@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Send, Loader2, MessageCircle, Bot } from 'lucide-react';
+import { Send, Loader2, MessageCircle, Bot, Paperclip, X } from 'lucide-react';
 import { ChatMessage, ChatResponse } from '../../types/chat';
 import { sendChatMessage } from '../../services/chatService';
 import { useToast } from '@/hooks/use-toast';
@@ -19,28 +19,90 @@ interface ChatPanelProps {
 const ChatPanel: React.FC<ChatPanelProps> = ({ chatHistory, onNewMessage }) => {
   const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [uploadedFile, setUploadedFile] = useState<{ name: string; content: unknown } | null>(null);
   const chatEndRef = useRef<HTMLDivElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
+
+  const MAX_FILE_SIZE = 50 * 1024; // 50KB
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [chatHistory]);
 
+  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    // Validate file extension
+    if (!file.name.toLowerCase().endsWith('.json')) {
+      toast({
+        title: "Invalid File Type",
+        description: "Please upload a JSON file (.json)",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    // Validate file size
+    if (file.size > MAX_FILE_SIZE) {
+      toast({
+        title: "File Too Large",
+        description: `File size must be less than ${MAX_FILE_SIZE / 1024}KB`,
+        variant: "destructive"
+      });
+      return;
+    }
+
+    // Read and parse JSON
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const content = JSON.parse(e.target?.result as string);
+        setUploadedFile({ name: file.name, content });
+        toast({
+          title: "File Uploaded",
+          description: `${file.name} uploaded successfully`,
+        });
+      } catch (error) {
+        toast({
+          title: "Invalid JSON",
+          description: "The file contains invalid JSON format",
+          variant: "destructive"
+        });
+      }
+    };
+    reader.readAsText(file);
+    
+    // Reset file input
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
   const handleSendMessage = async () => {
     if (!inputMessage.trim() || isLoading) return;
 
+    let messageContent = inputMessage;
+    
+    // Include uploaded file content if available
+    if (uploadedFile) {
+      messageContent += `\n\nUploaded JSON file (${uploadedFile.name}):\n\`\`\`json\n${JSON.stringify(uploadedFile.content, null, 2)}\n\`\`\``;
+    }
+
     const userMessage: ChatMessage = {
       role: 'user',
-      content: inputMessage,
+      content: messageContent,
       timestamp: new Date().toISOString()
     };
 
     onNewMessage(userMessage);
     setInputMessage('');
+    setUploadedFile(null); // Clear uploaded file after sending
     setIsLoading(true);
 
     try {
-      const response: ChatResponse = await sendChatMessage(inputMessage, chatHistory);
+      const response: ChatResponse = await sendChatMessage(messageContent, chatHistory);
       
       if (response.error) {
         throw new Error(response.error);
@@ -70,6 +132,10 @@ const ChatPanel: React.FC<ChatPanelProps> = ({ chatHistory, onNewMessage }) => {
       e.preventDefault();
       handleSendMessage();
     }
+  };
+
+  const removeUploadedFile = () => {
+    setUploadedFile(null);
   };
 
   return (
@@ -140,6 +206,24 @@ const ChatPanel: React.FC<ChatPanelProps> = ({ chatHistory, onNewMessage }) => {
 
       {/* Message Input */}
       <div className="border-t border-slate-200 dark:border-slate-700 p-6 bg-slate-50 dark:bg-slate-800">
+        {/* Uploaded File Indicator */}
+        {uploadedFile && (
+          <div className="mb-3 flex items-center justify-between bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 rounded-lg px-3 py-2">
+            <div className="flex items-center space-x-2">
+              <Paperclip className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+              <span className="text-sm text-emerald-700 dark:text-emerald-300">{uploadedFile.name}</span>
+            </div>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={removeUploadedFile}
+              className="h-6 w-6 p-0 hover:bg-emerald-100 dark:hover:bg-emerald-800"
+            >
+              <X className="h-3 w-3" />
+            </Button>
+          </div>
+        )}
+        
         <div className="flex space-x-3">
           <Input
             value={inputMessage}
@@ -149,6 +233,35 @@ const ChatPanel: React.FC<ChatPanelProps> = ({ chatHistory, onNewMessage }) => {
             disabled={isLoading}
             className="flex-1 border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 focus:border-indigo-500 focus:ring-indigo-500/20"
           />
+          
+          {/* File Upload Button */}
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={() => fileInputRef.current?.click()}
+                disabled={isLoading}
+                className="border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 hover:bg-slate-50 dark:hover:bg-slate-600"
+              >
+                <Paperclip className="h-4 w-4" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Upload JSON file (max 50KB)</p>
+            </TooltipContent>
+          </Tooltip>
+          
+          {/* Hidden File Input */}
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept=".json"
+            onChange={handleFileUpload}
+            className="hidden"
+          />
+          
+          {/* Send Button */}
           <Tooltip>
             <TooltipTrigger asChild>
               <Button 

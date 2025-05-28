@@ -1,0 +1,30 @@
+{
+  "user": {
+    "id": 123,
+    "name": "John Doe",
+    "email": "john.doe@example.com",
+    "profile": {
+      "age": 30,
+      "location": "New York",
+      "preferences": {
+        "theme": "dark",
+        "notifications": true
+      }
+    }
+  },
+  "orders": [
+    {
+      "id": "order-001",
+      "date": "2024-01-15",
+      "items": [
+        {"name": "Laptop", "price": 999.99, "quantity": 1},
+        {"name": "Mouse", "price": 29.99, "quantity": 2}
+      ],
+      "total": 1059.97
+    }
+  ],
+  "metadata": {
+    "version": "1.0",
+    "created": "2024-01-01T00:00:00Z"
+  }
+} 
