@@ -1,7 +1,7 @@
-
 import React, { useState } from 'react';
 import ChatPanel from './ChatPanel';
 import CodeEditor from './CodeEditor';
+import { ThemeToggle } from '../ui/theme-toggle';
 import { ChatMessage } from '../../types/chat';
 
 const DSLTutor = () => {
@@ -24,16 +24,19 @@ const DSLTutor = () => {
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-900">
       <header className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-700 shadow-sm px-6 py-8">
-        <div className="flex items-center space-x-4">
-          <div className="w-12 h-12 bg-gradient-to-r from-indigo-600 to-emerald-500 rounded-2xl flex items-center justify-center shadow-lg">
-            <span className="text-white font-bold text-xl">DSL</span>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-4">
+            <div className="w-12 h-12 bg-gradient-to-r from-indigo-600 to-emerald-500 rounded-2xl flex items-center justify-center shadow-lg">
+              <span className="text-white font-bold text-xl">DSL</span>
+            </div>
+            <div>
+              <h1 className="text-3xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-emerald-500">
+                DSL Tutor <span className="text-slate-500 dark:text-slate-400 font-semibold">Playground</span>
+              </h1>
+              <p className="text-sm text-slate-600 dark:text-slate-300 mt-1">Learn & experiment with domain-specific expressions</p>
+            </div>
           </div>
-          <div>
-            <h1 className="text-3xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-emerald-500">
-              DSL Tutor <span className="text-slate-500 dark:text-slate-400 font-semibold">Playground</span>
-            </h1>
-            <p className="text-sm text-slate-600 dark:text-slate-300 mt-1">Learn & experiment with domain-specific expressions</p>
-          </div>
+          <ThemeToggle />
         </div>
       </header>
       

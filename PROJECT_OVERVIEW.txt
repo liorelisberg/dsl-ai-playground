@@ -1,0 +1,274 @@
+================================================================================
+                           DSL AI PLAYGROUND - PROJECT OVERVIEW
+================================================================================
+
+🎯 PROJECT OVERVIEW
+================================================================================
+
+This is a Domain-Specific Language (DSL) Tutor and Playground - an educational 
+web application designed to help users learn and experiment with a JavaScript-like 
+domain-specific language for data parsing and transformation.
+
+🏗️ ARCHITECTURE & STRUCTURE
+================================================================================
+
+MONOREPO STRUCTURE:
+├── apps/
+│   ├── web/           # React frontend application
+│   └── server/        # Express.js backend server
+├── packages/
+│   ├── ui/            # Shared UI components
+│   ├── config/        # Shared configuration
+│   └── scripts/       # Build and utility scripts
+├── src/               # Main application source
+├── data/              # Data files (examples, rules)
+└── public/            # Static assets
+
+BUILD SYSTEM:
+- Turborepo for monorepo orchestration
+- Multiple package managers supported (pnpm, npm, bun)
+- Vite for fast development and building
+- TypeScript for type safety
+
+🛠️ TECHNOLOGY STACK
+================================================================================
+
+FRONTEND TECHNOLOGIES:
+- Framework: React 18.3.1 with TypeScript
+- Build Tool: Vite 5.4.1 with SWC plugin
+- Styling: Tailwind CSS 3.4.11 with custom design system
+- UI Components: shadcn/ui (comprehensive component library)
+- State Management: React Query (TanStack Query) for server state
+- Routing: React Router DOM 6.26.2
+- Form Handling: React Hook Form with Zod validation
+- Icons: Lucide React
+- Notifications: Sonner toasts
+- Theme: next-themes for dark/light mode
+
+BACKEND TECHNOLOGIES:
+- Runtime: Node.js with Express 5.1.0
+- Language: TypeScript
+- Database: ChromaDB integration (vector database)
+- Middleware: CORS, cookie-parser, rate limiting
+- Session Management: Custom session handling
+
+🚀 CORE FEATURES & CAPABILITIES
+================================================================================
+
+1. INTERACTIVE DSL LEARNING ENVIRONMENT
+   - Split-panel interface: Chat assistant on left, code editor on right
+   - Real-time expression evaluation with immediate feedback
+   - Syntax highlighting and error handling
+   - Modern, responsive UI with gradient branding
+
+2. AI-POWERED CHAT ASSISTANT
+   - Educational chatbot for learning DSL syntax and concepts
+   - Context-aware responses with examples and debugging help
+   - Chat history management (maintains last 8 messages)
+   - Mock implementation (Gemini API integration pending)
+
+3. CODE EDITOR & EXECUTION ENGINE
+   - Expression workbench for writing and testing DSL expressions
+   - JSON input support for testing expressions against sample data
+   - Result visualization with formatted display
+   - Basic DSL interpreter supporting:
+     * Property access (user.name, user.profile.city)
+     * String methods (.toUpperCase(), .toLowerCase(), .trim())
+     * Nested object navigation
+
+4. EXAMPLES LIBRARY
+   - Categorized examples: basic operations, string transformations
+   - Interactive examples drawer with search functionality
+   - Pre-built examples for common use cases
+   - Easy example selection and loading
+
+5. MODERN UI/UX DESIGN
+   - Dark/light mode support with theme switching
+   - Responsive design for desktop and mobile
+   - Professional indigo-to-emerald gradient color scheme
+   - Smooth animations using Tailwind CSS
+   - Comprehensive component library (50+ UI components)
+
+🔧 CURRENT DSL CAPABILITIES
+================================================================================
+
+SUPPORTED OPERATIONS:
+// Property access
+user.name
+user.profile.city
+
+// String transformations
+user.name.toUpperCase()
+user.email.toLowerCase()
+user.description.trim()
+
+// Nested object navigation
+user.profile.address.street
+
+EXAMPLE USE CASES:
+- Data extraction from JSON objects
+- String manipulation and formatting
+- Nested property access
+- Basic data transformation
+
+📁 COMPONENT ARCHITECTURE
+================================================================================
+
+MAIN COMPONENTS:
+1. DSLTutor.tsx - Main application container with split layout
+2. ChatPanel.tsx - AI assistant interface with message history
+3. CodeEditor.tsx - Expression editor with execution capabilities
+4. ExamplesDrawer.tsx - Sliding panel with example library
+
+SERVICES LAYER:
+1. chatService.ts - Mock chat responses (AI integration pending)
+2. dslService.ts - Expression evaluation engine
+3. examplesService.ts - Example data management
+
+UI COMPONENTS (50+ shadcn/ui components):
+- Form components: Button, Input, Textarea, Select, Checkbox
+- Layout components: Card, Sheet, Dialog, Drawer, Tabs
+- Navigation: Menubar, Navigation Menu, Breadcrumb
+- Data display: Table, Chart, Badge, Avatar, Progress
+- Feedback: Toast, Alert, Skeleton, Tooltip
+- And many more...
+
+🛠️ DEVELOPMENT & BUILD SETUP
+================================================================================
+
+AVAILABLE SCRIPTS:
+- npm run dev: Start development server (port 8080)
+- npm run build: Production build
+- npm run build:dev: Development build
+- npm run lint: Code linting with ESLint
+- npm run preview: Preview production build
+
+DEVELOPMENT TOOLS:
+- Hot reload with Vite development server
+- Type checking with TypeScript strict configuration
+- Code quality with ESLint (React and TypeScript rules)
+- Component tagging for Lovable development integration
+- Path aliases (@/ for src directory)
+
+🎨 DESIGN SYSTEM
+================================================================================
+
+COLOR PALETTE:
+- Primary: Indigo gradient (600-700)
+- Secondary: Emerald (500-600)
+- Neutral: Slate color scale
+- Semantic: Success, warning, error states
+
+TYPOGRAPHY:
+- Font: Inter sans-serif
+- Spacing: Consistent 8px grid system
+- Borders: Rounded corners with consistent radius
+- Letter spacing: Tight (-0.025em)
+
+LAYOUT:
+- Container-based responsive design
+- Flexbox and CSS Grid layouts
+- Mobile-first responsive breakpoints
+- Consistent padding and margins
+
+🔮 FUTURE ENHANCEMENTS (IDENTIFIED TODOS)
+================================================================================
+
+1. AI INTEGRATION
+   - Replace mock chat with actual Gemini API
+   - Implement real-time AI responses
+   - Add conversation context and memory
+
+2. ADVANCED DSL FEATURES
+   - Array operations (.map(), .filter(), .find())
+   - Conditional expressions (ternary operators)
+   - Function definitions and calls
+   - Mathematical operations
+
+3. DATA PERSISTENCE
+   - Save user expressions and history
+   - User accounts and authentication
+   - Cloud synchronization
+
+4. COLLABORATIVE FEATURES
+   - Share expressions with others
+   - Community example library
+   - Collaborative editing
+
+5. ADVANCED EXAMPLES
+   - More complex transformation patterns
+   - Real-world data processing scenarios
+   - Interactive tutorials
+
+6. PERFORMANCE OPTIMIZATION
+   - Code splitting and lazy loading
+   - Expression caching
+   - Optimized bundle sizes
+
+📊 PROJECT STATUS
+================================================================================
+
+COMPLETED:
+✅ Frontend: Fully functional with modern React architecture
+✅ Backend: Basic Express server with session management
+✅ DSL Engine: Basic interpreter with core functionality
+✅ UI/UX: Polished, professional interface
+✅ Component Library: Comprehensive shadcn/ui integration
+✅ Build System: Turborepo monorepo with Vite
+
+IN PROGRESS:
+🔄 AI Integration: Mock implementation (pending real API)
+🔄 Advanced DSL Features: Basic operations implemented
+
+PLANNED:
+📋 Data Persistence: User accounts and cloud sync
+📋 Collaborative Features: Sharing and community
+📋 Advanced Examples: Complex use cases
+📋 Performance Optimization: Bundle optimization
+
+🚀 DEPLOYMENT & HOSTING
+================================================================================
+
+CURRENT SETUP:
+- Lovable.dev integration for easy deployment
+- Custom domain support available
+- Development server on port 8080
+- Production builds optimized for performance
+
+DEPLOYMENT OPTIONS:
+- Lovable.dev platform (current)
+- Vercel/Netlify for frontend
+- Railway/Heroku for backend
+- Docker containerization ready
+
+📝 DEVELOPMENT NOTES
+================================================================================
+
+PACKAGE MANAGERS:
+- Primary: pnpm (workspace configuration)
+- Supported: npm, bun (lockfiles present)
+- Workspace: Configured for monorepo structure
+
+CONFIGURATION FILES:
+- TypeScript: Strict configuration with path mapping
+- ESLint: React and TypeScript rules
+- Tailwind: Custom design system configuration
+- Vite: Optimized for React with SWC
+- Turbo: Build pipeline orchestration
+
+CODE QUALITY:
+- TypeScript strict mode enabled
+- ESLint with React hooks and refresh plugins
+- Consistent code formatting
+- Component-based architecture
+- Service layer separation
+
+This project represents a sophisticated educational platform for learning 
+domain-specific languages, with a strong foundation for future enhancements 
+and real-world deployment.
+
+================================================================================
+Generated: $(date)
+Project: DSL AI Playground
+Version: 0.0.0
+================================================================================ 
