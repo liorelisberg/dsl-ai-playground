@@ -22,25 +22,25 @@ const DSLTutor = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
-      <header className="bg-white/80 backdrop-blur-md border-b border-gray-200/50 shadow-sm px-6 py-6">
-        <div className="flex items-center space-x-3">
-          <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl flex items-center justify-center">
-            <span className="text-white font-bold text-lg">DSL</span>
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-900">
+      <header className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-700 shadow-sm px-6 py-8">
+        <div className="flex items-center space-x-4">
+          <div className="w-12 h-12 bg-gradient-to-r from-indigo-600 to-emerald-500 rounded-2xl flex items-center justify-center shadow-lg">
+            <span className="text-white font-bold text-xl">DSL</span>
           </div>
           <div>
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
-              DSL Tutor
+            <h1 className="text-3xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-emerald-500">
+              DSL Tutor <span className="text-slate-500 dark:text-slate-400 font-semibold">Playground</span>
             </h1>
-            <p className="text-sm text-gray-600 mt-1">Learn and experiment with domain-specific language expressions</p>
+            <p className="text-sm text-slate-600 dark:text-slate-300 mt-1">Learn & experiment with domain-specific expressions</p>
           </div>
         </div>
       </header>
       
-      <div className="flex flex-col lg:flex-row h-[calc(100vh-104px)] gap-6 p-6">
+      <div className="flex flex-col lg:flex-row h-[calc(100vh-120px)] gap-6 p-6">
         {/* Chat Panel - Left Side */}
         <div className="w-full lg:w-1/2">
-          <div className="h-full bg-white/70 backdrop-blur-md rounded-2xl shadow-xl border border-white/50 overflow-hidden">
+          <div className="h-full bg-white dark:bg-slate-800 rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700 overflow-hidden">
             <ChatPanel 
               chatHistory={chatHistory} 
               onNewMessage={handleNewMessage}
@@ -50,7 +50,7 @@ const DSLTutor = () => {
         
         {/* Code Editor - Right Side */}
         <div className="w-full lg:w-1/2">
-          <div className="h-full bg-white/70 backdrop-blur-md rounded-2xl shadow-xl border border-white/50 overflow-hidden">
+          <div className="h-full bg-white dark:bg-slate-800 rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700 overflow-hidden">
             <CodeEditor />
           </div>
         </div>
