@@ -1,10 +1,14 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
 import { X, Search, Code, Sparkles } from 'lucide-react';
 import { getExamples } from '../../services/examplesService';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 
 interface Example {
   id: string;
@@ -86,9 +90,16 @@ const ExamplesDrawer: React.FC<ExamplesDrawerProps> = ({
               </div>
               <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">DSL Examples</h3>
             </div>
-            <Button variant="ghost" size="icon" onClick={onClose} className="hover:bg-slate-100 dark:hover:bg-slate-700 rounded-full">
-              <X className="h-4 w-4" />
-            </Button>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button variant="ghost" size="icon" onClick={onClose} className="hover:bg-slate-100 dark:hover:bg-slate-700 rounded-full">
+                  <X className="h-4 w-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Close examples drawer</p>
+              </TooltipContent>
+            </Tooltip>
           </div>
         </div>
 
@@ -124,24 +135,30 @@ const ExamplesDrawer: React.FC<ExamplesDrawerProps> = ({
                   </div>
                   <div className="space-y-3">
                     {categoryExamples.map((example) => (
-                      <Card 
-                        key={example.id} 
-                        className="p-4 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700 transition-all duration-200 border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 shadow-lg hover:shadow-xl rounded-2xl"
-                        onClick={() => onSelectExample(example)}
-                      >
-                        <h5 className="font-medium text-slate-900 dark:text-slate-100 mb-2 flex items-center">
-                          <Code className="h-3 w-3 mr-2 text-indigo-500" />
-                          {example.title}
-                        </h5>
-                        <p className="text-sm text-slate-600 dark:text-slate-400 mb-3">
-                          {example.description}
-                        </p>
-                        <div className="bg-slate-100 dark:bg-slate-700 rounded-lg p-3">
-                          <code className="text-xs text-slate-800 dark:text-slate-200 font-mono">
-                            {example.expression}
-                          </code>
-                        </div>
-                      </Card>
+                      <Tooltip key={example.id}>
+                        <TooltipTrigger asChild>
+                          <Card 
+                            className="p-4 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700 transition-all duration-200 border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 shadow-lg hover:shadow-xl rounded-2xl"
+                            onClick={() => onSelectExample(example)}
+                          >
+                            <h5 className="font-medium text-slate-900 dark:text-slate-100 mb-2 flex items-center">
+                              <Code className="h-3 w-3 mr-2 text-indigo-500" />
+                              {example.title}
+                            </h5>
+                            <p className="text-sm text-slate-600 dark:text-slate-400 mb-3">
+                              {example.description}
+                            </p>
+                            <div className="bg-slate-100 dark:bg-slate-700 rounded-lg p-3">
+                              <code className="text-xs text-slate-800 dark:text-slate-200 font-mono">
+                                {example.expression}
+                              </code>
+                            </div>
+                          </Card>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Click to load this example into the editor</p>
+                        </TooltipContent>
+                      </Tooltip>
                     ))}
                   </div>
                 </div>

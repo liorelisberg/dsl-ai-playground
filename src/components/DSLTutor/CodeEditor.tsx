@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -7,6 +6,11 @@ import { Play, Book, Code2, Sparkles } from 'lucide-react';
 import { evaluateExpression } from '../../services/dslService';
 import { useToast } from '@/hooks/use-toast';
 import ExamplesDrawer from './ExamplesDrawer';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 
 const CodeEditor = () => {
   const [code, setCode] = useState('// Enter your DSL expression here\nuser.name.toUpperCase()');
@@ -34,7 +38,15 @@ const CodeEditor = () => {
     }
   };
 
-  const handleExampleSelect = (example: any) => {
+  const handleExampleSelect = (example: {
+    id: string;
+    title: string;
+    expression: string;
+    sampleInput: string;
+    expectedOutput: string;
+    description: string;
+    category: string;
+  }) => {
     setCode(example.expression);
     setSampleInput(example.sampleInput);
     setShowExamples(false);
@@ -55,24 +67,38 @@ const CodeEditor = () => {
             </div>
           </div>
           <div className="flex space-x-3">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setShowExamples(true)}
-              className="border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 hover:bg-slate-50 dark:hover:bg-slate-600 rounded-full shadow-sm"
-            >
-              <Book className="h-4 w-4 mr-2" />
-              Examples
-            </Button>
-            <Button
-              onClick={handleExecute}
-              disabled={isLoading}
-              size="sm"
-              className="bg-indigo-600 hover:bg-indigo-700 text-white rounded-full shadow-lg"
-            >
-              <Play className="h-4 w-4 mr-2" />
-              {isLoading ? 'Running...' : 'Run'}
-            </Button>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setShowExamples(true)}
+                  className="border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 hover:bg-slate-50 dark:hover:bg-slate-600 rounded-full shadow-sm"
+                >
+                  <Book className="h-4 w-4 mr-2" />
+                  Examples
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Browse pre-built DSL expression examples</p>
+              </TooltipContent>
+            </Tooltip>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  onClick={handleExecute}
+                  disabled={isLoading}
+                  size="sm"
+                  className="bg-indigo-600 hover:bg-indigo-700 text-white rounded-full shadow-lg"
+                >
+                  <Play className="h-4 w-4 mr-2" />
+                  {isLoading ? 'Running...' : 'Run'}
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Execute DSL expression with sample input</p>
+              </TooltipContent>
+            </Tooltip>
           </div>
         </div>
       </div>

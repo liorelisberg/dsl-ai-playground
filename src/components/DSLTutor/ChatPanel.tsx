@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -6,6 +5,11 @@ import { Send, Loader2, MessageCircle, Bot } from 'lucide-react';
 import { ChatMessage, ChatResponse } from '../../types/chat';
 import { sendChatMessage } from '../../services/chatService';
 import { useToast } from '@/hooks/use-toast';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 
 interface ChatPanelProps {
   chatHistory: ChatMessage[];
@@ -145,13 +149,20 @@ const ChatPanel: React.FC<ChatPanelProps> = ({ chatHistory, onNewMessage }) => {
             disabled={isLoading}
             className="flex-1 border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 focus:border-indigo-500 focus:ring-indigo-500/20"
           />
-          <Button 
-            onClick={handleSendMessage}
-            disabled={!inputMessage.trim() || isLoading}
-            className="bg-indigo-600 hover:bg-indigo-700 text-white rounded-full shadow-lg"
-          >
-            <Send className="h-4 w-4" />
-          </Button>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button 
+                onClick={handleSendMessage}
+                disabled={!inputMessage.trim() || isLoading}
+                className="bg-indigo-600 hover:bg-indigo-700 text-white rounded-full shadow-lg"
+              >
+                <Send className="h-4 w-4" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Send message to AI assistant (Enter)</p>
+            </TooltipContent>
+          </Tooltip>
         </div>
       </div>
     </div>
