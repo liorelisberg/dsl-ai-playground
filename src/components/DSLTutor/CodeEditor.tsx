@@ -13,7 +13,7 @@ import {
 } from '@/components/ui/tooltip';
 
 const CodeEditor = () => {
-  const [code, setCode] = useState('// Enter your DSL expression here\nuser.name.toUpperCase()');
+  const [code, setCode] = useState('// Enter your DSL expression here\nupper(user.name)');
   const [sampleInput, setSampleInput] = useState('{"user": {"name": "john doe", "age": 30}}');
   const [result, setResult] = useState<string>('');
   const [isLoading, setIsLoading] = useState(false);

@@ -12,7 +12,7 @@ const mockExamples = [
   {
     id: '2',
     title: 'Uppercase Name',
-    expression: 'user.name.toUpperCase()',
+    expression: 'upper(user.name)',
     sampleInput: '{"user": {"name": "john doe", "age": 30}}',
     expectedOutput: '"JOHN DOE"',
     description: 'Convert text to uppercase',
