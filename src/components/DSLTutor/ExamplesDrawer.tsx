@@ -191,6 +191,12 @@ const categoryConfig: Record<string, { icon: React.ReactNode; label: string; des
     label: 'Utility Functions',
     description: 'Fuzzy matching, timezone operations, leap year checks, and date setters',
     color: 'bg-gradient-to-br from-red-500 to-pink-600'
+  },
+  'array-flattening': {
+    icon: <FolderOpen className="h-5 w-5" />,
+    label: 'Array Flattening & Transformations',
+    description: 'FlatMap, unique, sort, reverse, reduce, and nested array operations',
+    color: 'bg-gradient-to-br from-cyan-500 to-teal-600'
   }
 };
 
