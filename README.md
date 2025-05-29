@@ -230,10 +230,10 @@ The API includes full **OpenAPI 3.0 specification** with:
 
 ## 🔧 Development Notes
 
-- **Frontend**: Runs on port 8080 (or next available: 8081, 8082)
+- **Frontend**: Runs on port 8080
 - **Backend**: Runs on port 3000
 - **Architecture**: Frontend HTTP client → Backend API → Zen Engine evaluation
-- **CORS**: Configured for multiple frontend ports
+- **CORS**: Configured for frontend port
 - **Rate Limiting**: 10 requests/minute, 500/day for API protection
 - **Session Management**: HTTP-only cookies
 - **Error Handling**: Graceful fallback to basic evaluation when API unavailable
