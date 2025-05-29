@@ -28,12 +28,12 @@ class GeminiService {
 
     this.genAI = new GoogleGenerativeAI(apiKey);
     this.model = this.genAI.getGenerativeModel({ 
-      model: 'gemini-2.0-flash',
+      model: 'gemini-2.5-flash-preview-05-20',
       generationConfig: {
         temperature: 0.7,
-        topP: 1,
-        topK: 1,
-        maxOutputTokens: 4096,
+        topP: 0.95,
+        topK: 64,
+        maxOutputTokens: 8192,
       },
     });
   }
