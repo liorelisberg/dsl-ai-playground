@@ -167,6 +167,30 @@ const categoryConfig: Record<string, { icon: React.ReactNode; label: string; des
     label: 'Business Calculations',
     description: 'Price validation, revenue calculations, permissions, and inventory checks',
     color: 'bg-gradient-to-br from-green-500 to-emerald-600'
+  },
+  'unary-operations': {
+    icon: <Hash className="h-5 w-5" />,
+    label: 'Unary Operations',
+    description: 'Context-dependent expressions using $ symbol for comparisons and validations',
+    color: 'bg-gradient-to-br from-yellow-500 to-orange-600'
+  },
+  'string-advanced': {
+    icon: <Code className="h-5 w-5" />,
+    label: 'Advanced String Operations',
+    description: 'String concatenation, join, repeat, reverse, and utility functions',
+    color: 'bg-gradient-to-br from-teal-500 to-blue-600'
+  },
+  'date-constructors': {
+    icon: <Hash className="h-5 w-5" />,
+    label: 'Advanced Date Constructors',
+    description: 'Timezone-aware date creation, enhanced comparisons, and duration operations',
+    color: 'bg-gradient-to-br from-purple-500 to-violet-600'
+  },
+  'utility-functions': {
+    icon: <Sparkles className="h-5 w-5" />,
+    label: 'Utility Functions',
+    description: 'Fuzzy matching, timezone operations, leap year checks, and date setters',
+    color: 'bg-gradient-to-br from-red-500 to-pink-600'
   }
 };
 

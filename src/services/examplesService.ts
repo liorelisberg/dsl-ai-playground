@@ -2285,6 +2285,527 @@ const realExamples = [
     expectedOutput: 'true',
     description: 'Check if cart total qualifies for discount',
     category: 'business-calculations'
+  },
+
+  // Unary Operations
+  {
+    id: 'unary-1',
+    title: 'Boolean Context True',
+    expression: 'true',
+    sampleInput: '{ "$": true }',
+    expectedOutput: 'true',
+    description: 'Boolean literal evaluation in true context',
+    category: 'unary-operations'
+  },
+  {
+    id: 'unary-2',
+    title: 'Boolean Context False',
+    expression: 'true',
+    sampleInput: '{ "$": false }',
+    expectedOutput: 'false',
+    description: 'Boolean literal evaluation in false context',
+    category: 'unary-operations'
+  },
+  {
+    id: 'unary-3',
+    title: 'Greater Than Comparison',
+    expression: '> 5',
+    sampleInput: '{"$": 10}',
+    expectedOutput: 'true',
+    description: 'Check if context value ($) is greater than 5',
+    category: 'unary-operations'
+  },
+  {
+    id: 'unary-4',
+    title: 'Less Than Comparison',
+    expression: '< 10',
+    sampleInput: '{"$": 5}',
+    expectedOutput: 'true',
+    description: 'Check if context value ($) is less than 10',
+    category: 'unary-operations'
+  },
+  {
+    id: 'unary-5',
+    title: 'Greater Than or Equal',
+    expression: '>= 10',
+    sampleInput: '{"$": 10}',
+    expectedOutput: 'true',
+    description: 'Check if context value ($) is greater than or equal to 10',
+    category: 'unary-operations'
+  },
+  {
+    id: 'unary-6',
+    title: 'Less Than or Equal',
+    expression: '<= 5',
+    sampleInput: '{"$": 5}',
+    expectedOutput: 'true',
+    description: 'Check if context value ($) is less than or equal to 5',
+    category: 'unary-operations'
+  },
+  {
+    id: 'unary-7',
+    title: 'Range Check Inclusive',
+    expression: '[-10..0]',
+    sampleInput: '{"$": 0}',
+    expectedOutput: 'true',
+    description: 'Check if context value ($) is in inclusive range [-10..0]',
+    category: 'unary-operations'
+  },
+  {
+    id: 'unary-8',
+    title: 'Range Check Exclusive Start',
+    expression: '(-10..0]',
+    sampleInput: '{"$": -10}',
+    expectedOutput: 'false',
+    description: 'Check if context value ($) is in range excluding start (-10..0]',
+    category: 'unary-operations'
+  },
+  {
+    id: 'unary-9',
+    title: 'Range Check Exclusive End',
+    expression: '[-10..0)',
+    sampleInput: '{"$": -10}',
+    expectedOutput: 'true',
+    description: 'Check if context value ($) is in range excluding end [-10..0)',
+    category: 'unary-operations'
+  },
+  {
+    id: 'unary-10',
+    title: 'Range Check Both Exclusive',
+    expression: '(-10..0)',
+    sampleInput: '{"$": 0}',
+    expectedOutput: 'false',
+    description: 'Check if context value ($) is in range excluding both ends (-10..0)',
+    category: 'unary-operations'
+  },
+  {
+    id: 'unary-11',
+    title: 'Complex Range Check',
+    expression: '[-15..-5]',
+    sampleInput: '{"$": -4.99}',
+    expectedOutput: 'false',
+    description: 'Check if context value ($) is in decimal range [-15..-5]',
+    category: 'unary-operations'
+  },
+  {
+    id: 'unary-12',
+    title: 'Combined Comparison',
+    expression: '> 5 and < 10',
+    sampleInput: '{"$": 5}',
+    expectedOutput: 'false',
+    description: 'Check if context value ($) is greater than 5 AND less than 10',
+    category: 'unary-operations'
+  },
+  {
+    id: 'unary-13',
+    title: 'Range and Comparison',
+    expression: '[-10..0] and > -5',
+    sampleInput: '{"$": -4.99}',
+    expectedOutput: 'true',
+    description: 'Check if context value ($) is in range AND greater than -5',
+    category: 'unary-operations'
+  },
+  {
+    id: 'unary-14',
+    title: 'String Set Check',
+    expression: '"GB","US"',
+    sampleInput: '{"$": "US"}',
+    expectedOutput: 'true',
+    description: 'Check if context string ($) matches one of the values',
+    category: 'unary-operations'
+  },
+  {
+    id: 'unary-15',
+    title: 'String Length Check',
+    expression: 'len($) == 13',
+    sampleInput: '{"$": "Hello, World!"}',
+    expectedOutput: 'true',
+    description: 'Check if context string ($) length equals 13',
+    category: 'unary-operations'
+  },
+  {
+    id: 'unary-16',
+    title: 'String Starts With',
+    expression: 'startsWith($, "Hello")',
+    sampleInput: '{"$": "Hello, World!"}',
+    expectedOutput: 'true',
+    description: 'Check if context string ($) starts with "Hello"',
+    category: 'unary-operations'
+  },
+  {
+    id: 'unary-17',
+    title: 'String Ends With',
+    expression: 'endsWith($, "World!")',
+    sampleInput: '{"$": "Hello, World!"}',
+    expectedOutput: 'true',
+    description: 'Check if context string ($) ends with "World!"',
+    category: 'unary-operations'
+  },
+  {
+    id: 'unary-18',
+    title: 'String Contains',
+    expression: 'contains($, "lo")',
+    sampleInput: '{"$": "Hello, World!"}',
+    expectedOutput: 'true',
+    description: 'Check if context string ($) contains "lo"',
+    category: 'unary-operations'
+  },
+  {
+    id: 'unary-19',
+    title: 'String Slice Check',
+    expression: '$[0:5] == "sample"',
+    sampleInput: '{"$": "sample_string"}',
+    expectedOutput: 'true',
+    description: 'Check if context string ($) slice [0:5] equals "sample"',
+    category: 'unary-operations'
+  },
+
+  // Advanced String Operations
+  {
+    id: 'str-adv-1',
+    title: 'Multi-String Concatenation',
+    expression: '"Hello" + " " + "World" + "!"',
+    sampleInput: '{}',
+    expectedOutput: '"Hello World!"',
+    description: 'Concatenate multiple strings with spaces and punctuation',
+    category: 'string-advanced'
+  },
+  {
+    id: 'str-adv-2',
+    title: 'User Data Concatenation',
+    expression: '"User: " + user.name',
+    sampleInput: '{"user":{"name":"John"}}',
+    expectedOutput: '"User: John"',
+    description: 'Concatenate static text with user property',
+    category: 'string-advanced'
+  },
+  {
+    id: 'str-adv-3',
+    title: 'Template vs Concatenation',
+    expression: 'user.firstName + " " + user.lastName',
+    sampleInput: '{"user":{"firstName":"John","lastName":"Doe"}}',
+    expectedOutput: '"John Doe"',
+    description: 'Build full name by concatenating first and last name',
+    category: 'string-advanced'
+  },
+  {
+    id: 'str-adv-4',
+    title: 'Array Join Operation',
+    expression: 'join(["apple", "banana", "cherry"], ", ")',
+    sampleInput: '{}',
+    expectedOutput: '"apple, banana, cherry"',
+    description: 'Join array elements into comma-separated string',
+    category: 'string-advanced'
+  },
+  {
+    id: 'str-adv-5',
+    title: 'Array Join with Separator',
+    expression: 'join(map(items, #.name), " | ")',
+    sampleInput: '{"items":[{"name":"John"},{"name":"Jane"},{"name":"Bob"}]}',
+    expectedOutput: '"John | Jane | Bob"',
+    description: 'Extract names and join with pipe separator',
+    category: 'string-advanced'
+  },
+  {
+    id: 'str-adv-6',
+    title: 'String Repeat Operation',
+    expression: 'repeat("*", 5)',
+    sampleInput: '{}',
+    expectedOutput: '"*****"',
+    description: 'Repeat character multiple times',
+    category: 'string-advanced'
+  },
+  {
+    id: 'str-adv-7',
+    title: 'String Reverse',
+    expression: 'reverse("hello")',
+    sampleInput: '{}',
+    expectedOutput: '"olleh"',
+    description: 'Reverse string character order',
+    category: 'string-advanced'
+  },
+  {
+    id: 'str-adv-8',
+    title: 'Character At Index',
+    expression: 'charAt("hello", 0)',
+    sampleInput: '{}',
+    expectedOutput: '"h"',
+    description: 'Get character at specific index',
+    category: 'string-advanced'
+  },
+  {
+    id: 'str-adv-9',
+    title: 'Find Index Of',
+    expression: 'indexOf("hello world", "world")',
+    sampleInput: '{}',
+    expectedOutput: '6',
+    description: 'Find index of substring within string',
+    category: 'string-advanced'
+  },
+  {
+    id: 'str-adv-10',
+    title: 'Substring Extraction',
+    expression: 'substring("hello world", 6, 5)',
+    sampleInput: '{}',
+    expectedOutput: '"world"',
+    description: 'Extract substring from start index with length',
+    category: 'string-advanced'
+  },
+  {
+    id: 'str-adv-11',
+    title: 'String Builder Pattern',
+    expression: '"(" + user.id + ") " + user.name + " - " + user.status',
+    sampleInput: '{"user":{"id":"123","name":"John","status":"active"}}',
+    expectedOutput: '"(123) John - active"',
+    description: 'Build complex string from multiple properties',
+    category: 'string-advanced'
+  },
+  {
+    id: 'str-adv-12',
+    title: 'Conditional Concatenation',
+    expression: 'user.title ? user.title + " " + user.name : user.name',
+    sampleInput: '{"user":{"title":"Dr.","name":"Smith"}}',
+    expectedOutput: '"Dr. Smith"',
+    description: 'Conditionally include title in name concatenation',
+    category: 'string-advanced'
+  },
+
+  // Advanced Date Constructors
+  {
+    id: 'date-const-1',
+    title: 'Date with Time',
+    expression: 'd("2023-10-15 14:30")',
+    sampleInput: '{}',
+    expectedOutput: '"2023-10-15T14:30:00Z"',
+    description: 'Create date with specific time',
+    category: 'date-constructors'
+  },
+  {
+    id: 'date-const-2',
+    title: 'Date with Seconds',
+    expression: 'd("2023-10-15 14:30:45")',
+    sampleInput: '{}',
+    expectedOutput: '"2023-10-15T14:30:45Z"',
+    description: 'Create date with time including seconds',
+    category: 'date-constructors'
+  },
+  {
+    id: 'date-const-3',
+    title: 'Date with Timezone',
+    expression: 'd("2023-10-15", "Europe/Berlin")',
+    sampleInput: '{}',
+    expectedOutput: '"2023-10-15T00:00:00+02:00"',
+    description: 'Create date with specific timezone',
+    category: 'date-constructors'
+  },
+  {
+    id: 'date-const-4',
+    title: 'DateTime with Timezone',
+    expression: 'd("2023-10-15 14:30", "Europe/Berlin")',
+    sampleInput: '{}',
+    expectedOutput: '"2023-10-15T14:30:00+02:00"',
+    description: 'Create datetime with timezone specification',
+    category: 'date-constructors'
+  },
+  {
+    id: 'date-const-5',
+    title: 'Full DateTime with Timezone',
+    expression: 'd("2023-10-15 14:30:45", "Europe/Berlin")',
+    sampleInput: '{}',
+    expectedOutput: '"2023-10-15T14:30:45+02:00"',
+    description: 'Create full datetime with timezone and seconds',
+    category: 'date-constructors'
+  },
+  {
+    id: 'date-const-6',
+    title: 'Add Duration String',
+    expression: 'd("2023-10-15").add("1d 5h")',
+    sampleInput: '{}',
+    expectedOutput: '"2023-10-16T05:00:00Z"',
+    description: 'Add complex duration string (1 day 5 hours)',
+    category: 'date-constructors'
+  },
+  {
+    id: 'date-const-7',
+    title: 'Subtract with Units',
+    expression: 'd("2023-10-15").sub(1, "M")',
+    sampleInput: '{}',
+    expectedOutput: '"2023-09-15T00:00:00Z"',
+    description: 'Subtract 1 month using unit specification',
+    category: 'date-constructors'
+  },
+  {
+    id: 'date-const-8',
+    title: 'Is Same Or Before',
+    expression: 'd("2023-10-15").isSameOrBefore(d("2023-10-16"))',
+    sampleInput: '{}',
+    expectedOutput: 'true',
+    description: 'Check if date is same or before another date',
+    category: 'date-constructors'
+  },
+  {
+    id: 'date-const-9',
+    title: 'Is Same Or After',
+    expression: 'd("2023-10-15").isSameOrAfter(d("2023-10-14"))',
+    sampleInput: '{}',
+    expectedOutput: 'true',
+    description: 'Check if date is same or after another date',
+    category: 'date-constructors'
+  },
+  {
+    id: 'date-const-10',
+    title: 'Date Validation Check',
+    expression: 'd("Europe/Berlin").isValid() and d("Europe/Berlin").isToday()',
+    sampleInput: '{}',
+    expectedOutput: 'true',
+    description: 'Validate timezone string and check if today (context-dependent)',
+    category: 'date-constructors'
+  },
+  {
+    id: 'date-const-11',
+    title: 'Is Before Check',
+    expression: 'd("2023-10-15").isBefore(d("2023-10-15"))',
+    sampleInput: '{}',
+    expectedOutput: 'false',
+    description: 'Check if date is before same date (returns false)',
+    category: 'date-constructors'
+  },
+  {
+    id: 'date-const-12',
+    title: 'Is After Check',
+    expression: 'd("2023-10-15").isAfter(d("2023-10-15"))',
+    sampleInput: '{}',
+    expectedOutput: 'false',
+    description: 'Check if date is after same date (returns false)',
+    category: 'date-constructors'
+  },
+
+  // Utility Functions
+  {
+    id: 'util-1',
+    title: 'Fuzzy Match Exact',
+    expression: 'fuzzyMatch("hello", "hello")',
+    sampleInput: '{}',
+    expectedOutput: '1',
+    description: 'Fuzzy string matching with exact match (returns 1.0)',
+    category: 'utility-functions'
+  },
+  {
+    id: 'util-2',
+    title: 'Fuzzy Match Partial',
+    expression: 'fuzzyMatch("world", "hello")',
+    sampleInput: '{}',
+    expectedOutput: '0.2',
+    description: 'Fuzzy string matching with low similarity',
+    category: 'utility-functions'
+  },
+  {
+    id: 'util-3',
+    title: 'Fuzzy Match Array',
+    expression: 'fuzzyMatch(["hello", "world"], "hello")',
+    sampleInput: '{}',
+    expectedOutput: '[1, 0.2]',
+    description: 'Fuzzy match string against array of strings',
+    category: 'utility-functions'
+  },
+  {
+    id: 'util-4',
+    title: 'Date Offset Name Berlin',
+    expression: 'd("2023-10-15", "Europe/Berlin").offsetName()',
+    sampleInput: '{}',
+    expectedOutput: '"Europe/Berlin"',
+    description: 'Get timezone offset name from date',
+    category: 'utility-functions'
+  },
+  {
+    id: 'util-5',
+    title: 'Date Offset Name LA',
+    expression: 'd("2023-10-15", "America/Los_Angeles").offsetName()',
+    sampleInput: '{}',
+    expectedOutput: '"America/Los_Angeles"',
+    description: 'Get timezone offset name for Los Angeles',
+    category: 'utility-functions'
+  },
+  {
+    id: 'util-6',
+    title: 'Leap Year Check False',
+    expression: 'd("2023-10-15").isLeapYear()',
+    sampleInput: '{}',
+    expectedOutput: 'false',
+    description: 'Check if year 2023 is a leap year (false)',
+    category: 'utility-functions'
+  },
+  {
+    id: 'util-7',
+    title: 'Leap Year Check True',
+    expression: 'd("2024-10-15").isLeapYear()',
+    sampleInput: '{}',
+    expectedOutput: 'true',
+    description: 'Check if year 2024 is a leap year (true)',
+    category: 'utility-functions'
+  },
+  {
+    id: 'util-8',
+    title: 'Century Leap Year',
+    expression: 'd("2000-10-15").isLeapYear()',
+    sampleInput: '{}',
+    expectedOutput: 'true',
+    description: 'Check leap year for century year 2000 (true)',
+    category: 'utility-functions'
+  },
+  {
+    id: 'util-9',
+    title: 'Century Non-Leap Year',
+    expression: 'd("1900-10-15").isLeapYear()',
+    sampleInput: '{}',
+    expectedOutput: 'false',
+    description: 'Check leap year for century year 1900 (false)',
+    category: 'utility-functions'
+  },
+  {
+    id: 'util-10',
+    title: 'Date Set Year',
+    expression: 'd("2023-10-15").set("year", 2024)',
+    sampleInput: '{}',
+    expectedOutput: '"2024-10-15T00:00:00Z"',
+    description: 'Set year component of date to 2024',
+    category: 'utility-functions'
+  },
+  {
+    id: 'util-11',
+    title: 'Date Set Month',
+    expression: 'd("2023-10-15").set("month", 5)',
+    sampleInput: '{}',
+    expectedOutput: '"2023-05-15T00:00:00Z"',
+    description: 'Set month component of date to May (5)',
+    category: 'utility-functions'
+  },
+  {
+    id: 'util-12',
+    title: 'Date Set Day',
+    expression: 'd("2023-10-15").set("day", 20)',
+    sampleInput: '{}',
+    expectedOutput: '"2023-10-20T00:00:00Z"',
+    description: 'Set day component of date to 20th',
+    category: 'utility-functions'
+  },
+  {
+    id: 'util-13',
+    title: 'Date Set Hour',
+    expression: 'd("2023-10-15T10:30:00Z").set("hour", 15)',
+    sampleInput: '{}',
+    expectedOutput: '"2023-10-15T15:30:00Z"',
+    description: 'Set hour component of datetime to 15 (3 PM)',
+    category: 'utility-functions'
+  },
+  {
+    id: 'util-14',
+    title: 'Date Set Minute',
+    expression: 'd("2023-10-15T10:30:00Z").set("minute", 45)',
+    sampleInput: '{}',
+    expectedOutput: '"2023-10-15T10:45:00Z"',
+    description: 'Set minute component of datetime to 45',
+    category: 'utility-functions'
   }
 ];
 
