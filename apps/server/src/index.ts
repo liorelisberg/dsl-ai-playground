@@ -32,30 +32,30 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'ok' });
 });
 
-// Test DSL evaluation endpoint (for testing Zen Engine integration)
-app.post('/api/test-dsl', (req, res) => {
-  const testDsl = async () => {
+// DSL evaluation endpoint using Zen Engine
+app.post('/api/evaluate-dsl', (req, res) => {
+  const handleDslEvaluation = async () => {
     try {
       const { expression, data } = req.body;
       
-      if (!expression || !data) {
+      if (!expression || data === undefined) {
         return res.status(400).json({ error: 'Missing expression or data' });
       }
       
-      console.log('Testing DSL evaluation:', expression, data);
+      console.log('DSL evaluation request:', { expression, data });
       
-      // Simple test without importing frontend service
-      res.json({ 
-        result: `Testing expression: ${expression} with data: ${JSON.stringify(data)}`,
-        message: 'DSL test endpoint working - Zen Engine integration to be tested on frontend'
-      });
+      // Import and use the backend DSL service
+      const { evaluateExpression } = await import('./services/dslService');
+      const result = await evaluateExpression(expression, data);
+      
+      res.json(result);
     } catch (error) {
-      console.error('DSL test error:', error);
+      console.error('DSL evaluation error:', error);
       res.status(500).json({ error: error instanceof Error ? error.message : 'Unknown error' });
     }
   };
   
-  testDsl();
+  handleDslEvaluation();
 });
 
 // Start server
