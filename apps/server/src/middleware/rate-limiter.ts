@@ -11,7 +11,7 @@ interface RateLimit {
 const rateLimits = new Map<string, RateLimit>();
 
 export const rateLimiter = (req: Request, res: Response, next: NextFunction) => {
-  const key = req.sessionId || req.ip;
+  const key = req.sessionId || req.ip || 'unknown';
   const now = Date.now();
   
   // Clean up old entries

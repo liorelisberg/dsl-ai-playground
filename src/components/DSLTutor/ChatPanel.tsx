@@ -5,6 +5,7 @@ import { Send, Loader2, MessageCircle, Bot, Paperclip, X } from 'lucide-react';
 import { ChatMessage, ChatResponse } from '../../types/chat';
 import { sendChatMessage } from '../../services/chatService';
 import { useToast } from '@/hooks/use-toast';
+import { useConnectionStatus } from '../../hooks/useConnectionStatus';
 import {
   Tooltip,
   TooltipContent,
@@ -23,6 +24,7 @@ const ChatPanel: React.FC<ChatPanelProps> = ({ chatHistory, onNewMessage }) => {
   const chatEndRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
+  const { isOnline, isApiHealthy } = useConnectionStatus();
 
   const MAX_FILE_SIZE = 50 * 1024; // 50KB
 
@@ -104,22 +106,39 @@ const ChatPanel: React.FC<ChatPanelProps> = ({ chatHistory, onNewMessage }) => {
     try {
       const response: ChatResponse = await sendChatMessage(messageContent, chatHistory);
       
-      if (response.error) {
-        throw new Error(response.error);
-      }
-
+      // Handle both successful responses and error responses
       const assistantMessage: ChatMessage = {
         role: 'assistant',
-        content: response.response,
+        content: response.text, // Changed from response.response to response.text
         timestamp: new Date().toISOString()
       };
 
       onNewMessage(assistantMessage);
+
+      // Show warning toast if there was an error but we still got a response
+      if (response.error) {
+        toast({
+          title: "Warning",
+          description: "There was an issue with the AI service, but I provided a fallback response.",
+          variant: "default"
+        });
+      }
+
     } catch (error) {
       console.error('Chat error:', error);
+      
+      // Add error message to chat
+      const errorMessage: ChatMessage = {
+        role: 'assistant',
+        content: "I'm sorry, I'm having trouble responding right now. Please try again in a moment.",
+        timestamp: new Date().toISOString()
+      };
+      
+      onNewMessage(errorMessage);
+      
       toast({
-        title: "Error",
-        description: "Failed to send message. Please try again.",
+        title: "Connection Error",
+        description: "Failed to connect to the AI service. Please check your connection and try again.",
         variant: "destructive"
       });
     } finally {
@@ -142,14 +161,31 @@ const ChatPanel: React.FC<ChatPanelProps> = ({ chatHistory, onNewMessage }) => {
     <div className="flex flex-col h-full">
       {/* Chat Header */}
       <div className="border-b border-slate-200 dark:border-slate-700 p-6 bg-slate-50 dark:bg-slate-800">
-        <div className="flex items-center space-x-3">
-          <div className="w-10 h-10 bg-gradient-to-r from-indigo-600 to-emerald-500 rounded-full flex items-center justify-center shadow-md">
-            <Bot className="h-5 w-5 text-white" />
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-3">
+            <div className="w-10 h-10 bg-gradient-to-r from-indigo-600 to-emerald-500 rounded-full flex items-center justify-center shadow-md">
+              <Bot className="h-5 w-5 text-white" />
+            </div>
+            <div>
+              <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">AI Assistant</h2>
+              <p className="text-sm text-slate-600 dark:text-slate-400">Ask questions about DSL syntax and concepts</p>
+            </div>
           </div>
-          <div>
-            <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">AI Assistant</h2>
-            <p className="text-sm text-slate-600 dark:text-slate-400">Ask questions about DSL syntax and concepts</p>
-          </div>
+          
+          {/* Connection Status */}
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <div className="flex items-center space-x-2">
+                <div className={`w-2 h-2 rounded-full ${isOnline && isApiHealthy ? 'bg-green-500' : 'bg-red-500'}`} />
+                <span className="text-xs text-slate-500 dark:text-slate-400">
+                  {isOnline && isApiHealthy ? 'Connected' : 'Disconnected'}
+                </span>
+              </div>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>{isOnline && isApiHealthy ? 'AI service is online and ready' : 'AI service is currently unavailable'}</p>
+            </TooltipContent>
+          </Tooltip>
         </div>
       </div>
 

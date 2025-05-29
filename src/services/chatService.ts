@@ -1,73 +1,100 @@
+import { ChatMessage, ChatResponse, ChatRequest, ApiError } from '../types/chat';
+import { httpClient } from './httpClient';
+import { API_CONFIG } from '../config/api';
 
-import { ChatMessage, ChatResponse } from '../types/chat';
+export class ChatService {
+  private retryAttempts = API_CONFIG.RETRY_ATTEMPTS;
 
-// Mock implementation - replace with actual Gemini API integration
-export const sendChatMessage = async (
-  message: string, 
-  chatHistory: ChatMessage[]
-): Promise<ChatResponse> => {
-  // Simulate API call delay
-  await new Promise(resolve => setTimeout(resolve, 1000));
+  async sendChatMessage(
+    message: string, 
+    chatHistory: ChatMessage[]
+  ): Promise<ChatResponse> {
+    const request: ChatRequest = { message };
 
-  // Mock responses based on keywords
-  const lowerMessage = message.toLowerCase();
-  
-  let response = '';
-  
-  if (lowerMessage.includes('syntax') || lowerMessage.includes('how to')) {
-    response = `Here are some key DSL syntax concepts:
+    for (let attempt = 1; attempt <= this.retryAttempts; attempt++) {
+      try {
+        const response = await httpClient.request<ChatResponse>(
+          API_CONFIG.ENDPOINTS.CHAT,
+          {
+            method: 'POST',
+            body: request
+          }
+        );
 
-1. **Property Access**: Use dot notation like \`user.name\` to access object properties
-2. **String Methods**: Methods like \`.toUpperCase()\`, \`.toLowerCase()\`, \`.trim()\`
-3. **Array Operations**: Use \`.map()\`, \`.filter()\`, \`.find()\` for array manipulation
-4. **Conditionals**: Use ternary operators like \`condition ? valueIfTrue : valueIfFalse\`
+        return response;
 
-Example: \`user.name.toUpperCase()\` converts the user's name to uppercase.
+      } catch (error) {
+        console.error(`Chat API attempt ${attempt} failed:`, error);
 
-Try these in the code editor to see how they work!`;
-  } else if (lowerMessage.includes('example') || lowerMessage.includes('sample')) {
-    response = `Here are some common DSL patterns:
+        // If this is the last attempt, handle the error
+        if (attempt === this.retryAttempts) {
+          return this.handleError(error);
+        }
 
-**Basic Property Access:**
-\`\`\`
-user.name
-user.email
-user.profile.age
-\`\`\`
+        // Wait before retrying (exponential backoff)
+        await this.delay(Math.pow(2, attempt) * 1000);
+      }
+    }
 
-**String Transformations:**
-\`\`\`
-user.name.toUpperCase()
-user.email.toLowerCase()
-user.description.trim()
-\`\`\`
-
-**Conditional Logic:**
-\`\`\`
-user.age >= 18 ? "adult" : "minor"
-user.status === "active" ? user.name : "inactive user"
-\`\`\`
-
-Click the "Examples" button in the code editor to see more detailed examples!`;
-  } else if (lowerMessage.includes('error') || lowerMessage.includes('problem')) {
-    response = `Common DSL errors and solutions:
-
-1. **Property doesn't exist**: Check your JSON structure and property names
-2. **Syntax errors**: Make sure to use proper JavaScript syntax
-3. **Type errors**: Ensure you're calling methods on the right data types
-4. **Undefined values**: Use optional chaining \`user?.profile?.age\` for safety
-
-If you're seeing a specific error, paste your expression and I'll help debug it!`;
-  } else {
-    response = `I'm here to help you learn the DSL! You can ask me about:
-
-- Syntax and language features
-- Examples and use cases  
-- Debugging expressions
-- Best practices
-
-What would you like to learn about? You can also try examples in the code editor on the right.`;
+    // This should never be reached, but TypeScript requires it
+    throw new Error('Unexpected error in chat service');
   }
 
-  return { response };
-};
+  private handleError(error: unknown): ChatResponse {
+    console.error('Chat service error:', error);
+
+    if (error instanceof Error) {
+      if (error.message.includes('timeout')) {
+        return {
+          text: "I'm taking longer than usual to respond. Please try again.",
+          error: 'Request timeout'
+        };
+      }
+
+      if (error.message.includes('Failed to fetch')) {
+        return {
+          text: "I'm having trouble connecting. Please check your internet connection and try again.",
+          error: 'Network error'
+        };
+      }
+
+      if (error.message.includes('429')) {
+        return {
+          text: "I'm currently experiencing high demand. Please wait a moment and try again.",
+          error: 'Rate limit exceeded'
+        };
+      }
+
+      if (error.message.includes('500')) {
+        return {
+          text: "I'm experiencing technical difficulties. Please try again later.",
+          error: 'Server error'
+        };
+      }
+    }
+
+    return {
+      text: "I encountered an unexpected error. Please try again.",
+      error: 'Unknown error'
+    };
+  }
+
+  private delay(ms: number): Promise<void> {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
+  async healthCheck(): Promise<boolean> {
+    try {
+      await httpClient.request(API_CONFIG.ENDPOINTS.HEALTH);
+      return true;
+    } catch {
+      return false;
+    }
+  }
+}
+
+// Export singleton instance
+export const chatService = new ChatService();
+
+// Keep backward compatibility
+export const sendChatMessage = chatService.sendChatMessage.bind(chatService);

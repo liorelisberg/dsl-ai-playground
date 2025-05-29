@@ -13,19 +13,21 @@
   "license": "ISC",
   "packageManager": "pnpm@10.11.0",
   "dependencies": {
+    "@google/generative-ai": "^0.24.1",
     "@types/express": "^5.0.2",
-    "express": "^5.1.0",
-    "ts-node": "^10.9.2",
-    "typescript": "^5.8.3",
     "chromadb": "^1.8.1",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
-    "dotenv": "^16.4.5"
+    "dotenv": "^16.4.5",
+    "express": "^5.1.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.3"
   },
   "devDependencies": {
-    "@types/node": "^22.15.23",
     "@types/cookie-parser": "^1.4.7",
     "@types/cors": "^2.8.17",
+    "@types/node": "^22.15.23",
+    "@types/uuid": "^10.0.0",
     "nodemon": "^3.1.10"
   }
 }

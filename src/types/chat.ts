@@ -1,4 +1,3 @@
-
 export interface ChatMessage {
   role: 'user' | 'assistant';
   content: string;
@@ -6,6 +5,15 @@ export interface ChatMessage {
 }
 
 export interface ChatResponse {
-  response: string;
+  text: string;
   error?: string;
+}
+
+export interface ChatRequest {
+  message: string;
+}
+
+export interface ApiError {
+  error: string;
+  status?: number;
 }
