@@ -104,7 +104,7 @@ const CodeEditor = () => {
       </div>
 
       {/* Code Editor */}
-      <div className="flex-1 p-6 space-y-6">
+      <div className="flex-1 p-6 space-y-6 overflow-y-auto">
         <div>
           <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-3 flex items-center">
             <Sparkles className="h-4 w-4 mr-2 text-emerald-500" />

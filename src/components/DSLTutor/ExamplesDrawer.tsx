@@ -42,6 +42,12 @@ const categoryConfig: Record<string, { icon: React.ReactNode; label: string; des
     description: 'Arithmetic operations, comparisons, and math functions',
     color: 'bg-gradient-to-br from-blue-500 to-indigo-600'
   },
+  mathematical: {
+    icon: <Hash className="h-5 w-5" />,
+    label: 'Mathematical Functions',
+    description: 'Floor, ceil, round, and high-precision arithmetic',
+    color: 'bg-gradient-to-br from-cyan-500 to-blue-600'
+  },
   string: {
     icon: <Code className="h-5 w-5" />,
     label: 'String Operations',
@@ -66,6 +72,12 @@ const categoryConfig: Record<string, { icon: React.ReactNode; label: string; des
     description: 'Map, filter, reduce, and array manipulation',
     color: 'bg-gradient-to-br from-red-500 to-pink-600'
   },
+  'array-advanced': {
+    icon: <Sparkles className="h-5 w-5" />,
+    label: 'Advanced Array Methods',
+    description: 'Complex map, filter, some, all, flatMap operations',
+    color: 'bg-gradient-to-br from-purple-500 to-indigo-600'
+  },
   object: {
     icon: <FolderOpen className="h-5 w-5" />,
     label: 'Object Operations',
@@ -83,6 +95,12 @@ const categoryConfig: Record<string, { icon: React.ReactNode; label: string; des
     label: 'Type Conversion',
     description: 'Convert between strings, numbers, and booleans',
     color: 'bg-gradient-to-br from-violet-500 to-purple-600'
+  },
+  'type-checking': {
+    icon: <Hash className="h-5 w-5" />,
+    label: 'Type Checking',
+    description: 'Validate types and check if values are numeric',
+    color: 'bg-gradient-to-br from-teal-500 to-emerald-600'
   },
   date: {
     icon: <Hash className="h-5 w-5" />,
