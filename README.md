@@ -162,23 +162,23 @@ The application integrates with Google's **Gemini 2.5 Flash Preview** API to pro
 ```
 ├── src/                    # Frontend source code
 │   ├── components/         # React components
-│   ├── services/          # API services and HTTP client
-│   │   ├── dslService.ts  # Frontend DSL client (calls backend API)
-│   │   ├── chatService.ts # AI chat service
-│   │   └── httpClient.ts  # HTTP client utility
-│   ├── hooks/             # Custom React hooks
-│   ├── types/             # TypeScript type definitions
-│   └── config/            # Configuration files
-├── apps/
-│   └── server/            # Backend Express application
-│       ├── src/           # Server source code
-│       │   ├── services/  # Backend services
-│       │   │   ├── dslService.ts  # Zen Engine integration
-│       │   │   └── gemini.ts      # Gemini AI service
-│       │   ├── api/       # API routes
-│       │   └── index.ts   # Main server file
-│       └── .env           # Server environment variables
-└── packages/              # Shared packages (if any)
+│   │   ├── services/          # API services and HTTP client
+│   │   │   ├── dslService.ts  # Frontend DSL client (calls backend API)
+│   │   │   ├── chatService.ts # AI chat service
+│   │   │   └── httpClient.ts  # HTTP client utility
+│   │   ├── hooks/             # Custom React hooks
+│   │   ├── types/             # TypeScript type definitions
+│   │   └── config/            # Configuration files
+│   ├── apps/
+│   │   └── server/            # Backend Express application
+│   │       ├── src/           # Server source code
+│   │       │   ├── services/  # Backend services
+│   │       │   │   ├── dslService.ts  # Zen Engine integration
+│   │       │   │   └── gemini.ts      # Gemini AI service
+│   │       │   ├── api/       # API routes
+│   │       │   └── index.ts   # Main server file
+│   │       └── .env           # Server environment variables
+│   └── packages/              # Shared packages (if any)
 ```
 
 ## 🔌 API Endpoints
@@ -212,6 +212,21 @@ Content-Type: application/json
 GET /api/health
 Response: { "status": "ok" }
 ```
+
+### 📚 **API Documentation (Swagger)**
+```
+GET /api-docs
+Interactive Swagger UI with comprehensive API documentation
+```
+
+The API includes full **OpenAPI 3.0 specification** with:
+- **Interactive testing**: Try all endpoints directly from the docs
+- **Request/response examples**: Real examples for all operations
+- **Schema definitions**: Complete data models and validation rules
+- **Rate limiting info**: Usage limits and performance details
+- **Architecture details**: Zen Engine integration and fallback mechanisms
+
+**Access**: http://localhost:3000/api-docs
 
 ## 🔧 Development Notes
 

@@ -1,0 +1,246 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# DSL Type Inspection and Conversion Rule
+
+This rule defines the syntax and semantics for type inspection and type conversion expressions in the DSL, including the use of `type`, `isNumeric`, `string`, `number`, and `bool`. All examples and restrictions are validated against the DSL source-of-truth.
+
+---
+
+## 1. Type Inspection Operators
+
+- `type(value)`: Returns the type of the value as a string (e.g., `'string'`, `'number'`, `'bool'`, `'null'`, `'array'`, `'object'`).
+- `isNumeric(value)`: Returns `true` if the value is numeric (number or numeric string), otherwise `false`.
+
+---
+
+## 2. Type Conversion Operators
+
+- `string(value)`: Converts a value to its string representation.
+- `number(value)`: Converts a value to its numeric representation (if possible).
+- `bool(value)`: Converts a value to its boolean representation.
+
+---
+
+## 3. Type Inspection Examples
+
+**Example 1:**
+- **JavaScript:** `typeof 'hello'`
+- **DSL:** `type('hello')`
+- **Input:** _(none)_
+- **Output:** `'string'`
+- **Explanation:** Returns the type of a string literal as `'string'`.
+
+**Example 2:**
+- **JavaScript:** `typeof 123`
+- **DSL:** `type(123)`
+- **Input:** _(none)_
+- **Output:** `'number'`
+- **Explanation:** Returns the type of a numeric literal as `'number'`.
+
+**Example 3:**
+- **JavaScript:** `typeof true`
+- **DSL:** `type(true)`
+- **Input:** _(none)_
+- **Output:** `'bool'`
+- **Explanation:** Returns the type of a boolean literal as `'bool'`.
+
+**Example 4:**
+- **JavaScript:** `typeof null`
+- **DSL:** `type(null)`
+- **Input:** _(none)_
+- **Output:** `'null'`
+- **Explanation:** Returns the type of a null value as `'null'`.
+
+**Example 5:**
+- **JavaScript:** `Array.isArray([1,2,3]) ? 'array' : typeof [1,2,3]`
+- **DSL:** `type([1, 2, 3])`
+- **Input:** _(none)_
+- **Output:** `'array'`
+- **Explanation:** Returns the type of an array literal as `'array'`.
+
+**Example 6:**
+- **JavaScript:** `typeof {a: 1, b: 2}`
+- **DSL:** `type({a: 1, b: 2})`
+- **Input:** _(none)_
+- **Output:** `'object'`
+- **Explanation:** Returns the type of an object literal as `'object'`.
+
+**Example 7:**
+- **JavaScript:** `typeof x // x = 42`
+- **DSL:** `type(x)`
+- **Input:** `{ "x": 42 }`
+- **Output:** `'number'`
+- **Explanation:** Returns the type of a variable `x`, which in this case is a number.
+
+**Example 8:**
+- **JavaScript:** `typeof x // x = 'test'`
+- **DSL:** `type(x)`
+- **Input:** `{ "x": "test" }`
+- **Output:** `'string'`
+- **Explanation:** Returns the type of a variable `x`, which in this case is a string.
+
+**Example 9:**
+- **JavaScript:** `typeof user.age // user = { age: 30 }`
+- **DSL:** `type(user.age)`
+- **Input:** `{ "user": { "age": 30 } }`
+- **Output:** `'number'`
+- **Explanation:** Returns the type of a property accessed via dot notation, which in this case is a number.
+
+**Example 10:**
+- **JavaScript:** `typeof typeof 'hello'`
+- **DSL:** `type(type('hello'))`
+- **Input:** _(none)_
+- **Output:** `'string'`
+- **Explanation:** Returns the type of the result of `type('hello')`, which is always `'string'`.
+
+**Example 11:**
+- **JavaScript:** `isNumeric(123.123)`
+- **DSL:** `isNumeric(123.123)`
+- **Input:** _(none)_
+- **Output:** `true`
+- **Explanation:** Checks if the value is numeric. Returns true for a decimal number literal.
+
+**Example 12:**
+- **JavaScript:** `isNumeric('123')`
+- **DSL:** `isNumeric('123')`
+- **Input:** _(none)_
+- **Output:** `true`
+- **Explanation:** Checks if the value is numeric. Returns true for a string that can be parsed as a number.
+
+**Example 13:**
+- **JavaScript:** `isNumeric('hello')`
+- **DSL:** `isNumeric('hello')`
+- **Input:** _(none)_
+- **Output:** `false`
+- **Explanation:** Checks if the value is numeric. Returns false for a string that cannot be parsed as a number.
+
+**Example 14:**
+- **JavaScript:** `isNumeric(true)`
+- **DSL:** `isNumeric(true)`
+- **Input:** _(none)_
+- **Output:** `false`
+- **Explanation:** Checks if the value is numeric. Returns false for boolean values.
+
+---
+
+## 4. Type Conversion Examples
+
+**Example 1:**
+- **JavaScript:** `String(123.123)`
+- **DSL:** `string(123.123)`
+- **Input:** _(none)_
+- **Output:** `'123.123'`
+- **Explanation:** Converts the number 123.123 to its string representation.
+
+**Example 2:**
+- **JavaScript:** `String(true)`
+- **DSL:** `string(true)`
+- **Input:** _(none)_
+- **Output:** `'true'`
+- **Explanation:** Converts the boolean value true to its string representation.
+
+**Example 3:**
+- **JavaScript:** `Number('123.45')`
+- **DSL:** `number('123.45')`
+- **Input:** _(none)_
+- **Output:** `123.45`
+- **Explanation:** Converts the string '123.45' to the numeric value 123.45.
+
+**Example 4:**
+- **JavaScript:** `Number(true)`
+- **DSL:** `number(true)`
+- **Input:** _(none)_
+- **Output:** `1`
+- **Explanation:** Converts the boolean value true to the number 1.
+
+**Example 5:**
+- **JavaScript:** `Boolean('false')`
+- **DSL:** `bool('false')`
+- **Input:** _(none)_
+- **Output:** `false`
+- **Explanation:** Converts the string 'false' to the boolean value false.
+
+**Example 6:**
+- **JavaScript:** `Boolean(0)`
+- **DSL:** `bool(0)`
+- **Input:** _(none)_
+- **Output:** `false`
+- **Explanation:** Converts the number 0 to the boolean value false.
+
+**Example 7:**
+- **JavaScript:** `String('already string')`
+- **DSL:** `string('already string')`
+- **Input:** _(none)_
+- **Output:** `'already string'`
+- **Explanation:** Converts the string 'already string' to a string, which remains unchanged.
+
+---
+
+## 5. Usage in Mapping and Filtering
+
+**Example 1:**
+- **JavaScript:** `['123', '456', '789'].map(Number)`
+- **DSL:** `map(split("123,456,789", ","), number(#))`
+- **Input:** _(none)_
+- **Output:** `[123, 456, 789]`
+- **Explanation:** Splits a string by commas into an array of strings, then converts each string in the array to a number.
+
+---
+
+## 6. Edge Cases and Type Checks
+
+**Example 1:**
+- **JavaScript:** `typeof undefined` (not supported in DSL)
+- **DSL:** _Not supported_
+- **Input:** _(none)_
+- **Output:** _(none)_
+- **Explanation:** The DSL does not support `undefined` as a type.
+
+**Example 2:**
+- **JavaScript:** `typeof typeof 123`
+- **DSL:** `type(type(123))`
+- **Input:** _(none)_
+- **Output:** `'string'`
+- **Explanation:** The result of `type()` is always a string, so `type(type(123))` returns `'string'`.
+
+**Example 3:**
+- **JavaScript:** `typeof [1, 2, 3]`
+- **DSL:** `type([1, 2, 3])`
+- **Input:** _(none)_
+- **Output:** `'array'`
+- **Explanation:** Returns `'array'` for array literals.
+
+**Example 4:**
+- **JavaScript:** `typeof true`
+- **DSL:** `type(true)`
+- **Input:** _(none)_
+- **Output:** `'bool'`
+- **Explanation:** Returns `'bool'` for boolean values.
+
+---
+
+## 7. Syntax Restrictions
+
+- Use only `type`, `isNumeric`, `string`, `number`, and `bool` for type inspection and conversion.
+- No support for `typeof`, JS-style coercion, or custom type predicates.
+- Parentheses must be used for function calls as shown in the examples.
+- Do not wrap expressions in quotes.
+- Only use operators, methods, and functions defined in this rule.
+
+---
+
+## 8. Summary Table
+
+| Feature/Operator         | Allowed | Example (DSL)                          |
+|-------------------------|---------|----------------------------------------|
+| Type inspection         | Yes     | `type(123)`                            |
+| Numeric check           | Yes     | `isNumeric('123')`                     |
+| String conversion       | Yes     | `string(true)`                         |
+| Number conversion       | Yes     | `number('123.45')`                     |
+| Boolean conversion      | Yes     | `bool('true')`                         |
+| Non-DSL type ops        | No      | `typeof`, JS coercion, etc.            |
+
+---

@@ -2,10 +2,16 @@ import express from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import dotenv from 'dotenv';
+import swaggerUi from 'swagger-ui-express';
+import YAML from 'yamljs';
+import path from 'path';
 import chatRouter from './api/chat';
 
 // Load environment variables
 dotenv.config();
+
+// Load Swagger documentation
+const swaggerDocument = YAML.load(path.join(__dirname, 'swagger.yaml'));
 
 const app = express();
 const port = process.env.PORT || 4000;
@@ -23,6 +29,12 @@ app.use(cors({
 }));
 app.use(cookieParser());
 app.use(express.json());
+
+// Swagger API documentation
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument, {
+  customCss: '.swagger-ui .topbar { display: none }',
+  customSiteTitle: 'DSL AI Playground API Documentation'
+}));
 
 // Routes
 app.use('/api', chatRouter);
@@ -61,4 +73,5 @@ app.post('/api/evaluate-dsl', (req, res) => {
 // Start server
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
+  console.log(`API Documentation available at http://localhost:${port}/api-docs`);
 }); 

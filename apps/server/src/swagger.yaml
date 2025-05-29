@@ -1,0 +1,398 @@
+openapi: 3.0.3
+info:
+  title: DSL AI Playground API
+  description: |
+    A production-grade API for the DSL AI Playground - an educational platform for learning JavaScript-like domain-specific language (DSL) with AI-powered assistance.
+    
+    ## Features
+    - **Enterprise DSL Engine**: Powered by GoRules Zen Engine (Rust-based, sub-millisecond evaluation)
+    - **AI Chat Assistant**: Real-time assistance with Google Gemini 2.5 Flash Preview
+    - **Advanced Expression Support**: Mathematical operations, array indexing, conditional expressions, string operations
+    - **Rate Limiting**: Built-in protection for free-tier usage
+    
+    ## Architecture
+    - Frontend HTTP client → Backend API → Zen Engine evaluation
+    - Graceful fallback when services are unavailable
+    - Comprehensive error handling and logging
+  version: 1.0.0
+  contact:
+    name: DSL AI Playground
+    url: https://github.com/liorelisberg/dsl-ai-playground
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+
+servers:
+  - url: http://localhost:3000
+    description: Development server
+  - url: http://localhost:4000
+    description: Alternative development server
+
+tags:
+  - name: Health
+    description: System health and status endpoints
+  - name: DSL Evaluation
+    description: Domain-specific language expression evaluation using Zen Engine
+  - name: AI Chat
+    description: AI-powered chat assistance using Google Gemini
+
+paths:
+  /api/health:
+    get:
+      tags:
+        - Health
+      summary: Health check endpoint
+      description: Check if the API server is running and responsive
+      operationId: getHealth
+      responses:
+        '200':
+          description: Server is healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "ok"
+              examples:
+                success:
+                  summary: Healthy server response
+                  value:
+                    status: "ok"
+
+  /api/evaluate-dsl:
+    post:
+      tags:
+        - DSL Evaluation
+      summary: Evaluate DSL expression
+      description: |
+        Evaluate a JavaScript-like DSL expression using the enterprise-grade GoRules Zen Engine.
+        
+        Supports:
+        - **Mathematical operations**: `price * quantity`, `age >= 18`
+        - **Array indexing**: `users[0].name`, `items[1].price`
+        - **String operations**: `firstName + " " + lastName`, `user.name.toUpperCase()`
+        - **Conditional expressions**: `age >= 18 ? "Adult" : "Minor"`
+        - **Property access**: `user.profile.city`, `data.settings.theme`
+        
+        Performance: 30-330µs evaluation time with Rust-powered engine.
+      operationId: evaluateDslExpression
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - expression
+                - data
+              properties:
+                expression:
+                  type: string
+                  description: The DSL expression to evaluate
+                  example: "price * quantity"
+                data:
+                  type: object
+                  description: The input data context for the expression
+                  example:
+                    price: 10.50
+                    quantity: 3
+            examples:
+              mathematical_operation:
+                summary: Mathematical calculation
+                value:
+                  expression: "price * quantity"
+                  data:
+                    price: 10.50
+                    quantity: 3
+              array_indexing:
+                summary: Array element access
+                value:
+                  expression: "users[0].name"
+                  data:
+                    users:
+                      - name: "John Doe"
+                        age: 30
+                      - name: "Jane Smith"
+                        age: 25
+              string_operation:
+                summary: String concatenation
+                value:
+                  expression: "firstName + ' ' + lastName"
+                  data:
+                    firstName: "John"
+                    lastName: "Doe"
+              conditional_expression:
+                summary: Conditional logic
+                value:
+                  expression: "age >= 18 ? 'Adult' : 'Minor'"
+                  data:
+                    age: 25
+              property_access:
+                summary: Nested property access
+                value:
+                  expression: "user.profile.city"
+                  data:
+                    user:
+                      profile:
+                        city: "New York"
+                        country: "USA"
+      responses:
+        '200':
+          description: Expression evaluated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: string
+                    description: JSON string representation of the evaluation result
+                    example: "{\n  \"result\": 31.5\n}"
+              examples:
+                mathematical_result:
+                  summary: Mathematical operation result
+                  value:
+                    result: "{\n  \"result\": 31.5\n}"
+                array_access_result:
+                  summary: Array access result
+                  value:
+                    result: "{\n  \"result\": \"John Doe\"\n}"
+                string_result:
+                  summary: String operation result
+                  value:
+                    result: "{\n  \"result\": \"John Doe\"\n}"
+                boolean_result:
+                  summary: Conditional expression result
+                  value:
+                    result: "{\n  \"result\": \"Adult\"\n}"
+        '400':
+          description: Bad request - missing or invalid parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Missing expression or data"
+        '500':
+          description: Internal server error - evaluation failed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Evaluation error: Invalid syntax in expression"
+
+  /api/chat:
+    post:
+      tags:
+        - AI Chat
+      summary: Send message to AI assistant
+      description: |
+        Send a message to the AI assistant powered by Google Gemini 2.5 Flash Preview.
+        
+        Features:
+        - Context-aware responses based on chat history
+        - Educational focus on DSL concepts and syntax
+        - Rate limiting protection (10 requests/minute, 500/day)
+        - Automatic retry with exponential backoff
+        - Comprehensive error handling
+      operationId: sendChatMessage
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - message
+              properties:
+                message:
+                  type: string
+                  description: The user's message to the AI assistant
+                  example: "How do I calculate totals in DSL?"
+                  minLength: 1
+                  maxLength: 2000
+                history:
+                  type: array
+                  description: Previous conversation history for context
+                  items:
+                    type: object
+                    properties:
+                      role:
+                        type: string
+                        enum: [user, assistant]
+                      content:
+                        type: string
+                  example:
+                    - role: "user"
+                      content: "What is DSL?"
+                    - role: "assistant"
+                      content: "DSL stands for Domain-Specific Language..."
+            examples:
+              first_message:
+                summary: First message without history
+                value:
+                  message: "How do I use mathematical operations in DSL?"
+                  history: []
+              continuing_conversation:
+                summary: Message with conversation history
+                value:
+                  message: "Can you show me an example with arrays?"
+                  history:
+                    - role: "user"
+                      content: "How do I use mathematical operations in DSL?"
+                    - role: "assistant"
+                      content: "You can use standard mathematical operators..."
+      responses:
+        '200':
+          description: AI response generated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  text:
+                    type: string
+                    description: The AI assistant's response
+                    example: "To use mathematical operations in DSL, you can use standard operators like +, -, *, /. For example: price * quantity"
+              examples:
+                helpful_response:
+                  summary: Educational DSL response
+                  value:
+                    text: "To calculate totals in DSL, you can use mathematical expressions like `price * quantity` or more complex formulas like `price * (1 + taxRate) * quantity`. The Zen Engine supports all standard arithmetic operators with sub-millisecond performance."
+        '400':
+          description: Bad request - invalid message
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Message is required"
+        '429':
+          description: Rate limit exceeded
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Rate limit exceeded. Please try again later."
+        '500':
+          description: Internal server error - AI service unavailable
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "AI service temporarily unavailable"
+
+components:
+  schemas:
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Human-readable error message
+          example: "Invalid request parameters"
+    
+    HealthResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          description: Server health status
+          example: "ok"
+    
+    DSLEvaluationRequest:
+      type: object
+      required:
+        - expression
+        - data
+      properties:
+        expression:
+          type: string
+          description: DSL expression to evaluate
+          example: "user.name.toUpperCase()"
+        data:
+          type: object
+          description: Input data context
+          example:
+            user:
+              name: "john doe"
+    
+    DSLEvaluationResponse:
+      type: object
+      properties:
+        result:
+          type: string
+          description: JSON string representation of evaluation result
+          example: "{\n  \"result\": \"JOHN DOE\"\n}"
+    
+    ChatRequest:
+      type: object
+      required:
+        - message
+      properties:
+        message:
+          type: string
+          minLength: 1
+          maxLength: 2000
+          description: User's message
+          example: "Explain array operations in DSL"
+        history:
+          type: array
+          description: Conversation history
+          items:
+            type: object
+            properties:
+              role:
+                type: string
+                enum: [user, assistant]
+              content:
+                type: string
+    
+    ChatResponse:
+      type: object
+      properties:
+        text:
+          type: string
+          description: AI assistant's response
+          example: "Array operations in DSL allow you to access elements using bracket notation..."
+
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+      description: Future API key authentication (not currently implemented)
+
+# Rate limiting information
+x-rate-limit:
+  chat:
+    requests: 10
+    window: "1 minute"
+    daily_limit: 500
+  dsl_evaluation:
+    requests: 50
+    window: "1 minute"
+    daily_limit: 2000
+
+# Additional metadata
+x-technical-info:
+  dsl_engine: "GoRules Zen Engine (Rust-powered)"
+  ai_model: "Google Gemini 2.5 Flash Preview"
+  performance: "30-330µs DSL evaluation time"
+  architecture: "Frontend HTTP → Backend API → Zen Engine"
+  fallback: "Graceful degradation to basic evaluation" 
