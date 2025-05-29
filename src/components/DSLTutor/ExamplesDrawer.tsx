@@ -131,6 +131,42 @@ const categoryConfig: Record<string, { icon: React.ReactNode; label: string; des
     label: 'Range Operations',
     description: 'Range syntax and interval iterations',
     color: 'bg-gradient-to-br from-orange-500 to-red-600'
+  },
+  'complex-math': {
+    icon: <Hash className="h-5 w-5" />,
+    label: 'Complex Math Expressions',
+    description: 'Multi-step calculations with parentheses and operator precedence',
+    color: 'bg-gradient-to-br from-blue-500 to-purple-600'
+  },
+  'dynamic-objects': {
+    icon: <FolderOpen className="h-5 w-5" />,
+    label: 'Dynamic Object Construction',
+    description: 'Create objects with computed keys and dynamic properties',
+    color: 'bg-gradient-to-br from-violet-500 to-purple-600'
+  },
+  'date-duration': {
+    icon: <Hash className="h-5 w-5" />,
+    label: 'Date Duration Arithmetic',
+    description: 'Duration operations, date arithmetic, and time period calculations',
+    color: 'bg-gradient-to-br from-indigo-500 to-blue-600'
+  },
+  'array-statistics': {
+    icon: <FolderOpen className="h-5 w-5" />,
+    label: 'Array Statistics',
+    description: 'Statistical functions: median, mode, range calculations',
+    color: 'bg-gradient-to-br from-emerald-500 to-green-600'
+  },
+  'date-parts': {
+    icon: <Hash className="h-5 w-5" />,
+    label: 'Extended Date Parts',
+    description: 'Extract year, month, day, week using function syntax',
+    color: 'bg-gradient-to-br from-orange-500 to-pink-600'
+  },
+  'business-calculations': {
+    icon: <FolderOpen className="h-5 w-5" />,
+    label: 'Business Calculations',
+    description: 'Price validation, revenue calculations, permissions, and inventory checks',
+    color: 'bg-gradient-to-br from-green-500 to-emerald-600'
   }
 };
 

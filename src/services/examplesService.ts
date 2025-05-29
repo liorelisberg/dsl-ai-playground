@@ -1589,6 +1589,702 @@ const realExamples = [
     expectedOutput: '"2023-10-15T10:59:59Z"',
     description: 'Get end of current hour',
     category: 'date-advanced'
+  },
+
+  // Complex Mathematical Expressions
+  {
+    id: 'complex-math-1',
+    title: 'Complex Order of Operations',
+    expression: '(10 + 5) * 3 / 2 > 15',
+    sampleInput: '{}',
+    expectedOutput: 'true',
+    description: 'Complex expression: (10 + 5) * 3 / 2 = 22.5 > 15',
+    category: 'complex-math'
+  },
+  {
+    id: 'complex-math-2',
+    title: 'Division with Parentheses',
+    expression: '(100 - 25) / (5 * 2) < 10',
+    sampleInput: '{}',
+    expectedOutput: 'true',
+    description: 'Complex expression: (100 - 25) / (5 * 2) = 75 / 10 = 7.5 < 10',
+    category: 'complex-math'
+  },
+  {
+    id: 'complex-math-3',
+    title: 'Division and Addition',
+    expression: '1000 / (10 - 2) + 50 == 175',
+    sampleInput: '{}',
+    expectedOutput: 'true',
+    description: 'Complex expression: 1000 / 8 + 50 = 125 + 50 = 175',
+    category: 'complex-math'
+  },
+  {
+    id: 'complex-math-4',
+    title: 'Multiplication of Sums',
+    expression: '(3 + 4) * (8 - 6) == 14',
+    sampleInput: '{}',
+    expectedOutput: 'true',
+    description: 'Complex expression: (3 + 4) * (8 - 6) = 7 * 2 = 14',
+    category: 'complex-math'
+  },
+  {
+    id: 'complex-math-5',
+    title: 'Power Comparison',
+    expression: '10^3 != 999',
+    sampleInput: '{}',
+    expectedOutput: 'true',
+    description: 'Power expression: 10³ = 1000 ≠ 999',
+    category: 'complex-math'
+  },
+  {
+    id: 'complex-math-6',
+    title: 'Power Division',
+    expression: '1000 / 10^3 <= 1.1',
+    sampleInput: '{}',
+    expectedOutput: 'true',
+    description: 'Power division: 1000 / 1000 = 1.0 ≤ 1.1',
+    category: 'complex-math'
+  },
+  {
+    id: 'complex-math-7',
+    title: 'Absolute Value Comparison',
+    expression: 'abs(-20) > 10',
+    sampleInput: '{}',
+    expectedOutput: 'true',
+    description: 'Absolute value: |-20| = 20 > 10',
+    category: 'complex-math'
+  },
+  {
+    id: 'complex-math-8',
+    title: 'Modulo Non-Zero',
+    expression: '10 % 3 != 0',
+    sampleInput: '{}',
+    expectedOutput: 'true',
+    description: 'Modulo operation: 10 % 3 = 1 ≠ 0',
+    category: 'complex-math'
+  },
+  {
+    id: 'complex-math-9',
+    title: 'Negative and Power',
+    expression: '-8 + 2^3 == 0',
+    sampleInput: '{}',
+    expectedOutput: 'true',
+    description: 'Negative and power: -8 + 2³ = -8 + 8 = 0',
+    category: 'complex-math'
+  },
+  {
+    id: 'complex-math-10',
+    title: 'Double Negative',
+    expression: '2 * -(-5) == 10',
+    sampleInput: '{}',
+    expectedOutput: 'true',
+    description: 'Double negative: 2 * -(-5) = 2 * 5 = 10',
+    category: 'complex-math'
+  },
+  {
+    id: 'complex-math-11',
+    title: 'Division Chain',
+    expression: '20 / (5 / 2) == 8.0',
+    sampleInput: '{}',
+    expectedOutput: 'true',
+    description: 'Division chain: 20 / (5 / 2) = 20 / 2.5 = 8.0',
+    category: 'complex-math'
+  },
+  {
+    id: 'complex-math-12',
+    title: 'Multi-Operation Expression',
+    expression: '(4 + 2) * 3 - (5 / 2) + 1 < 18',
+    sampleInput: '{}',
+    expectedOutput: 'true',
+    description: 'Multi-operation: (4 + 2) * 3 - (5 / 2) + 1 = 6 * 3 - 2.5 + 1 = 16.5 < 18',
+    category: 'complex-math'
+  },
+  {
+    id: 'complex-math-13',
+    title: 'Power Plus Multiplication',
+    expression: '5^2 + 3 * 4 - 6 / 2 > 20',
+    sampleInput: '{}',
+    expectedOutput: 'true',
+    description: 'Complex expression: 5² + 3 * 4 - 6 / 2 = 25 + 12 - 3 = 34 > 20',
+    category: 'complex-math'
+  },
+  {
+    id: 'complex-math-14',
+    title: 'Power with Decimal Result',
+    expression: '4^3 - 2 * 5 + 7 / 2 == 57.5',
+    sampleInput: '{}',
+    expectedOutput: 'true',
+    description: 'Complex expression: 4³ - 2 * 5 + 7 / 2 = 64 - 10 + 3.5 = 57.5',
+    category: 'complex-math'
+  },
+  {
+    id: 'complex-math-15',
+    title: 'Absolute Value in Expression',
+    expression: 'abs(-7 + 4) * (8 - 6^2) < 34',
+    sampleInput: '{}',
+    expectedOutput: 'true',
+    description: 'Complex expression: |(-7 + 4)| * (8 - 6²) = |-3| * (8 - 36) = 3 * (-28) = -84 < 34',
+    category: 'complex-math'
+  },
+  {
+    id: 'complex-math-16',
+    title: 'Range Check Inclusive',
+    expression: '5 in [1..10]',
+    sampleInput: '{}',
+    expectedOutput: 'true',
+    description: 'Check if 5 is in inclusive range [1..10]',
+    category: 'complex-math'
+  },
+  {
+    id: 'complex-math-17',
+    title: 'Range Check Exclusive',
+    expression: '5 in (1..10)',
+    sampleInput: '{}',
+    expectedOutput: 'true',
+    description: 'Check if 5 is in exclusive range (1..10)',
+    category: 'complex-math'
+  },
+
+  // Dynamic Object Operations
+  {
+    id: 'dynamic-obj-1',
+    title: 'Dynamic Key with Template',
+    expression: '{[`key-${value}`]: 123}',
+    sampleInput: '{"value":"test"}',
+    expectedOutput: '{"key-test":123}',
+    description: 'Create object with computed key using template string',
+    category: 'dynamic-objects'
+  },
+  {
+    id: 'dynamic-obj-2',
+    title: 'Property as Key',
+    expression: '{[user.id]: user.name}',
+    sampleInput: '{"user":{"id":"u123","name":"John"}}',
+    expectedOutput: '{"u123":"John"}',
+    description: 'Use object property value as key for new object',
+    category: 'dynamic-objects'
+  },
+  {
+    id: 'dynamic-obj-3',
+    title: 'Keys of Dynamic Object',
+    expression: 'keys({[`dynamic-${"key"}`]: 123})',
+    sampleInput: '{}',
+    expectedOutput: '["dynamic-key"]',
+    description: 'Get keys from object with computed key',
+    category: 'dynamic-objects'
+  },
+  {
+    id: 'dynamic-obj-4',
+    title: 'Dynamic Key with Variable',
+    expression: '{[prefix + "-" + suffix]: value}',
+    sampleInput: '{"prefix":"user","suffix":"123","value":"John"}',
+    expectedOutput: '{"user-123":"John"}',
+    description: 'Create dynamic key by concatenating variables',
+    category: 'dynamic-objects'
+  },
+  {
+    id: 'dynamic-obj-5',
+    title: 'Conditional Dynamic Key',
+    expression: '{[status == "active" ? "activeUser" : "inactiveUser"]: user.name}',
+    sampleInput: '{"status":"active","user":{"name":"John"}}',
+    expectedOutput: '{"activeUser":"John"}',
+    description: 'Use conditional expression as object key',
+    category: 'dynamic-objects'
+  },
+  {
+    id: 'dynamic-obj-6',
+    title: 'Multiple Dynamic Keys',
+    expression: '{[key1]: value1, [key2]: value2}',
+    sampleInput: '{"key1":"firstName","value1":"John","key2":"lastName","value2":"Doe"}',
+    expectedOutput: '{"firstName":"John","lastName":"Doe"}',
+    description: 'Create object with multiple computed keys',
+    category: 'dynamic-objects'
+  },
+  {
+    id: 'dynamic-obj-7',
+    title: 'Dynamic Key from Array Index',
+    expression: '{[`item_${index}`]: items[index]}',
+    sampleInput: '{"index":0,"items":["apple","banana","cherry"]}',
+    expectedOutput: '{"item_0":"apple"}',
+    description: 'Use array index to create dynamic key and value',
+    category: 'dynamic-objects'
+  },
+  {
+    id: 'dynamic-obj-8',
+    title: 'Dynamic Key with Function',
+    expression: '{[upper(category)]: count}',
+    sampleInput: '{"category":"books","count":25}',
+    expectedOutput: '{"BOOKS":25}',
+    description: 'Transform property value to create dynamic key',
+    category: 'dynamic-objects'
+  },
+
+  // Date Duration Arithmetic  
+  {
+    id: 'date-dur-1',
+    title: 'Add Duration to Date',
+    expression: 'date("2023-10-15") + duration("1d")',
+    sampleInput: '{}',
+    expectedOutput: '1697414400',
+    description: 'Add 1 day duration to date (returns timestamp)',
+    category: 'date-duration'
+  },
+  {
+    id: 'date-dur-2',
+    title: 'Subtract Duration from Date',
+    expression: 'date("2023-10-15") - duration("7d")',
+    sampleInput: '{}',
+    expectedOutput: '1696723200',
+    description: 'Subtract 7 days duration from date (returns timestamp)',
+    category: 'date-duration'
+  },
+  {
+    id: 'date-dur-3',
+    title: 'Date String After Addition',
+    expression: 'dateString(date("2023-10-15") + duration("1d"))',
+    sampleInput: '{}',
+    expectedOutput: '"2023-10-16 00:00:00"',
+    description: 'Format date after adding duration as readable string',
+    category: 'date-duration'
+  },
+  {
+    id: 'date-dur-4',
+    title: 'Date String After Subtraction',
+    expression: 'dateString(date("2023-10-15") - duration("7d"))',
+    sampleInput: '{}',
+    expectedOutput: '"2023-10-08 00:00:00"',
+    description: 'Format date after subtracting duration as readable string',
+    category: 'date-duration'
+  },
+  {
+    id: 'date-dur-5',
+    title: 'Duration Comparison',
+    expression: 'date("2023-10-15") + duration("1d") == date("2023-10-16")',
+    sampleInput: '{}',
+    expectedOutput: 'true',
+    description: 'Compare date with duration arithmetic to another date',
+    category: 'date-duration'
+  },
+  {
+    id: 'date-dur-6',
+    title: 'Hour Duration',
+    expression: 'duration("1h 30m")',
+    sampleInput: '{}',
+    expectedOutput: '5400',
+    description: 'Create duration of 1 hour 30 minutes (5400 seconds)',
+    category: 'date-duration'
+  },
+  {
+    id: 'date-dur-7',
+    title: 'Add Hours to Date',
+    expression: 'dateString(date("2023-10-15") + duration("12h"))',
+    sampleInput: '{}',
+    expectedOutput: '"2023-10-15 12:00:00"',
+    description: 'Add 12 hours to date and format as string',
+    category: 'date-duration'
+  },
+  {
+    id: 'date-dur-8',
+    title: 'Start of Day',
+    expression: 'dateString(startOf("2023-01-01 15:45:01", "day"))',
+    sampleInput: '{}',
+    expectedOutput: '"2023-01-01 00:00:00"',
+    description: 'Get start of day from datetime string',
+    category: 'date-duration'
+  },
+  {
+    id: 'date-dur-9',
+    title: 'End of Day',
+    expression: 'dateString(endOf("2023-01-01 15:45:01", "d"))',
+    sampleInput: '{}',
+    expectedOutput: '"2023-01-01 23:59:59"',
+    description: 'Get end of day from datetime string (short format)',
+    category: 'date-duration'
+  },
+  {
+    id: 'date-dur-10',
+    title: 'Start of Hour',
+    expression: 'dateString(startOf("2023-01-01 15:45:01", "hour"))',
+    sampleInput: '{}',
+    expectedOutput: '"2023-01-01 15:00:00"',
+    description: 'Get start of current hour',
+    category: 'date-duration'
+  },
+  {
+    id: 'date-dur-11',
+    title: 'End of Hour',
+    expression: 'dateString(endOf("2023-01-01 15:45:01", "h"))',
+    sampleInput: '{}',
+    expectedOutput: '"2023-01-01 15:59:59"',
+    description: 'Get end of current hour (short format)',
+    category: 'date-duration'
+  },
+  {
+    id: 'date-dur-12',
+    title: 'Start of Minute',
+    expression: 'dateString(startOf("2023-01-01 15:45:01", "minute"))',
+    sampleInput: '{}',
+    expectedOutput: '"2023-01-01 15:45:00"',
+    description: 'Get start of current minute',
+    category: 'date-duration'
+  },
+  {
+    id: 'date-dur-13',
+    title: 'End of Minute',
+    expression: 'dateString(endOf("2023-01-01 15:45:01", "m"))',
+    sampleInput: '{}',
+    expectedOutput: '"2023-01-01 15:45:59"',
+    description: 'Get end of current minute (short format)',
+    category: 'date-duration'
+  },
+  {
+    id: 'date-dur-14',
+    title: 'Start of Week',
+    expression: 'dateString(startOf("2023-01-04 15:45:01", "week"))',
+    sampleInput: '{}',
+    expectedOutput: '"2023-01-02 00:00:00"',
+    description: 'Get start of week (Monday) from given date',
+    category: 'date-duration'
+  },
+  {
+    id: 'date-dur-15',
+    title: 'End of Week',
+    expression: 'dateString(endOf("2023-01-04 15:45:01", "w"))',
+    sampleInput: '{}',
+    expectedOutput: '"2023-01-08 23:59:59"',
+    description: 'Get end of week (Sunday) from given date',
+    category: 'date-duration'
+  },
+  {
+    id: 'date-dur-16',
+    title: 'Start of Month',
+    expression: 'dateString(startOf("2023-01-04 15:45:01", "month"))',
+    sampleInput: '{}',
+    expectedOutput: '"2023-01-01 00:00:00"',
+    description: 'Get first day of month',
+    category: 'date-duration'
+  },
+  {
+    id: 'date-dur-17',
+    title: 'End of Month',
+    expression: 'dateString(endOf("2023-01-04 15:45:01", "M"))',
+    sampleInput: '{}',
+    expectedOutput: '"2023-01-31 23:59:59"',
+    description: 'Get last moment of month (short format)',
+    category: 'date-duration'
+  },
+  {
+    id: 'date-dur-18',
+    title: 'Start of Year',
+    expression: 'dateString(startOf("2023-01-04 15:45:01", "year"))',
+    sampleInput: '{}',
+    expectedOutput: '"2023-01-01 00:00:00"',
+    description: 'Get first day of year',
+    category: 'date-duration'
+  },
+  {
+    id: 'date-dur-19',
+    title: 'End of Year',
+    expression: 'dateString(endOf("2023-01-04 15:45:01", "y"))',
+    sampleInput: '{}',
+    expectedOutput: '"2023-12-31 23:59:59"',
+    description: 'Get last moment of year (short format)',
+    category: 'date-duration'
+  },
+
+  // Array Statistics
+  {
+    id: 'array-stats-1',
+    title: 'Array Median',
+    expression: 'median([4, 2, 7, 5, 3])',
+    sampleInput: '{}',
+    expectedOutput: '4',
+    description: 'Find median value in array (middle value when sorted)',
+    category: 'array-statistics'
+  },
+  {
+    id: 'array-stats-2',
+    title: 'Array Mode',
+    expression: 'mode([1, 2, 2, 3, 3, 3, 4, 4, 4, 4])',
+    sampleInput: '{}',
+    expectedOutput: '4',
+    description: 'Find mode (most frequent value) in array',
+    category: 'array-statistics'
+  },
+  {
+    id: 'array-stats-3',
+    title: 'Median of Sorted Array',
+    expression: 'median([1, 2, 3, 4, 5])',
+    sampleInput: '{}',
+    expectedOutput: '3',
+    description: 'Find median of odd-length sorted array',
+    category: 'array-statistics'
+  },
+  {
+    id: 'array-stats-4',
+    title: 'Median of Even Array',
+    expression: 'median([1, 2, 3, 4])',
+    sampleInput: '{}',
+    expectedOutput: '2.5',
+    description: 'Find median of even-length array (average of middle two)',
+    category: 'array-statistics'
+  },
+  {
+    id: 'array-stats-5',
+    title: 'Mode of String Array',
+    expression: 'mode(["apple", "banana", "apple", "cherry", "apple"])',
+    sampleInput: '{}',
+    expectedOutput: '"apple"',
+    description: 'Find most frequent string in array',
+    category: 'array-statistics'
+  },
+  {
+    id: 'array-stats-6',
+    title: 'Statistical Comparison',
+    expression: 'median([1, 5, 9]) > avg([1, 5, 9])',
+    sampleInput: '{}',
+    expectedOutput: 'false',
+    description: 'Compare median and average of same array',
+    category: 'array-statistics'
+  },
+  {
+    id: 'array-stats-7',
+    title: 'Combined Statistics',
+    expression: 'max([median([1, 3, 5]), avg([2, 4, 6])])',
+    sampleInput: '{}',
+    expectedOutput: '4',
+    description: 'Find maximum between median of one array and average of another',
+    category: 'array-statistics'
+  },
+  {
+    id: 'array-stats-8',
+    title: 'Mode Frequency Check',
+    expression: 'count([1, 1, 2, 2, 2, 3], # == mode([1, 1, 2, 2, 2, 3]))',
+    sampleInput: '{}',
+    expectedOutput: '3',
+    description: 'Count occurrences of the mode value',
+    category: 'array-statistics'
+  },
+  {
+    id: 'array-stats-9',
+    title: 'Range Calculation',
+    expression: 'max([1, 3, 7, 2, 9]) - min([1, 3, 7, 2, 9])',
+    sampleInput: '{}',
+    expectedOutput: '8',
+    description: 'Calculate range (difference between max and min)',
+    category: 'array-statistics'
+  },
+  {
+    id: 'array-stats-10',
+    title: 'Median Price Calculation',
+    expression: 'median(map(products, #.price))',
+    sampleInput: '{"products":[{"price":10},{"price":20},{"price":30},{"price":15},{"price":25}]}',
+    expectedOutput: '20',
+    description: 'Find median price from product array',
+    category: 'array-statistics'
+  },
+
+  // Extended Date Parts
+  {
+    id: 'date-parts-1',
+    title: 'Extract Year Function',
+    expression: 'year(date("2023-10-15"))',
+    sampleInput: '{}',
+    expectedOutput: '2023',
+    description: 'Extract year using year() function',
+    category: 'date-parts'
+  },
+  {
+    id: 'date-parts-2',
+    title: 'Extract Month of Year',
+    expression: 'monthOfYear(date("2023-10-15"))',
+    sampleInput: '{}',
+    expectedOutput: '10',
+    description: 'Extract month number using monthOfYear() function',
+    category: 'date-parts'
+  },
+  {
+    id: 'date-parts-3',
+    title: 'Extract Day of Month',
+    expression: 'dayOfMonth(date("2023-10-15"))',
+    sampleInput: '{}',
+    expectedOutput: '15',
+    description: 'Extract day of month using dayOfMonth() function',
+    category: 'date-parts'
+  },
+  {
+    id: 'date-parts-4',
+    title: 'Extract Day of Week',
+    expression: 'dayOfWeek(date("2023-10-15"))',
+    sampleInput: '{}',
+    expectedOutput: '7',
+    description: 'Extract day of week (1=Monday, 7=Sunday) using dayOfWeek() function',
+    category: 'date-parts'
+  },
+  {
+    id: 'date-parts-5',
+    title: 'Extract Week of Year',
+    expression: 'weekOfYear(date("2023-10-15"))',
+    sampleInput: '{}',
+    expectedOutput: '41',
+    description: 'Extract week number of year using weekOfYear() function',
+    category: 'date-parts'
+  },
+  {
+    id: 'date-parts-6',
+    title: 'Date Parts Comparison',
+    expression: 'monthOfYear(date("2023-10-15")) == 10',
+    sampleInput: '{}',
+    expectedOutput: 'true',
+    description: 'Compare extracted month with expected value',
+    category: 'date-parts'
+  },
+  {
+    id: 'date-parts-7',
+    title: 'Weekend Check',
+    expression: 'dayOfWeek(date("2023-10-15")) in [6, 7]',
+    sampleInput: '{}',
+    expectedOutput: 'true',
+    description: 'Check if date falls on weekend (Saturday=6, Sunday=7)',
+    category: 'date-parts'
+  },
+  {
+    id: 'date-parts-8',
+    title: 'Year Range Check',
+    expression: 'year(date("2023-10-15")) in [2020..2025]',
+    sampleInput: '{}',
+    expectedOutput: 'true',
+    description: 'Check if year is within specific range',
+    category: 'date-parts'
+  },
+  {
+    id: 'date-parts-9',
+    title: 'Quarter Calculation',
+    expression: 'ceil(monthOfYear(date("2023-10-15")) / 3)',
+    sampleInput: '{}',
+    expectedOutput: '4',
+    description: 'Calculate quarter from month (Q4 for October)',
+    category: 'date-parts'
+  },
+  {
+    id: 'date-parts-10',
+    title: 'Week Progress',
+    expression: 'weekOfYear(date("2023-10-15")) / 52.0',
+    sampleInput: '{}',
+    expectedOutput: '0.7884615384615384',
+    description: 'Calculate year progress as decimal (week 41 of 52)',
+    category: 'date-parts'
+  },
+
+  // Business Calculations
+  {
+    id: 'business-1',
+    title: 'Permission Check',
+    expression: 'some(user.permissions, # == "edit")',
+    sampleInput: '{"user":{"permissions":["view","edit","delete"]}}',
+    expectedOutput: 'true',
+    description: 'Check if user has specific permission',
+    category: 'business-calculations'
+  },
+  {
+    id: 'business-2',
+    title: 'Price Validation All',
+    expression: 'all(items, #.price > 10)',
+    sampleInput: '{"items":[{"price":15},{"price":20},{"price":25}]}',
+    expectedOutput: 'true',
+    description: 'Check if all items meet minimum price requirement',
+    category: 'business-calculations'
+  },
+  {
+    id: 'business-3',
+    title: 'Price Validation Some Fail',
+    expression: 'all(items, #.price > 10)',
+    sampleInput: '{"items":[{"price":15},{"price":5},{"price":25}]}',
+    expectedOutput: 'false',
+    description: 'Price validation with some items failing requirement',
+    category: 'business-calculations'
+  },
+  {
+    id: 'business-4',
+    title: 'Average Price Calculation',
+    expression: 'avg(map(items, #.price))',
+    sampleInput: '{"items":[{"price":10},{"price":20},{"price":30}]}',
+    expectedOutput: '20',
+    description: 'Calculate average price from product array',
+    category: 'business-calculations'
+  },
+  {
+    id: 'business-5',
+    title: 'Maximum Order Value',
+    expression: 'max(map(items, #.qty * #.price))',
+    sampleInput: '{"items":[{"qty":2,"price":10},{"qty":1,"price":20},{"qty":3,"price":15}]}',
+    expectedOutput: '45',
+    description: 'Find maximum order value (quantity × price)',
+    category: 'business-calculations'
+  },
+  {
+    id: 'business-6',
+    title: 'Total Revenue Calculation',
+    expression: 'sum(map(orders, #.qty * #.price))',
+    sampleInput: '{"orders":[{"qty":2,"price":10},{"qty":1,"price":20},{"qty":3,"price":15}]}',
+    expectedOutput: '85',
+    description: 'Calculate total revenue from all orders',
+    category: 'business-calculations'
+  },
+  {
+    id: 'business-7',
+    title: 'High Value Orders',
+    expression: 'filter(orders, #.qty * #.price > 30)',
+    sampleInput: '{"orders":[{"qty":2,"price":10},{"qty":1,"price":20},{"qty":3,"price":15}]}',
+    expectedOutput: '[{"qty":3,"price":15}]',
+    description: 'Filter orders with value greater than threshold',
+    category: 'business-calculations'
+  },
+  {
+    id: 'business-8',
+    title: 'Count High Value Orders',
+    expression: 'len(filter(orders, #.qty * #.price > 30))',
+    sampleInput: '{"orders":[{"qty":2,"price":10},{"qty":1,"price":20},{"qty":3,"price":15}]}',
+    expectedOutput: '1',
+    description: 'Count orders exceeding value threshold',
+    category: 'business-calculations'
+  },
+  {
+    id: 'business-9',
+    title: 'Admin Permission Check',
+    expression: 'some(user.roles, # == "admin")',
+    sampleInput: '{"user":{"roles":["user","editor","admin"]}}',
+    expectedOutput: 'true',
+    description: 'Check if user has admin role',
+    category: 'business-calculations'
+  },
+  {
+    id: 'business-10',
+    title: 'All Items In Stock',
+    expression: 'all(inventory, #.stock > 0)',
+    sampleInput: '{"inventory":[{"stock":5},{"stock":10},{"stock":3}]}',
+    expectedOutput: 'true',
+    description: 'Check if all items are in stock',
+    category: 'business-calculations'
+  },
+  {
+    id: 'business-11',
+    title: 'Low Stock Alert',
+    expression: 'some(inventory, #.stock < 5)',
+    sampleInput: '{"inventory":[{"stock":5},{"stock":2},{"stock":10}]}',
+    expectedOutput: 'true',
+    description: 'Check if any items have low stock',
+    category: 'business-calculations'
+  },
+  {
+    id: 'business-12',
+    title: 'Discount Eligibility',
+    expression: 'sum(map(cart, #.price)) > 100',
+    sampleInput: '{"cart":[{"price":45},{"price":35},{"price":25}]}',
+    expectedOutput: 'true',
+    description: 'Check if cart total qualifies for discount',
+    category: 'business-calculations'
   }
 ];
 
