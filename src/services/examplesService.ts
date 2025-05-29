@@ -1,4 +1,3 @@
-
 // Mock examples data - replace with actual CSV loading
 const mockExamples = [
   {
@@ -44,6 +43,43 @@ const mockExamples = [
     sampleInput: '{"user": {"description": "  A software developer  "}}',
     expectedOutput: '"A software developer"',
     description: 'Remove leading and trailing whitespace',
+    category: 'string'
+  },
+  // New Zen Engine test examples
+  {
+    id: '6',
+    title: 'Array Length',
+    expression: 'users.length',
+    sampleInput: '{"users": [{"name": "John"}, {"name": "Jane"}, {"name": "Bob"}]}',
+    expectedOutput: '3',
+    description: 'Get the length of an array',
+    category: 'array'
+  },
+  {
+    id: '7',
+    title: 'Mathematical Operation',
+    expression: 'price * quantity',
+    sampleInput: '{"price": 10.50, "quantity": 3}',
+    expectedOutput: '31.5',
+    description: 'Multiply two numbers',
+    category: 'math'
+  },
+  {
+    id: '8',
+    title: 'Conditional Expression',
+    expression: 'age >= 18',
+    sampleInput: '{"age": 25}',
+    expectedOutput: 'true',
+    description: 'Check if age is 18 or older',
+    category: 'conditional'
+  },
+  {
+    id: '9',
+    title: 'String Concatenation',
+    expression: 'firstName + " " + lastName',
+    sampleInput: '{"firstName": "John", "lastName": "Doe"}',
+    expectedOutput: '"John Doe"',
+    description: 'Concatenate first and last name',
     category: 'string'
   }
 ];
