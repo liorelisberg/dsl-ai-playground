@@ -108,6 +108,12 @@ const categoryConfig: Record<string, { icon: React.ReactNode; label: string; des
     description: 'Date creation, formatting, and manipulation',
     color: 'bg-gradient-to-br from-rose-500 to-red-600'
   },
+  'date-advanced': {
+    icon: <Sparkles className="h-5 w-5" />,
+    label: 'Advanced Date Operations',
+    description: 'Date validation, timezone conversion, and comparisons',
+    color: 'bg-gradient-to-br from-pink-500 to-rose-600'
+  },
   null: {
     icon: <Hash className="h-5 w-5" />,
     label: 'Null Handling',
