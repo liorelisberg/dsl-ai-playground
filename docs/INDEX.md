@@ -9,6 +9,7 @@ This folder contains all documentation, DSL rules, and datasets for the DSL AI P
 - **[project_requirements.txt](./project/project_requirements.txt)** - Implementation status report (Production Ready)
 - **[REQUIREMENTS_ANALYSIS_REPORT.txt](./project/REQUIREMENTS_ANALYSIS_REPORT.txt)** - Final completion analysis
 - **[README.md](./project/README.md)** - Project setup, installation, and usage instructions
+- **[FEATURE_ROADMAP_2025.md](./FEATURE_ROADMAP_2025.md)** - Comprehensive v4.0+ development plan with 25+ features
 
 ### 🔧 **dsl-rules/** - DSL Language Reference
 Complete Domain Specific Language (DSL) rule definitions in Markdown format (.mdc files):
