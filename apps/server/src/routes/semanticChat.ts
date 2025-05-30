@@ -31,7 +31,7 @@ if (config.gemini.apiKey) {
 interface SemanticChatRequest {
   message: string;
   sessionId?: string;
-  jsonContext?: any;
+  jsonContext?: unknown;
   maxTokens?: number;
 }
 

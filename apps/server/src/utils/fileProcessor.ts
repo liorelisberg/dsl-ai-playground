@@ -28,7 +28,7 @@ export interface RuleFileMetadata {
   description?: string;
   globs?: string;
   alwaysApply?: boolean;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 class FileProcessor {

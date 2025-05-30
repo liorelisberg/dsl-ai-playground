@@ -13,7 +13,7 @@ export interface BatchEmbeddingResponse {
 
 class EmbeddingService {
   private genAI: GoogleGenerativeAI | null = null;
-  private embeddingModel: any = null;
+  private embeddingModel: ReturnType<GoogleGenerativeAI['getGenerativeModel']> | null = null;
   private isInitialized = false;
 
   constructor() {
@@ -73,7 +73,7 @@ class EmbeddingService {
     }
 
     try {
-      const result = await this.embeddingModel.embedContent(text);
+      const result = await this.embeddingModel!.embedContent(text);
       
       if (!result || !result.embedding || !result.embedding.values) {
         throw new Error('Invalid embedding response from Gemini API');
@@ -142,7 +142,7 @@ class EmbeddingService {
   /**
    * Handle embedding errors with retries
    */
-  private async handleEmbeddingError(error: any, text: string): Promise<number[]> {
+  private async handleEmbeddingError(error: unknown, text: string): Promise<number[]> {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     
     console.error('Embedding API Error:', errorMessage);
@@ -159,7 +159,7 @@ class EmbeddingService {
       await this.sleep(5000); // Wait 5 seconds
       
       try {
-        const result = await this.embeddingModel.embedContent(text);
+        const result = await this.embeddingModel!.embedContent(text);
         return result.embedding.values;
       } catch (retryError) {
         throw new Error(`Rate limit exceeded and retry failed: ${retryError instanceof Error ? retryError.message : 'Unknown error'}`);

@@ -1,10 +1,6 @@
 import { Example } from './types';
 
 export const dateOperationsExamples: Example[] = [
-  // ⚠️  CLEANED FILE - 1 hallucinated examples removed
-  // 📅  Cleaned on: 2025-05-30T22:10:53.515Z
-  // 🔍  Removed IDs: date-const-7
-
   // ⚠️  MANUALLY CLEANED - 11 hallucinated examples removed
   // 📅  Cleaned on: 2025-05-30T21:41:11.968Z
   // ⚠️  CLEANED FILE - 12 hallucinated examples removed

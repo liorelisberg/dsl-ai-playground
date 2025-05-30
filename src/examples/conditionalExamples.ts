@@ -91,4 +91,26 @@ export const conditionalExamples: Example[] = [
     description: 'Check if value is in range (false case)',
     category: 'conditional'
   },
+
+
+  {
+    id: 'complex-conditional-1',
+    title: 'Multi-Tier Pricing Logic',
+    expression: 'map(customers, {name: #.name, tier: #.orders > 100 ? \'platinum\' : #.orders > 50 ? \'gold\' : #.orders > 10 ? \'silver\' : \'bronze\', discount: #.orders > 100 ? 0.15 : #.orders > 50 ? 0.1 : #.orders > 10 ? 0.05 : 0})',
+    sampleInput: '{"customers": [{"name": "Alice", "orders": 150}, {"name": "Bob", "orders": 25}, {"name": "Charlie", "orders": 5}]}',
+    expectedOutput: '[{"name": "Alice", "tier": "platinum", "discount": 0.15}, {"name": "Bob", "tier": "silver", "discount": 0.05}, {"name": "Charlie", "tier": "bronze", "discount": 0}]',
+    description: 'Implement complex multi-tier logic with nested ternary conditions',
+    category: 'complex-conditional'
+  }
+,
+
+  {
+    id: 'complex-conditional-2',
+    title: 'Inventory Status Logic',
+    expression: 'map(inventory, {product: #.name, status: #.quantity <= 0 ? \'out_of_stock\' : #.quantity <= #.reorder_point ? \'low_stock\' : #.quantity >= #.max_capacity ? \'overstocked\' : \'normal\', action: #.quantity <= 0 ? \'urgent_reorder\' : #.quantity <= #.reorder_point ? \'reorder_soon\' : #.quantity >= #.max_capacity ? \'reduce_orders\' : \'none\'})',
+    sampleInput: '{"inventory": [{"name": "Widget A", "quantity": 0, "reorder_point": 10, "max_capacity": 100}, {"name": "Widget B", "quantity": 5, "reorder_point": 10, "max_capacity": 100}, {"name": "Widget C", "quantity": 150, "reorder_point": 20, "max_capacity": 100}]}',
+    expectedOutput: '[{"product": "Widget A", "status": "out_of_stock", "action": "urgent_reorder"}, {"product": "Widget B", "status": "low_stock", "action": "reorder_soon"}, {"product": "Widget C", "status": "overstocked", "action": "reduce_orders"}]',
+    description: 'Complex inventory management logic with multiple conditions and actions',
+    category: 'complex-conditional'
+  }
 ];

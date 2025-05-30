@@ -9,17 +9,29 @@ interface ValidFunction {
   context?: string; // For methods like d().add()
 }
 
+interface ExampleDefinition {
+  id: string;
+  title: string;
+  expression: string;
+  input: unknown;
+  output: unknown;
+  description: string;
+  category: string;
+  sourceFile?: string;
+  filename?: string;
+}
+
 interface ExampleFile {
   path: string;
-  examples: any[];
+  examples: ExampleDefinition[];
 }
 
 interface ValidationResult {
-  validExamples: any[];
-  invalidExamples: any[];
+  validExamples: ExampleDefinition[];
+  invalidExamples: (ExampleDefinition & { invalidFunctions: string[] })[];
   hallucinations: {
     function: string;
-    examples: any[];
+    examples: ExampleDefinition[];
   }[];
 }
 
@@ -140,7 +152,7 @@ class DSLValidator {
       hallucinations: []
     };
 
-    const hallucinationMap = new Map<string, any[]>();
+    const hallucinationMap = new Map<string, ExampleDefinition[]>();
 
     for (const file of exampleFiles) {
       console.log(`\nValidating ${file.path}...`);
@@ -213,8 +225,8 @@ class DSLValidator {
     return exampleFiles;
   }
 
-  private extractExamplesFromFile(content: string, filename: string): any[] {
-    const examples: any[] = [];
+  private extractExamplesFromFile(content: string, filename: string): ExampleDefinition[] {
+    const examples: ExampleDefinition[] = [];
     
     // Extract examples from the exported array
     const exampleRegex = /{\s*id:\s*['"`]([^'"`]+)['"`].*?expression:\s*['"`]([^'"`]+)['"`].*?}/gs;
@@ -227,14 +239,19 @@ class DSLValidator {
       examples.push({
         id,
         expression,
-        filename
+        title: '',
+        input: null,
+        output: null,
+        description: '',
+        category: '',
+        filename: filename
       });
     }
 
     return examples;
   }
 
-  private validateExample(example: any): { isValid: boolean; invalidFunctions: string[] } {
+  private validateExample(example: ExampleDefinition): { isValid: boolean; invalidFunctions: string[] } {
     const expression = example.expression;
     const invalidFunctions: string[] = [];
 
@@ -298,10 +315,10 @@ class DSLValidator {
     console.log('\n🔧 GENERATING CLEANED EXAMPLE FILES...');
     
     // Group valid examples by source file
-    const fileGroups = new Map<string, any[]>();
+    const fileGroups = new Map<string, ExampleDefinition[]>();
     
     for (const example of result.validExamples) {
-      const sourceFile = example.sourceFile || example.filename;
+      const sourceFile = example.sourceFile || example.filename || 'unknown';
       if (!fileGroups.has(sourceFile)) {
         fileGroups.set(sourceFile, []);
       }
@@ -310,11 +327,13 @@ class DSLValidator {
 
     // Create cleaned versions
     for (const [originalPath, validExamples] of fileGroups) {
-      this.generateCleanedFile(originalPath, validExamples);
+      if (originalPath !== 'unknown') {
+        this.generateCleanedFile(originalPath, validExamples);
+      }
     }
   }
 
-  private generateCleanedFile(originalPath: string, validExamples: any[]) {
+  private generateCleanedFile(originalPath: string, validExamples: ExampleDefinition[]) {
     const backupPath = originalPath.replace('.ts', '.backup.ts');
     const cleanedPath = originalPath.replace('.ts', '.cleaned.ts');
     
@@ -338,7 +357,7 @@ class DSLValidator {
     }
   }
 
-  private createCleanedFileContent(originalContent: string, validExamples: any[]): string {
+  private createCleanedFileContent(originalContent: string, validExamples: ExampleDefinition[]): string {
     // Extract the header and imports
     const lines = originalContent.split('\n');
     const headerLines: string[] = [];

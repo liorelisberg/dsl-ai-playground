@@ -109,4 +109,26 @@ export const business_calculationsExamples: Example[] = [
     description: 'Check if cart total qualifies for discount',
     category: 'business-calculations'
   },
+
+
+  {
+    id: 'complex-business-1',
+    title: 'Customer Order Analysis',
+    expression: 'filter(map(orders, {id: #.id, total: sum(map(#.items, #.price * #.quantity)), customer: #.customer}), #.total > 100)',
+    sampleInput: '{"orders": [{"id": 1, "customer": "John", "items": [{"price": 25, "quantity": 2}, {"price": 60, "quantity": 1}]}, {"id": 2, "customer": "Jane", "items": [{"price": 15, "quantity": 3}]}]}',
+    expectedOutput: '[{"id": 1, "total": 110, "customer": "John"}]',
+    description: 'Calculate order totals and filter high-value orders using nested maps and filters',
+    category: 'complex-business'
+  }
+,
+
+  {
+    id: 'complex-business-2',
+    title: 'Employee Performance Score',
+    expression: 'map(employees, {name: #.name, score: round(avg([#.sales, #.reviews, #.attendance]) * 100), grade: avg([#.sales, #.reviews, #.attendance]) >= 0.8 ? \'A\' : avg([#.sales, #.reviews, #.attendance]) >= 0.6 ? \'B\' : \'C\'})',
+    sampleInput: '{"employees": [{"name": "Alice", "sales": 0.9, "reviews": 0.8, "attendance": 0.95}, {"name": "Bob", "sales": 0.6, "reviews": 0.7, "attendance": 0.5}]}',
+    expectedOutput: '[{"name": "Alice", "score": 88, "grade": "A"}, {"name": "Bob", "score": 60, "grade": "C"}]',
+    description: 'Calculate performance scores with conditional grading using nested ternary operations',
+    category: 'complex-business'
+  }
 ];

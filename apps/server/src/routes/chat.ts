@@ -5,7 +5,7 @@ import { chatService } from '../services/chat';
 import { config } from '../config/environment';
 import { rateLimiter, lengthGuard, tpmGuard } from '../middleware/rate-limiter';
 import { attachSession } from '../middleware/session';
-import { DynamicContextManager, ChatTurn } from '../services/contextManager';
+import { DynamicContextManager, ChatTurn, ContextBudget } from '../services/contextManager';
 import { KnowledgeOptimizer } from '../services/knowledgeOptimizer';
 import { JSONContextOptimizer } from '../services/jsonOptimizer';
 import { jsonStore } from '../api/upload';
@@ -179,9 +179,9 @@ const chatHandler = async (req: Request, res: Response): Promise<void> => {
 function buildOptimizedPrompt(
   userMessage: string,
   history: ChatTurn[],
-  knowledgeCards: any[],
+  knowledgeCards: Array<{ category: string; source: string; content: string }>,
   jsonContext: string,
-  budget: any
+  budget: ContextBudget
 ): string {
   const sections: string[] = [];
 
@@ -223,7 +223,7 @@ Provide accurate, helpful responses using the knowledge base and context provide
 }
 
 // Route with middleware
-// @ts-ignore - Express v5 typing issue
+// @ts-expect-error - Express v5 typing issue
 router.post('/chat', attachSession, lengthGuard, tpmGuard, rateLimiter, chatHandler);
 
 export default router; 

@@ -44,7 +44,7 @@ export const evaluateExpression = async (
 };
 
 // Fallback basic expression evaluator for offline/error scenarios
-function evaluateBasicExpression(expression: string, data: any): any {
+function evaluateBasicExpression(expression: string, data: unknown): unknown {
   const cleanExpression = expression.replace(/\/\/.*$/gm, '').trim();
   
   if (!cleanExpression) {
@@ -82,8 +82,10 @@ function evaluateBasicExpression(expression: string, data: any): any {
   }
 }
 
-function getNestedProperty(obj: any, path: string): any {
-  return path.split('.').reduce((current, prop) => {
-    return current && current[prop] !== undefined ? current[prop] : undefined;
+function getNestedProperty(obj: unknown, path: string): unknown {
+  return path.split('.').reduce((current: unknown, prop: string) => {
+    return current && typeof current === 'object' && current !== null && prop in current 
+      ? (current as Record<string, unknown>)[prop] 
+      : undefined;
   }, obj);
 }

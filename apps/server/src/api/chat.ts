@@ -74,7 +74,7 @@ interface KnowledgeCard {
   relevanceScore: number;
 }
 
-// @ts-ignore - Express v5 typing issue
+// @ts-expect-error - Express v5 typing issue
 router.post('/chat', attachSession, lengthGuard, tpmGuard, rateLimiter, chatHandler);
 
 export default router; 

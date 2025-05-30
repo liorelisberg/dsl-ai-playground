@@ -1,6 +1,12 @@
 // JSON Context Optimization for intelligent schema and data selection
 // Phase 1.3 of Conversation Optimization Plan
 
+// JSON type definitions
+export type JsonValue = string | number | boolean | null | JsonObject | Array<JsonValue>;
+export interface JsonObject {
+  [key: string]: JsonValue;
+}
+
 export interface JsonOptimizationResult {
   content: string;
   tokensUsed: number;
@@ -12,7 +18,7 @@ export interface JsonOptimizationResult {
 export interface JsonField {
   path: string;
   type: string;
-  value?: any;
+  value?: JsonValue;
   relevanceScore: number;
 }
 
@@ -24,7 +30,7 @@ export class JSONContextOptimizer {
    * Optimize JSON context based on query and token budget
    */
   optimizeForQuery(
-    jsonData: any,
+    jsonData: unknown,
     query: string,
     tokenBudget: number,
     includeFullData: boolean = false
@@ -123,7 +129,7 @@ export class JSONContextOptimizer {
   /**
    * Extract fields relevant to the query
    */
-  private extractRelevantFields(data: any, query: string): JsonField[] {
+  private extractRelevantFields(data: unknown, query: string): JsonField[] {
     const queryTerms = query.toLowerCase().split(/\s+/)
       .filter(term => term.length > 2)
       .map(term => term.replace(/[^\w]/g, ''));
@@ -145,7 +151,7 @@ export class JSONContextOptimizer {
    * Recursively find relevant object paths
    */
   private findRelevantPaths(
-    obj: any,
+    obj: unknown,
     currentPath: string,
     queryTerms: string[],
     results: JsonField[],
@@ -167,9 +173,11 @@ export class JSONContextOptimizer {
       return;
     }
 
-    Object.keys(obj).forEach(key => {
+    // Type guard: ensure obj is a record-like object
+    const objRecord = obj as Record<string, unknown>;
+    Object.keys(objRecord).forEach(key => {
       const fullPath = currentPath ? `${currentPath}.${key}` : key;
-      const value = obj[key];
+      const value = objRecord[key];
       const relevanceScore = this.calculateFieldRelevance(key, value, queryTerms);
 
       if (relevanceScore > 0) {
@@ -191,7 +199,7 @@ export class JSONContextOptimizer {
   /**
    * Calculate field relevance to query terms
    */
-  private calculateFieldRelevance(key: string, value: any, queryTerms: string[]): number {
+  private calculateFieldRelevance(key: string, value: unknown, queryTerms: string[]): number {
     const keyLower = key.toLowerCase();
     let score = 0;
 
@@ -233,7 +241,7 @@ export class JSONContextOptimizer {
   /**
    * Generate focused schema for relevant fields
    */
-  private generateFocusedSchema(relevantFields: JsonField[], data: any): string {
+  private generateFocusedSchema(relevantFields: JsonField[], data: unknown): string {
     if (relevantFields.length === 0) {
       return this.generateMinimalSchema(data);
     }
@@ -256,12 +264,12 @@ export class JSONContextOptimizer {
   /**
    * Build focused data structure from relevant fields
    */
-  private buildFocusedStructure(fields: JsonField[]): any {
-    const structure: any = {};
+  private buildFocusedStructure(fields: JsonField[]): Record<string, unknown> {
+    const structure: Record<string, unknown> = {};
 
     fields.forEach(field => {
       const pathParts = field.path.split('.');
-      let current = structure;
+      let current: Record<string, unknown> = structure;
 
       pathParts.forEach((part, index) => {
         // Handle array notation
@@ -270,7 +278,7 @@ export class JSONContextOptimizer {
           if (!current[key]) current[key] = [];
           if (arrayIndex === '0]') {
             current[key] = [{}];
-            current = current[key][0];
+            current = (current[key] as Record<string, unknown>[])[0];
           }
           return;
         }
@@ -285,7 +293,7 @@ export class JSONContextOptimizer {
           if (!current[part] || typeof current[part] === 'string') {
             current[part] = {};
           }
-          current = current[part];
+          current = current[part] as Record<string, unknown>;
         }
       });
     });
@@ -298,7 +306,7 @@ export class JSONContextOptimizer {
    */
   private generateSampleData(
     relevantFields: JsonField[],
-    data: any,
+    data: unknown,
     tokenBudget: number
   ): string | null {
     const samples: string[] = [];
@@ -334,7 +342,7 @@ export class JSONContextOptimizer {
   /**
    * Get sample value for a specific field path
    */
-  private getFieldSampleValue(data: any, path: string): any {
+  private getFieldSampleValue(data: unknown, path: string): unknown {
     const pathParts = path.split('.');
     let current = data;
 
@@ -342,12 +350,12 @@ export class JSONContextOptimizer {
       for (const part of pathParts) {
         if (part.includes('[')) {
           const [key, index] = part.split('[');
-          current = current[key];
+          current = (current as Record<string, unknown>)[key];
           if (Array.isArray(current) && current.length > 0) {
             current = current[0]; // Take first element
           }
         } else {
-          current = current[part];
+          current = (current as Record<string, unknown>)[part];
         }
         
         if (current === undefined) return null;
@@ -362,7 +370,7 @@ export class JSONContextOptimizer {
   /**
    * Generate minimal schema
    */
-  private generateMinimalSchema(data: any): string {
+  private generateMinimalSchema(data: unknown): string {
     const basicStructure = this.getBasicStructure(data, 2); // Max depth 2
     
     return [
@@ -376,7 +384,7 @@ export class JSONContextOptimizer {
   /**
    * Get basic structure with limited depth
    */
-  private getBasicStructure(obj: any, maxDepth: number, currentDepth: number = 0): any {
+  private getBasicStructure(obj: unknown, maxDepth: number, currentDepth: number = 0): unknown {
     if (currentDepth >= maxDepth || !obj || typeof obj !== 'object') {
       return this.getValueType(obj);
     }
@@ -385,9 +393,9 @@ export class JSONContextOptimizer {
       return obj.length > 0 ? [this.getBasicStructure(obj[0], maxDepth, currentDepth + 1)] : [];
     }
 
-    const result: any = {};
+    const result: Record<string, unknown> = {};
     Object.keys(obj).slice(0, 10).forEach(key => { // Limit to 10 keys
-      result[key] = this.getBasicStructure(obj[key], maxDepth, currentDepth + 1);
+      result[key] = this.getBasicStructure((obj as Record<string, unknown>)[key], maxDepth, currentDepth + 1);
     });
 
     return result;
@@ -396,7 +404,7 @@ export class JSONContextOptimizer {
   /**
    * Format full JSON with size limits
    */
-  private formatFullJSON(data: any): string {
+  private formatFullJSON(data: unknown): string {
     return [
       '**Complete Data Available:**',
       '```json',
@@ -408,7 +416,7 @@ export class JSONContextOptimizer {
   /**
    * Get all field paths in data
    */
-  private getAllFields(data: any, prefix: string = ''): string[] {
+  private getAllFields(data: unknown, prefix: string = ''): string[] {
     const fields: string[] = [];
     
     if (!data || typeof data !== 'object') return fields;
@@ -420,12 +428,13 @@ export class JSONContextOptimizer {
       return fields;
     }
 
-    Object.keys(data).forEach(key => {
+    const objRecord = data as Record<string, unknown>;
+    Object.keys(objRecord).forEach(key => {
       const fullPath = prefix ? `${prefix}.${key}` : key;
       fields.push(fullPath);
       
-      if (data[key] && typeof data[key] === 'object') {
-        fields.push(...this.getAllFields(data[key], fullPath));
+      if (objRecord[key] && typeof objRecord[key] === 'object') {
+        fields.push(...this.getAllFields(objRecord[key], fullPath));
       }
     });
 
@@ -435,20 +444,20 @@ export class JSONContextOptimizer {
   /**
    * Utility functions
    */
-  private getValueType(value: any): string {
+  private getValueType(value: unknown): string {
     if (value === null) return 'null';
     if (Array.isArray(value)) return 'array';
     return typeof value;
   }
 
-  private getSampleValue(value: any): any {
+  private getSampleValue(value: unknown): JsonValue {
     if (Array.isArray(value)) {
-      return value.slice(0, 2); // First 2 elements
+      return value.slice(0, 2) as JsonValue; // First 2 elements
     }
     if (typeof value === 'string' && value.length > 50) {
       return value.substring(0, 50) + '...';
     }
-    return value;
+    return value as JsonValue;
   }
 
   private estimateTokens(text: string): number {

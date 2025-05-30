@@ -2,11 +2,27 @@ export interface ChatMessage {
   role: 'user' | 'assistant';
   content: string;
   timestamp: string;
+  metadata?: {
+    semanticMatches?: number;
+    userExpertise?: 'beginner' | 'intermediate' | 'advanced';
+    conversationFlow?: string;
+    semanticSimilarity?: number;
+    processingTime?: number;
+    contextUsed?: boolean;
+  };
 }
 
 export interface ChatResponse {
   text: string;
   error?: string;
+  metadata?: {
+    semanticMatches?: number;
+    userExpertise?: 'beginner' | 'intermediate' | 'advanced';
+    conversationFlow?: string;
+    semanticSimilarity?: number;
+    processingTime?: number;
+    contextUsed?: boolean;
+  };
 }
 
 export interface ChatRequest {

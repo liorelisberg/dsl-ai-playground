@@ -28,7 +28,7 @@ export interface EmbeddingStats {
 }
 
 export class SemanticVectorStore {
-  private embedModel: any;
+  private embedModel: ReturnType<GoogleGenerativeAI['getGenerativeModel']> | null = null;
   private documents: Map<string, SemanticDocument> = new Map();
   private embeddingCache: Map<string, number[]> = new Map();
   private embeddingStats: EmbeddingStats;
@@ -286,7 +286,7 @@ export class SemanticVectorStore {
     for (const result of results) {
       if (selected.length >= limit) break;
       
-      const category = result.metadata.category;
+      const category = typeof result.metadata.category === 'string' ? result.metadata.category : 'general';
       const semanticCluster = this.getSemanticCluster(result.semanticTags);
       
       if (!usedCategories.has(category) || !usedSemanticClusters.has(semanticCluster)) {
@@ -492,8 +492,8 @@ export class SemanticVectorStore {
     return results.map(result => ({
       id: result.id,
       content: result.content,
-      source: result.metadata.source || 'unknown',
-      category: result.metadata.category || 'general',
+      source: typeof result.metadata.source === 'string' ? result.metadata.source : 'unknown',
+      category: typeof result.metadata.category === 'string' ? result.metadata.category : 'general',
       relevanceScore: result.similarity
     }));
   }

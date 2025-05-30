@@ -1,13 +1,15 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { Badge } from "@/components/ui/badge";
 import { toast } from "@/hooks/use-toast";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import { Bot, MessageCircle, Send, Paperclip, X, Loader2, Copy, Check } from 'lucide-react';
+import { Bot, MessageCircle, Send, Paperclip, X, Loader2, Copy, Check, Brain, Target, Zap, FileJson } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
 import { ChatMessage, ChatResponse } from '@/types/chat';
+import { JsonMetadata } from './JsonUpload';
 import { sendChatMessage } from '@/services/chatService';
 
 interface ChatPanelProps {
@@ -15,20 +17,33 @@ interface ChatPanelProps {
   onNewMessage: (message: ChatMessage) => void;
   isOnline: boolean;
   isApiHealthy: boolean;
+  currentJsonFile?: JsonMetadata | null;
+  onJsonUploadSuccess?: (metadata: JsonMetadata) => void;
+  onJsonUploadError?: (error: string) => void;
+  onClearJsonFile?: () => void;
 }
 
 interface UploadedFile {
   name: string;
-  content: any;
+  content: unknown;
 }
 
-const ChatPanel: React.FC<ChatPanelProps> = ({ chatHistory, onNewMessage, isOnline, isApiHealthy }) => {
+const ChatPanel: React.FC<ChatPanelProps> = ({ 
+  chatHistory, 
+  onNewMessage, 
+  isOnline, 
+  isApiHealthy,
+  currentJsonFile,
+  onJsonUploadSuccess,
+  onJsonUploadError,
+  onClearJsonFile
+}) => {
   const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [uploadedFile, setUploadedFile] = useState<UploadedFile | null>(null);
   const [includeFullJson, setIncludeFullJson] = useState(false);
   const [copiedMessageIndex, setCopiedMessageIndex] = useState<number | null>(null);
-  const [inputAreaHeight, setInputAreaHeight] = useState(120); // Reduced from 180px
+  const [inputAreaHeight, setInputAreaHeight] = useState(120);
   const [isDragging, setIsDragging] = useState(false);
   
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -95,9 +110,11 @@ const ChatPanel: React.FC<ChatPanelProps> = ({ chatHistory, onNewMessage, isOnli
 
     // Validate file extension
     if (!file.name.toLowerCase().endsWith('.json')) {
+      const errorMsg = "Please upload a JSON file (.json)";
+      onJsonUploadError?.(errorMsg);
       toast({
         title: "Invalid File Type",
-        description: "Please upload a JSON file (.json)",
+        description: errorMsg,
         variant: "destructive"
       });
       return;
@@ -105,9 +122,11 @@ const ChatPanel: React.FC<ChatPanelProps> = ({ chatHistory, onNewMessage, isOnli
 
     // Validate file size (256KB for backend compatibility)
     if (file.size > 256 * 1024) {
+      const errorMsg = "File size must be less than 256KB";
+      onJsonUploadError?.(errorMsg);
       toast({
         title: "File Too Large",
-        description: "File size must be less than 256KB",
+        description: errorMsg,
         variant: "destructive"
       });
       return;
@@ -133,16 +152,28 @@ const ChatPanel: React.FC<ChatPanelProps> = ({ chatHistory, onNewMessage, isOnli
       // Parse locally for display
       const content = JSON.parse(await file.text());
       setUploadedFile({ name: file.name, content });
+
+      // Create metadata
+      const metadata: JsonMetadata = {
+        filename: file.name,
+        sizeBytes: result.sizeBytes,
+        topLevelKeys: result.topLevelKeys || [],
+        uploadTime: new Date().toISOString()
+      };
+
+      onJsonUploadSuccess?.(metadata);
       
       toast({
         title: "File Uploaded",
-        description: `${file.name} uploaded successfully (${result.sizeBytes} bytes)`,
+        description: `${file.name} uploaded successfully - AI now has context about your data`,
       });
     } catch (error) {
       console.error('Upload error:', error);
+      const errorMsg = error instanceof Error ? error.message : "Failed to upload file";
+      onJsonUploadError?.(errorMsg);
       toast({
         title: "Upload Failed",
-        description: error instanceof Error ? error.message : "Failed to upload file",
+        description: errorMsg,
         variant: "destructive"
       });
     }
@@ -180,7 +211,8 @@ const ChatPanel: React.FC<ChatPanelProps> = ({ chatHistory, onNewMessage, isOnli
       const assistantMessage: ChatMessage = {
         role: 'assistant',
         content: response.text,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
+        metadata: response.metadata // Include semantic metadata
       };
 
       onNewMessage(assistantMessage);
@@ -234,6 +266,7 @@ const ChatPanel: React.FC<ChatPanelProps> = ({ chatHistory, onNewMessage, isOnli
   const removeUploadedFile = () => {
     setUploadedFile(null);
     setIncludeFullJson(false);
+    onClearJsonFile?.();
   };
 
   const copyToClipboard = async (content: string, messageIndex: number) => {
@@ -256,18 +289,68 @@ const ChatPanel: React.FC<ChatPanelProps> = ({ chatHistory, onNewMessage, isOnli
     }
   };
 
+  // Render semantic metadata badges
+  const renderSemanticMetadata = (metadata: any) => {
+    if (!metadata) return null;
+
+    return (
+      <div className="mt-2 flex flex-wrap gap-1">
+        {metadata.semanticSimilarity && (
+          <Badge variant="outline" className="text-xs">
+            <Target className="h-3 w-3 mr-1" />
+            {metadata.semanticSimilarity}% similarity
+          </Badge>
+        )}
+        {metadata.contextUsed && (
+          <Badge variant="outline" className="text-xs">
+            <Brain className="h-3 w-3 mr-1" />
+            Context Applied
+          </Badge>
+        )}
+        {metadata.userExpertise && (
+          <Badge variant="outline" className="text-xs">
+            Level: {metadata.userExpertise}
+          </Badge>
+        )}
+        {metadata.semanticMatches && (
+          <Badge variant="outline" className="text-xs">
+            {metadata.semanticMatches} patterns
+          </Badge>
+        )}
+      </div>
+    );
+  };
+
   return (
     <div ref={containerRef} className="flex flex-col h-full">
-      {/* Chat Header */}
+      {/* Chat Header - Updated with Context Indicator */}
       <div className="border-b border-slate-200 dark:border-slate-700 p-6 bg-slate-50 dark:bg-slate-800 flex-shrink-0">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
             <div className="w-10 h-10 bg-gradient-to-r from-indigo-600 to-emerald-500 rounded-full flex items-center justify-center shadow-md">
-              <Bot className="h-5 w-5 text-white" />
+              <Brain className="h-5 w-5 text-white" />
             </div>
             <div>
-              <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">AI Assistant</h2>
-              <p className="text-sm text-slate-600 dark:text-slate-400">Ask questions about DSL syntax and concepts</p>
+              <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100 flex items-center">
+                Intelligent AI Assistant
+                <Badge variant="secondary" className="ml-2 text-xs">
+                  Context-Aware
+                </Badge>
+                {currentJsonFile && (
+                  <Badge variant="outline" className="ml-2 text-xs flex items-center">
+                    <FileJson className="h-3 w-3 mr-1" />
+                    {currentJsonFile.filename}
+                  </Badge>
+                )}
+              </h2>
+              <p className="text-sm text-slate-600 dark:text-slate-400">
+                AI that learns from your data and conversation patterns
+                {currentJsonFile && (
+                  <span className="text-blue-600 dark:text-blue-400">
+                    {' '}• Using {currentJsonFile.topLevelKeys.length} data keys for context
+                  </span>
+                )}
+              </p>
             </div>
           </div>
           
@@ -275,14 +358,25 @@ const ChatPanel: React.FC<ChatPanelProps> = ({ chatHistory, onNewMessage, isOnli
           <Tooltip>
             <TooltipTrigger asChild>
               <div className="flex items-center space-x-2">
-                <div className={`w-2 h-2 rounded-full ${isOnline && isApiHealthy ? 'bg-green-500' : 'bg-red-500'}`} />
-                <span className="text-xs text-slate-500 dark:text-slate-400">
-                  {isOnline && isApiHealthy ? 'Connected' : 'Disconnected'}
+                <div className={`w-2 h-2 rounded-full transition-all duration-500 ${
+                  isOnline && isApiHealthy 
+                    ? 'bg-green-500 shadow-green-500/50 shadow-sm scale-110' 
+                    : 'bg-red-500 animate-pulse scale-90'
+                }`} />
+                <span className={`text-xs transition-colors duration-300 ${
+                  isOnline && isApiHealthy 
+                    ? 'text-green-600 dark:text-green-400' 
+                    : 'text-slate-500 dark:text-slate-400'
+                }`}>
+                  {isOnline && isApiHealthy ? 'Connected' : 'Connecting...'}
                 </span>
               </div>
             </TooltipTrigger>
             <TooltipContent>
-              <p>{isOnline && isApiHealthy ? 'AI service is online and ready' : 'AI service is currently unavailable'}</p>
+              <p>{isOnline && isApiHealthy 
+                ? 'Intelligent AI service is online and ready' 
+                : 'Establishing connection to AI service...'
+              }</p>
             </TooltipContent>
           </Tooltip>
         </div>
@@ -291,7 +385,7 @@ const ChatPanel: React.FC<ChatPanelProps> = ({ chatHistory, onNewMessage, isOnli
       {/* Chat Messages - Dynamic Height */}
       <div 
         className="flex-1 overflow-y-auto p-6 space-y-6"
-        style={{ height: `calc(100% - ${inputAreaHeight + 120}px)` }} // 120px for header
+        style={{ height: `calc(100% - ${inputAreaHeight + 120}px)` }}
       >
         {chatHistory.map((message, index) => (
           <div
@@ -301,7 +395,7 @@ const ChatPanel: React.FC<ChatPanelProps> = ({ chatHistory, onNewMessage, isOnli
             <div className="flex items-start space-x-3 max-w-[85%]">
               {message.role === 'assistant' && (
                 <div className="w-8 h-8 bg-gradient-to-r from-indigo-600 to-emerald-500 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
-                  <Bot className="h-4 w-4 text-white" />
+                  <Brain className="h-4 w-4 text-white" />
                 </div>
               )}
               <div className="relative group">
@@ -328,6 +422,9 @@ const ChatPanel: React.FC<ChatPanelProps> = ({ chatHistory, onNewMessage, isOnli
                     </div>
                   )}
                 </div>
+                
+                {/* Semantic Metadata for Assistant Messages */}
+                {message.role === 'assistant' && message.metadata && renderSemanticMetadata(message.metadata)}
                 
                 {/* Copy Button */}
                 <Button
@@ -359,7 +456,7 @@ const ChatPanel: React.FC<ChatPanelProps> = ({ chatHistory, onNewMessage, isOnli
           <div className="flex justify-start">
             <div className="flex items-start space-x-3">
               <div className="w-8 h-8 bg-gradient-to-r from-indigo-600 to-emerald-500 rounded-full flex items-center justify-center">
-                <Bot className="h-4 w-4 text-white" />
+                <Brain className="h-4 w-4 text-white" />
               </div>
               <div className="bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-2xl px-4 py-3 shadow-sm">
                 <Loader2 className="h-4 w-4 animate-spin text-indigo-600 dark:text-indigo-400" />
@@ -383,8 +480,8 @@ const ChatPanel: React.FC<ChatPanelProps> = ({ chatHistory, onNewMessage, isOnli
         className="border-t border-slate-200 dark:border-slate-700 p-2 bg-slate-50 dark:bg-slate-800 flex-shrink-0 mb-3"
         style={{ height: `${inputAreaHeight}px` }}
       >
-        {/* Uploaded File Indicator */}
-        {uploadedFile && (
+        {/* Uploaded File Indicator - Only show legacy upload indicator if using old file system */}
+        {uploadedFile && !currentJsonFile && (
           <div className="mb-2 flex items-center justify-between bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 rounded-lg px-3 py-2">
             <div className="flex items-center space-x-2">
               <Paperclip className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
@@ -434,7 +531,7 @@ const ChatPanel: React.FC<ChatPanelProps> = ({ chatHistory, onNewMessage, isOnli
               disabled={isLoading}
               className="border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 focus:border-indigo-500 focus:ring-indigo-500/20 resize-none w-full"
               style={{ 
-                height: `${Math.max(inputAreaHeight - 30, 50)}px` // Reverted back to 30px
+                height: `${Math.max(inputAreaHeight - 30, 50)}px`
               }}
               maxLength={MAX_CHARS}
             />
@@ -444,7 +541,7 @@ const ChatPanel: React.FC<ChatPanelProps> = ({ chatHistory, onNewMessage, isOnli
           <div className="flex flex-col space-y-2 w-24">
             {/* Top Row: Upload Button and Character Counter */}
             <div className="flex space-x-2">
-              {/* File Upload Button */}
+              {/* Enhanced File Upload Button with Drag & Drop Tooltip */}
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Button
@@ -457,8 +554,12 @@ const ChatPanel: React.FC<ChatPanelProps> = ({ chatHistory, onNewMessage, isOnli
                     <Paperclip className="h-3 w-3" />
                   </Button>
                 </TooltipTrigger>
-                <TooltipContent>
-                  <p>Upload JSON file (max 50KB)</p>
+                <TooltipContent className="max-w-xs">
+                  <div className="space-y-1">
+                    <p className="font-medium">Upload JSON Data</p>
+                    <p className="text-xs">Click to browse files or drag & drop anywhere on the window</p>
+                    <p className="text-xs text-muted-foreground">Max 256KB • .json files only</p>
+                  </div>
                 </TooltipContent>
               </Tooltip>
               

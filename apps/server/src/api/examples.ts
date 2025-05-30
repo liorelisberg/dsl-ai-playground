@@ -7,8 +7,8 @@ interface Example {
   id: string;
   title: string;
   expression: string;
-  input: any;
-  output: any;
+  input: unknown;
+  output: unknown;
   description: string;
   category: string;
 }

@@ -4,18 +4,14 @@ import { config } from '../config/environment';
 import multer from 'multer';
 
 // Extend Request interface to include file property
-declare global {
-  namespace Express {
-    interface Request {
-      file?: Express.Multer.File;
-    }
-  }
+interface ExtendedRequest extends Request {
+  file?: Express.Multer.File;
 }
 
 const router: Router = Router();
 
 // In-memory JSON store per session
-const jsonStore = new Map<string, any>();
+const jsonStore = new Map<string, unknown>();
 
 // Configure multer for file uploads
 const upload = multer({
@@ -23,7 +19,7 @@ const upload = multer({
   limits: {
     fileSize: config.limits.maxJsonBytes, // 256KB limit
   },
-  fileFilter: (req: any, file: Express.Multer.File, cb: multer.FileFilterCallback) => {
+  fileFilter: (req: ExtendedRequest, file: Express.Multer.File, cb: multer.FileFilterCallback) => {
     // Accept if MIME type is application/json OR if filename ends with .json
     if (file.mimetype === 'application/json' || file.originalname.toLowerCase().endsWith('.json')) {
       cb(null, true);
@@ -33,7 +29,7 @@ const upload = multer({
   },
 });
 
-const uploadHandler = async (req: Request, res: Response): Promise<void> => {
+const uploadHandler = async (req: ExtendedRequest, res: Response): Promise<void> => {
   try {
     if (!req.file) {
       res.status(400).json({ error: 'No file uploaded' });
@@ -42,7 +38,7 @@ const uploadHandler = async (req: Request, res: Response): Promise<void> => {
 
     // Parse JSON
     const jsonContent = req.file.buffer.toString('utf8');
-    let parsedJson: any;
+    let parsedJson: unknown;
     
     try {
       parsedJson = JSON.parse(jsonContent);
@@ -56,7 +52,7 @@ const uploadHandler = async (req: Request, res: Response): Promise<void> => {
 
     // Extract top-level keys for response
     const topLevelKeys = typeof parsedJson === 'object' && parsedJson !== null 
-      ? Object.keys(parsedJson) 
+      ? Object.keys(parsedJson as Record<string, unknown>) 
       : [];
 
     console.log(`JSON uploaded for session ${req.sessionId}: ${req.file.size} bytes, keys: ${topLevelKeys.join(', ')}`);

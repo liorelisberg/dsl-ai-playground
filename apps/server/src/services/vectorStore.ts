@@ -18,7 +18,7 @@ export interface Document {
 export interface SearchResult {
   id: string;
   content: string;
-  metadata: any;
+  metadata: Record<string, unknown>;
   similarity: number;  // 0-1 similarity score
 }
 
@@ -184,8 +184,8 @@ class VectorStore {
     return results.map(result => ({
       id: result.id,
       content: result.content,
-      source: result.metadata.source || 'unknown',
-      category: result.metadata.category || 'general',
+      source: typeof result.metadata.source === 'string' ? result.metadata.source : 'unknown',
+      category: typeof result.metadata.category === 'string' ? result.metadata.category : 'general',
       relevanceScore: result.similarity,
     }));
   }

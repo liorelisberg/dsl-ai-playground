@@ -150,7 +150,7 @@ class GeminiService {
     message: string, 
     history: ChatTurn[] = [], 
     knowledgeCards: KnowledgeCard[] = [],
-    jsonContext?: any
+    jsonContext?: unknown
   ): Promise<GeminiResponse> {
     try {
       // Build enhanced prompt with DSL context
@@ -216,7 +216,7 @@ class GeminiService {
     message: string, 
     history: ChatTurn[], 
     knowledgeCards: KnowledgeCard[],
-    jsonContext?: any
+    jsonContext?: unknown
   ): string {
     const sections: string[] = [];
 
@@ -268,7 +268,7 @@ Always provide clear explanations and practical examples.`);
   /**
    * Generate a compact JSON schema representation
    */
-  private generateJsonSchema(obj: any, maxDepth: number = 2, currentDepth: number = 0): string {
+  private generateJsonSchema(obj: unknown, maxDepth: number = 2, currentDepth: number = 0): string {
     if (currentDepth >= maxDepth) return '...';
     
     if (Array.isArray(obj)) {
@@ -278,10 +278,10 @@ Always provide clear explanations and practical examples.`);
     
     if (obj && typeof obj === 'object') {
       const keys = Object.keys(obj).slice(0, 5); // Limit to first 5 keys
-      const schemaObj: any = {};
+      const schemaObj: Record<string, unknown> = {};
       
       for (const key of keys) {
-        schemaObj[key] = this.generateJsonSchema(obj[key], maxDepth, currentDepth + 1);
+        schemaObj[key] = this.generateJsonSchema((obj as Record<string, unknown>)[key], maxDepth, currentDepth + 1);
       }
       
       if (Object.keys(obj).length > 5) {
@@ -295,4 +295,4 @@ Always provide clear explanations and practical examples.`);
   }
 }
 
-export const geminiService = new GeminiService(); 
+export const geminiService = new GeminiService();

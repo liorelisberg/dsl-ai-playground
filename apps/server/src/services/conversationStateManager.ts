@@ -231,7 +231,7 @@ export class ConversationStateManager {
   private assessExpertiseFromQuery(message: string): 'beginner' | 'intermediate' | 'advanced' {
     const messageLower = message.toLowerCase();
     
-    let scores = {
+    const scores = {
       beginner: 0,
       intermediate: 0,
       advanced: 0
@@ -253,7 +253,7 @@ export class ConversationStateManager {
     const maxScore = Math.max(scores.beginner, scores.intermediate, scores.advanced);
     if (maxScore === 0) return 'beginner'; // Default
 
-    return Object.keys(scores).find(key => scores[key as keyof typeof scores] === maxScore) as any;
+    return Object.keys(scores).find(key => scores[key as keyof typeof scores] === maxScore) as 'beginner' | 'intermediate' | 'advanced' || 'beginner';
   }
 
   private blendExpertise(
@@ -267,8 +267,8 @@ export class ConversationStateManager {
     // Weighted average (70% current, 30% detected)
     const blended = Math.round(currentScore * 0.7 + detectedScore * 0.3);
     
-    const levelMap = { 1: 'beginner', 2: 'intermediate', 3: 'advanced' };
-    return levelMap[blended as keyof typeof levelMap] as any;
+    const levelMap = { 1: 'beginner', 2: 'intermediate', 3: 'advanced' } as const;
+    return levelMap[blended as keyof typeof levelMap] || 'beginner';
   }
 
   private extractTopics(message: string): string[] {

@@ -17,7 +17,7 @@ const getZenEngine = () => {
 
 export const evaluateExpression = async (
   expression: string,
-  data: any
+  data: unknown
 ): Promise<DSLEvaluationResult> => {
   const cleanExpression = expression.replace(/\/\/.*$/gm, '').trim();
   

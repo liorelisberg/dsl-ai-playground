@@ -1,10 +1,6 @@
 import { Example } from './types';
 
 export const arrayOperationsExamples: Example[] = [
-  // ⚠️  CLEANED FILE - 4 hallucinated examples removed
-  // 📅  Cleaned on: 2025-05-30T22:10:53.509Z
-  // 🔍  Removed IDs: array-flat-6, array-flat-7, array-flat-8, array-flat-9
-
   // ⚠️  MANUALLY CLEANED - 5 hallucinated examples removed
   // 📅  Cleaned on: 2025-05-30T21:41:11.963Z
   // ⚠️  CLEANED FILE - 5 hallucinated examples removed

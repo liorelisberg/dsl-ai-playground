@@ -3,7 +3,7 @@ import { API_CONFIG } from '../config/api';
 interface RequestOptions {
   method?: 'GET' | 'POST' | 'PUT' | 'DELETE';
   headers?: Record<string, string>;
-  body?: any;
+  body?: unknown;
   timeout?: number;
 }
 

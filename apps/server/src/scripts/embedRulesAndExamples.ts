@@ -1,7 +1,7 @@
 #!/usr/bin/env ts-node
 
-import { vectorStore } from '../services/vectorStore';
-import { fileProcessor } from '../utils/fileProcessor';
+import { vectorStore, Document } from '../services/vectorStore';
+import { fileProcessor, ProcessedFile } from '../utils/fileProcessor';
 import { config } from '../config/environment';
 
 interface EmbeddingProgress {
@@ -109,7 +109,7 @@ class EmbeddingScript {
     }
   }
 
-  private async processFiles(options: ScriptOptions): Promise<any[]> {
+  private async processFiles(options: ScriptOptions): Promise<ProcessedFile[]> {
     console.log('📁 Processing rule files...');
 
     try {
@@ -141,7 +141,7 @@ class EmbeddingScript {
     }
   }
 
-  private async embedDocuments(documents: any[], options: ScriptOptions): Promise<void> {
+  private async embedDocuments(documents: Document[], options: ScriptOptions): Promise<void> {
     console.log('🧠 Embedding documents...');
 
     const batchSize = 10; // Process in batches to avoid overwhelming the API

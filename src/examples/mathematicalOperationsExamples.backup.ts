@@ -1,10 +1,6 @@
 import { Example } from './types';
 
 export const mathematicalOperationsExamples: Example[] = [
-  // ⚠️  CLEANED FILE - 11 hallucinated examples removed
-  // 📅  Cleaned on: 2025-05-30T22:10:53.518Z
-  // 🔍  Removed IDs: math-7, math-8, math-23, complex-math-3, complex-math-9, complex-math-13, complex-math-22, complex-math-26, complex-math-30, complex-math-33, round-10
-
   // ⚠️  MANUALLY CLEANED - 17 hallucinated examples removed
   // 📅  Cleaned on: 2025-05-30T21:41:11.979Z
   // ⚠️  CLEANED FILE - 17 hallucinated examples removed
