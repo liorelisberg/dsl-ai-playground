@@ -256,7 +256,7 @@ class VectorStore {
       const { fileProcessor } = await import('../utils/fileProcessor');
       
       // Process DSL rule files from the data directory
-      const rulesDirectory = '../../data/rules';
+      const rulesDirectory = '../../docs/dsl-rules';
       const processedFiles = await fileProcessor.readRuleFiles(rulesDirectory);
       
       if (processedFiles.length === 0) {

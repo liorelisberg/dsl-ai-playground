@@ -263,7 +263,7 @@ async function main(): Promise<void> {
   const options: ScriptOptions = {
     dryRun: args.includes('--dry-run'),
     reset: args.includes('--reset'),
-    rulesDirectory: args.find(arg => arg.startsWith('--rules='))?.split('=')[1] || './data/rules',
+    rulesDirectory: args.find(arg => arg.startsWith('--rules='))?.split('=')[1] || './docs/dsl-rules',
     verbose: args.includes('--verbose') || args.includes('-v'),
   };
 
@@ -275,7 +275,7 @@ async function main(): Promise<void> {
     console.log('Options:');
     console.log('  --dry-run         Preview what would be processed without making changes');
     console.log('  --reset           Delete and recreate the vector store collection');
-    console.log('  --rules=PATH      Specify custom rules directory (default: ./data/rules)');
+    console.log('  --rules=PATH      Specify custom rules directory (default: ./docs/dsl-rules)');
     console.log('  --verbose, -v     Show detailed processing information');
     console.log('  --help, -h        Show this help message');
     console.log('');

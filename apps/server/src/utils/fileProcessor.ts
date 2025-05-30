@@ -42,7 +42,7 @@ class FileProcessor {
   /**
    * Read all .mdc files from the rules directory
    */
-  async readRuleFiles(rulesDirectory: string = './data/rules'): Promise<ProcessedFile[]> {
+  async readRuleFiles(rulesDirectory: string = './docs/dsl-rules'): Promise<ProcessedFile[]> {
     const processedFiles: ProcessedFile[] = [];
 
     try {
