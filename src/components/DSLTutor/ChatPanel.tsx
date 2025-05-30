@@ -28,8 +28,12 @@ const ChatPanel: React.FC<ChatPanelProps> = ({ chatHistory, onNewMessage, isOnli
   const [uploadedFile, setUploadedFile] = useState<UploadedFile | null>(null);
   const [includeFullJson, setIncludeFullJson] = useState(false);
   const [copiedMessageIndex, setCopiedMessageIndex] = useState<number | null>(null);
-  const chatEndRef = useRef<HTMLDivElement>(null);
+  const [inputAreaHeight, setInputAreaHeight] = useState(120); // Reduced from 180px
+  const [isDragging, setIsDragging] = useState(false);
+  
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const chatEndRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   const MAX_FILE_SIZE = 50 * 1024; // 50KB
   const MAX_CHARS = 500;
@@ -45,9 +49,45 @@ const ChatPanel: React.FC<ChatPanelProps> = ({ chatHistory, onNewMessage, isOnli
   // Check if send button should be disabled
   const isSendDisabled = !inputMessage.trim() || isLoading || charCount >= MAX_CHARS;
 
+  // Resize functionality
+  const handleMouseDown = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
+
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [chatHistory]);
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!isDragging || !containerRef.current) return;
+
+      const containerRect = containerRef.current.getBoundingClientRect();
+      const newInputHeight = containerRect.bottom - e.clientY;
+      
+      // Set min/max limits for input area (100px to 400px)
+      const minHeight = 100;
+      const maxHeight = Math.min(400, containerRect.height - 200); // Leave at least 200px for messages
+      
+      const clampedHeight = Math.max(minHeight, Math.min(maxHeight, newInputHeight));
+      setInputAreaHeight(clampedHeight);
+    };
+
+    const handleMouseUp = () => {
+      setIsDragging(false);
+    };
+
+    if (isDragging) {
+      document.addEventListener('mousemove', handleMouseMove);
+      document.addEventListener('mouseup', handleMouseUp);
+    }
+
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, [isDragging]);
 
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -217,9 +257,9 @@ const ChatPanel: React.FC<ChatPanelProps> = ({ chatHistory, onNewMessage, isOnli
   };
 
   return (
-    <div className="flex flex-col h-full">
+    <div ref={containerRef} className="flex flex-col h-full">
       {/* Chat Header */}
-      <div className="border-b border-slate-200 dark:border-slate-700 p-6 bg-slate-50 dark:bg-slate-800">
+      <div className="border-b border-slate-200 dark:border-slate-700 p-6 bg-slate-50 dark:bg-slate-800 flex-shrink-0">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
             <div className="w-10 h-10 bg-gradient-to-r from-indigo-600 to-emerald-500 rounded-full flex items-center justify-center shadow-md">
@@ -248,8 +288,11 @@ const ChatPanel: React.FC<ChatPanelProps> = ({ chatHistory, onNewMessage, isOnli
         </div>
       </div>
 
-      {/* Chat Messages */}
-      <div className="flex-1 overflow-y-auto p-6 space-y-6">
+      {/* Chat Messages - Dynamic Height */}
+      <div 
+        className="flex-1 overflow-y-auto p-6 space-y-6"
+        style={{ height: `calc(100% - ${inputAreaHeight + 120}px)` }} // 120px for header
+      >
         {chatHistory.map((message, index) => (
           <div
             key={index}
@@ -327,11 +370,22 @@ const ChatPanel: React.FC<ChatPanelProps> = ({ chatHistory, onNewMessage, isOnli
         <div ref={chatEndRef} />
       </div>
 
-      {/* Message Input */}
-      <div className="border-t border-slate-200 dark:border-slate-700 p-3 bg-slate-50 dark:bg-slate-800">
+      {/* Resize Handle */}
+      <div 
+        className={`flex items-center justify-center h-1 bg-slate-200 dark:bg-slate-600 border-slate-300 dark:border-slate-500 cursor-row-resize hover:bg-slate-300 dark:hover:bg-slate-500 transition-all duration-150 group ${isDragging ? 'bg-slate-300 dark:bg-slate-500' : ''}`}
+        onMouseDown={handleMouseDown}
+      >
+        <div className="w-8 h-0.5 bg-slate-400 dark:bg-slate-400 rounded-full opacity-60 group-hover:opacity-100 transition-opacity" />
+      </div>
+
+      {/* Message Input - Dynamic Height */}
+      <div 
+        className="border-t border-slate-200 dark:border-slate-700 p-2 bg-slate-50 dark:bg-slate-800 flex-shrink-0 mb-3"
+        style={{ height: `${inputAreaHeight}px` }}
+      >
         {/* Uploaded File Indicator */}
         {uploadedFile && (
-          <div className="mb-3 flex items-center justify-between bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 rounded-lg px-3 py-2">
+          <div className="mb-2 flex items-center justify-between bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 rounded-lg px-3 py-2">
             <div className="flex items-center space-x-2">
               <Paperclip className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
               <span className="text-sm text-emerald-700 dark:text-emerald-300">{uploadedFile.name}</span>
@@ -358,9 +412,9 @@ const ChatPanel: React.FC<ChatPanelProps> = ({ chatHistory, onNewMessage, isOnli
           </div>
         )}
         
-        <div className="flex space-x-3 items-start">
+        <div className="flex space-x-2 items-start mt-3 mb-3">
           {/* Text Input */}
-          <div className="flex-1 relative">
+          <div className="flex-1 relative mx-2">
             <Textarea
               value={inputMessage}
               onChange={(e) => {
@@ -378,7 +432,10 @@ const ChatPanel: React.FC<ChatPanelProps> = ({ chatHistory, onNewMessage, isOnli
               }}
               placeholder="Ask about DSL syntax, examples, or concepts..."
               disabled={isLoading}
-              className="min-h-[80px] max-h-[140px] border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 focus:border-indigo-500 focus:ring-indigo-500/20 resize-none"
+              className="border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 focus:border-indigo-500 focus:ring-indigo-500/20 resize-none w-full"
+              style={{ 
+                height: `${Math.max(inputAreaHeight - 30, 50)}px` // Reverted back to 30px
+              }}
               maxLength={MAX_CHARS}
             />
           </div>
