@@ -1,9 +1,10 @@
 import { Request, Response, NextFunction } from 'express';
+import { config } from '../config/environment';
 
 // Rate limiting for FREE tier Gemini 2.5 Flash Preview
 const MAX_REQUESTS_PER_MINUTE = 10; // Free tier limit
 const MAX_REQUESTS_PER_DAY = 500;   // Free tier limit
-const WINDOW_MS = 60 * 1000; // 1 minute
+const WINDOW_MS = config.rateLimit.window * 1000; // Convert to milliseconds
 const DAY_MS = 24 * 60 * 60 * 1000; // 24 hours
 
 interface RateLimit {
@@ -14,6 +15,22 @@ interface RateLimit {
 }
 
 const rateLimits = new Map<string, RateLimit>();
+
+// Length guard middleware - checks message character limit
+export const lengthGuard = (req: Request, res: Response, next: NextFunction) => {
+  const { message } = req.body;
+  
+  if (message && typeof message === 'string' && message.length > config.limits.maxMessageChars) {
+    console.log(`Message length exceeded for ${req.sessionId}: ${message.length} chars (max: ${config.limits.maxMessageChars})`);
+    return res.status(413).json({ 
+      error: `Message too long. Maximum ${config.limits.maxMessageChars} characters allowed.`,
+      maxLength: config.limits.maxMessageChars,
+      currentLength: message.length
+    });
+  }
+  
+  next();
+};
 
 export const rateLimiter = (req: Request, res: Response, next: NextFunction) => {
   const key = req.sessionId || req.ip || 'unknown';
@@ -33,7 +50,7 @@ export const rateLimiter = (req: Request, res: Response, next: NextFunction) => 
     dailyTimestamp: now 
   };
   
-  // Reset minute counter if window expired
+  // Reset window counter if window expired
   if (now - userRateLimit.timestamp > WINDOW_MS) {
     userRateLimit.timestamp = now;
     userRateLimit.count = 1;
@@ -51,11 +68,11 @@ export const rateLimiter = (req: Request, res: Response, next: NextFunction) => 
   
   rateLimits.set(key, userRateLimit);
   
-  // Check minute limit (FREE tier: 10 RPM)
-  if (userRateLimit.count > MAX_REQUESTS_PER_MINUTE) {
-    console.log(`Rate limit exceeded for ${key}: ${userRateLimit.count} requests in last minute`);
+  // Check session-based limit (6 requests / 30s per session as per requirements)
+  if (userRateLimit.count > config.rateLimit.max) {
+    console.log(`Rate limit exceeded for session ${key}: ${userRateLimit.count} requests in last ${config.rateLimit.window}s`);
     return res.status(429).json({ 
-      error: 'Rate limit exceeded. Free tier allows 10 requests per minute. Please wait before trying again.',
+      error: `Rate limit exceeded. Maximum ${config.rateLimit.max} requests per ${config.rateLimit.window} seconds per session.`,
       retryAfter: Math.ceil((WINDOW_MS - (now - userRateLimit.timestamp)) / 1000)
     });
   }
@@ -70,10 +87,11 @@ export const rateLimiter = (req: Request, res: Response, next: NextFunction) => 
   }
   
   // Add headers to inform client about limits
-  res.setHeader('X-RateLimit-Limit-Minute', MAX_REQUESTS_PER_MINUTE);
-  res.setHeader('X-RateLimit-Remaining-Minute', Math.max(0, MAX_REQUESTS_PER_MINUTE - userRateLimit.count));
+  res.setHeader('X-RateLimit-Limit-Window', config.rateLimit.max);
+  res.setHeader('X-RateLimit-Remaining-Window', Math.max(0, config.rateLimit.max - userRateLimit.count));
   res.setHeader('X-RateLimit-Limit-Day', MAX_REQUESTS_PER_DAY);
   res.setHeader('X-RateLimit-Remaining-Day', Math.max(0, MAX_REQUESTS_PER_DAY - userRateLimit.dailyCount));
+  res.setHeader('X-RateLimit-Window-Seconds', config.rateLimit.window);
   
   next();
 }; 

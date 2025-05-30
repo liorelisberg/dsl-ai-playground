@@ -1,10 +1,10 @@
 import { Router, Request, Response } from 'express';
 import { chatService } from '../services/chat';
 import { geminiService } from '../services/gemini';
-import { rateLimiter } from '../middleware/rate-limiter';
+import { rateLimiter, lengthGuard } from '../middleware/rate-limiter';
 import { attachSession } from '../middleware/session';
 
-const router = Router();
+const router: Router = Router();
 
 const chatHandler = async (req: Request, res: Response): Promise<void> => {
   try {
@@ -37,6 +37,6 @@ const chatHandler = async (req: Request, res: Response): Promise<void> => {
 };
 
 // @ts-ignore - Express v5 typing issue
-router.post('/chat', attachSession, rateLimiter, chatHandler);
+router.post('/chat', attachSession, lengthGuard, rateLimiter, chatHandler);
 
 export default router; 

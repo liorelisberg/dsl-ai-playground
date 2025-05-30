@@ -1,25 +1,26 @@
 import express from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
-import dotenv from 'dotenv';
 import swaggerUi from 'swagger-ui-express';
 import YAML from 'yamljs';
 import path from 'path';
 import chatRouter from './api/chat';
+import uploadRouter from './api/upload';
+import examplesRouter from './api/examples';
+import { config, validateConfig } from './config/environment';
 
-// Load environment variables
-dotenv.config();
+// Validate configuration
+validateConfig();
 
 // Load Swagger documentation
 const swaggerDocument = YAML.load(path.join(__dirname, 'swagger.yaml'));
 
 const app = express();
-const port = process.env.PORT || 3000;
 
 // Middleware
 app.use(cors({
   origin: [
-    process.env.FRONTEND_URL || 'http://localhost:8080',
+    config.cors.origin,
     'http://localhost:8080'
   ],
   credentials: true
@@ -35,10 +36,21 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument, {
 
 // Routes
 app.use('/api', chatRouter);
+app.use('/api', uploadRouter);
+app.use('/api', examplesRouter);
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok' });
+  res.json({ 
+    status: 'ok',
+    timestamp: new Date().toISOString(),
+    environment: config.server.nodeEnv,
+    limits: {
+      maxMessageChars: config.limits.maxMessageChars,
+      maxJsonBytes: config.limits.maxJsonBytes,
+      rateLimit: `${config.rateLimit.max} requests per ${config.rateLimit.window}s`
+    }
+  });
 });
 
 // DSL evaluation endpoint using Zen Engine
@@ -68,7 +80,9 @@ app.post('/api/evaluate-dsl', (req, res) => {
 });
 
 // Start server
-app.listen(port, () => {
-  console.log(`Server running on port ${port}`);
-  console.log(`API Documentation available at http://localhost:${port}/api-docs`);
+app.listen(config.server.port, () => {
+  console.log(`🚀 Server running on port ${config.server.port}`);
+  console.log(`📚 API Documentation: http://localhost:${config.server.port}/api-docs`);
+  console.log(`🔧 Environment: ${config.server.nodeEnv}`);
+  console.log(`⚡ Rate Limits: ${config.rateLimit.max} requests per ${config.rateLimit.window}s`);
 }); 
