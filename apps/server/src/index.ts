@@ -9,6 +9,7 @@ import uploadRouter from './api/upload';
 import examplesRouter from './api/examples';
 import { config, validateConfig } from './config/environment';
 import { vectorStore } from './services/vectorStore';
+import semanticChatRoutes from './routes/semanticChat';
 
 // Validate configuration
 validateConfig();
@@ -27,7 +28,7 @@ app.use(cors({
   credentials: true
 }));
 app.use(cookieParser());
-app.use(express.json());
+app.use(express.json({ limit: '10mb' }));
 
 // Swagger API documentation
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument, {
@@ -39,18 +40,14 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument, {
 app.use('/api', chatRouter);
 app.use('/api', uploadRouter);
 app.use('/api', examplesRouter);
+app.use('/api/chat', semanticChatRoutes);
 
 // Health check endpoint
-app.get('/api/health', (req, res) => {
+app.get('/health', (req, res) => {
   res.json({ 
-    status: 'ok',
+    status: 'healthy', 
     timestamp: new Date().toISOString(),
-    environment: config.server.nodeEnv,
-    limits: {
-      maxMessageChars: config.limits.maxMessageChars,
-      maxJsonBytes: config.limits.maxJsonBytes,
-      rateLimit: `${config.rateLimit.max} requests per ${config.rateLimit.window}s`
-    }
+    version: '2.0.0-semantic'
   });
 });
 
@@ -86,6 +83,9 @@ app.listen(config.server.port, async () => {
   console.log(`📚 API Documentation: http://localhost:${config.server.port}/api-docs`);
   console.log(`🔧 Environment: ${config.server.nodeEnv}`);
   console.log(`⚡ Rate Limits: ${config.rateLimit.max} requests per ${config.rateLimit.window}s`);
+  console.log(`📡 Health check: http://localhost:${config.server.port}/health`);
+  console.log(`💬 Chat API: http://localhost:${config.server.port}/api/chat`);
+  console.log(`🧠 Semantic Chat API: http://localhost:${config.server.port}/api/chat/semantic`);
   
   // Initialize vector store for knowledge retrieval
   try {
@@ -101,4 +101,13 @@ app.listen(config.server.port, async () => {
     console.error(`❌ Failed to initialize knowledge base:`, error);
     console.log(`⚠️  Server will continue without knowledge retrieval`);
   }
+});
+
+// Error handling middleware
+app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
+  console.error('Unhandled error:', err);
+  res.status(500).json({ 
+    error: 'Internal server error',
+    message: err.message 
+  });
 }); 
