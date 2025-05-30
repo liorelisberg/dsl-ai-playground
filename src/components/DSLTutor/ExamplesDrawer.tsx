@@ -2,23 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
-import { X, Search, Code, Sparkles, ArrowLeft, FolderOpen, Hash } from 'lucide-react';
+import { X, Search, Code, Sparkles, ArrowLeft, FolderOpen, Hash, Layers, Calendar, Braces, Clock, BarChart } from 'lucide-react';
 import { getExamples } from '../../services/examplesService';
+import { Example } from '../../examples/types';
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
-
-interface Example {
-  id: string;
-  title: string;
-  expression: string;
-  sampleInput: string;
-  expectedOutput: string;
-  description: string;
-  category: string;
-}
 
 interface ExamplesDrawerProps {
   isOpen: boolean;
@@ -98,9 +89,9 @@ const categoryConfig: Record<string, { icon: React.ReactNode; label: string; des
   },
   'type-checking': {
     icon: <Hash className="h-5 w-5" />,
-    label: 'Type Checking',
-    description: 'Validate types and check if values are numeric',
-    color: 'bg-gradient-to-br from-teal-500 to-emerald-600'
+    label: 'Type Checking Functions',
+    description: 'Type detection, validation, and numeric checking functions',
+    color: 'bg-gradient-to-br from-indigo-500 to-blue-600'
   },
   date: {
     icon: <Hash className="h-5 w-5" />,
@@ -109,10 +100,10 @@ const categoryConfig: Record<string, { icon: React.ReactNode; label: string; des
     color: 'bg-gradient-to-br from-rose-500 to-red-600'
   },
   'date-advanced': {
-    icon: <Sparkles className="h-5 w-5" />,
+    icon: <Calendar className="h-5 w-5" />,
     label: 'Advanced Date Operations',
-    description: 'Date validation, timezone conversion, and comparisons',
-    color: 'bg-gradient-to-br from-pink-500 to-rose-600'
+    description: 'Date validation, timezone conversion, and complex date comparisons',
+    color: 'bg-gradient-to-br from-rose-500 to-pink-600'
   },
   null: {
     icon: <Hash className="h-5 w-5" />,
@@ -134,27 +125,27 @@ const categoryConfig: Record<string, { icon: React.ReactNode; label: string; des
   },
   'complex-math': {
     icon: <Hash className="h-5 w-5" />,
-    label: 'Complex Math Expressions',
-    description: 'Multi-step calculations with parentheses and operator precedence',
-    color: 'bg-gradient-to-br from-blue-500 to-purple-600'
+    label: 'Complex Mathematical Expressions',
+    description: 'Multi-step calculations with parentheses, powers, and operator precedence',
+    color: 'bg-gradient-to-br from-yellow-500 to-amber-600'
   },
   'dynamic-objects': {
-    icon: <FolderOpen className="h-5 w-5" />,
-    label: 'Dynamic Object Construction',
-    description: 'Create objects with computed keys and dynamic properties',
-    color: 'bg-gradient-to-br from-violet-500 to-purple-600'
+    icon: <Braces className="h-5 w-5" />,
+    label: 'Dynamic Object Operations',
+    description: 'Computed keys, template strings, and property-based object creation',
+    color: 'bg-gradient-to-br from-emerald-500 to-green-600'
   },
   'date-duration': {
-    icon: <Hash className="h-5 w-5" />,
+    icon: <Clock className="h-5 w-5" />,
     label: 'Date Duration Arithmetic',
-    description: 'Duration operations, date arithmetic, and time period calculations',
-    color: 'bg-gradient-to-br from-indigo-500 to-blue-600'
+    description: 'Duration operations, date arithmetic, and startOf/endOf functions',
+    color: 'bg-gradient-to-br from-teal-500 to-cyan-600'
   },
   'array-statistics': {
-    icon: <FolderOpen className="h-5 w-5" />,
+    icon: <BarChart className="h-5 w-5" />,
     label: 'Array Statistics',
-    description: 'Statistical functions: median, mode, range calculations',
-    color: 'bg-gradient-to-br from-emerald-500 to-green-600'
+    description: 'Median, mode, range calculations, and statistical array operations',
+    color: 'bg-gradient-to-br from-orange-500 to-red-600'
   },
   'date-parts': {
     icon: <Hash className="h-5 w-5" />,
@@ -197,6 +188,30 @@ const categoryConfig: Record<string, { icon: React.ReactNode; label: string; des
     label: 'Array Flattening & Transformations',
     description: 'FlatMap, unique, sort, reverse, reduce, and nested array operations',
     color: 'bg-gradient-to-br from-cyan-500 to-teal-600'
+  },
+  'decimal-precision': {
+    icon: <Hash className="h-5 w-5" />,
+    label: 'Decimal Precision',
+    description: 'High-precision decimal arithmetic and floating-point operations',
+    color: 'bg-gradient-to-br from-amber-500 to-orange-600'
+  },
+  rounding: {
+    icon: <Hash className="h-5 w-5" />,
+    label: 'Rounding Functions',
+    description: 'Round numbers to specified precision with various rounding modes',
+    color: 'bg-gradient-to-br from-lime-500 to-green-600'
+  },
+  closures: {
+    icon: <Hash className="h-5 w-5" />,
+    label: 'Closures and # Symbol',
+    description: 'Array operations using closure syntax with # for element reference',
+    color: 'bg-gradient-to-br from-sky-500 to-blue-600'
+  },
+  'nested-closures': {
+    icon: <Layers className="h-5 w-5" />,
+    label: 'Nested Closures',
+    description: 'Complex nested operations with multiple closure functions',
+    color: 'bg-gradient-to-br from-violet-500 to-purple-600'
   }
 };
 

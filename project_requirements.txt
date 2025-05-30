@@ -1,0 +1,154 @@
+# DSL Tutor – Conversation-Manager Layer  
+**Minimum-Viable Product Requirements**  
+Version 1.0 · May 2025  
+
+---
+
+## 1 · Purpose
+Create a token-efficient, free-tier-compliant conversation engine that lets users:
+
+1. Chat with an AI expert on a custom JavaScript-like DSL.  
+2. Generate, explain and evaluate DSL expressions.  
+3. Optionally upload a JSON data sample to guide expression generation.
+
+The system must run entirely on free resources (Google Gemini 2.5 Flash Preview and a local Chroma vector store) and remain responsive under the model’s request-per-minute and token-per-minute quotas.
+
+---
+
+## 2 · High-Level Architecture
+```
+Client (Next.js) ──► REST API (Express, TypeScript) ──►
+  ├─ upload JSON        │
+  ├─ chat message       │ embeds        ┌── Chroma (vector db)
+  └─ eval request       └─ prompt build ┘
+                                │
+                        Google Gemini 2.5 Flash Preview
+                                │
+                         Assistant response ←──────────
+```
+
+---
+
+## 3 · Core Concepts & Limits
+
+| Item | Limit / Rule |
+|------|--------------|
+| User chat message length | **2 000 characters** (hard cap; HTTP 413 on exceed) |
+| Uploaded JSON size | **256 KB** (≈ 150 000 tokens) |
+| Model context window | 1 000 000 tokens |
+| Retrieval docs per call | 6 “knowledge cards” (≤ 400 tokens each) |
+| Sliding chat memory | Last 4 turns (≈ 800 tokens) |
+| Static DSL header | ≈ 150 tokens |
+| Request quota guard | 6 requests / 30 s per session or IP |
+| Vendor free-tier quotas | 10 requests / min · 250 K tokens / min · 500 requests / day |
+
+With these limits the typical prompt is ≈ 2 000 tokens; a full-JSON request tops out at ≈ 152 000 tokens—well below the model’s 1 M window.
+
+---
+
+## 4 · Functional Requirements
+
+### 4.1  Embedding Script  
+* File: `embedRulesAndExamples.ts`  
+* Reads all `.mdc` rule files and `.csv` example files.  
+* Splits each into ≤ 400-token chunks, adds metadata `{ id, category, content }`.  
+* Embeds via `gemini-embedding-exp-03-07` and upserts to Chroma at `CHROMA_PATH`.  
+* Runs automatically on server start if no index exists; manual run with `pnpm run embed`.
+
+### 4.2  JSON Upload  
+* Endpoint: `POST /api/upload-json`  
+* Accepts `multipart/form-data` file (MIME `application/json`; ≤ 256 KB).  
+* Parses and stores object in `JSONStore<sessionId, any>` (in RAM).  
+* Returns `{ sizeBytes, topLevelKeys: string[] }`.
+
+### 4.3  Chat  
+* Endpoint: `POST /api/chat`  
+* Pipeline:  
+  1. **LengthGuard** – reject > 2 000 chars.  
+  2. **RateLimiter** – 6 req / 30 s.  
+  3. Embed user message → Chroma top-6 similarity search.  
+  4. Build prompt: static DSL header ▶ retrieved docs ▶ optional JSON schema snippet ▶ last 4 turns ▶ user message.  
+  5. If the user sends `@fulljson` or toggles “Include full JSON,” append the entire uploaded JSON once and block further chats from this session for 5 s.  
+  6. Call Gemini 2.5 Flash Preview (`v1beta/models/gemini-2.5-flash-preview-05-20:generateContent`).  
+  7. Store the new turn in `MemoryMap<sessionId, ChatTurn[]>` (max 4 turns).  
+  8. Respond `{ text }` or `{ error }`.
+
+### 4.4  Evaluation  
+* Endpoint: `POST /api/eval`  
+* Body: `{ expression: string, inputSource: "inline" | "uploaded", sampleInput?: any }`  
+* When `inputSource` is `"uploaded"`, evaluate against `JSONStore[sessionId]`.  
+* Current implementation is a **stub** returning `{ result: "stub" }`.
+
+### 4.5  Examples  
+* Endpoint: `GET /api/examples`  
+* Returns array of `{ id, title, expression, input, output, description, category }`.  
+* Front end groups examples by `category`, sorts alphabetically within each group, and provides a search box.
+
+---
+
+## 5 · Non-Functional Requirements
+
+| Category | Requirement |
+|----------|-------------|
+| **Performance** | 95-percentile latency < 6 s for typical 2 K-token prompts. |
+| **Reliability** | If Gemini returns an error, log and send a toast; no retries or fallback model in MVP. |
+| **Security** | HTTP-only signed cookie `sessionId`; reject non-JSON uploads; escape strings when echoing filenames or JSON previews. |
+| **Privacy** | Uploaded JSON kept only in RAM; cleared on server restart; never logged. |
+| **Accessibility** | UI color contrast ≥ WCAG AA; buttons have ARIA labels. |
+| **Logging** | Console or file logs: embedding stats, rate-limit violations, 413 rejects, Gemini errors. |
+
+---
+
+## 6 · Environment Variables
+
+```env
+GEMINI_API_KEY=
+GEMINI_EMBED_KEY=
+SESSION_SECRET=changeme
+CHROMA_PATH=./chroma
+RATE_LIMIT_WINDOW=30
+RATE_LIMIT_MAX=6
+MAX_MESSAGE_CHARS=2000
+MAX_JSON_BYTES=262144
+```
+
+---
+
+## 7 · Development & Deployment
+
+| Command | Action |
+|---------|--------|
+| `pnpm install` | Install dependencies. |
+| `pnpm run embed` | Create / refresh Chroma index. |
+| `pnpm dev` | Start Next.js on **3000** and Express on **4000**. |
+| `pnpm lint` / `pnpm test` | ESLint + Prettier, Vitest + supertest gates. |
+
+Deployment targets: **Vercel** (front) via `vercel.json`, **Fly.io** (back) via `fly.toml`. CI/CD pipeline is postponed until after MVP.
+
+---
+
+## 8 · Milestones
+
+| Priority | Deliverable | Owner |
+|----------|-------------|-------|
+| **P0** | Embedding script operational. |
+| **P0** | LengthGuard (2 000 chars) & RateLimiter active on `/api/chat`. |
+| **P0** | Full `/api/chat` flow with Gemini call and memory. |
+| **P1** | JSON upload API + schema extractor; UI upload & preview. |
+| **P1** | ExamplesDrawer (search, group, alpha sort). |
+| **P1** | Eval stub and Run button wired. |
+| **P2** | UI toggle for “Include full JSON” and TPM guard (5 s delay). |
+| **Later** | GitHub Actions pipeline (lint → test → deploy). |
+
+---
+
+## 9 · Out-of-Scope
+* Authentication and payments  
+* Persistent databases beyond local Chroma  
+* Advanced analytics or monitoring dashboards  
+* Admin UI for vector store  
+* CI/CD until post-MVP  
+
+---
+
+_End of requirements document_
