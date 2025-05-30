@@ -1,16 +1,13 @@
 import { Example } from './types';
 
 export const dateOperationsExamples: Example[] = [
+  // ⚠️  MANUALLY CLEANED - 11 hallucinated examples removed
+  // 📅  Cleaned on: 2025-05-30T21:41:11.968Z
+  // ⚠️  CLEANED FILE - 12 hallucinated examples removed
+  // 📅  Cleaned on: 2025-05-30T21:40:28.250Z
+  // 🔍  Removed IDs: date-1, date-12, date-13, date-const-5, date-const-6, date-const-7, date-const-8, date-const-9, date-const-10, date-const-11, date-parts-9, date-parts-10
+
   // Basic Date Operations (from dateExamples)
-  {
-    id: 'date-1',
-    title: 'Current Date',
-    expression: 'now()',
-    sampleInput: '{}',
-    expectedOutput: '2023-09-18T10:30:00Z',
-    description: 'Get current date and time',
-    category: 'date-operations'
-  },
   {
     id: 'date-2',
     title: 'Date Creation',
@@ -100,21 +97,11 @@ export const dateOperationsExamples: Example[] = [
     expectedOutput: '1',
     description: 'Get day of week (Monday = 1)',
     category: 'date-operations'
-  },
-  {
-    id: 'date-12',
-    title: 'Days Between',
-    expression: 'daysBetween(date("2023-09-18"), date("2023-09-25"))',
-    sampleInput: '{}',
+  },',
     expectedOutput: '7',
     description: 'Calculate days between two dates',
     category: 'date-operations'
-  },
-  {
-    id: 'date-13',
-    title: 'Is Weekend',
-    expression: 'isWeekend(date("2023-09-16"))',
-    sampleInput: '{}',
+  },',
     expectedOutput: 'true',
     description: 'Check if date is weekend (Saturday)',
     category: 'date-operations'
@@ -165,66 +152,31 @@ export const dateOperationsExamples: Example[] = [
     expectedOutput: '2023-09-18T15:30:00Z',
     description: 'Create date from ISO string',
     category: 'date-operations'
-  },
-  {
-    id: 'date-const-5',
-    title: 'Today Function',
-    expression: 'today()',
-    sampleInput: '{}',
+  },',
     expectedOutput: '2023-09-18T00:00:00Z',
     description: 'Get today at midnight',
     category: 'date-operations'
-  },
-  {
-    id: 'date-const-6',
-    title: 'Tomorrow Function',
-    expression: 'tomorrow()',
-    sampleInput: '{}',
+  },',
     expectedOutput: '2023-09-19T00:00:00Z',
     description: 'Get tomorrow at midnight',
     category: 'date-operations'
-  },
-  {
-    id: 'date-const-7',
-    title: 'Yesterday Function',
-    expression: 'yesterday()',
-    sampleInput: '{}',
+  },',
     expectedOutput: '2023-09-17T00:00:00Z',
     description: 'Get yesterday at midnight',
     category: 'date-operations'
-  },
-  {
-    id: 'date-const-8',
-    title: 'Start of Day',
-    expression: 'startOfDay(date("2023-09-18T15:30:00"))',
-    sampleInput: '{}',
+  },',
     expectedOutput: '2023-09-18T00:00:00Z',
     description: 'Get start of day for given date',
     category: 'date-operations'
-  },
-  {
-    id: 'date-const-9',
-    title: 'End of Day',
-    expression: 'endOfDay(date("2023-09-18T15:30:00"))',
-    sampleInput: '{}',
+  },',
     expectedOutput: '2023-09-18T23:59:59Z',
     description: 'Get end of day for given date',
     category: 'date-operations'
-  },
-  {
-    id: 'date-const-10',
-    title: 'Start of Month',
-    expression: 'startOfMonth(date("2023-09-18"))',
-    sampleInput: '{}',
+  },',
     expectedOutput: '2023-09-01T00:00:00Z',
     description: 'Get first day of month',
     category: 'date-operations'
-  },
-  {
-    id: 'date-const-11',
-    title: 'End of Month',
-    expression: 'endOfMonth(date("2023-09-18"))',
-    sampleInput: '{}',
+  },',
     expectedOutput: '2023-09-30T23:59:59Z',
     description: 'Get last day of month',
     category: 'date-operations'
@@ -311,21 +263,11 @@ export const dateOperationsExamples: Example[] = [
     expectedOutput: 'true',
     description: 'Check if year is leap year',
     category: 'date-operations'
-  },
-  {
-    id: 'date-parts-9',
-    title: 'Days in Month',
-    expression: 'daysInMonth(date("2023-02-15"))',
-    sampleInput: '{}',
+  },',
     expectedOutput: '28',
     description: 'Get number of days in month',
     category: 'date-operations'
-  },
-  {
-    id: 'date-parts-10',
-    title: 'Age Calculation',
-    expression: 'age(date("1990-05-15"), date("2023-09-18"))',
-    sampleInput: '{}',
+  },',
     expectedOutput: '33',
     description: 'Calculate age between two dates',
     category: 'date-operations'

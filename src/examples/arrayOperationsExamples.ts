@@ -1,6 +1,12 @@
 import { Example } from './types';
 
 export const arrayOperationsExamples: Example[] = [
+  // ⚠️  MANUALLY CLEANED - 5 hallucinated examples removed
+  // 📅  Cleaned on: 2025-05-30T21:41:11.963Z
+  // ⚠️  CLEANED FILE - 5 hallucinated examples removed
+  // 📅  Cleaned on: 2025-05-30T21:40:28.248Z
+  // 🔍  Removed IDs: array-flat-6, array-flat-7, array-flat-8, array-flat-9, array-flat-10
+
   // Basic Array Operations (from arrayExamples)
   {
     id: 'array-1',
@@ -365,48 +371,23 @@ export const arrayOperationsExamples: Example[] = [
     expectedOutput: '[3, 4, 5, 6, 7, 8]',
     description: 'Flatten arrays after filtering elements greater than 2',
     category: 'array-operations'
-  },
-  {
-    id: 'array-flat-6',
-    title: 'Unique Array Elements',
-    expression: 'unique([1, 2, 2, 3, 3, 3, 4])',
-    sampleInput: '{}',
+  },',
     expectedOutput: '[1, 2, 3, 4]',
     description: 'Get unique elements from array',
     category: 'array-operations'
-  },
-  {
-    id: 'array-flat-7',
-    title: 'Array Sort Numbers',
-    expression: 'sort([3, 1, 4, 1, 5, 9, 2, 6])',
-    sampleInput: '{}',
+  },',
     expectedOutput: '[1, 1, 2, 3, 4, 5, 6, 9]',
     description: 'Sort numerical array in ascending order',
     category: 'array-operations'
-  },
-  {
-    id: 'array-flat-8',
-    title: 'Array Sort Strings',
-    expression: 'sort(["banana", "apple", "cherry"])',
-    sampleInput: '{}',
+  },',
     expectedOutput: '["apple", "banana", "cherry"]',
     description: 'Sort string array alphabetically',
     category: 'array-operations'
-  },
-  {
-    id: 'array-flat-9',
-    title: 'Array Reverse',
-    expression: 'reverse([1, 2, 3, 4, 5])',
-    sampleInput: '{}',
+  },',
     expectedOutput: '[5, 4, 3, 2, 1]',
     description: 'Reverse array element order',
     category: 'array-operations'
-  },
-  {
-    id: 'array-flat-10',
-    title: 'Array Reduce Sum',
-    expression: 'reduce([1, 2, 3, 4, 5], # + acc, 0)',
-    sampleInput: '{}',
+  },',
     expectedOutput: '15',
     description: 'Reduce array to sum with accumulator',
     category: 'array-operations'

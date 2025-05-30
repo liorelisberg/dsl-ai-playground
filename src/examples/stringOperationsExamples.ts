@@ -1,6 +1,12 @@
 import { Example } from './types';
 
 export const stringOperationsExamples: Example[] = [
+  // ⚠️  MANUALLY CLEANED - 10 hallucinated examples removed
+  // 📅  Cleaned on: 2025-05-30T21:41:11.986Z
+  // ⚠️  CLEANED FILE - 10 hallucinated examples removed
+  // 📅  Cleaned on: 2025-05-30T21:40:28.251Z
+  // 🔍  Removed IDs: str-adv-1, str-adv-2, str-adv-5, str-adv-6, str-adv-7, str-adv-8, str-adv-9, str-adv-10, str-adv-11, str-adv-12
+
   // Basic String Operations (from stringExamples)
   {
     id: 'str-1',
@@ -120,21 +126,11 @@ export const stringOperationsExamples: Example[] = [
     category: 'string-operations'
   },
 
-  // Advanced String Operations (from string_advancedExamples)
-  {
-    id: 'str-adv-1',
-    title: 'String Replace',
-    expression: 'replace("Hello World", "World", "DSL")',
-    sampleInput: '{}',
+  // Advanced String Operations (from string_advancedExamples)',
     expectedOutput: '"Hello DSL"',
     description: 'Replace substring with new value',
     category: 'string-operations'
-  },
-  {
-    id: 'str-adv-2',
-    title: 'String Substring',
-    expression: 'substr("Hello World", 6, 5)',
-    sampleInput: '{}',
+  },',
     expectedOutput: '"World"',
     description: 'Extract substring from start position with length',
     category: 'string-operations'
@@ -156,75 +152,35 @@ export const stringOperationsExamples: Example[] = [
     expectedOutput: 'true',
     description: 'Case-insensitive substring search using lowercase',
     category: 'string-operations'
-  },
-  {
-    id: 'str-adv-5',
-    title: 'String Padding Left',
-    expression: 'padLeft("123", 5, "0")',
-    sampleInput: '{}',
+  },',
     expectedOutput: '"00123"',
     description: 'Pad string to left with specified character',
     category: 'string-operations'
-  },
-  {
-    id: 'str-adv-6',
-    title: 'String Padding Right',
-    expression: 'padRight("123", 5, "*")',
-    sampleInput: '{}',
+  },',
     expectedOutput: '"123**"',
     description: 'Pad string to right with specified character',
     category: 'string-operations'
-  },
-  {
-    id: 'str-adv-7',
-    title: 'String Index Of',
-    expression: 'indexOf("Hello World", "o")',
-    sampleInput: '{}',
+  },',
     expectedOutput: '4',
     description: 'Find first index of character in string',
     category: 'string-operations'
-  },
-  {
-    id: 'str-adv-8',
-    title: 'String Last Index Of',
-    expression: 'lastIndexOf("Hello World", "o")',
-    sampleInput: '{}',
+  },',
     expectedOutput: '7',
     description: 'Find last index of character in string',
     category: 'string-operations'
-  },
-  {
-    id: 'str-adv-9',
-    title: 'String Character At',
-    expression: 'charAt("Hello", 1)',
-    sampleInput: '{}',
+  },',
     expectedOutput: '"e"',
     description: 'Get character at specific index',
     category: 'string-operations'
-  },
-  {
-    id: 'str-adv-10',
-    title: 'String Reverse',
-    expression: 'reverse("Hello")',
-    sampleInput: '{}',
+  },',
     expectedOutput: '"olleH"',
     description: 'Reverse string character order',
     category: 'string-operations'
-  },
-  {
-    id: 'str-adv-11',
-    title: 'String Join Array',
-    expression: 'join(["apple", "banana", "cherry"], ", ")',
-    sampleInput: '{}',
+  },',
     expectedOutput: '"apple, banana, cherry"',
     description: 'Join array elements into string with separator',
     category: 'string-operations'
-  },
-  {
-    id: 'str-adv-12',
-    title: 'Complex String Transformation',
-    expression: 'upper(replace(trim("  hello world  "), " ", "_"))',
-    sampleInput: '{}',
+  },',
     expectedOutput: '"HELLO_WORLD"',
     description: 'Chain multiple string operations: trim, replace, uppercase',
     category: 'string-operations'
