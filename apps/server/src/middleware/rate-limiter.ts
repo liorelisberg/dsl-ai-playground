@@ -7,6 +7,10 @@ const MAX_REQUESTS_PER_DAY = 500;   // Free tier limit
 const WINDOW_MS = config.rateLimit.window * 1000; // Convert to milliseconds
 const DAY_MS = 24 * 60 * 60 * 1000; // 24 hours
 
+// TPM (Tokens Per Minute) guard - 5 second delay for full JSON requests
+const TPM_DELAY_MS = 5000; // 5 seconds
+const tpmGuardTimestamps = new Map<string, number>();
+
 interface RateLimit {
   timestamp: number;
   count: number;
@@ -15,6 +19,41 @@ interface RateLimit {
 }
 
 const rateLimits = new Map<string, RateLimit>();
+
+// TPM Guard - prevents token rate limit violations for full JSON requests
+export const tpmGuard = (req: Request, res: Response, next: NextFunction) => {
+  const { message } = req.body;
+  const sessionKey = req.sessionId || req.ip || 'unknown';
+  
+  // Check if this is a full JSON request
+  const isFullJsonRequest = message && (
+    message.includes('@fulljson') || 
+    message.includes('Include full JSON') ||
+    message.length > 10000 // Large messages likely contain JSON
+  );
+  
+  if (isFullJsonRequest) {
+    const lastFullJsonTime = tpmGuardTimestamps.get(sessionKey);
+    const now = Date.now();
+    
+    if (lastFullJsonTime && (now - lastFullJsonTime) < TPM_DELAY_MS) {
+      const remainingDelay = Math.ceil((TPM_DELAY_MS - (now - lastFullJsonTime)) / 1000);
+      
+      console.log(`TPM guard blocked session ${sessionKey}: ${remainingDelay}s remaining`);
+      return res.status(429).json({
+        error: `Full JSON requests are limited to prevent token rate limit violations. Please wait ${remainingDelay} seconds before sending another large request.`,
+        retryAfter: remainingDelay,
+        type: 'tpm_guard'
+      });
+    }
+    
+    // Record this full JSON request
+    tpmGuardTimestamps.set(sessionKey, now);
+    console.log(`TPM guard: Full JSON request recorded for session ${sessionKey}`);
+  }
+  
+  next();
+};
 
 // Length guard middleware - checks message character limit
 export const lengthGuard = (req: Request, res: Response, next: NextFunction) => {

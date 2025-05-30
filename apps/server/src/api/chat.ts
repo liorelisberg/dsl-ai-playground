@@ -1,8 +1,10 @@
 import { Router, Request, Response } from 'express';
 import { chatService } from '../services/chat';
 import { geminiService } from '../services/gemini';
-import { rateLimiter, lengthGuard } from '../middleware/rate-limiter';
+import { vectorStore } from '../services/vectorStore';
+import { rateLimiter, lengthGuard, tpmGuard } from '../middleware/rate-limiter';
 import { attachSession } from '../middleware/session';
+import { jsonStore } from './upload';
 
 const router: Router = Router();
 
@@ -17,8 +19,19 @@ const chatHandler = async (req: Request, res: Response): Promise<void> => {
     // Get chat history
     const history = chatService.getHistory(req.sessionId);
 
-    // Generate response using Gemini API
-    const geminiResponse = await geminiService.generateResponse(message, history);
+    // 🎯 NEW: Retrieve relevant knowledge from vector store
+    const knowledgeCards = await retrieveKnowledgeCards(message);
+    
+    // 🎯 NEW: Get uploaded JSON context if available
+    const jsonContext = jsonStore.get(req.sessionId);
+    
+    // 🎯 NEW: Generate context-enhanced response with JSON context
+    const geminiResponse = await geminiService.generateContextualResponse(
+      message, 
+      history, 
+      knowledgeCards,
+      jsonContext
+    );
     
     if (geminiResponse.error) {
       console.error('Gemini API Error:', geminiResponse.error);
@@ -36,7 +49,32 @@ const chatHandler = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
+/**
+ * Retrieve relevant knowledge cards for the user's query
+ */
+async function retrieveKnowledgeCards(query: string): Promise<KnowledgeCard[]> {
+  try {
+    const searchResults = await vectorStore.search(query, 6);
+    const knowledgeCards = vectorStore.searchResultsToKnowledgeCards(searchResults);
+    
+    console.log(`Retrieved ${knowledgeCards.length} knowledge cards for query: "${query.substring(0, 50)}..."`);
+    return knowledgeCards;
+  } catch (error) {
+    console.error('Failed to retrieve knowledge cards:', error);
+    return []; // Return empty array on error - graceful degradation
+  }
+}
+
+// Knowledge card interface for type safety
+interface KnowledgeCard {
+  id: string;
+  content: string;
+  source: string;
+  category: string;
+  relevanceScore: number;
+}
+
 // @ts-ignore - Express v5 typing issue
-router.post('/chat', attachSession, lengthGuard, rateLimiter, chatHandler);
+router.post('/chat', attachSession, lengthGuard, tpmGuard, rateLimiter, chatHandler);
 
 export default router; 

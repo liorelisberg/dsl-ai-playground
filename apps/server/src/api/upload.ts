@@ -24,7 +24,8 @@ const upload = multer({
     fileSize: config.limits.maxJsonBytes, // 256KB limit
   },
   fileFilter: (req: any, file: Express.Multer.File, cb: multer.FileFilterCallback) => {
-    if (file.mimetype === 'application/json') {
+    // Accept if MIME type is application/json OR if filename ends with .json
+    if (file.mimetype === 'application/json' || file.originalname.toLowerCase().endsWith('.json')) {
       cb(null, true);
     } else {
       cb(new Error('Only JSON files are allowed'));

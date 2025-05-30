@@ -18,6 +18,8 @@ export const config = {
   // ChromaDB Configuration
   chroma: {
     path: process.env.CHROMA_PATH || './chroma',
+    collectionName: process.env.CHROMA_COLLECTION_NAME || 'dsl_knowledge',
+    embeddingFunction: process.env.CHROMA_EMBEDDING_FUNCTION || 'default',
   },
 
   // Rate Limiting Configuration

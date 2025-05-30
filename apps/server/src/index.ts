@@ -8,6 +8,7 @@ import chatRouter from './api/chat';
 import uploadRouter from './api/upload';
 import examplesRouter from './api/examples';
 import { config, validateConfig } from './config/environment';
+import { vectorStore } from './services/vectorStore';
 
 // Validate configuration
 validateConfig();
@@ -80,9 +81,24 @@ app.post('/api/evaluate-dsl', (req, res) => {
 });
 
 // Start server
-app.listen(config.server.port, () => {
+app.listen(config.server.port, async () => {
   console.log(`🚀 Server running on port ${config.server.port}`);
   console.log(`📚 API Documentation: http://localhost:${config.server.port}/api-docs`);
   console.log(`🔧 Environment: ${config.server.nodeEnv}`);
   console.log(`⚡ Rate Limits: ${config.rateLimit.max} requests per ${config.rateLimit.window}s`);
+  
+  // Initialize vector store for knowledge retrieval
+  try {
+    console.log(`🧠 Initializing knowledge base...`);
+    await vectorStore.initialize();
+    
+    // Auto-load DSL knowledge base
+    await vectorStore.autoLoadKnowledgeBase();
+    
+    const info = await vectorStore.getCollectionInfo();
+    console.log(`✅ Knowledge base ready: ${info.count} documents loaded`);
+  } catch (error) {
+    console.error(`❌ Failed to initialize knowledge base:`, error);
+    console.log(`⚠️  Server will continue without knowledge retrieval`);
+  }
 }); 

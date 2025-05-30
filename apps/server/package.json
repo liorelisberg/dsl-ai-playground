@@ -6,7 +6,11 @@
     "dev": "nodemon src/index.ts",
     "build": "tsc",
     "start": "node dist/index.js",
-    "lint": "eslint src --ext .ts"
+    "lint": "eslint src --ext .ts",
+    "embed": "ts-node src/scripts/embedRulesAndExamples.ts",
+    "embed:dry-run": "ts-node src/scripts/embedRulesAndExamples.ts --dry-run",
+    "embed:reset": "ts-node src/scripts/embedRulesAndExamples.ts --reset",
+    "embed:verbose": "ts-node src/scripts/embedRulesAndExamples.ts --verbose"
   },
   "keywords": [],
   "author": "",
@@ -15,6 +19,7 @@
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
     "@types/express": "^5.0.2",
+    "chromadb": "^2.4.6",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",

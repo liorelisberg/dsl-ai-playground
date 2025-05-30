@@ -1,38 +1,55 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Send, Loader2, MessageCircle, Bot, Paperclip, X } from 'lucide-react';
-import { ChatMessage, ChatResponse } from '../../types/chat';
-import { sendChatMessage } from '../../services/chatService';
-import { useToast } from '@/hooks/use-toast';
-import { useConnectionStatus } from '../../hooks/useConnectionStatus';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from '@/components/ui/tooltip';
+import React, { useState, useEffect, useRef } from 'react';
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { toast } from "@/hooks/use-toast";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { Bot, MessageCircle, Send, Paperclip, X, Loader2, Copy, Check } from 'lucide-react';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+
+import { ChatMessage, ChatResponse } from '@/types/chat';
+import { sendChatMessage } from '@/services/chatService';
 
 interface ChatPanelProps {
   chatHistory: ChatMessage[];
   onNewMessage: (message: ChatMessage) => void;
+  isOnline: boolean;
+  isApiHealthy: boolean;
 }
 
-const ChatPanel: React.FC<ChatPanelProps> = ({ chatHistory, onNewMessage }) => {
+interface UploadedFile {
+  name: string;
+  content: any;
+}
+
+const ChatPanel: React.FC<ChatPanelProps> = ({ chatHistory, onNewMessage, isOnline, isApiHealthy }) => {
   const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [uploadedFile, setUploadedFile] = useState<{ name: string; content: unknown } | null>(null);
+  const [uploadedFile, setUploadedFile] = useState<UploadedFile | null>(null);
+  const [includeFullJson, setIncludeFullJson] = useState(false);
+  const [copiedMessageIndex, setCopiedMessageIndex] = useState<number | null>(null);
   const chatEndRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const { toast } = useToast();
-  const { isOnline, isApiHealthy } = useConnectionStatus();
 
   const MAX_FILE_SIZE = 50 * 1024; // 50KB
+  const MAX_CHARS = 500;
+  const charCount = inputMessage.length;
+
+  const getCharCounterColor = () => {
+    if (charCount === 0) return 'text-slate-400';
+    if (charCount <= 450) return 'text-green-600';
+    if (charCount < 500) return 'text-yellow-600';
+    return 'text-red-600';
+  };
+
+  // Check if send button should be disabled
+  const isSendDisabled = !inputMessage.trim() || isLoading || charCount >= MAX_CHARS;
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [chatHistory]);
 
-  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
@@ -46,35 +63,49 @@ const ChatPanel: React.FC<ChatPanelProps> = ({ chatHistory, onNewMessage }) => {
       return;
     }
 
-    // Validate file size
-    if (file.size > MAX_FILE_SIZE) {
+    // Validate file size (256KB for backend compatibility)
+    if (file.size > 256 * 1024) {
       toast({
         title: "File Too Large",
-        description: `File size must be less than ${MAX_FILE_SIZE / 1024}KB`,
+        description: "File size must be less than 256KB",
         variant: "destructive"
       });
       return;
     }
 
-    // Read and parse JSON
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      try {
-        const content = JSON.parse(e.target?.result as string);
-        setUploadedFile({ name: file.name, content });
-        toast({
-          title: "File Uploaded",
-          description: `${file.name} uploaded successfully`,
-        });
-      } catch (error) {
-        toast({
-          title: "Invalid JSON",
-          description: "The file contains invalid JSON format",
-          variant: "destructive"
-        });
+    try {
+      // Upload to backend
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const response = await fetch('/api/upload-json', {
+        method: 'POST',
+        body: formData,
+        credentials: 'include', // For session cookies
+      });
+
+      if (!response.ok) {
+        throw new Error(`Upload failed: ${response.statusText}`);
       }
-    };
-    reader.readAsText(file);
+
+      const result = await response.json();
+      
+      // Parse locally for display
+      const content = JSON.parse(await file.text());
+      setUploadedFile({ name: file.name, content });
+      
+      toast({
+        title: "File Uploaded",
+        description: `${file.name} uploaded successfully (${result.sizeBytes} bytes)`,
+      });
+    } catch (error) {
+      console.error('Upload error:', error);
+      toast({
+        title: "Upload Failed",
+        description: error instanceof Error ? error.message : "Failed to upload file",
+        variant: "destructive"
+      });
+    }
     
     // Reset file input
     if (fileInputRef.current) {
@@ -87,9 +118,9 @@ const ChatPanel: React.FC<ChatPanelProps> = ({ chatHistory, onNewMessage }) => {
 
     let messageContent = inputMessage;
     
-    // Include uploaded file content if available
-    if (uploadedFile) {
-      messageContent += `\n\nUploaded JSON file (${uploadedFile.name}):\n\`\`\`json\n${JSON.stringify(uploadedFile.content, null, 2)}\n\`\`\``;
+    // Add full JSON flag if toggled
+    if (uploadedFile && includeFullJson) {
+      messageContent += ' @fulljson';
     }
 
     const userMessage: ChatMessage = {
@@ -100,7 +131,6 @@ const ChatPanel: React.FC<ChatPanelProps> = ({ chatHistory, onNewMessage }) => {
 
     onNewMessage(userMessage);
     setInputMessage('');
-    setUploadedFile(null); // Clear uploaded file after sending
     setIsLoading(true);
 
     try {
@@ -109,19 +139,27 @@ const ChatPanel: React.FC<ChatPanelProps> = ({ chatHistory, onNewMessage }) => {
       // Handle both successful responses and error responses
       const assistantMessage: ChatMessage = {
         role: 'assistant',
-        content: response.text, // Changed from response.response to response.text
+        content: response.text,
         timestamp: new Date().toISOString()
       };
 
       onNewMessage(assistantMessage);
 
-      // Show warning toast if there was an error but we still got a response
+      // Show specific warnings for TPM guard
       if (response.error) {
-        toast({
-          title: "Warning",
-          description: "There was an issue with the AI service, but I provided a fallback response.",
-          variant: "default"
-        });
+        if (response.error.includes('TPM guard') || response.error.includes('token rate limit')) {
+          toast({
+            title: "Rate Limited",
+            description: "Large JSON requests are limited. Please wait before sending another.",
+            variant: "default"
+          });
+        } else {
+          toast({
+            title: "Warning",
+            description: "There was an issue with the AI service, but I provided a fallback response.",
+            variant: "default"
+          });
+        }
       }
 
     } catch (error) {
@@ -155,6 +193,27 @@ const ChatPanel: React.FC<ChatPanelProps> = ({ chatHistory, onNewMessage }) => {
 
   const removeUploadedFile = () => {
     setUploadedFile(null);
+    setIncludeFullJson(false);
+  };
+
+  const copyToClipboard = async (content: string, messageIndex: number) => {
+    try {
+      await navigator.clipboard.writeText(content);
+      setCopiedMessageIndex(messageIndex);
+      toast({
+        title: "Copied!",
+        description: "Message copied to clipboard",
+      });
+      
+      // Reset copy state after 2 seconds
+      setTimeout(() => setCopiedMessageIndex(null), 2000);
+    } catch (error) {
+      toast({
+        title: "Copy Failed",
+        description: "Unable to copy message to clipboard",
+        variant: "destructive"
+      });
+    }
   };
 
   return (
@@ -202,20 +261,48 @@ const ChatPanel: React.FC<ChatPanelProps> = ({ chatHistory, onNewMessage }) => {
                   <Bot className="h-4 w-4 text-white" />
                 </div>
               )}
-              <div
-                className={`rounded-2xl px-4 py-3 shadow-sm ${
-                  message.role === 'user'
-                    ? 'bg-indigo-600 text-white ml-auto'
-                    : 'bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-900 dark:text-slate-100'
-                }`}
-              >
-                <div className="prose prose-sm max-w-none">
-                  {message.content.split('\n').map((line, lineIndex) => (
-                    <p key={lineIndex} className={`mb-2 last:mb-0 ${message.role === 'user' ? 'text-white' : ''}`}>
-                      {line}
-                    </p>
-                  ))}
+              <div className="relative group">
+                <div
+                  className={`rounded-2xl px-4 py-3 shadow-sm ${
+                    message.role === 'user'
+                      ? 'bg-indigo-600 text-white ml-auto'
+                      : 'bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-900 dark:text-slate-100'
+                  }`}
+                >
+                  {message.role === 'assistant' ? (
+                    <div className="prose prose-sm max-w-none dark:prose-invert">
+                      <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                        {message.content}
+                      </ReactMarkdown>
+                    </div>
+                  ) : (
+                    <div className="prose prose-sm max-w-none">
+                      {message.content.split('\n').map((line, lineIndex) => (
+                        <p key={lineIndex} className={`mb-2 last:mb-0 ${message.role === 'user' ? 'text-white' : ''}`}>
+                          {line}
+                        </p>
+                      ))}
+                    </div>
+                  )}
                 </div>
+                
+                {/* Copy Button */}
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => copyToClipboard(message.content, index)}
+                  className={`absolute -bottom-2 -right-2 h-6 w-6 p-0 opacity-0 group-hover:opacity-100 transition-opacity ${
+                    message.role === 'user' 
+                      ? 'bg-indigo-500 hover:bg-indigo-600 text-white' 
+                      : 'bg-slate-100 hover:bg-slate-200 dark:bg-slate-600 dark:hover:bg-slate-500'
+                  }`}
+                >
+                  {copiedMessageIndex === index ? (
+                    <Check className="h-3 w-3" />
+                  ) : (
+                    <Copy className="h-3 w-3" />
+                  )}
+                </Button>
               </div>
               {message.role === 'user' && (
                 <div className="w-8 h-8 bg-slate-600 dark:bg-slate-500 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
@@ -241,13 +328,24 @@ const ChatPanel: React.FC<ChatPanelProps> = ({ chatHistory, onNewMessage }) => {
       </div>
 
       {/* Message Input */}
-      <div className="border-t border-slate-200 dark:border-slate-700 p-6 bg-slate-50 dark:bg-slate-800">
+      <div className="border-t border-slate-200 dark:border-slate-700 p-3 bg-slate-50 dark:bg-slate-800">
         {/* Uploaded File Indicator */}
         {uploadedFile && (
           <div className="mb-3 flex items-center justify-between bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 rounded-lg px-3 py-2">
             <div className="flex items-center space-x-2">
               <Paperclip className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
               <span className="text-sm text-emerald-700 dark:text-emerald-300">{uploadedFile.name}</span>
+              
+              {/* Full JSON Toggle */}
+              <label className="flex items-center space-x-1 ml-4">
+                <input
+                  type="checkbox"
+                  checked={includeFullJson}
+                  onChange={(e) => setIncludeFullJson(e.target.checked)}
+                  className="rounded border-emerald-300 text-emerald-600 focus:ring-emerald-500"
+                />
+                <span className="text-xs text-emerald-700 dark:text-emerald-300">Include full JSON</span>
+              </label>
             </div>
             <Button
               variant="ghost"
@@ -260,58 +358,92 @@ const ChatPanel: React.FC<ChatPanelProps> = ({ chatHistory, onNewMessage }) => {
           </div>
         )}
         
-        <div className="flex space-x-3">
-          <Input
-            value={inputMessage}
-            onChange={(e) => setInputMessage(e.target.value)}
-            onKeyPress={handleKeyPress}
-            placeholder="Ask about DSL syntax, examples, or concepts..."
-            disabled={isLoading}
-            className="flex-1 border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 focus:border-indigo-500 focus:ring-indigo-500/20"
-          />
+        <div className="flex space-x-3 items-start">
+          {/* Text Input */}
+          <div className="flex-1 relative">
+            <Textarea
+              value={inputMessage}
+              onChange={(e) => {
+                if (e.target.value.length <= MAX_CHARS) {
+                  setInputMessage(e.target.value);
+                }
+              }}
+              onKeyPress={(e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                  e.preventDefault();
+                  if (!isSendDisabled) {
+                    handleSendMessage();
+                  }
+                }
+              }}
+              placeholder="Ask about DSL syntax, examples, or concepts..."
+              disabled={isLoading}
+              className="min-h-[80px] max-h-[140px] border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 focus:border-indigo-500 focus:ring-indigo-500/20 resize-none"
+              maxLength={MAX_CHARS}
+            />
+          </div>
           
-          {/* File Upload Button */}
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                variant="outline"
-                size="icon"
-                onClick={() => fileInputRef.current?.click()}
-                disabled={isLoading}
-                className="border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 hover:bg-slate-50 dark:hover:bg-slate-600"
-              >
-                <Paperclip className="h-4 w-4" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>Upload JSON file (max 50KB)</p>
-            </TooltipContent>
-          </Tooltip>
-          
-          {/* Hidden File Input */}
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept=".json"
-            onChange={handleFileUpload}
-            className="hidden"
-          />
-          
-          {/* Send Button */}
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button 
-                onClick={handleSendMessage}
-                disabled={!inputMessage.trim() || isLoading}
-                className="bg-indigo-600 hover:bg-indigo-700 text-white rounded-full shadow-lg"
-              >
-                <Send className="h-4 w-4" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>Send message to AI assistant (Enter)</p>
-            </TooltipContent>
-          </Tooltip>
+          {/* Right Controls: Upload & Counter above Send */}
+          <div className="flex flex-col space-y-2 w-24">
+            {/* Top Row: Upload Button and Character Counter */}
+            <div className="flex space-x-2">
+              {/* File Upload Button */}
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => fileInputRef.current?.click()}
+                    disabled={isLoading}
+                    className="w-8 h-8 border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 hover:bg-slate-50 dark:hover:bg-slate-600 p-1"
+                  >
+                    <Paperclip className="h-3 w-3" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Upload JSON file (max 50KB)</p>
+                </TooltipContent>
+              </Tooltip>
+              
+              {/* Hidden File Input */}
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept=".json"
+                onChange={handleFileUpload}
+                className="hidden"
+              />
+              
+              {/* Character Counter */}
+              <div className={`flex-1 h-8 flex items-center justify-center text-xs font-medium border border-slate-300 dark:border-slate-600 rounded-md bg-slate-50 dark:bg-slate-700 ${getCharCounterColor()}`}>
+                {charCount}/{MAX_CHARS}
+              </div>
+            </div>
+            
+            {/* Send Button */}
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button 
+                  onClick={handleSendMessage}
+                  disabled={isSendDisabled}
+                  className="w-full h-12 bg-indigo-600 hover:bg-indigo-700 disabled:bg-slate-300 disabled:text-slate-500 text-white px-2 py-1 text-sm"
+                >
+                  <Send className="h-3 w-3 mr-1" />
+                  Send
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>
+                  {charCount >= MAX_CHARS 
+                    ? charCount === MAX_CHARS 
+                      ? 'At character limit - remove 1 character to send'
+                      : `Remove ${charCount - MAX_CHARS + 1} characters to send`
+                    : "Send message to AI assistant (Enter)"
+                  }
+                </p>
+              </TooltipContent>
+            </Tooltip>
+          </div>
         </div>
       </div>
     </div>

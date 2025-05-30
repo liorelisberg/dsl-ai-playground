@@ -3,6 +3,7 @@ import ChatPanel from './ChatPanel';
 import CodeEditor from './CodeEditor';
 import { ThemeToggle } from '../ui/theme-toggle';
 import { ChatMessage } from '../../types/chat';
+import { useConnectionStatus } from '../../hooks/useConnectionStatus';
 
 const DSLTutor = () => {
   const [chatHistory, setChatHistory] = useState<ChatMessage[]>([
@@ -12,6 +13,8 @@ const DSLTutor = () => {
       timestamp: new Date().toISOString()
     }
   ]);
+
+  const { isOnline, isApiHealthy } = useConnectionStatus();
 
   const handleNewMessage = (message: ChatMessage) => {
     setChatHistory(prev => {
@@ -47,6 +50,8 @@ const DSLTutor = () => {
             <ChatPanel 
               chatHistory={chatHistory} 
               onNewMessage={handleNewMessage}
+              isOnline={isOnline}
+              isApiHealthy={isApiHealthy}
             />
           </div>
         </div>
