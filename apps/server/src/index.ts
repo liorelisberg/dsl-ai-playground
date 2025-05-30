@@ -4,7 +4,7 @@ import cookieParser from 'cookie-parser';
 import swaggerUi from 'swagger-ui-express';
 import YAML from 'yamljs';
 import path from 'path';
-import chatRouter from './api/chat';
+import chatRouter from './routes/chat';
 import uploadRouter from './api/upload';
 import examplesRouter from './api/examples';
 import { config, validateConfig } from './config/environment';
