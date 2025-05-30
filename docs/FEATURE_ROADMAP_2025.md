@@ -20,6 +20,11 @@ This document outlines the comprehensive feature development plan for DSL AI Pla
 **Goal:**
 Transform from production-ready to industry-leading DSL education platform with enhanced user experience, developer tools, and enterprise features.
 
+**Roadmap Overview:**
+- **29 Features Total**: 10 HIGH priority, 8 MEDIUM priority, 6 LOW priority  
+- **4-Phase Implementation**: 15 weeks estimated timeline
+- **Expected Impact**: 40-50% workflow efficiency improvement, 3-5x performance boost
+
 ---
 
 ## 🎯 **Feature Classification System**
@@ -111,9 +116,77 @@ Transform from production-ready to industry-leading DSL education platform with 
 
 ---
 
+### **H4. Parser → Chat Example Transfer**
+- **Summary**: Add button in parser to send working expressions to chat for discussion and analysis
+- **Value**: 🔥🔥🔥 **CRITICAL** - Reverse workflow for expert exploration and learning
+- **Priority**: 🔴 **HIGH**
+- **Difficulty**: 🟢 **SIMPLE** (2 days)
+- **User Impact**: Expert users can share working expressions for deeper AI analysis and optimization
+- **Technical Approach**:
+  - Add "Ask About This" button in parser result area
+  - Capture current expression, input data, and result
+  - Format context for AI discussion
+  - Pre-populate chat with analysis request
+- **Dependencies**: Chat service integration
+- **Acceptance Criteria**:
+  - ✅ Button appears only when expression evaluates successfully
+  - ✅ Sends expression + context to chat with meaningful prompt
+  - ✅ AI receives formatted analysis request
+  - ✅ Chat scrolls to show new analysis request
+- **Estimated Time**: 2 days
+- **Files to Modify**: `CodeEditor.tsx`, `ChatPanel.tsx`, context sharing
+
+---
+
+### **H5. Panel Maximize/Minimize Toggle**
+- **Summary**: Add buttons to temporarily maximize one panel (chat or parser) and minimize the other
+- **Value**: 🔥🔥 **HIGH** - Focused workspace and better screen utilization
+- **Priority**: 🔴 **HIGH**
+- **Difficulty**: 🟢 **SIMPLE** (2 days)
+- **User Impact**: Focus mode for deep coding sessions or extended AI conversations, better mobile experience
+- **Technical Approach**:
+  - Add maximize/minimize buttons to panel headers
+  - Implement 3 states: balanced, chat-maximized, parser-maximized
+  - Smooth CSS transitions between states
+  - Remember state preference in localStorage
+- **Dependencies**: None
+- **Acceptance Criteria**:
+  - ✅ Toggle buttons in both panel headers
+  - ✅ Smooth transitions between maximize/minimize states
+  - ✅ State persists across sessions
+  - ✅ Responsive behavior on mobile devices
+- **Estimated Time**: 2 days
+- **Files to Modify**: `DSLTutor.tsx`, panel components, CSS
+
+---
+
 ## **Moderate Implementation (4-7 days each)**
 
-### **H4. Vertical Panel Resize Handle**
+### **H6. Parser JSON Input Upload**
+- **Summary**: Add JSON file upload and drag & drop functionality specifically for parser input data
+- **Value**: 🔥🔥🔥 **CRITICAL** - Streamlined testing workflow with real data
+- **Priority**: 🔴 **HIGH**
+- **Difficulty**: 🟡 **MODERATE** (4 days)
+- **User Impact**: Easy testing with real JSON data, eliminates manual copy-paste for large datasets
+- **Technical Approach**:
+  - Add compact JSON upload zone in parser input area
+  - Implement drag & drop with visual feedback
+  - JSON validation with helpful error messages
+  - Size limit enforcement (e.g., 64KB for parser input)
+  - Clear/replace functionality
+- **Dependencies**: File validation utilities
+- **Acceptance Criteria**:
+  - ✅ Drag & drop JSON files directly into parser input
+  - ✅ File size validation with user-friendly errors
+  - ✅ JSON syntax validation before loading
+  - ✅ Visual feedback during upload process
+  - ✅ Easy clear/replace uploaded data
+- **Estimated Time**: 4 days
+- **Files to Modify**: `CodeEditor.tsx`, file upload components, validation
+
+---
+
+### **H7. Vertical Panel Resize Handle**
 - **Summary**: Add draggable vertical divider to adjust chat/parser panel sizes dynamically
 - **Value**: 🔥🔥🔥 **CRITICAL** - Workspace customization and productivity
 - **Priority**: 🔴 **HIGH**
@@ -136,7 +209,7 @@ Transform from production-ready to industry-leading DSL education platform with 
 
 ---
 
-### **H5. Error Transfer: Parser → Chat**
+### **H8. Error Transfer: Parser → Chat**
 - **Summary**: When expression fails, add button to send error + context to AI for debugging help
 - **Value**: 🔥🔥🔥 **CRITICAL** - Debugging workflow and learning assistance
 - **Priority**: 🔴 **HIGH**
@@ -158,7 +231,7 @@ Transform from production-ready to industry-leading DSL education platform with 
 
 ---
 
-### **H6. Zen Engine Performance Display**
+### **H9. Zen Engine Performance Display**
 - **Summary**: Show real-time performance metrics (execution time, memory) in parser results
 - **Value**: 🔥🔥 **HIGH** - Developer insight and confidence building
 - **Priority**: 🔴 **HIGH**
@@ -182,7 +255,7 @@ Transform from production-ready to industry-leading DSL education platform with 
 
 ## **Complex Implementation (1-3 weeks each)**
 
-### **H7. Parallel Embedding Processing**
+### **H10. Parallel Embedding Processing**
 - **Summary**: Optimize semantic vector processing to run embeddings in parallel rather than sequential
 - **Value**: 🔥🔥 **HIGH** - System performance and scalability
 - **Priority**: 🔴 **HIGH**
@@ -252,9 +325,33 @@ Transform from production-ready to industry-leading DSL education platform with 
 
 ---
 
+### **M3. Parser Size Limitations & Validation**
+- **Summary**: Enforce size constraints on parser expressions and input data with user-friendly validation
+- **Value**: 🔥🔥 **HIGH** - Performance protection and user guidance
+- **Priority**: 🟡 **MEDIUM**
+- **Difficulty**: 🟢 **SIMPLE** (2 days)
+- **User Impact**: Prevents performance issues, provides clear guidance on limitations
+- **Technical Approach**:
+  - Add character limits for expressions (e.g., 2KB max)
+  - Add size limits for input data (e.g., 64KB max)
+  - Real-time validation with visual feedback
+  - Helpful error messages with suggested solutions
+  - Warning indicators as users approach limits
+- **Dependencies**: None
+- **Acceptance Criteria**:
+  - ✅ Expression character limit with real-time counter
+  - ✅ Input data size validation before evaluation
+  - ✅ Clear error messages when limits exceeded
+  - ✅ Visual indicators (yellow warning, red error)
+  - ✅ Suggested actions for oversized content
+- **Estimated Time**: 2 days
+- **Files to Modify**: `CodeEditor.tsx`, validation utilities, error displays
+
+---
+
 ## **Moderate Implementation (4-7 days each)**
 
-### **M3. TypeScript Refactoring**
+### **M4. TypeScript Refactoring**
 - **Summary**: Consolidate all TypeScript types into centralized `/types` folder structure
 - **Value**: 🔥🔥 **HIGH** - Code maintainability and developer experience
 - **Priority**: 🟡 **MEDIUM**
@@ -274,9 +371,7 @@ Transform from production-ready to industry-leading DSL education platform with 
 - **Estimated Time**: 5 days
 - **Files to Modify**: Project-wide type organization
 
----
-
-### **M4. Comprehensive Logging System**
+### **M5. Comprehensive Logging System**
 - **Summary**: Implement structured logging with levels, timestamps, and trace information
 - **Value**: 🔥🔥 **HIGH** - Production monitoring and debugging
 - **Priority**: 🟡 **MEDIUM**
@@ -296,9 +391,7 @@ Transform from production-ready to industry-leading DSL education platform with 
 - **Estimated Time**: 7 days
 - **Files to Modify**: Backend services, middleware, error handling
 
----
-
-### **M5. JDM Examples Integration**
+### **M6. JDM Examples Integration**
 - **Summary**: Import and integrate examples from existing JSON Decision Model (JDM) project
 - **Value**: 🔥🔥 **HIGH** - Content richness and real-world scenarios
 - **Priority**: 🟡 **MEDIUM**
@@ -318,11 +411,9 @@ Transform from production-ready to industry-leading DSL education platform with 
 - **Estimated Time**: 6 days
 - **Files to Modify**: Examples data, validation scripts
 
----
-
 ## **Complex Implementation (1-3 weeks each)**
 
-### **M6. Intelligent Autocomplete System**
+### **M7. Intelligent Autocomplete System**
 - **Summary**: Implement context-aware autocomplete for DSL expressions with function suggestions
 - **Value**: 🔥🔥🔥 **CRITICAL** - Developer productivity and learning acceleration
 - **Priority**: 🟡 **MEDIUM** (could be HIGH)
@@ -342,9 +433,7 @@ Transform from production-ready to industry-leading DSL education platform with 
 - **Estimated Time**: 3 weeks
 - **Files to Modify**: `CodeEditor.tsx`, language server, DSL definitions
 
----
-
-### **M7. Project Architecture Refactoring**
+### **M8. Project Architecture Refactoring**
 - **Summary**: Deep code review and architectural improvements for maintainability and scalability
 - **Value**: 🔥🔥 **HIGH** - Long-term project health and maintainability
 - **Priority**: 🟡 **MEDIUM**
@@ -363,8 +452,6 @@ Transform from production-ready to industry-leading DSL education platform with 
   - ✅ Updated documentation and patterns
 - **Estimated Time**: 2-3 weeks
 - **Files to Modify**: Project-wide architectural changes
-
----
 
 # 🟢 **LOW PRIORITY FEATURES**
 
@@ -508,45 +595,46 @@ Transform from production-ready to industry-leading DSL education platform with 
 
 # 📋 **IMPLEMENTATION ROADMAP**
 
-## **Phase 1: Core User Experience (2-3 weeks)**
+## **Phase 1: Core User Experience (5 weeks)**
 **Goal**: Transform daily user workflows with essential productivity features
 
 1. **Week 1**: Example Transfer + Random Examples + JSON Prettify (3 simple features)
-2. **Week 2**: Vertical Panel Resize + Error Transfer (2 moderate features)
-3. **Week 3**: Zen Engine Performance Display (1 complex feature)
+2. **Week 2**: Parser JSON Input Upload + Vertical Panel Resize (2 moderate features)
+3. **Week 3**: Error Transfer + Zen Engine Performance Display (2 moderate features)
+4. **Week 4**: Parser → Chat Transfer + Panel Maximize/Minimize Toggle (2 simple features)
+5. **Week 5**: Parallel Embedding Processing (1 complex feature)
 
 **Expected Impact**: 40-50% improvement in user productivity and learning efficiency
 
 ---
 
-## **Phase 2: Developer Experience (2-3 weeks)**
+## **Phase 2: Developer Experience (3 weeks)**
 **Goal**: Enhance development and maintenance capabilities
 
-1. **Week 4**: Missing Tooltips + Code Block Viewer (2 simple features)
-2. **Week 5**: TypeScript Refactoring + Comprehensive Logging (2 moderate features)
-3. **Week 6**: JDM Examples Integration (1 moderate feature)
+1. **Week 6**: Missing Tooltips + Code Block Viewer + Parser Size Limitations (3 simple features)
+2. **Week 7**: TypeScript Refactoring + Comprehensive Logging (2 moderate features)
+3. **Week 8**: JDM Examples Integration (1 moderate feature)
 
 **Expected Impact**: Improved code maintainability and richer content library
 
 ---
 
-## **Phase 3: Advanced Features (3-4 weeks)**
+## **Phase 3: Advanced Features (2 weeks)**
 **Goal**: Industry-leading capabilities and performance
 
-1. **Week 7-8**: Parallel Embedding Processing (1 complex feature)
-2. **Week 9-11**: Intelligent Autocomplete System (1 complex feature)
-3. **Week 12**: Project Architecture Refactoring (ongoing)
+1. **Week 9**: Intelligent Autocomplete System (1 complex feature)
+2. **Week 10**: Project Architecture Refactoring (ongoing)
 
 **Expected Impact**: Performance leadership and advanced developer tooling
 
 ---
 
-## **Phase 4: Production Excellence (2-3 weeks)**
+## **Phase 4: Production Excellence (3 weeks)**
 **Goal**: Enterprise-ready platform with comprehensive testing and automation
 
-1. **Week 13**: UI Polish + Root Cleanup (2 simple features)
-2. **Week 14**: Testing Suite + Exception Handling (2 moderate features)
-3. **Week 15-16**: CI/CD + Docusaurus (2 complex features)
+1. **Week 11**: UI Polish + Root Cleanup (2 simple features)
+2. **Week 12**: Testing Suite + Exception Handling (2 moderate features)
+3. **Week 13-15**: CI/CD + Docusaurus (2 complex features)
 
 **Expected Impact**: Production-grade platform ready for enterprise adoption
 
@@ -573,7 +661,7 @@ Transform from production-ready to industry-leading DSL education platform with 
 
 ---
 
-**Total Estimated Timeline**: 12-16 weeks for complete roadmap  
+**Total Estimated Timeline**: 15 weeks for complete roadmap  
 **Recommended Approach**: Focus on Phase 1 first for maximum user impact
 
 *Last Updated: 2025-01-30*  
