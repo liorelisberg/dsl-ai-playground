@@ -29,9 +29,39 @@ export interface PromptPersonalization {
 }
 
 export class EnhancedPromptBuilder {
-  private readonly BASE_SYSTEM_PROMPT = `You are a specialized DSL (Domain Specific Language) expert assistant with deep knowledge of JavaScript-like expression languages.
+  private readonly BASE_SYSTEM_PROMPT = `You are a specialized ZEN DSL (Domain Specific Language) expert assistant with deep knowledge of the ZEN expression language.
 
-Your expertise covers: Mathematical operations, Array manipulation, String processing, Date/time handling, Boolean logic, Object property access, Type checking, and Advanced DSL patterns.`;
+🚨 CRITICAL: ZEN DSL is NOT JavaScript. Use ONLY ZEN syntax:
+
+✅ ZEN SYNTAX (ALWAYS USE):
+- String length: len("text") ← NOT text.length
+- String case: upper("text"), lower("TEXT") ← NOT .toUpperCase()/.toLowerCase()  
+- String operations: contains(), trim(), startsWith(), endsWith(), matches(), split()
+- Array operations: filter(array, # > 5), map(array, # * 2), len(array) ← NOT .filter()/.map()
+- Boolean logic: and, or, not ← NOT &&, ||, !
+- Math functions: round(), sqrt(), floor(), ceil(), abs(), pow(), min(), max()
+- Array indexing: array[0], array[-1] (negative indexing supported)
+- Type checking: type(value), string(value), number(value)
+- Object access: object.property.nested
+- Conditionals: condition ? value1 : value2
+
+❌ NEVER USE JavaScript syntax:
+- .length, .toUpperCase(), .toLowerCase(), .split(), .filter(), .map()
+- &&, ||, ! (use and, or, not instead)
+- ** for power (use pow() instead)
+- .includes(), .indexOf(), .match(), .test()
+
+🎯 YOUR EXPERTISE: Mathematical operations, Array manipulation with # placeholder, String processing with ZEN functions, Date/time handling, Boolean logic with ZEN operators, Object property access, Type checking with type() function, and Advanced ZEN DSL patterns.
+
+🔗 CONVERSATION CONTINUITY RULES:
+- ALWAYS reference previous discussion when conversation history exists
+- Use conversation markers like "Building on our discussion of...", "As we explored...", "Continuing from..."
+- Connect new concepts to previously covered topics explicitly
+- Acknowledge the user's learning progression and previous questions
+- Maintain conversation flow and topic threading throughout responses
+- Show awareness of the conversation's journey and context
+
+⚡ RESPONSE RULE: ALWAYS provide ZEN DSL syntax examples, never JavaScript equivalents.`;
 
   /**
    * Build an adaptive prompt based on user context and strategy
@@ -46,17 +76,24 @@ Your expertise covers: Mathematical operations, Array manipulation, String proce
     jsonContext?: string
   ): EnhancedPromptResult {
     
-    console.log(`🎨 Building adaptive prompt for ${adaptiveStrategy.complexityLevel} user with ${adaptiveStrategy.includeExamples ? 'examples' : 'no examples'}`);
+    // 🔍 DETECT BREVITY REQUESTS
+    const brevityKeywords = ['brief', 'briefly', 'few words', 'short', 'concise', 'quick', 'list', 'summary'];
+    const isBrevityRequest = brevityKeywords.some(keyword => 
+      userMessage.toLowerCase().includes(keyword)
+    );
+    
+    console.log(`🎨 Building adaptive prompt for ${adaptiveStrategy.complexityLevel} user with ${adaptiveStrategy.includeExamples ? 'examples' : 'no examples'}${isBrevityRequest ? ' (BREVITY REQUESTED)' : ''}`);
 
     const sections: PromptSection[] = [];
     const adaptations: string[] = [];
     const personalizations: string[] = [];
 
-    // 1. System prompt with personalization
+    // 1. System prompt with personalization AND brevity handling
     const personalizedSystem = this.buildPersonalizedSystemPrompt(
       adaptiveStrategy, 
       userProfile, 
-      conversationContext
+      conversationContext,
+      isBrevityRequest
     );
     sections.push({
       name: 'system',
@@ -65,6 +102,10 @@ Your expertise covers: Mathematical operations, Array manipulation, String proce
       priority: 'high'
     });
     personalizations.push(...personalizedSystem.personalizations);
+    
+    if (isBrevityRequest) {
+      adaptations.push('brevity mode enabled');
+    }
 
     // 2. Knowledge cards with adaptive selection
     if (knowledgeCards.length > 0) {
@@ -123,7 +164,7 @@ Your expertise covers: Mathematical operations, Array manipulation, String proce
     adaptations.push(...enrichedMessage.adaptations);
 
     // 6. Response guidelines based on strategy
-    const guidelines = this.buildResponseGuidelines(adaptiveStrategy, userProfile);
+    const guidelines = this.buildResponseGuidelines(adaptiveStrategy, userProfile, isBrevityRequest, history.length > 0);
     sections.push({
       name: 'guidelines',
       content: guidelines.content,
@@ -153,7 +194,8 @@ Your expertise covers: Mathematical operations, Array manipulation, String proce
   private buildPersonalizedSystemPrompt(
     strategy: AdaptiveResponse,
     profile?: UserProfile,
-    context?: ConversationContext
+    context?: ConversationContext,
+    isBrevityRequest: boolean = false
   ): { content: string; personalizations: string[] } {
     
     const personalizations: string[] = [];
@@ -163,15 +205,15 @@ Your expertise covers: Mathematical operations, Array manipulation, String proce
     if (profile) {
       switch (profile.expertiseLevel) {
         case 'beginner':
-          systemPrompt += `\n\nYou are working with a beginner who benefits from clear explanations, step-by-step guidance, and practical examples. Always explain concepts before diving into implementation details.`;
+          systemPrompt += `\n\nYou are working with a beginner who benefits from clear explanations, step-by-step guidance, and practical ZEN examples. Always explain concepts before diving into implementation details using ZEN syntax.`;
           personalizations.push('beginner-friendly tone');
           break;
         case 'intermediate':
-          systemPrompt += `\n\nYou are working with someone who has intermediate DSL knowledge. They understand basics but appreciate deeper insights, best practices, and when to use different approaches.`;
+          systemPrompt += `\n\nYou are working with someone who has intermediate ZEN DSL knowledge. They understand basics but appreciate deeper insights, best practices, and when to use different ZEN approaches.`;
           personalizations.push('intermediate-level insights');
           break;
         case 'advanced':
-          systemPrompt += `\n\nYou are working with an advanced user who values efficiency, performance considerations, edge cases, and implementation details. They can handle complex concepts and appreciate technical depth.`;
+          systemPrompt += `\n\nYou are working with an advanced ZEN user who values efficiency, performance considerations, edge cases, and implementation details. They can handle complex ZEN concepts and appreciate technical depth.`;
           personalizations.push('advanced technical depth');
           break;
       }
@@ -179,31 +221,43 @@ Your expertise covers: Mathematical operations, Array manipulation, String proce
 
     // Add conversation flow awareness
     if (context) {
-      switch (context.conversationFlow) {
+      switch (context.flowType) {
         case 'learning':
-          systemPrompt += `\n\nThe user is in learning mode. Focus on building understanding, provide educational context, and suggest progressive learning paths.`;
+          systemPrompt += `\n\nThe user is in learning mode. Focus on building ZEN understanding, provide educational context, and suggest progressive learning paths using ZEN syntax.`;
           personalizations.push('learning-focused approach');
           break;
         case 'problem-solving':
-          systemPrompt += `\n\nThe user is trying to solve a specific problem. Be solution-oriented, provide practical implementations, and consider edge cases.`;
+          systemPrompt += `\n\nThe user is trying to solve a specific problem. Be solution-oriented, provide practical ZEN implementations, and consider edge cases in ZEN DSL.`;
           personalizations.push('solution-oriented responses');
           break;
         case 'debugging':
-          systemPrompt += `\n\nThe user is troubleshooting an issue. Be systematic, help identify root causes, and provide clear debugging steps.`;
+          systemPrompt += `\n\nThe user is troubleshooting a ZEN DSL issue. Be systematic, help identify root causes, and provide clear debugging steps using correct ZEN syntax.`;
           personalizations.push('debugging assistance');
           break;
         case 'exploration':
-          systemPrompt += `\n\nThe user is exploring DSL capabilities. Provide comprehensive coverage, suggest related concepts, and encourage discovery.`;
+          systemPrompt += `\n\nThe user is exploring ZEN DSL capabilities. Provide comprehensive coverage of ZEN functions, suggest related ZEN concepts, and encourage discovery.`;
           personalizations.push('exploratory guidance');
           break;
       }
+    }
+
+    // 🎯 BREVITY HANDLING
+    if (isBrevityRequest) {
+      systemPrompt += `\n\n🎯 BREVITY MODE: The user requested a brief response. Provide:
+- Concise, direct answers
+- Essential ZEN syntax only 
+- Minimal explanations
+- Focus on core functionality
+- Use bullet points or short lists when appropriate
+- Skip verbose examples unless specifically requested`;
+      personalizations.push('brevity mode enabled');
     }
 
     return { content: systemPrompt, personalizations };
   }
 
   /**
-   * Build adaptive knowledge section
+   * Build adaptive knowledge section with ZEN priority
    */
   private buildAdaptiveKnowledgeSection(
     knowledgeCards: KnowledgeCard[],
@@ -212,46 +266,71 @@ Your expertise covers: Mathematical operations, Array manipulation, String proce
   ): { content: string; adaptations: string[] } {
     
     const adaptations: string[] = [];
-    let content = '**Relevant DSL Knowledge:**\n\n';
+    let content = '**Relevant ZEN DSL Knowledge:**\n\n';
 
-    // Sort by relevance and apply strategy filters
+    // Sort by relevance and ZEN syntax priority
     const sortedCards = [...knowledgeCards]
-      .sort((a, b) => b.relevanceScore - a.relevanceScore);
+      .sort((a, b) => {
+        // Prioritize ZEN examples over general rules
+        const aIsZenExample = a.source.includes('example') || a.content.includes('ZEN');
+        const bIsZenExample = b.source.includes('example') || b.content.includes('ZEN');
+        
+        if (aIsZenExample && !bIsZenExample) return -1;
+        if (!aIsZenExample && bIsZenExample) return 1;
+        
+        // Then sort by relevance score
+        return b.relevanceScore - a.relevanceScore;
+      });
 
-    // Adaptive filtering based on complexity level
+    // Adaptive filtering based on complexity level with ZEN focus
     let filteredCards = sortedCards;
     if (strategy.complexityLevel === 'basic') {
-      // Prefer simpler, foundational content
-      filteredCards = sortedCards.filter(card => 
-        !card.content.toLowerCase().includes('advanced') &&
-        !card.content.toLowerCase().includes('performance')
-      ).slice(0, 4);
-      adaptations.push('filtered for basic complexity');
+      // Prefer ZEN examples and simpler foundational content
+      filteredCards = sortedCards.filter(card => {
+        const isZenExample = card.source.includes('example') || card.content.includes('ZEN');
+        const isBasic = !card.content.toLowerCase().includes('advanced') &&
+                       !card.content.toLowerCase().includes('performance');
+        return isZenExample || isBasic;
+      }).slice(0, 5);
+      adaptations.push('filtered for basic complexity with ZEN priority');
     } else if (strategy.complexityLevel === 'advanced') {
-      // Include more complex content
-      filteredCards = sortedCards.slice(0, 6);
-      adaptations.push('included advanced content');
+      // Include more complex content but still prioritize ZEN
+      filteredCards = sortedCards.slice(0, 7);
+      adaptations.push('included advanced ZEN content');
     } else {
-      filteredCards = sortedCards.slice(0, 5);
+      filteredCards = sortedCards.slice(0, 6);
+      adaptations.push('balanced ZEN knowledge selection');
     }
 
-    // Build knowledge content with adaptive formatting
+    // Build knowledge content with ZEN emphasis
     filteredCards.forEach((card, index) => {
+      const isZenExample = card.source.includes('example') || card.content.includes('ZEN');
       const priority = index < 2 ? '⭐' : '';
-      content += `${index + 1}. ${priority}**${this.capitalizeCategory(card.category)}** (${card.source}):\n`;
+      const zenFlag = isZenExample ? '🔧 ZEN SYNTAX' : '📋 DSL RULE';
+      
+      content += `${index + 1}. ${priority}**${zenFlag}: ${this.capitalizeCategory(card.category)}** (${card.source}):\n`;
       
       if (strategy.includeBackground && index === 0) {
-        content += `   *Primary concept for your current question*\n`;
-        adaptations.push('added background context');
+        content += `   *Primary ZEN concept for your current question*\n`;
+        adaptations.push('added ZEN background context');
       }
       
-      content += `   ${card.content}\n\n`;
+      // Enhance ZEN examples with additional emphasis
+      if (isZenExample) {
+        content += `   ${card.content}\n`;
+        content += `   🎯 Remember: Use ZEN syntax exactly as shown above.\n\n`;
+      } else {
+        content += `   ${card.content}\n\n`;
+      }
     });
+
+    // Add ZEN syntax reminder
+    content += `💡 **ZEN SYNTAX REMINDER**: Always use ZEN functions like len(), upper(), filter(), map() with # placeholder - never JavaScript equivalents.\n`;
 
     // Add topic continuity for ongoing conversations
     if (context && context.topicDepth > 1) {
-      content += `*Note: This continues your ${context.currentTopic} exploration (depth level ${context.topicDepth})*\n`;
-      adaptations.push('added topic continuity');
+      content += `\n*Note: This continues your ${context.currentTopic} exploration (depth level ${context.topicDepth}) using ZEN DSL.*\n`;
+      adaptations.push('added ZEN topic continuity');
     }
 
     return { content, adaptations };
@@ -320,7 +399,7 @@ Your expertise covers: Mathematical operations, Array manipulation, String proce
     content += `\n${message}`;
 
     // Add follow-up suggestions if available
-    if (strategy.suggestedFollowUps.length > 0 && context?.conversationFlow === 'exploration') {
+    if (strategy.suggestedFollowUps.length > 0 && context?.flowType === 'exploration') {
       content += `\n\n*Related questions you might have: ${strategy.suggestedFollowUps.join(', ')}*`;
       adaptations.push('added follow-up suggestions');
     }
@@ -333,7 +412,9 @@ Your expertise covers: Mathematical operations, Array manipulation, String proce
    */
   private buildResponseGuidelines(
     strategy: AdaptiveResponse,
-    profile?: UserProfile
+    profile?: UserProfile,
+    isBrevityRequest: boolean = false,
+    hasHistory: boolean = false
   ): { content: string; adaptations: string[] } {
     
     const adaptations: string[] = [];
@@ -341,56 +422,83 @@ Your expertise covers: Mathematical operations, Array manipulation, String proce
 
     const guidelines: string[] = [];
 
-    // Complexity-based guidelines
-    switch (strategy.complexityLevel) {
-      case 'basic':
-        guidelines.push('Use simple, clear language');
-        guidelines.push('Explain concepts step-by-step');
-        guidelines.push('Avoid technical jargon');
-        adaptations.push('basic complexity guidelines');
-        break;
-      case 'intermediate':
-        guidelines.push('Balance explanation with implementation');
-        guidelines.push('Include best practices');
-        guidelines.push('Mention alternative approaches');
-        adaptations.push('intermediate complexity guidelines');
-        break;
-      case 'advanced':
-        guidelines.push('Focus on implementation details');
-        guidelines.push('Discuss performance implications');
-        guidelines.push('Cover edge cases');
-        adaptations.push('advanced complexity guidelines');
-        break;
+    // 🔗 CONVERSATION CONTINUITY RULES (Phase 2.2)
+    if (hasHistory) {
+      guidelines.push('🔗 REFERENCE previous conversation elements explicitly');
+      guidelines.push('📚 CONNECT new concepts to topics already discussed');
+      guidelines.push('🎯 USE conversation markers: "As we discussed...", "Building on our discussion of...", "Continuing from..."');
+      guidelines.push('🧵 ACKNOWLEDGE the user\'s learning progression and previous questions');
+      guidelines.push('📈 SHOW awareness of the conversation journey and context');
+      adaptations.push('conversation continuity rules applied');
     }
 
-    // Example inclusion
-    if (strategy.includeExamples) {
-      guidelines.push('Include practical code examples');
-      guidelines.push('Show before/after scenarios');
-      adaptations.push('include examples guideline');
+    // 🎯 BREVITY FIRST - Override complexity if brevity requested
+    if (isBrevityRequest) {
+      guidelines.push('⚡ BRIEF MODE: Keep response concise and direct');
+      guidelines.push('📝 Use bullet points or short lists');
+      guidelines.push('🔑 Focus on essential ZEN syntax only');
+      guidelines.push('⚠️ Skip lengthy explanations');
+      adaptations.push('brevity guidelines applied');
+    } else {
+      // Complexity-based guidelines (only if not brief)
+      switch (strategy.complexityLevel) {
+        case 'basic':
+          guidelines.push('Use simple, clear language with ZEN examples');
+          guidelines.push('Explain ZEN concepts step-by-step');
+          guidelines.push('Avoid technical jargon');
+          adaptations.push('basic complexity guidelines');
+          break;
+        case 'intermediate':
+          guidelines.push('Balance ZEN explanation with implementation');
+          guidelines.push('Include ZEN best practices');
+          guidelines.push('Mention alternative ZEN approaches');
+          adaptations.push('intermediate complexity guidelines');
+          break;
+        case 'advanced':
+          guidelines.push('Focus on ZEN implementation details');
+          guidelines.push('Discuss ZEN performance implications');
+          guidelines.push('Cover ZEN edge cases');
+          adaptations.push('advanced complexity guidelines');
+          break;
+      }
     }
 
-    // Background context
-    if (strategy.includeBackground) {
-      guidelines.push('Provide conceptual background');
-      guidelines.push('Explain the "why" behind solutions');
-      adaptations.push('include background guideline');
+    // Core ZEN guidelines (always apply)
+    guidelines.push('🚫 NEVER use JavaScript syntax (.length, .toUpperCase(), etc.)');
+    guidelines.push('✅ ALWAYS use ZEN syntax (len(), upper(), filter(), etc.)');
+    guidelines.push('📋 Include ZEN function names in responses');
+
+    // Example inclusion (adjust for brevity)
+    if (strategy.includeExamples && !isBrevityRequest) {
+      guidelines.push('Include practical ZEN code examples');
+      guidelines.push('Show before/after scenarios with ZEN syntax');
+      adaptations.push('include ZEN examples guideline');
+    } else if (strategy.includeExamples && isBrevityRequest) {
+      guidelines.push('Include minimal ZEN syntax examples only');
+      adaptations.push('brief ZEN examples only');
+    }
+
+    // Background context (skip if brevity requested)
+    if (strategy.includeBackground && !isBrevityRequest) {
+      guidelines.push('Provide ZEN conceptual background');
+      guidelines.push('Explain the "why" behind ZEN solutions');
+      adaptations.push('include ZEN background guideline');
     }
 
     // User interaction style
-    if (profile) {
+    if (profile && !isBrevityRequest) {
       switch (profile.interactionStyle) {
         case 'concise':
-          guidelines.push('Keep responses focused and brief');
+          guidelines.push('Keep ZEN responses focused and brief');
           adaptations.push('concise style preference');
           break;
         case 'examples-focused':
-          guidelines.push('Emphasize practical examples');
-          adaptations.push('examples-focused style');
+          guidelines.push('Emphasize practical ZEN examples');
+          adaptations.push('ZEN examples-focused style');
           break;
         case 'explanatory':
-          guidelines.push('Provide thorough explanations');
-          adaptations.push('explanatory style preference');
+          guidelines.push('Provide thorough ZEN explanations');
+          adaptations.push('explanatory ZEN style preference');
           break;
       }
     }
@@ -447,7 +555,7 @@ Your expertise covers: Mathematical operations, Array manipulation, String proce
                           strategy.complexityLevel === 'advanced' ? 'technical' : 'standard';
 
     const encouragementLevel = profile?.expertiseLevel === 'beginner' ? 'high' :
-                              context?.userSatisfaction && context.userSatisfaction < 0.5 ? 'medium' : 'low';
+                              context?.satisfaction && context.satisfaction < 0.5 ? 'medium' : 'low';
 
     return {
       greetingStyle,

@@ -31,12 +31,13 @@ export interface OptimizationMetrics {
 }
 
 export class DynamicContextManager {
-  private readonly MAX_TOKENS = 2000; // Budget limit
-  private readonly STATIC_HEADER_TOKENS = 150;
-  private readonly RESERVE_TOKENS = 200;
+  // Phase 1.1: Expanded Token Budget (4x increase from 2,000 to 8,000)
+  private readonly MAX_TOKENS = 8000; // Increased from 2,000 to utilize Gemini 2.0 Flash capacity
+  private readonly STATIC_HEADER_TOKENS = 300; // Increased from 150 to support richer prompts
+  private readonly RESERVE_TOKENS = 400; // Increased from 200 for better safety margin
 
   /**
-   * Calculate optimal token budget allocation based on conversation context
+   * Phase 1.2: Enhanced conversation-flow-aware budget allocation
    */
   calculateOptimalBudget(
     message: string,
@@ -61,35 +62,110 @@ export class DynamicContextManager {
       return budget;
     }
 
-    // Smart allocation based on conversation state
-    if (history.length === 0) {
-      // New conversation: prioritize knowledge discovery
-      budget.knowledgeCards = Math.min(600, Math.floor(availableTokens * 0.8));
-      budget.jsonContext = hasJsonContext ? Math.floor(availableTokens * 0.2) : 0;
-      
-      console.log(`🆕 New conversation: Knowledge-focused allocation (${budget.knowledgeCards} tokens for knowledge)`);
-    } else {
-      // Ongoing conversation: balance history + knowledge
-      const estimatedHistoryTokens = this.estimateHistoryTokens(history);
-      const historyBudget = Math.min(estimatedHistoryTokens, Math.floor(availableTokens * 0.4));
-      
-      budget.chatHistory = historyBudget;
-      budget.knowledgeCards = Math.min(400, Math.floor(availableTokens * 0.4));
-      budget.jsonContext = hasJsonContext ? Math.floor(availableTokens * 0.2) : 0;
-      
-      console.log(`🔄 Ongoing conversation: Balanced allocation (History: ${budget.chatHistory}, Knowledge: ${budget.knowledgeCards})`);
+    // Phase 1.2: Flow-aware allocation strategy
+    const conversationFlow = this.detectConversationFlow(message, history);
+    
+    switch (conversationFlow) {
+      case 'learning':
+        // Learning flow: prioritize knowledge cards for educational content
+        budget.knowledgeCards = Math.min(3200, Math.floor(availableTokens * 0.65)); // 65% for knowledge
+        budget.chatHistory = Math.min(1600, Math.floor(availableTokens * 0.25)); // 25% for history
+        budget.jsonContext = hasJsonContext ? Math.floor(availableTokens * 0.10) : 0; // 10% for JSON
+        console.log(`📚 Learning flow: Knowledge-prioritized allocation (${budget.knowledgeCards} tokens for knowledge)`);
+        break;
+        
+      case 'problem-solving':
+        // Problem-solving: prioritize history for solution continuity
+        budget.chatHistory = Math.min(2800, Math.floor(availableTokens * 0.45)); // 45% for solution context
+        budget.knowledgeCards = Math.min(2000, Math.floor(availableTokens * 0.35)); // 35% for knowledge
+        budget.jsonContext = hasJsonContext ? Math.floor(availableTokens * 0.20) : 0; // 20% for data context
+        console.log(`🔧 Problem-solving flow: History-prioritized allocation (${budget.chatHistory} tokens for context)`);
+        break;
+        
+      case 'exploration':
+        // Exploration: balanced allocation for discovery
+        budget.knowledgeCards = Math.min(2400, Math.floor(availableTokens * 0.40)); // 40% for knowledge
+        budget.chatHistory = Math.min(2000, Math.floor(availableTokens * 0.35)); // 35% for history
+        budget.jsonContext = hasJsonContext ? Math.floor(availableTokens * 0.25) : 0; // 25% for data exploration
+        console.log(`🔍 Exploration flow: Balanced allocation (Knowledge: ${budget.knowledgeCards}, History: ${budget.chatHistory})`);
+        break;
+        
+      default:
+        // Default: smart allocation based on conversation state
+        if (history.length === 0) {
+          // New conversation: prioritize knowledge discovery
+          budget.knowledgeCards = Math.min(2400, Math.floor(availableTokens * 0.70));
+          budget.jsonContext = hasJsonContext ? Math.floor(availableTokens * 0.30) : 0;
+          console.log(`🆕 New conversation: Knowledge-focused allocation (${budget.knowledgeCards} tokens for knowledge)`);
+        } else {
+          // Ongoing conversation: enhanced balanced allocation
+          budget.chatHistory = Math.min(2000, Math.floor(availableTokens * 0.35));
+          budget.knowledgeCards = Math.min(2000, Math.floor(availableTokens * 0.40));
+          budget.jsonContext = hasJsonContext ? Math.floor(availableTokens * 0.25) : 0;
+          console.log(`🔄 Ongoing conversation: Enhanced allocation (History: ${budget.chatHistory}, Knowledge: ${budget.knowledgeCards})`);
+        }
     }
 
-    // Complexity adjustments
+    // Complexity adjustments with larger budget
     if (queryComplexity === 'complex') {
-      // Complex queries need more knowledge
-      const extraKnowledge = Math.min(200, budget.reserve);
+      // Complex queries get additional knowledge tokens from reserve
+      const extraKnowledge = Math.min(800, budget.reserve); // Can allocate up to 800 extra tokens
       budget.knowledgeCards += extraKnowledge;
       budget.reserve -= extraKnowledge;
+      console.log(`🧠 Complex query boost: +${extraKnowledge} tokens for knowledge`);
+    } else if (queryComplexity === 'simple') {
+      // Simple queries can use fewer tokens, optimize for speed
+      budget.knowledgeCards = Math.min(budget.knowledgeCards, 1200);
+      budget.chatHistory = Math.min(budget.chatHistory, 800);
+      console.log(`⚡ Simple query optimization: Reduced allocation for speed`);
     }
 
-    console.log(`💰 Token Budget: Total=${this.MAX_TOKENS}, Available=${availableTokens}, Allocation=${JSON.stringify(budget)}`);
+    console.log(`💰 Enhanced Token Budget: Total=${this.MAX_TOKENS}, Available=${availableTokens}, Flow=${conversationFlow}`);
+    console.log(`📊 Allocation: Knowledge=${budget.knowledgeCards}, History=${budget.chatHistory}, JSON=${budget.jsonContext}, Reserve=${budget.reserve}`);
     return budget;
+  }
+
+  /**
+   * Phase 1.2: Detect conversation flow for adaptive allocation
+   */
+  private detectConversationFlow(message: string, history: ChatTurn[]): 'learning' | 'problem-solving' | 'exploration' | 'default' {
+    const messageLower = message.toLowerCase();
+    
+    // Learning indicators
+    const learningIndicators = ['what is', 'how does', 'explain', 'teach me', 'learn', 'understand', 'concept', 'basics', 'introduction'];
+    const learningScore = learningIndicators.filter(indicator => messageLower.includes(indicator)).length;
+    
+    // Problem-solving indicators
+    const problemIndicators = ['error', 'fix', 'debug', 'issue', 'problem', 'not working', 'help with', 'troubleshoot', 'solve'];
+    const problemScore = problemIndicators.filter(indicator => messageLower.includes(indicator)).length;
+    
+    // Exploration indicators
+    const explorationIndicators = ['try', 'test', 'experiment', 'compare', 'different ways', 'alternatives', 'explore', 'options'];
+    const explorationScore = explorationIndicators.filter(indicator => messageLower.includes(indicator)).length;
+    
+    // Historical context analysis
+    if (history.length > 0) {
+      const recentMessages = history.slice(-4).map(turn => turn.content.toLowerCase()).join(' ');
+      
+      if (recentMessages.includes('error') || recentMessages.includes('problem')) {
+        return 'problem-solving';
+      }
+      
+      if (recentMessages.includes('what') && recentMessages.includes('how')) {
+        return 'learning';
+      }
+    }
+    
+    // Score-based detection
+    const maxScore = Math.max(learningScore, problemScore, explorationScore);
+    
+    if (maxScore === 0) return 'default';
+    
+    if (learningScore === maxScore) return 'learning';
+    if (problemScore === maxScore) return 'problem-solving';
+    if (explorationScore === maxScore) return 'exploration';
+    
+    return 'default';
   }
 
   /**

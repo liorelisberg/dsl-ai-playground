@@ -2,6 +2,8 @@
 // Phase 2.2 of Conversation Optimization Plan
 
 import { ChatTurn } from './contextManager';
+import { TopicManager, TopicRelatedness, ZenRelevanceResult } from './topicManager';
+import { SemanticVectorStore } from './semanticVectorStore';
 
 export interface UserProfile {
   sessionId: string;
@@ -15,13 +17,27 @@ export interface UserProfile {
 }
 
 export interface ConversationContext {
+  sessionId: string;
   currentTopic: string;
-  topicDepth: number; // How deep into the topic we've gone
-  followUpQuestions: string[];
+  topicDepth: number;
+  flowType: 'learning' | 'problem-solving' | 'exploration' | 'debugging';
   conceptsDiscussed: Set<string>;
-  pendingClarifications: string[];
-  userSatisfaction: number; // 0-1 estimated satisfaction
-  conversationFlow: 'exploration' | 'problem-solving' | 'learning' | 'debugging';
+  lastActivity: Date;
+  // Phase 3: Enhanced topic management
+  topicTransitions: Array<{
+    from: string;
+    to: string;
+    relationship: 'same' | 'related' | 'different';
+    timestamp: Date;
+  }>;
+  zenRelevanceHistory: Array<{
+    message: string;
+    relevance: ZenRelevanceResult;
+    timestamp: Date;
+  }>;
+  // Legacy properties for backward compatibility
+  suggestedFollowUps?: string[];
+  satisfaction?: number;
 }
 
 export interface AdaptiveResponse {
@@ -48,6 +64,13 @@ export class ConversationStateManager {
     intermediate: ['difference between', 'when to use', 'best practice', 'compare', 'optimize'],
     advanced: ['performance', 'edge case', 'implementation details', 'architecture', 'scalability']
   };
+  private topicManager: TopicManager | null = null;
+
+  constructor(semanticStore?: SemanticVectorStore) {
+    if (semanticStore) {
+      this.topicManager = new TopicManager(semanticStore);
+    }
+  }
 
   /**
    * Initialize or update user profile based on interaction patterns
@@ -115,16 +138,16 @@ export class ConversationStateManager {
     concepts.forEach(concept => context.conceptsDiscussed.add(concept));
 
     // Analyze conversation flow
-    context.conversationFlow = this.analyzeConversationFlow(message, history);
+    context.flowType = this.analyzeConversationFlow(message, history);
 
     // Generate follow-up questions
-    context.followUpQuestions = this.generateFollowUpQuestions(context);
+    context.suggestedFollowUps = this.generateFollowUpQuestions(context);
 
     // Update user satisfaction estimation
-    context.userSatisfaction = this.estimateUserSatisfaction(message, history);
+    context.satisfaction = this.estimateUserSatisfaction(message, history);
 
     this.conversationContexts.set(sessionId, context);
-    console.log(`💭 Context updated: ${context.currentTopic} (depth: ${context.topicDepth}), flow: ${context.conversationFlow}`);
+    console.log(`💭 Context updated: ${context.currentTopic} (depth: ${context.topicDepth}), flow: ${context.flowType}`);
 
     return context;
   }
@@ -195,7 +218,7 @@ export class ConversationStateManager {
       totalQuestions: profile.sessionCount,
       topicsExplored: context.conceptsDiscussed.size,
       avgComplexity,
-      satisfactionScore: context.userSatisfaction,
+      satisfactionScore: context.satisfaction || 0.5,
       learningProgression: Math.min(learningProgression, 1.0)
     };
   }
@@ -218,13 +241,14 @@ export class ConversationStateManager {
 
   private createNewContext(initialMessage: string): ConversationContext {
     return {
+      sessionId: '',
       currentTopic: this.identifyMainTopic(initialMessage),
       topicDepth: 1,
-      followUpQuestions: [],
+      flowType: 'exploration',
       conceptsDiscussed: new Set(),
-      pendingClarifications: [],
-      userSatisfaction: 0.5, // Neutral start
-      conversationFlow: 'exploration'
+      lastActivity: new Date(),
+      topicTransitions: [],
+      zenRelevanceHistory: []
     };
   }
 
@@ -347,7 +371,7 @@ export class ConversationStateManager {
   private generateFollowUpQuestions(context: ConversationContext): string[] {
     const followUps: string[] = [];
 
-    switch (context.conversationFlow) {
+    switch (context.flowType) {
       case 'learning':
         followUps.push(`Would you like to see more examples of ${context.currentTopic}?`);
         followUps.push(`Are there specific use cases you're wondering about?`);
@@ -410,7 +434,7 @@ export class ConversationStateManager {
   private shouldIncludeExamples(profile: UserProfile, context: ConversationContext): boolean {
     return profile.expertiseLevel === 'beginner' || 
            profile.interactionStyle === 'examples-focused' ||
-           context.conversationFlow === 'learning';
+           context.flowType === 'learning';
   }
 
   private shouldIncludeBackground(profile: UserProfile, context: ConversationContext): boolean {
@@ -449,7 +473,7 @@ export class ConversationStateManager {
     context: ConversationContext, 
     query: string
   ): string {
-    switch (context.conversationFlow) {
+    switch (context.flowType) {
       case 'learning': return `Understanding ${context.currentTopic} fundamentals`;
       case 'problem-solving': return `Implementing ${context.currentTopic} solution`;
       case 'debugging': return `Fixing ${context.currentTopic} issues`;
@@ -505,6 +529,363 @@ export class ConversationStateManager {
     }
 
     return `User: ${profile.expertiseLevel} | Topic: ${context.currentTopic} (depth: ${context.topicDepth}) | ` +
-           `Flow: ${context.conversationFlow} | Satisfaction: ${(context.userSatisfaction * 100).toFixed(0)}%`;
+           `Flow: ${context.flowType} | Satisfaction: ${((context.satisfaction || 0.5) * 100).toFixed(0)}%`;
+  }
+
+  /**
+   * Phase 2.1: Generate older message summary for conversation continuity
+   */
+  generateOlderMessageSummary(
+    olderHistory: ChatTurn[],
+    conversationFlow: string,
+    conceptsDiscussed: Set<string>
+  ): string {
+    if (olderHistory.length === 0) {
+      return '';
+    }
+
+    switch (conversationFlow) {
+      case 'learning':
+        return this.generateLearningProgressionSummary(conceptsDiscussed, olderHistory);
+      case 'problem-solving':
+        return this.generateProblemProgressionSummary(olderHistory);
+      case 'exploration':
+        return this.generateExplorationPathSummary(olderHistory);
+      case 'debugging':
+        return this.generateDebuggingSessionSummary(olderHistory);
+      default:
+        return this.generateConceptSummary(conceptsDiscussed);
+    }
+  }
+
+  /**
+   * Generate learning progression summary for educational conversations
+   */
+  private generateLearningProgressionSummary(
+    conceptsDiscussed: Set<string>,
+    olderHistory: ChatTurn[]
+  ): string {
+    const concepts = Array.from(conceptsDiscussed).slice(0, 6); // Limit to most important concepts
+    const questionCount = olderHistory.filter(turn => turn.role === 'user').length;
+    
+    if (concepts.length === 0) return '';
+    
+    return `Previous learning: Explored ${concepts.slice(0, 4).join(', ')}${concepts.length > 4 ? ` and ${concepts.length - 4} other concepts` : ''} across ${questionCount} questions. Building knowledge progressively.`;
+  }
+
+  /**
+   * Generate problem-solving progression summary
+   */
+  private generateProblemProgressionSummary(olderHistory: ChatTurn[]): string {
+    const userMessages = olderHistory.filter(turn => turn.role === 'user');
+    const assistantMessages = olderHistory.filter(turn => turn.role === 'assistant');
+    
+    // Look for problem indicators and solutions attempted
+    const problems = userMessages.filter(turn => 
+      /error|issue|problem|not working|debug|fix|trouble/i.test(turn.content)
+    );
+    
+    const solutions = assistantMessages.filter(turn =>
+      /try|solution|fix|check|ensure|modify|change/i.test(turn.content)
+    );
+
+    if (problems.length === 0) return '';
+
+    return `Problem-solving context: Addressed ${problems.length} issue${problems.length > 1 ? 's' : ''}, tried ${solutions.length} solution${solutions.length > 1 ? 's' : ''}. Working toward resolution.`;
+  }
+
+  /**
+   * Generate exploration path summary
+   */
+  private generateExplorationPathSummary(olderHistory: ChatTurn[]): string {
+    const userMessages = olderHistory.filter(turn => turn.role === 'user');
+    const topics = new Set<string>();
+    
+    userMessages.forEach(turn => {
+      const extractedTopics = this.extractTopics(turn.content);
+      extractedTopics.forEach(topic => topics.add(topic));
+    });
+
+    if (topics.size === 0) return '';
+
+    const topicList = Array.from(topics).slice(0, 5);
+    return `Exploration journey: Investigated ${topicList.join(', ')}${topics.size > 5 ? ` and ${topics.size - 5} other areas` : ''}. Discovering ZEN capabilities.`;
+  }
+
+  /**
+   * Generate debugging session summary
+   */
+  private generateDebuggingSessionSummary(olderHistory: ChatTurn[]): string {
+    const userMessages = olderHistory.filter(turn => turn.role === 'user');
+    const expressions = userMessages.map(turn => turn.content)
+      .filter(content => /\(|\)|filter|map|len|sum|avg/.test(content));
+
+    if (expressions.length === 0) return '';
+
+    return `Debugging session: Worked on ${expressions.length} expression${expressions.length > 1 ? 's' : ''}. Troubleshooting ZEN syntax and logic.`;
+  }
+
+  /**
+   * Generate concept summary (default flow)
+   */
+  private generateConceptSummary(conceptsDiscussed: Set<string>): string {
+    if (conceptsDiscussed.size === 0) return '';
+
+    const concepts = Array.from(conceptsDiscussed).slice(0, 5);
+    return `Previous discussion: Covered ${concepts.join(', ')}${conceptsDiscussed.size > 5 ? ` and ${conceptsDiscussed.size - 5} other topics` : ''}.`;
+  }
+
+  /**
+   * Phase 2.1: Get recent and older message breakdown for conversation continuity
+   */
+  splitMessageHistory(
+    history: ChatTurn[],
+    recentMessageCount: number = 8 // 4-6 exchanges (8-12 turns)
+  ): { recentHistory: ChatTurn[], olderHistory: ChatTurn[] } {
+    if (history.length <= recentMessageCount) {
+      return {
+        recentHistory: history,
+        olderHistory: []
+      };
+    }
+
+    const recentHistory = history.slice(-recentMessageCount);
+    const olderHistory = history.slice(0, -recentMessageCount);
+
+    console.log(`📂 Split history: Recent ${recentHistory.length} turns, Older ${olderHistory.length} turns`);
+
+    return { recentHistory, olderHistory };
+  }
+
+  /**
+   * Phase 2.1: Generate comprehensive conversation context for continuity
+   */
+  generateConversationContinuityContext(
+    sessionId: string,
+    history: ChatTurn[]
+  ): {
+    recentHistory: ChatTurn[];
+    olderSummary: string;
+    conversationFlow: string;
+    conceptsDiscussed: Set<string>;
+  } {
+    const context = this.conversationContexts.get(sessionId);
+    const { recentHistory, olderHistory } = this.splitMessageHistory(history);
+    
+    const conversationFlow = context?.flowType || 'default';
+    const conceptsDiscussed = context?.conceptsDiscussed || new Set<string>();
+    
+    const olderSummary = this.generateOlderMessageSummary(
+      olderHistory,
+      conversationFlow,
+      conceptsDiscussed
+    );
+
+    console.log(`🔗 Conversation continuity context prepared: ${olderSummary ? 'Has summary' : 'No summary'}, ${recentHistory.length} recent turns`);
+
+    return {
+      recentHistory,
+      olderSummary,
+      conversationFlow,
+      conceptsDiscussed
+    };
+  }
+
+  /**
+   * Phase 3.1: Enhanced topic change detection with semantic similarity
+   */
+  async updateConversationTopic(
+    sessionId: string,
+    newMessage: string,
+    detectedTopic: string
+  ): Promise<{
+    topicChanged: boolean;
+    relatedness?: TopicRelatedness;
+    zenRelevance?: ZenRelevanceResult;
+  }> {
+    let context = this.conversationContexts.get(sessionId);
+    if (!context) {
+      context = this.createConversationContext(sessionId);
+    }
+    const currentTopic = context.currentTopic;
+
+    // Phase 3.1: Use Topic Manager for semantic topic similarity
+    let relatedness: TopicRelatedness | undefined;
+    if (this.topicManager && currentTopic && currentTopic !== detectedTopic) {
+      relatedness = await this.topicManager.detectTopicRelatedness(currentTopic, detectedTopic);
+      
+      // Record topic transition
+      context.topicTransitions.push({
+        from: currentTopic,
+        to: detectedTopic,
+        relationship: relatedness.relationship,
+        timestamp: new Date()
+      });
+
+      console.log(`🔄 Topic transition: ${currentTopic} → ${detectedTopic} (${relatedness.relationship}, ${(relatedness.similarity * 100).toFixed(1)}% similarity)`);
+    }
+
+    // Phase 3.2: ZEN relevance validation
+    let zenRelevance: ZenRelevanceResult | undefined;
+    if (this.topicManager) {
+      zenRelevance = await this.topicManager.validateZenRelevance(newMessage);
+      
+      // Record ZEN relevance for analytics
+      context.zenRelevanceHistory.push({
+        message: newMessage,
+        relevance: zenRelevance,
+        timestamp: new Date()
+      });
+
+      console.log(`🎯 ZEN relevance: ${zenRelevance.isZenRelated ? 'YES' : 'NO'} (${(zenRelevance.confidence * 100).toFixed(1)}% confidence)`);
+      if (zenRelevance.detectedFunctions.length > 0) {
+        console.log(`   Functions detected: ${zenRelevance.detectedFunctions.join(', ')}`);
+      }
+    }
+
+    // Update topic with enhanced logic
+    const topicChanged = this.shouldUpdateTopic(currentTopic, detectedTopic, relatedness);
+    
+    if (topicChanged) {
+      context.currentTopic = detectedTopic;
+      this.updateTopicDepth(context, relatedness);
+    }
+
+    return {
+      topicChanged,
+      relatedness,
+      zenRelevance
+    };
+  }
+
+  /**
+   * Generate off-topic deflection message using Topic Manager
+   */
+  async generateOffTopicResponse(
+    sessionId: string,
+    message: string
+  ): Promise<string | null> {
+    if (!this.topicManager) {
+      return null;
+    }
+
+    const zenRelevance = await this.topicManager.validateZenRelevance(message);
+    
+    if (zenRelevance.isZenRelated) {
+      return null; // Message is ZEN-related, no deflection needed
+    }
+
+    return this.topicManager.generateOffTopicDeflection(message, zenRelevance);
+  }
+
+  /**
+   * Enhanced topic similarity analysis for conversation continuity
+   */
+  async analyzeTopicContinuity(sessionId: string): Promise<{
+    hasConsistentFlow: boolean;
+    relatedTransitions: number;
+    offtopicRate: number;
+    zenFocusScore: number;
+  }> {
+    const context = this.conversationContexts.get(sessionId);
+    if (!context) {
+      return {
+        hasConsistentFlow: false,
+        relatedTransitions: 0,
+        offtopicRate: 0,
+        zenFocusScore: 0
+      };
+    }
+
+    // Analyze topic transitions
+    const transitions = context.topicTransitions;
+    const relatedTransitions = transitions.filter(t => 
+      t.relationship === 'same' || t.relationship === 'related'
+    ).length;
+    
+    const consistentFlowRate = transitions.length > 0 ? 
+      relatedTransitions / transitions.length : 1;
+
+    // Analyze ZEN relevance over conversation
+    const relevanceHistory = context.zenRelevanceHistory;
+    const zenRelatedMessages = relevanceHistory.filter(r => r.relevance.isZenRelated).length;
+    const zenFocusScore = relevanceHistory.length > 0 ? 
+      zenRelatedMessages / relevanceHistory.length : 1;
+
+    const offtopicRate = 1 - zenFocusScore;
+
+    return {
+      hasConsistentFlow: consistentFlowRate > 0.7,
+      relatedTransitions,
+      offtopicRate,
+      zenFocusScore
+    };
+  }
+
+  /**
+   * Create new conversation context with Phase 3 enhancements
+   */
+  createConversationContext(sessionId: string): ConversationContext {
+    const context: ConversationContext = {
+      sessionId,
+      currentTopic: 'general',
+      topicDepth: 1,
+      flowType: 'exploration',
+      conceptsDiscussed: new Set(),
+      lastActivity: new Date(),
+      topicTransitions: [],
+      zenRelevanceHistory: []
+    };
+
+    this.conversationContexts.set(sessionId, context);
+    console.log(`💭 Created new conversation context for session: ${sessionId}`);
+    
+    return context;
+  }
+
+  /**
+   * Enhanced topic depth calculation considering semantic relationships
+   */
+  private updateTopicDepth(
+    context: ConversationContext,
+    relatedness?: TopicRelatedness
+  ): void {
+    if (!relatedness) {
+      context.topicDepth = 1;
+      return;
+    }
+
+    switch (relatedness.relationship) {
+      case 'same':
+        context.topicDepth = Math.min(context.topicDepth + 1, 5);
+        break;
+      case 'related':
+        context.topicDepth = Math.max(context.topicDepth - 1, 1);
+        break;
+      case 'different':
+        context.topicDepth = 1;
+        break;
+    }
+  }
+
+  /**
+   * Determine if topic should be updated based on semantic similarity
+   */
+  private shouldUpdateTopic(
+    currentTopic: string,
+    newTopic: string,
+    relatedness?: TopicRelatedness
+  ): boolean {
+    if (!currentTopic || currentTopic === 'general') {
+      return true;
+    }
+
+    if (!relatedness) {
+      return currentTopic !== newTopic;
+    }
+
+    // Only update if topics are different enough
+    return relatedness.relationship === 'different' || 
+           (relatedness.relationship === 'related' && relatedness.similarity < 0.7);
   }
 } 
