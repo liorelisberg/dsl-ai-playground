@@ -1,5 +1,6 @@
 {
-  "name": "vite_react_shadcn_ts",
+  "name": "dsl-ai-playground",
+  "description": "Intelligent DSL learning platform with AI-powered assistance, topic management, and real-time code execution",
   "private": true,
   "version": "3.1.0",
   "type": "module",
