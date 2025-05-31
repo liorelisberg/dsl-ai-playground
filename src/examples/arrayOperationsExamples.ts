@@ -519,11 +519,11 @@ export const arrayOperationsExamples: Example[] = [
   },
   {
     id: 'extreme-data-2',
-    title: 'Advanced Data Quality and Anomaly Detection',
-    expression: "map(datasets, {name: #.name, quality_metrics: {completeness: round(count(#.records, #.name != null and #.email != null and #.age != null) / len(#.records) * 100), validity: round(count(#.records, matches(#.email, '[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}') and #.age > 0 and #.age < 120) / len(#.records) * 100), consistency: round(count(#.records, len(#.name) > 0 and #.age >= 18) / len(#.records) * 100)}, anomalies: {email_duplicates: len(#.records) - len(keys(map(#.records, #.email))), age_outliers: count(#.records, #.age > avg(map(#.records, #.age)) + 2 * (max(map(#.records, #.age)) - min(map(#.records, #.age))) / len(#.records)), suspicious_names: count(#.records, len(#.name) < 2 or contains(#.name, '123') or contains(#.name, 'test'))}, recommendations: len(#.records) - len(keys(map(#.records, #.email))) > 0 ? ['Remove duplicate emails'] : count(#.records, #.age > 100) > 0 ? ['Review age values'] : ['Data quality acceptable']})",
-    sampleInput: '{"datasets": [{"name": "Customer Database", "records": [{"name": "John Doe", "email": "john@example.com", "age": 35}, {"name": "Jane Smith", "email": "jane@example.com", "age": 28}, {"name": "Test User", "email": "john@example.com", "age": 150}, {"name": "Bob", "email": "bob@test.com", "age": 45}]}]}',
-    expectedOutput: '[{"name": "Customer Database", "quality_metrics": {"completeness": 100, "validity": 75, "consistency": 75}, "anomalies": {"email_duplicates": 1, "age_outliers": 1, "suspicious_names": 1}, "recommendations": ["Remove duplicate emails"]}]',
-    description: 'Advanced data quality assessment with anomaly detection and automated recommendations',
+    title: 'Simplified Data Quality Assessment',
+    expression: 'map(datasets, {name: #.name, total_records: len(#.records), has_names: count(#.records, len(#.name ?? "") > 0), has_emails: count(#.records, len(#.email ?? "") > 0), has_ages: count(#.records, type(#.age) == "number"), avg_age: avg(map(filter(#.records, type(#.age) == "number"), #.age))})',
+    sampleInput: '{"datasets": [{"name": "Customer Database", "records": [{"name": "John Doe", "email": "john@example.com", "age": 35}, {"name": "Jane Smith", "email": "jane@example.com", "age": 28}, {"name": "", "email": "bob@test.com", "age": 45}]}]}',
+    expectedOutput: '[{"name": "Customer Database", "total_records": 3, "has_names": 2, "has_emails": 3, "has_ages": 3, "avg_age": 36}]',
+    description: 'Simplified data quality assessment with basic metrics and statistics',
     category: 'extreme-data'
   }
 ]; 
