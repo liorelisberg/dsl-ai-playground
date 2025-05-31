@@ -30,6 +30,14 @@
 - **Production Engine**: Rust-powered Zen Engine with enterprise reliability
 - **320+ Examples**: 100% validated examples with zero hallucinations
 - **Smart Editor**: Enhanced code editor with 42% more screen space
+- **Advanced JSON Viewer**: Professional data exploration with interactive features
+  - **Smart View Modes**: Toggle between text editor and interactive JSON tree
+  - **Path Copying**: Click any row to copy JSONPath (e.g., `$.user.profile.name`)
+  - **Dynamic Collapse**: Expand/collapse JSON levels with +/- controls
+  - **URL Detection**: Automatic clickable links and inline image previews
+  - **Intelligent Buttons**: Context-aware controls that adapt to current mode
+- **Proportional Resizing**: Drag handles to adjust component heights (20-80% viewport)
+- **Dark Theme Optimized**: High-contrast colors for excellent visibility
 
 ### 🔧 **Production Quality**
 - **Zero TypeScript Errors**: Fixed 39+ lint errors for bulletproof type safety
@@ -153,6 +161,7 @@ pnpm run test            # Run test suite
 - **AI**: Google Gemini 2.5 Flash, Semantic Vector Search
 - **DSL Engine**: GoRules Zen Engine (Rust-powered)
 - **File Upload**: react-dropzone with validation
+- **JSON Viewer**: @uiw/react-json-view with custom theming and interactions
 
 ## 📈 **Performance Metrics**
 
@@ -201,12 +210,15 @@ GET    /api-docs                # Swagger documentation
 - **Drag & Drop**: Global file detection with modal overlay
 - **Smart Tooltips**: Contextual help and feature explanations
 - **Responsive Design**: Mobile and desktop optimized
+- **Interactive JSON Viewer**: Professional data exploration with path copying and smart rendering
+- **Adaptive Controls**: Buttons that intelligently enable/disable based on context
 
 ### **Professional Polish**
 - **Zero Errors**: Complete TypeScript type safety
 - **Smooth Animations**: CSS transitions with Tailwind
-- **Dark/Light Themes**: Seamless theme switching
+- **Dark/Light Themes**: Seamless theme switching with optimized JSON viewer colors
 - **Loading States**: Visual feedback for all operations
+- **Smart Button Layout**: Context-aware controls with logical grouping
 
 ## 📚 **Documentation**
 
@@ -295,5 +307,5 @@ MIT License - see [LICENSE](../../LICENSE) for details.
 
 **🎉 DSL AI Playground - Where AI meets intelligent code education!**
 
-*Last Updated: 2025-05-30*  
-*Version: 3.0.0 (Production Ready)*
+*Last Updated: 2025-01-30*  
+*Version: 3.1.0 (Enhanced JSON Viewer)*

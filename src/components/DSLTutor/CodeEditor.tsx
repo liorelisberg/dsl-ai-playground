@@ -506,9 +506,9 @@ const CodeEditor = () => {
         <div className="flex flex-col min-h-0 relative" style={{ height: `${sampleInputHeight}px` }}>
           <div className="flex items-center justify-between mb-3">
             <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center">
-              <Code2 className="h-4 w-4 mr-2 text-indigo-500" />
-              Sample Input (JSON)
-            </label>
+            <Code2 className="h-4 w-4 mr-2 text-indigo-500" />
+            Sample Input (JSON)
+          </label>
             <div className="flex items-center space-x-2">
               {/* Collapse Controls for Sample Input JSON Viewer - leftmost when active */}
               {isValidJSON(sampleInput) && sampleInputJsonMode && (
@@ -681,12 +681,12 @@ const CodeEditor = () => {
                 </JsonView>
               </div>
             ) : (
-              <Textarea
+            <Textarea
                 value={getDisplayValue()}
                 onChange={(e) => handleSampleInputChange(e.target.value)}
-                placeholder="Enter sample JSON input..."
+              placeholder="Enter sample JSON input..."
                 className="font-mono text-sm border-0 bg-transparent resize-none h-full pb-8"
-              />
+            />
             )}
             <ResizeHandle section="sampleInput" />
           </Card>
@@ -696,9 +696,9 @@ const CodeEditor = () => {
         <div className="flex flex-col min-h-0" style={{ height: `${resultHeight}px` }}>
           <div className="flex items-center justify-between mb-3">
             <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center">
-              <Play className="h-4 w-4 mr-2 text-emerald-500" />
-              Result
-            </label>
+            <Play className="h-4 w-4 mr-2 text-emerald-500" />
+            Result
+          </label>
             <div className="flex items-center space-x-2">
               {/* Collapse Controls for Result JSON Viewer - leftmost when active */}
               {isValidJSON(result) && resultJsonMode && (
@@ -872,10 +872,10 @@ const CodeEditor = () => {
               </div>
             ) : (
               <div className="p-6 h-full overflow-auto pb-8">
-                <pre className="text-sm font-mono whitespace-pre-wrap text-slate-800 dark:text-slate-200">
+              <pre className="text-sm font-mono whitespace-pre-wrap text-slate-800 dark:text-slate-200">
                   {formatResult(result)}
-                </pre>
-              </div>
+              </pre>
+            </div>
             )}
             <ResizeHandle section="result" />
           </Card>

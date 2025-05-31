@@ -259,7 +259,7 @@ async function validateExample(example, fileName) {
       if (comparisonResult.type === 'format-validated') {
         console.log(`  ✅ ${example.id}: PASSED (format validated)`);
       } else {
-        console.log(`  ✅ ${example.id}: PASSED`);
+      console.log(`  ✅ ${example.id}: PASSED`);
       }
       results.passedExamples++;
     } else {
