@@ -121,7 +121,7 @@ export const unary_operationsExamples: Example[] = [
   {
     id: 'unary-14',
     title: 'String Set Check',
-    expression: "["GB", "US"]",
+    expression: '["GB", "US"]',
     sampleInput: '{"$": "US"}',
     expectedOutput: 'true',
     description: 'Check if context string ($) matches one of the values',

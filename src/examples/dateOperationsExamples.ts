@@ -24,7 +24,7 @@ export const dateOperationsExamples: Example[] = [
   {
     id: 'date-3',
     title: 'Date with Time',
-    expression: "d("2023-09-18T15:30:00")",
+    expression: 'd("2023-09-18T15:30:00")',
     sampleInput: '{}',
     expectedOutput: '2023-09-18T15:30:00Z',
     description: 'Create date with specific time',
@@ -33,7 +33,7 @@ export const dateOperationsExamples: Example[] = [
   {
     id: 'date-4',
     title: 'Date Addition',
-    expression: "d("2023-09-18").add(5, "day")",
+    expression: 'd("2023-09-18").add(5, "day")',
     sampleInput: '{}',
     expectedOutput: '2023-09-23T00:00:00Z',
     description: 'Add days to a date',
@@ -60,7 +60,7 @@ export const dateOperationsExamples: Example[] = [
   {
     id: 'date-7',
     title: 'Date Formatting',
-    expression: "d("2023-09-18").format("YYYY-MM-DD")",
+    expression: 'd("2023-09-18").format("YYYY-MM-DD")',
     sampleInput: '{}',
     expectedOutput: '"2023-09-18"',
     description: 'Format date as string',
@@ -78,7 +78,7 @@ export const dateOperationsExamples: Example[] = [
   {
     id: 'date-9',
     title: 'Month Extraction',
-    expression: "d("2023-09-18").month()",
+    expression: 'd("2023-09-18").month()',
     sampleInput: '{}',
     expectedOutput: '9',
     description: 'Extract month from date',
@@ -87,7 +87,7 @@ export const dateOperationsExamples: Example[] = [
   {
     id: 'date-10',
     title: 'Day Extraction',
-    expression: "d("2023-09-18").day()",
+    expression: 'd("2023-09-18").day()',
     sampleInput: '{}',
     expectedOutput: '18',
     description: 'Extract day from date',
@@ -123,7 +123,7 @@ export const dateOperationsExamples: Example[] = [
   {
     id: 'date-14',
     title: 'Add Months',
-    expression: "d("2023-09-18").add(2, "month")",
+    expression: 'd("2023-09-18").add(2, "month")',
     sampleInput: '{}',
     expectedOutput: '2023-11-18T00:00:00Z',
     description: 'Add months to a date',
@@ -179,7 +179,7 @@ export const dateOperationsExamples: Example[] = [
   {
     id: 'date-const-6',
     title: 'Get Tomorrow at Midnight',
-    expression: "d("2023-01-01").add(1, "day")",
+    expression: 'd("2023-01-01").add(1, "day")',
     sampleInput: '{}',
     expectedOutput: '2023-09-19T00:00:00Z',
     description: 'Get tomorrow at midnight',
@@ -197,7 +197,7 @@ export const dateOperationsExamples: Example[] = [
   {
     id: 'date-const-8',
     title: 'Get Start of Day for Given Date',
-    expression: "d("2023-01-01").startOf("day")",
+    expression: 'd("2023-01-01").startOf("day")',
     sampleInput: '{}',
     expectedOutput: '2023-09-18T00:00:00Z',
     description: 'Get start of day for given date',
@@ -206,7 +206,7 @@ export const dateOperationsExamples: Example[] = [
   {
     id: 'date-const-9',
     title: 'Get End of Day for Given Date',
-    expression: "d("2023-01-01").endOf("day")",
+    expression: 'd("2023-01-01").endOf("day")',
     sampleInput: '{}',
     expectedOutput: '2023-09-18T23:59:59Z',
     description: 'Get end of day for given date',
@@ -215,7 +215,7 @@ export const dateOperationsExamples: Example[] = [
   {
     id: 'date-const-10',
     title: 'Get First Day of Month',
-    expression: "d("2023-01-01").startOf("month")",
+    expression: 'd("2023-01-01").startOf("month")',
     sampleInput: '{}',
     expectedOutput: '2023-09-01T00:00:00Z',
     description: 'Get first day of month',
@@ -224,7 +224,7 @@ export const dateOperationsExamples: Example[] = [
   {
     id: 'date-const-11',
     title: 'Get Last Day of Month',
-    expression: "d("2023-01-01").endOf("month")",
+    expression: 'd("2023-01-01").endOf("month")',
     sampleInput: '{}',
     expectedOutput: '2023-09-30T23:59:59Z',
     description: 'Get last day of month',
@@ -244,7 +244,7 @@ export const dateOperationsExamples: Example[] = [
   {
     id: 'date-parts-1',
     title: 'Extract Hour',
-    expression: "d("2023-09-18T15:30:45").hour()",
+    expression: 'd("2023-09-18T15:30:45").hour()',
     sampleInput: '{}',
     expectedOutput: '15',
     description: 'Extract hour from datetime',
@@ -253,7 +253,7 @@ export const dateOperationsExamples: Example[] = [
   {
     id: 'date-parts-2',
     title: 'Extract Minute',
-    expression: "d("2023-09-18T15:30:45").minute()",
+    expression: 'd("2023-09-18T15:30:45").minute()',
     sampleInput: '{}',
     expectedOutput: '30',
     description: 'Extract minute from datetime',
@@ -262,7 +262,7 @@ export const dateOperationsExamples: Example[] = [
   {
     id: 'date-parts-3',
     title: 'Extract Second',
-    expression: "d("2023-09-18T15:30:45").second()",
+    expression: 'd("2023-09-18T15:30:45").second()',
     sampleInput: '{}',
     expectedOutput: '45',
     description: 'Extract second from datetime',
@@ -271,7 +271,7 @@ export const dateOperationsExamples: Example[] = [
   {
     id: 'date-parts-4',
     title: 'Get Timestamp',
-    expression: "d("2023-09-18T15:30:00").timestamp()",
+    expression: 'd("2023-09-18T15:30:00").timestamp()',
     sampleInput: '{}',
     expectedOutput: '1695043800000',
     description: 'Get Unix timestamp from date',
@@ -298,7 +298,7 @@ export const dateOperationsExamples: Example[] = [
   {
     id: 'date-parts-7',
     title: 'Quarter of Year',
-    expression: "d("2023-09-18").quarter()",
+    expression: 'd("2023-09-18").quarter()',
     sampleInput: '{}',
     expectedOutput: '3',
     description: 'Get quarter of year (1-4)',
@@ -307,7 +307,7 @@ export const dateOperationsExamples: Example[] = [
   {
     id: 'date-parts-8',
     title: 'Is Leap Year',
-    expression: "d("2024-02-29").isLeapYear()",
+    expression: 'd("2024-02-29").isLeapYear()',
     sampleInput: '{}',
     expectedOutput: 'true',
     description: 'Check if year is leap year',
