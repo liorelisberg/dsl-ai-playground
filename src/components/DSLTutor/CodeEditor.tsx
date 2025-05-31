@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
-import { Play, Book, Code2, Sparkles, Shuffle } from 'lucide-react';
+import { Play, Book, Code2, Sparkles, Shuffle, Minimize2, Maximize2 } from 'lucide-react';
 import { evaluateExpression } from '../../services/dslService';
 import { useToast } from '@/hooks/use-toast';
 import ExamplesDrawer from './ExamplesDrawer';
@@ -20,7 +20,31 @@ const CodeEditor = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [showExamples, setShowExamples] = useState(false);
   const [lastRandomExampleId, setLastRandomExampleId] = useState<string | null>(null);
+  const [isPrettyFormat, setIsPrettyFormat] = useState(true);
   const { toast } = useToast();
+
+  // Helper function to format result based on prettify toggle
+  const formatResult = (rawResult: string): string => {
+    if (!rawResult || rawResult.trim() === '') {
+      return 'Click "Run" to execute your expression';
+    }
+
+    // Handle error messages (don't try to format them)
+    if (rawResult.startsWith('Error:') || rawResult.startsWith('Invalid')) {
+      return rawResult;
+    }
+
+    // Try to detect and format JSON
+    try {
+      const parsed = JSON.parse(rawResult);
+      return isPrettyFormat 
+        ? JSON.stringify(parsed, null, 2)
+        : JSON.stringify(parsed);
+    } catch {
+      // Not valid JSON, return as-is
+      return rawResult;
+    }
+  };
 
   const handleExecute = async () => {
     setIsLoading(true);
@@ -185,9 +209,35 @@ const CodeEditor = () => {
             Result
           </label>
           <Card className="border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-800 shadow-lg rounded-2xl ring-1 ring-slate-200 dark:ring-slate-700">
+            {/* Result Header with Format Toggle */}
+            <div className="flex items-center justify-between px-4 py-3 border-b border-slate-200 dark:border-slate-600">
+              <div className="text-xs text-slate-500 dark:text-slate-400 font-medium">
+                Output
+              </div>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setIsPrettyFormat(!isPrettyFormat)}
+                    className="h-7 w-7 p-0 hover:bg-slate-200 dark:hover:bg-slate-700"
+                  >
+                    {isPrettyFormat ? (
+                      <Minimize2 className="h-3.5 w-3.5" />
+                    ) : (
+                      <Maximize2 className="h-3.5 w-3.5" />
+                    )}
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>{isPrettyFormat ? 'Switch to compact format' : 'Switch to pretty format'}</p>
+                </TooltipContent>
+              </Tooltip>
+            </div>
+            {/* Result Content */}
             <div className="p-6 min-h-[120px]">
               <pre className="text-sm font-mono whitespace-pre-wrap text-slate-800 dark:text-slate-200">
-                {result || 'Click "Run" to execute your expression'}
+                {formatResult(result)}
               </pre>
             </div>
           </Card>
