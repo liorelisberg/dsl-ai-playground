@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
@@ -230,23 +230,25 @@ const CodeEditor = () => {
       </div>
 
       {/* Code Editor */}
-      <div className="flex-1 p-6 space-y-6 overflow-y-auto">
-        <div>
+      <div className="flex-1 p-6 flex flex-col gap-6 overflow-hidden">
+        {/* DSL Expression - 1/5 of available height */}
+        <div className="flex-1 flex flex-col min-h-0">
           <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-3 flex items-center">
             <Sparkles className="h-4 w-4 mr-2 text-emerald-500" />
             DSL Expression
           </label>
-          <Card className="border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 shadow-lg rounded-2xl">
+          <Card className="border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 shadow-lg rounded-2xl flex-1 min-h-0">
             <Textarea
               value={code}
               onChange={(e) => setCode(e.target.value)}
               placeholder="Enter your DSL expression here..."
-              className="font-mono text-sm min-h-[200px] border-0 bg-transparent resize-none"
+              className="font-mono text-sm border-0 bg-transparent resize-none h-full"
             />
           </Card>
         </div>
 
-        <div>
+        {/* Sample Input (JSON) - 2/5 of available height */}
+        <div className="flex-[2] flex flex-col min-h-0">
           <div className="flex items-center justify-between mb-3">
             <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center">
               <Code2 className="h-4 w-4 mr-2 text-indigo-500" />
@@ -289,17 +291,18 @@ const CodeEditor = () => {
               </Tooltip>
             </div>
           </div>
-          <Card className="border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 shadow-lg rounded-2xl">
+          <Card className="border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 shadow-lg rounded-2xl flex-1 min-h-0">
             <Textarea
               value={getDisplayValue()}
               onChange={(e) => handleSampleInputChange(e.target.value)}
               placeholder="Enter sample JSON input..."
-              className="font-mono text-sm min-h-[120px] border-0 bg-transparent resize-none"
+              className="font-mono text-sm border-0 bg-transparent resize-none h-full"
             />
           </Card>
         </div>
 
-        <div>
+        {/* Result - 2/5 of available height */}
+        <div className="flex-[2] flex flex-col min-h-0">
           <div className="flex items-center justify-between mb-3">
             <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center">
               <Play className="h-4 w-4 mr-2 text-emerald-500" />
@@ -342,8 +345,8 @@ const CodeEditor = () => {
               </Tooltip>
             </div>
           </div>
-          <Card className="border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-800 shadow-lg rounded-2xl ring-1 ring-slate-200 dark:ring-slate-700">
-            <div className="p-6 min-h-[120px]">
+          <Card className="border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-800 shadow-lg rounded-2xl ring-1 ring-slate-200 dark:ring-slate-700 flex-1 min-h-0">
+            <div className="p-6 h-full overflow-auto">
               <pre className="text-sm font-mono whitespace-pre-wrap text-slate-800 dark:text-slate-200">
                 {formatResult(result)}
               </pre>
