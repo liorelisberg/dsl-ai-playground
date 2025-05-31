@@ -15,7 +15,7 @@ console.log('📊 Analyzing Vocabulary Validation Results...\n');
 // Load analysis files
 const analysisPath = path.join(__dirname, '../../config/vocabulary-deep-analysis.json');
 const invalidPath = path.join(__dirname, '../../config/invalid-vocabulary-entries.json');
-const vocabularyPath = path.join(__dirname, '../../config/zen-vocabulary-corrected.json');
+const vocabularyPath = path.join(__dirname, '../../docs/config/zen-vocabulary-corrected.json');
 
 const analysis = JSON.parse(fs.readFileSync(analysisPath, 'utf8'));
 const invalid = JSON.parse(fs.readFileSync(invalidPath, 'utf8'));

@@ -13,7 +13,7 @@ const path = require('path');
 console.log('🔬 Deep Vocabulary Validation - Context-Aware Analysis...\n');
 
 // Load vocabulary
-const vocabularyPath = path.join(__dirname, '../../config/zen-vocabulary-corrected.json');
+const vocabularyPath = path.join(__dirname, '../../docs/config/zen-vocabulary-corrected.json');
 const vocabulary = JSON.parse(fs.readFileSync(vocabularyPath, 'utf8'));
 
 class ZenExpressionParser {

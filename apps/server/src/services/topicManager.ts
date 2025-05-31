@@ -187,6 +187,11 @@ export class TopicManager {
     try {
       // Try to load corrected vocabulary first, fallback to original
       const vocabularyPaths = [
+        path.join(process.cwd(), 'docs/config/zen-vocabulary-corrected.json'),
+        path.join(__dirname, '../../docs/config/zen-vocabulary-corrected.json'),
+        path.join(__dirname, '../../../docs/config/zen-vocabulary-corrected.json'),
+        path.join(__dirname, '../../../../docs/config/zen-vocabulary-corrected.json'),
+        // Legacy paths for backward compatibility
         path.join(process.cwd(), 'config/zen-vocabulary-corrected.json'),
         path.join(__dirname, '../../config/zen-vocabulary-corrected.json'),
         path.join(__dirname, '../../../config/zen-vocabulary-corrected.json'),

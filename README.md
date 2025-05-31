@@ -288,7 +288,7 @@ ZEN_RELEVANCE_THRESHOLD=0.5
 ```
 
 ### **Configuration Files** *(Centralized)*
-- **`config/zen-vocabulary-corrected.json`**: ZEN DSL functions and concepts
+- **`docs/config/zen-vocabulary-corrected.json`**: ZEN DSL functions and concepts
 - **`config/components.json`**: UI component configuration
 - **`IMPLEMENTATION_PLAN.md`**: Current development roadmap
 
