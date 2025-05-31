@@ -112,11 +112,23 @@ const CodeEditor = () => {
     
     if (isDark) {
       return {
-        ...darkTheme,
         '--w-rjv-background-color': 'transparent',
         '--w-rjv-border-left': '0px',
         '--w-rjv-line-color': 'transparent',
         '--w-rjv-font-family': 'ui-monospace, SFMono-Regular, "SF Mono", Consolas, "Liberation Mono", Menlo, monospace',
+        // Bright, high-contrast colors for dark theme
+        '--w-rjv-color': '#e5e7eb', // Light gray for general text
+        '--w-rjv-key-string': '#34d399', // Bright emerald for keys
+        '--w-rjv-type-string-color': '#fbbf24', // Bright amber for strings
+        '--w-rjv-type-int-color': '#60a5fa', // Bright blue for numbers
+        '--w-rjv-type-float-color': '#60a5fa', // Bright blue for numbers
+        '--w-rjv-type-boolean-color': '#c084fc', // Bright purple for booleans
+        '--w-rjv-type-null-color': '#9ca3af', // Medium gray for null
+        '--w-rjv-type-undefined-color': '#9ca3af', // Medium gray for undefined
+        '--w-rjv-curlybraces-color': '#e5e7eb', // Light gray for braces
+        '--w-rjv-brackets-color': '#e5e7eb', // Light gray for brackets
+        '--w-rjv-colon-color': '#e5e7eb', // Light gray for colons
+        '--w-rjv-arrow-color': '#9ca3af', // Medium gray for arrows
       } as React.CSSProperties;
     } else {
       return {
@@ -535,6 +547,7 @@ const CodeEditor = () => {
                   style={getJsonViewerTheme()}
                   collapsed={1}
                   enableClipboard={false}
+                  displayDataTypes={false}
                 />
               </div>
             ) : (
@@ -623,6 +636,7 @@ const CodeEditor = () => {
                   style={getJsonViewerTheme()}
                   collapsed={1}
                   enableClipboard={false}
+                  displayDataTypes={false}
                 />
               </div>
             ) : (
