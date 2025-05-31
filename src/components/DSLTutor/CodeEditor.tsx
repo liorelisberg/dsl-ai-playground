@@ -2,10 +2,11 @@ import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
-import { Play, Book, Code2, Sparkles } from 'lucide-react';
+import { Play, Book, Code2, Sparkles, Shuffle } from 'lucide-react';
 import { evaluateExpression } from '../../services/dslService';
 import { useToast } from '@/hooks/use-toast';
 import ExamplesDrawer from './ExamplesDrawer';
+import { allExamples, Example } from '../../examples';
 import {
   Tooltip,
   TooltipContent,
@@ -18,6 +19,7 @@ const CodeEditor = () => {
   const [result, setResult] = useState<string>('');
   const [isLoading, setIsLoading] = useState(false);
   const [showExamples, setShowExamples] = useState(false);
+  const [lastRandomExampleId, setLastRandomExampleId] = useState<string | null>(null);
   const { toast } = useToast();
 
   const handleExecute = async () => {
@@ -38,18 +40,44 @@ const CodeEditor = () => {
     }
   };
 
-  const handleExampleSelect = (example: {
-    id: string;
-    title: string;
-    expression: string;
-    sampleInput: string;
-    expectedOutput: string;
-    description: string;
-    category: string;
-  }) => {
+  const handleExampleSelect = (example: Example) => {
     setCode(example.expression);
     setSampleInput(example.sampleInput);
     setShowExamples(false);
+  };
+
+  const handleRandomExample = () => {
+    if (allExamples.length === 0) {
+      toast({
+        title: "No Examples Available",
+        description: "No examples are currently loaded.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    // Filter out the last selected example to avoid consecutive duplicates
+    const availableExamples = allExamples.filter(example => 
+      allExamples.length === 1 || example.id !== lastRandomExampleId
+    );
+
+    // Select a random example
+    const randomIndex = Math.floor(Math.random() * availableExamples.length);
+    const randomExample = availableExamples[randomIndex];
+
+    // Load the example
+    setCode(randomExample.expression);
+    setSampleInput(randomExample.sampleInput);
+    setLastRandomExampleId(randomExample.id);
+
+    // Show success feedback
+    toast({
+      title: "Random Example Loaded",
+      description: `${randomExample.title} (${randomExample.category})`,
+    });
+
+    // Clear previous result to encourage running the new example
+    setResult('');
   };
 
   return (
@@ -67,6 +95,22 @@ const CodeEditor = () => {
             </div>
           </div>
           <div className="flex space-x-3">
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleRandomExample}
+                  className="border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 hover:bg-slate-50 dark:hover:bg-slate-600 rounded-full shadow-sm"
+                >
+                  <Shuffle className="h-4 w-4 mr-2" />
+                  Random
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Load a random DSL example for exploration</p>
+              </TooltipContent>
+            </Tooltip>
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button
