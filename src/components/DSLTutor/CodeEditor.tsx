@@ -129,6 +129,7 @@ const CodeEditor = () => {
         '--w-rjv-brackets-color': '#e5e7eb', // Light gray for brackets
         '--w-rjv-colon-color': '#e5e7eb', // Light gray for colons
         '--w-rjv-arrow-color': '#9ca3af', // Medium gray for arrows
+        '--w-rjv-info-color': '#9ca3af', // Medium gray for item counts ("5 items", "2 items")
       } as React.CSSProperties;
     } else {
       return {
