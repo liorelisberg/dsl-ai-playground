@@ -13,6 +13,8 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 import JsonView from '@uiw/react-json-view';
+import { useTheme } from 'next-themes';
+import { darkTheme } from '@uiw/react-json-view/dark';
 
 const CodeEditor = () => {
   const [code, setCode] = useState('// Enter your DSL expression here\nupper(user.name)');
@@ -100,6 +102,38 @@ const CodeEditor = () => {
   }, []);
   
   const { toast } = useToast();
+
+  // Theme detection
+  const { theme } = useTheme();
+  
+  // Helper function to get JSON viewer theme based on current theme
+  const getJsonViewerTheme = (): React.CSSProperties => {
+    const isDark = theme === 'dark';
+    
+    if (isDark) {
+      return {
+        ...darkTheme,
+        '--w-rjv-background-color': 'transparent',
+        '--w-rjv-border-left': '0px',
+        '--w-rjv-line-color': 'transparent',
+        '--w-rjv-font-family': 'ui-monospace, SFMono-Regular, "SF Mono", Consolas, "Liberation Mono", Menlo, monospace',
+      } as React.CSSProperties;
+    } else {
+      return {
+        '--w-rjv-background-color': 'transparent',
+        '--w-rjv-border-left': '0px',
+        '--w-rjv-line-color': 'transparent',
+        '--w-rjv-font-family': 'ui-monospace, SFMono-Regular, "SF Mono", Consolas, "Liberation Mono", Menlo, monospace',
+        '--w-rjv-color': '#374151', // Dark gray for light theme
+        '--w-rjv-key-string': '#059669', // Emerald for keys
+        '--w-rjv-type-string-color': '#dc2626', // Red for strings
+        '--w-rjv-type-int-color': '#2563eb', // Blue for numbers
+        '--w-rjv-type-float-color': '#2563eb', // Blue for numbers
+        '--w-rjv-type-boolean-color': '#7c3aed', // Purple for booleans
+        '--w-rjv-type-null-color': '#6b7280', // Gray for null
+      } as React.CSSProperties;
+    }
+  };
 
   // Helper function to safely parse JSON
   const safeParseJSON = (jsonString: string) => {
@@ -498,12 +532,7 @@ const CodeEditor = () => {
               <div className="p-4 h-full overflow-auto pb-8">
                 <JsonView 
                   value={safeParseJSON(sampleInput)} 
-                  style={{
-                    '--w-rjv-background-color': 'transparent',
-                    '--w-rjv-border-left': '0px',
-                    '--w-rjv-line-color': 'transparent',
-                    '--w-rjv-font-family': 'ui-monospace, SFMono-Regular, "SF Mono", Consolas, "Liberation Mono", Menlo, monospace',
-                  } as React.CSSProperties}
+                  style={getJsonViewerTheme()}
                   collapsed={1}
                   enableClipboard={false}
                 />
@@ -591,12 +620,7 @@ const CodeEditor = () => {
               <div className="p-4 h-full overflow-auto pb-8">
                 <JsonView 
                   value={safeParseJSON(result)} 
-                  style={{
-                    '--w-rjv-background-color': 'transparent',
-                    '--w-rjv-border-left': '0px',
-                    '--w-rjv-line-color': 'transparent',
-                    '--w-rjv-font-family': 'ui-monospace, SFMono-Regular, "SF Mono", Consolas, "Liberation Mono", Menlo, monospace',
-                  } as React.CSSProperties}
+                  style={getJsonViewerTheme()}
                   collapsed={1}
                   enableClipboard={false}
                 />
