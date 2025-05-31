@@ -21,6 +21,7 @@ const CodeEditor = () => {
   const [showExamples, setShowExamples] = useState(false);
   const [lastRandomExampleId, setLastRandomExampleId] = useState<string | null>(null);
   const [isPrettyFormat, setIsPrettyFormat] = useState(true);
+  const [isPrettyInputFormat, setIsPrettyInputFormat] = useState(true);
   const { toast } = useToast();
 
   // Helper function to format result based on prettify toggle
@@ -102,6 +103,28 @@ const CodeEditor = () => {
 
     // Clear previous result to encourage running the new example
     setResult('');
+  };
+
+  const handleSampleInputChange = (value: string) => {
+    setSampleInput(value);
+  };
+
+  // Get display value for sample input (only format if valid JSON and not currently being edited)
+  const getDisplayValue = () => {
+    if (!sampleInput || sampleInput.trim() === '') {
+      return '';
+    }
+    
+    // Try to format only if it's valid JSON
+    try {
+      const parsed = JSON.parse(sampleInput);
+      return isPrettyInputFormat 
+        ? JSON.stringify(parsed, null, 2)
+        : JSON.stringify(parsed);
+    } catch {
+      // Not valid JSON, return as-is
+      return sampleInput;
+    }
   };
 
   return (
@@ -189,14 +212,35 @@ const CodeEditor = () => {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-3 flex items-center">
-            <Code2 className="h-4 w-4 mr-2 text-indigo-500" />
-            Sample Input (JSON)
-          </label>
+          <div className="flex items-center justify-between mb-3">
+            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center">
+              <Code2 className="h-4 w-4 mr-2 text-indigo-500" />
+              Sample Input (JSON)
+            </label>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setIsPrettyInputFormat(!isPrettyInputFormat)}
+                  className="h-7 w-7 p-0 hover:bg-slate-200 dark:hover:bg-slate-700"
+                >
+                  {isPrettyInputFormat ? (
+                    <Minimize2 className="h-3.5 w-3.5" />
+                  ) : (
+                    <Maximize2 className="h-3.5 w-3.5" />
+                  )}
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>{isPrettyInputFormat ? 'Switch to compact format' : 'Switch to pretty format'}</p>
+              </TooltipContent>
+            </Tooltip>
+          </div>
           <Card className="border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 shadow-lg rounded-2xl">
             <Textarea
-              value={sampleInput}
-              onChange={(e) => setSampleInput(e.target.value)}
+              value={getDisplayValue()}
+              onChange={(e) => handleSampleInputChange(e.target.value)}
               placeholder="Enter sample JSON input..."
               className="font-mono text-sm min-h-[120px] border-0 bg-transparent resize-none"
             />
@@ -204,37 +248,32 @@ const CodeEditor = () => {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-3 flex items-center">
-            <Play className="h-4 w-4 mr-2 text-emerald-500" />
-            Result
-          </label>
+          <div className="flex items-center justify-between mb-3">
+            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center">
+              <Play className="h-4 w-4 mr-2 text-emerald-500" />
+              Result
+            </label>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setIsPrettyFormat(!isPrettyFormat)}
+                  className="h-7 w-7 p-0 hover:bg-slate-200 dark:hover:bg-slate-700"
+                >
+                  {isPrettyFormat ? (
+                    <Minimize2 className="h-3.5 w-3.5" />
+                  ) : (
+                    <Maximize2 className="h-3.5 w-3.5" />
+                  )}
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>{isPrettyFormat ? 'Switch to compact format' : 'Switch to pretty format'}</p>
+              </TooltipContent>
+            </Tooltip>
+          </div>
           <Card className="border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-800 shadow-lg rounded-2xl ring-1 ring-slate-200 dark:ring-slate-700">
-            {/* Result Header with Format Toggle */}
-            <div className="flex items-center justify-between px-4 py-3 border-b border-slate-200 dark:border-slate-600">
-              <div className="text-xs text-slate-500 dark:text-slate-400 font-medium">
-                Output
-              </div>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setIsPrettyFormat(!isPrettyFormat)}
-                    className="h-7 w-7 p-0 hover:bg-slate-200 dark:hover:bg-slate-700"
-                  >
-                    {isPrettyFormat ? (
-                      <Minimize2 className="h-3.5 w-3.5" />
-                    ) : (
-                      <Maximize2 className="h-3.5 w-3.5" />
-                    )}
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>{isPrettyFormat ? 'Switch to compact format' : 'Switch to pretty format'}</p>
-                </TooltipContent>
-              </Tooltip>
-            </div>
-            {/* Result Content */}
             <div className="p-6 min-h-[120px]">
               <pre className="text-sm font-mono whitespace-pre-wrap text-slate-800 dark:text-slate-200">
                 {formatResult(result)}
