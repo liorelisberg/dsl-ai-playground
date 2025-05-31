@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
-import { Play, Book, Code2, Sparkles, Shuffle, Minimize2, Maximize2, Copy } from 'lucide-react';
+import { Play, Book, Code2, Sparkles, Shuffle, Minimize2, Maximize2, Copy, GripVertical } from 'lucide-react';
 import { evaluateExpression } from '../../services/dslService';
 import { useToast } from '@/hooks/use-toast';
 import ExamplesDrawer from './ExamplesDrawer';
@@ -22,6 +22,78 @@ const CodeEditor = () => {
   const [lastRandomExampleId, setLastRandomExampleId] = useState<string | null>(null);
   const [isPrettyFormat, setIsPrettyFormat] = useState(true);
   const [isPrettyInputFormat, setIsPrettyInputFormat] = useState(true);
+  
+  // Ref to track available height for calculations
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [availableHeight, setAvailableHeight] = useState(600); // Default fallback
+  
+  // Height proportions (percentages of available height)
+  const [dslHeightPercent, setDslHeightPercent] = useState(20); // 20%
+  const [sampleInputHeightPercent, setSampleInputHeightPercent] = useState(40); // 40% 
+  const [resultHeightPercent, setResultHeightPercent] = useState(40); // 40%
+  
+  const [isDragging, setIsDragging] = useState<'dsl' | 'sampleInput' | 'result' | null>(null);
+  const [dragStartY, setDragStartY] = useState(0);
+  const [dragStartPercent, setDragStartPercent] = useState(0);
+  
+  // Calculate actual pixel heights from percentages
+  const dslHeight = Math.round((availableHeight * dslHeightPercent) / 100);
+  const sampleInputHeight = Math.round((availableHeight * sampleInputHeightPercent) / 100);
+  const resultHeight = Math.round((availableHeight * resultHeightPercent) / 100);
+  
+  // Minimum height is 20% of available height
+  const minHeightPercent = 20;
+  
+  // Refs to avoid stale closures
+  const isDraggingRef = useRef<'dsl' | 'sampleInput' | 'result' | null>(null);
+  const dragStartYRef = useRef(0);
+  const dragStartPercentRef = useRef(0);
+  
+  // Update refs when state changes
+  useEffect(() => {
+    isDraggingRef.current = isDragging;
+  }, [isDragging]);
+  
+  useEffect(() => {
+    dragStartYRef.current = dragStartY;
+  }, [dragStartY]);
+  
+  useEffect(() => {
+    dragStartPercentRef.current = dragStartPercent;
+  }, [dragStartPercent]);
+  
+  // Measure available height dynamically
+  useEffect(() => {
+    const updateAvailableHeight = () => {
+      if (containerRef.current) {
+        const rect = containerRef.current.getBoundingClientRect();
+        // Subtract some padding and spacing (estimated 60px for gaps and labels)
+        const newAvailableHeight = Math.max(300, rect.height - 60);
+        setAvailableHeight(newAvailableHeight);
+      }
+    };
+
+    // Initial measurement
+    updateAvailableHeight();
+
+    // Update on window resize
+    window.addEventListener('resize', updateAvailableHeight);
+    
+    // Use ResizeObserver if available for more accurate container size tracking
+    let resizeObserver: ResizeObserver | null = null;
+    if (containerRef.current && window.ResizeObserver) {
+      resizeObserver = new ResizeObserver(updateAvailableHeight);
+      resizeObserver.observe(containerRef.current);
+    }
+
+    return () => {
+      window.removeEventListener('resize', updateAvailableHeight);
+      if (resizeObserver) {
+        resizeObserver.disconnect();
+      }
+    };
+  }, []);
+  
   const { toast } = useToast();
 
   // Helper function to format result based on prettify toggle
@@ -162,6 +234,88 @@ const CodeEditor = () => {
     }
   };
 
+  // Resize handlers
+  const handleResizeMove = useCallback((event: MouseEvent) => {
+    const currentDragging = isDraggingRef.current;
+    if (!currentDragging) return;
+    
+    const deltaY = event.clientY - dragStartYRef.current;
+    
+    // Convert pixel delta to percentage change
+    const deltaPercent = (deltaY / availableHeight) * 100;
+    const newPercent = Math.max(minHeightPercent, Math.min(80, dragStartPercentRef.current + deltaPercent)); // Max 80% for any component
+    
+    if (currentDragging === 'dsl') {
+      setDslHeightPercent(Math.round(newPercent));
+    } else if (currentDragging === 'sampleInput') {
+      setSampleInputHeightPercent(Math.round(newPercent));
+    } else if (currentDragging === 'result') {
+      setResultHeightPercent(Math.round(newPercent));
+    }
+  }, [availableHeight, minHeightPercent]);
+
+  const handleResizeEnd = useCallback(() => {
+    setIsDragging(null);
+    isDraggingRef.current = null;
+    document.removeEventListener('mousemove', handleResizeMove);
+    document.removeEventListener('mouseup', handleResizeEnd);
+  }, [handleResizeMove]);
+
+  const handleResizeStart = useCallback((section: 'dsl' | 'sampleInput' | 'result', event: React.MouseEvent) => {
+    event.preventDefault();
+    setIsDragging(section);
+    isDraggingRef.current = section;
+    
+    const startY = event.clientY;
+    setDragStartY(startY);
+    dragStartYRef.current = startY;
+    
+    let startPercent;
+    if (section === 'dsl') {
+      startPercent = dslHeightPercent;
+    } else if (section === 'sampleInput') {
+      startPercent = sampleInputHeightPercent;
+    } else if (section === 'result') {
+      startPercent = resultHeightPercent;
+    } else {
+      startPercent = 20;
+    }
+    
+    setDragStartPercent(startPercent);
+    dragStartPercentRef.current = startPercent;
+    
+    // Add global mouse event listeners
+    document.addEventListener('mousemove', handleResizeMove);
+    document.addEventListener('mouseup', handleResizeEnd);
+  }, [dslHeightPercent, sampleInputHeightPercent, resultHeightPercent, handleResizeMove, handleResizeEnd]);
+
+  // Cleanup event listeners on unmount
+  useEffect(() => {
+    return () => {
+      document.removeEventListener('mousemove', handleResizeMove);
+      document.removeEventListener('mouseup', handleResizeEnd);
+    };
+  }, [handleResizeMove, handleResizeEnd]);
+
+  // Resize handle component
+  const ResizeHandle = ({ section }: { section: 'dsl' | 'sampleInput' | 'result' }) => (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <div
+          className="absolute bottom-1 right-1 w-5 h-5 cursor-ns-resize hover:bg-slate-200 dark:hover:bg-slate-600 flex items-center justify-center rounded opacity-60 hover:opacity-100 transition-all duration-200 z-10"
+          onMouseDown={(e) => {
+            handleResizeStart(section, e);
+          }}
+        >
+          <GripVertical className="h-3 w-3 text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300" />
+        </div>
+      </TooltipTrigger>
+      <TooltipContent>
+        <p>Drag vertically to resize this section</p>
+      </TooltipContent>
+    </Tooltip>
+  );
+
   return (
     <div className="flex flex-col h-full">
       {/* Editor Header */}
@@ -230,25 +384,26 @@ const CodeEditor = () => {
       </div>
 
       {/* Code Editor */}
-      <div className="flex-1 p-6 flex flex-col gap-6 overflow-hidden">
+      <div className="flex-1 p-6 flex flex-col gap-6 overflow-hidden" ref={containerRef}>
         {/* DSL Expression - 1/5 of available height */}
-        <div className="flex-1 flex flex-col min-h-0">
+        <div className="flex flex-col min-h-0 relative" style={{ height: `${dslHeight}px` }}>
           <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-3 flex items-center">
             <Sparkles className="h-4 w-4 mr-2 text-emerald-500" />
             DSL Expression
           </label>
-          <Card className="border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 shadow-lg rounded-2xl flex-1 min-h-0">
+          <Card className="border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 shadow-lg rounded-2xl flex-1 min-h-0 relative">
             <Textarea
               value={code}
               onChange={(e) => setCode(e.target.value)}
               placeholder="Enter your DSL expression here..."
-              className="font-mono text-sm border-0 bg-transparent resize-none h-full"
+              className="font-mono text-sm border-0 bg-transparent resize-none h-full pb-8"
             />
+            <ResizeHandle section="dsl" />
           </Card>
         </div>
 
         {/* Sample Input (JSON) - 2/5 of available height */}
-        <div className="flex-[2] flex flex-col min-h-0">
+        <div className="flex flex-col min-h-0 relative" style={{ height: `${sampleInputHeight}px` }}>
           <div className="flex items-center justify-between mb-3">
             <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center">
               <Code2 className="h-4 w-4 mr-2 text-indigo-500" />
@@ -291,18 +446,19 @@ const CodeEditor = () => {
               </Tooltip>
             </div>
           </div>
-          <Card className="border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 shadow-lg rounded-2xl flex-1 min-h-0">
+          <Card className="border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 shadow-lg rounded-2xl flex-1 min-h-0 relative">
             <Textarea
               value={getDisplayValue()}
               onChange={(e) => handleSampleInputChange(e.target.value)}
               placeholder="Enter sample JSON input..."
-              className="font-mono text-sm border-0 bg-transparent resize-none h-full"
+              className="font-mono text-sm border-0 bg-transparent resize-none h-full pb-8"
             />
+            <ResizeHandle section="sampleInput" />
           </Card>
         </div>
 
         {/* Result - 2/5 of available height */}
-        <div className="flex-[2] flex flex-col min-h-0">
+        <div className="flex flex-col min-h-0" style={{ height: `${resultHeight}px` }}>
           <div className="flex items-center justify-between mb-3">
             <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center">
               <Play className="h-4 w-4 mr-2 text-emerald-500" />
@@ -345,12 +501,13 @@ const CodeEditor = () => {
               </Tooltip>
             </div>
           </div>
-          <Card className="border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-800 shadow-lg rounded-2xl ring-1 ring-slate-200 dark:ring-slate-700 flex-1 min-h-0">
-            <div className="p-6 h-full overflow-auto">
+          <Card className="border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-800 shadow-lg rounded-2xl ring-1 ring-slate-200 dark:ring-slate-700 flex-1 min-h-0 relative">
+            <div className="p-6 h-full overflow-auto pb-8">
               <pre className="text-sm font-mono whitespace-pre-wrap text-slate-800 dark:text-slate-200">
                 {formatResult(result)}
               </pre>
             </div>
+            <ResizeHandle section="result" />
           </Card>
         </div>
       </div>
