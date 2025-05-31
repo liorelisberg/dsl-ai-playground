@@ -14,7 +14,6 @@ import {
 } from '@/components/ui/tooltip';
 import JsonView from '@uiw/react-json-view';
 import { useTheme } from 'next-themes';
-import { darkTheme } from '@uiw/react-json-view/dark';
 
 const CodeEditor = () => {
   const [code, setCode] = useState('// Enter your DSL expression here\nupper(user.name)');
@@ -33,7 +32,6 @@ const CodeEditor = () => {
   // Advanced JSON viewer features
   const [sampleInputCollapsed, setSampleInputCollapsed] = useState(1); // Default collapse level
   const [resultCollapsed, setResultCollapsed] = useState(1); // Default collapse level
-  const [copiedPath, setCopiedPath] = useState<string>(''); // For path copying feedback
   
   // Ref to track available height for calculations
   const containerRef = useRef<HTMLDivElement>(null);
@@ -397,8 +395,6 @@ const CodeEditor = () => {
   const handleCopyPath = async (path: string) => {
     try {
       await navigator.clipboard.writeText(path);
-      setCopiedPath(path);
-      setTimeout(() => setCopiedPath(''), 2000); // Clear after 2 seconds
       toast({
         title: "Path Copied!",
         description: `JSON path: ${path}`,
@@ -616,10 +612,6 @@ const CodeEditor = () => {
                   collapsed={sampleInputCollapsed}
                   enableClipboard={false}
                   displayDataTypes={false}
-                  onExpand={({ keyName, value, keyid }) => {
-                    // Optional: Add expand/collapse logging
-                    console.log('Expanded/Collapsed:', { keyName, value: typeof value, keyid });
-                  }}
                 >
                   {/* Enhanced String Rendering for URLs and Images */}
                   <JsonView.String
@@ -804,10 +796,6 @@ const CodeEditor = () => {
                   collapsed={resultCollapsed}
                   enableClipboard={false}
                   displayDataTypes={false}
-                  onExpand={({ keyName, value, keyid }) => {
-                    // Optional: Add expand/collapse logging
-                    console.log('Result Expanded/Collapsed:', { keyName, value: typeof value, keyid });
-                  }}
                 >
                   {/* Enhanced String Rendering for URLs and Images */}
                   <JsonView.String
