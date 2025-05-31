@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
-import { Play, Book, Code2, Sparkles, Shuffle, Minimize2, Maximize2, Copy, GripVertical } from 'lucide-react';
+import { Play, Book, Code2, Sparkles, Shuffle, Minimize2, Maximize2, Copy, GripVertical, Eye, FileText } from 'lucide-react';
 import { evaluateExpression } from '../../services/dslService';
 import { useToast } from '@/hooks/use-toast';
 import ExamplesDrawer from './ExamplesDrawer';
@@ -12,6 +12,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
+import JsonView from '@uiw/react-json-view';
 
 const CodeEditor = () => {
   const [code, setCode] = useState('// Enter your DSL expression here\nupper(user.name)');
@@ -22,6 +23,10 @@ const CodeEditor = () => {
   const [lastRandomExampleId, setLastRandomExampleId] = useState<string | null>(null);
   const [isPrettyFormat, setIsPrettyFormat] = useState(true);
   const [isPrettyInputFormat, setIsPrettyInputFormat] = useState(true);
+  
+  // JSON Viewer modes
+  const [sampleInputJsonMode, setSampleInputJsonMode] = useState(false); // false = text, true = JSON viewer
+  const [resultJsonMode, setResultJsonMode] = useState(false); // false = text, true = JSON viewer
   
   // Ref to track available height for calculations
   const containerRef = useRef<HTMLDivElement>(null);
@@ -95,6 +100,26 @@ const CodeEditor = () => {
   }, []);
   
   const { toast } = useToast();
+
+  // Helper function to safely parse JSON
+  const safeParseJSON = (jsonString: string) => {
+    try {
+      return JSON.parse(jsonString);
+    } catch {
+      return null;
+    }
+  };
+
+  // Helper function to check if content is valid JSON
+  const isValidJSON = (content: string): boolean => {
+    if (!content || content.trim() === '') return false;
+    try {
+      JSON.parse(content);
+      return true;
+    } catch {
+      return false;
+    }
+  };
 
   // Helper function to format result based on prettify toggle
   const formatResult = (rawResult: string): string => {
@@ -410,6 +435,28 @@ const CodeEditor = () => {
               Sample Input (JSON)
             </label>
             <div className="flex items-center space-x-2">
+              {/* JSON Viewer Toggle for Sample Input */}
+              {isValidJSON(sampleInput) && (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setSampleInputJsonMode(!sampleInputJsonMode)}
+                      className="h-7 w-7 p-0 hover:bg-slate-200 dark:hover:bg-slate-700"
+                    >
+                      {sampleInputJsonMode ? (
+                        <FileText className="h-3.5 w-3.5" />
+                      ) : (
+                        <Eye className="h-3.5 w-3.5" />
+                      )}
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>{sampleInputJsonMode ? 'Switch to text editor' : 'Switch to JSON viewer'}</p>
+                  </TooltipContent>
+                </Tooltip>
+              )}
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Button
@@ -447,12 +494,28 @@ const CodeEditor = () => {
             </div>
           </div>
           <Card className="border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 shadow-lg rounded-2xl flex-1 min-h-0 relative">
-            <Textarea
-              value={getDisplayValue()}
-              onChange={(e) => handleSampleInputChange(e.target.value)}
-              placeholder="Enter sample JSON input..."
-              className="font-mono text-sm border-0 bg-transparent resize-none h-full pb-8"
-            />
+            {sampleInputJsonMode && isValidJSON(sampleInput) ? (
+              <div className="p-4 h-full overflow-auto pb-8">
+                <JsonView 
+                  value={safeParseJSON(sampleInput)} 
+                  style={{
+                    '--w-rjv-background-color': 'transparent',
+                    '--w-rjv-border-left': '0px',
+                    '--w-rjv-line-color': 'transparent',
+                    '--w-rjv-font-family': 'ui-monospace, SFMono-Regular, "SF Mono", Consolas, "Liberation Mono", Menlo, monospace',
+                  } as React.CSSProperties}
+                  collapsed={1}
+                  enableClipboard={false}
+                />
+              </div>
+            ) : (
+              <Textarea
+                value={getDisplayValue()}
+                onChange={(e) => handleSampleInputChange(e.target.value)}
+                placeholder="Enter sample JSON input..."
+                className="font-mono text-sm border-0 bg-transparent resize-none h-full pb-8"
+              />
+            )}
             <ResizeHandle section="sampleInput" />
           </Card>
         </div>
@@ -465,6 +528,28 @@ const CodeEditor = () => {
               Result
             </label>
             <div className="flex items-center space-x-2">
+              {/* JSON Viewer Toggle for Result */}
+              {isValidJSON(result) && (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setResultJsonMode(!resultJsonMode)}
+                      className="h-7 w-7 p-0 hover:bg-slate-200 dark:hover:bg-slate-700"
+                    >
+                      {resultJsonMode ? (
+                        <FileText className="h-3.5 w-3.5" />
+                      ) : (
+                        <Eye className="h-3.5 w-3.5" />
+                      )}
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>{resultJsonMode ? 'Switch to text view' : 'Switch to JSON viewer'}</p>
+                  </TooltipContent>
+                </Tooltip>
+              )}
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Button
@@ -502,11 +587,27 @@ const CodeEditor = () => {
             </div>
           </div>
           <Card className="border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-800 shadow-lg rounded-2xl ring-1 ring-slate-200 dark:ring-slate-700 flex-1 min-h-0 relative">
-            <div className="p-6 h-full overflow-auto pb-8">
-              <pre className="text-sm font-mono whitespace-pre-wrap text-slate-800 dark:text-slate-200">
-                {formatResult(result)}
-              </pre>
-            </div>
+            {resultJsonMode && isValidJSON(result) ? (
+              <div className="p-4 h-full overflow-auto pb-8">
+                <JsonView 
+                  value={safeParseJSON(result)} 
+                  style={{
+                    '--w-rjv-background-color': 'transparent',
+                    '--w-rjv-border-left': '0px',
+                    '--w-rjv-line-color': 'transparent',
+                    '--w-rjv-font-family': 'ui-monospace, SFMono-Regular, "SF Mono", Consolas, "Liberation Mono", Menlo, monospace',
+                  } as React.CSSProperties}
+                  collapsed={1}
+                  enableClipboard={false}
+                />
+              </div>
+            ) : (
+              <div className="p-6 h-full overflow-auto pb-8">
+                <pre className="text-sm font-mono whitespace-pre-wrap text-slate-800 dark:text-slate-200">
+                  {formatResult(result)}
+                </pre>
+              </div>
+            )}
             <ResizeHandle section="result" />
           </Card>
         </div>

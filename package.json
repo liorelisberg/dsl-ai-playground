@@ -31,6 +31,7 @@
     "@radix-ui/react-tooltip": "^1.1.4",
     "@tanstack/react-query": "^5.56.2",
     "@types/react-syntax-highlighter": "^15.5.13",
+    "@uiw/react-json-view": "2.0.0-alpha.32",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "lucide-react": "^0.462.0",
