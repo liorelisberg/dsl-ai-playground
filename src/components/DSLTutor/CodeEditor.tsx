@@ -22,8 +22,6 @@ const CodeEditor = () => {
   const [lastRandomExampleId, setLastRandomExampleId] = useState<string | null>(null);
   const [isPrettyFormat, setIsPrettyFormat] = useState(true);
   const [isPrettyInputFormat, setIsPrettyInputFormat] = useState(true);
-  const [inputTextareaHeight, setInputTextareaHeight] = useState(160);
-  const inputTextareaRef = useRef<HTMLTextAreaElement>(null);
   const { toast } = useToast();
 
   // Helper function to format result based on prettify toggle
@@ -110,22 +108,6 @@ const CodeEditor = () => {
   const handleSampleInputChange = (value: string) => {
     setSampleInput(value);
   };
-
-  // Auto-resize Sample Input textarea based on content and format toggle
-  useEffect(() => {
-    const calculateHeight = () => {
-      if (inputTextareaRef.current) {
-        // Reset height to auto to get accurate scrollHeight
-        inputTextareaRef.current.style.height = 'auto';
-        const newHeight = Math.max(160, inputTextareaRef.current.scrollHeight + 4); // +4 for padding
-        setInputTextareaHeight(newHeight);
-      }
-    };
-
-    // Small delay to ensure content is rendered after format toggle
-    const timeoutId = setTimeout(calculateHeight, 0);
-    return () => clearTimeout(timeoutId);
-  }, [sampleInput, isPrettyInputFormat]);
 
   // Copy handlers
   const handleCopyResult = async () => {
@@ -314,9 +296,7 @@ const CodeEditor = () => {
               value={getDisplayValue()}
               onChange={(e) => handleSampleInputChange(e.target.value)}
               placeholder="Enter sample JSON input..."
-              className="font-mono text-sm border-0 bg-transparent resize-none"
-              ref={inputTextareaRef}
-              style={{ height: inputTextareaHeight }}
+              className="font-mono text-sm border-0 bg-transparent resize-none h-full"
             />
           </Card>
         </div>
