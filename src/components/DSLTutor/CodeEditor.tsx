@@ -510,29 +510,7 @@ const CodeEditor = () => {
               Sample Input (JSON)
             </label>
             <div className="flex items-center space-x-2">
-              {/* JSON Viewer Toggle for Sample Input */}
-              {isValidJSON(sampleInput) && (
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => setSampleInputJsonMode(!sampleInputJsonMode)}
-                      className="h-7 w-7 p-0 hover:bg-slate-200 dark:hover:bg-slate-700"
-                    >
-                      {sampleInputJsonMode ? (
-                        <FileText className="h-3.5 w-3.5" />
-                      ) : (
-                        <Eye className="h-3.5 w-3.5" />
-                      )}
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>{sampleInputJsonMode ? 'Switch to text editor' : 'Switch to JSON viewer'}</p>
-                  </TooltipContent>
-                </Tooltip>
-              )}
-              {/* Collapse Controls for Sample Input JSON Viewer */}
+              {/* Collapse Controls for Sample Input JSON Viewer - leftmost when active */}
               {isValidJSON(sampleInput) && sampleInputJsonMode && (
                 <>
                   <Tooltip>
@@ -567,6 +545,53 @@ const CodeEditor = () => {
                   </Tooltip>
                 </>
               )}
+              
+              {/* JSON Viewer Toggle for Sample Input */}
+              {isValidJSON(sampleInput) && (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setSampleInputJsonMode(!sampleInputJsonMode)}
+                      className="h-7 w-7 p-0 hover:bg-slate-200 dark:hover:bg-slate-700"
+                    >
+                      {sampleInputJsonMode ? (
+                        <FileText className="h-3.5 w-3.5" />
+                      ) : (
+                        <Eye className="h-3.5 w-3.5" />
+                      )}
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>{sampleInputJsonMode ? 'Switch to text editor' : 'Switch to JSON viewer'}</p>
+                  </TooltipContent>
+                </Tooltip>
+              )}
+              
+              {/* Pretty/Compact Format Toggle - disabled in JSON viewer mode */}
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setIsPrettyInputFormat(!isPrettyInputFormat)}
+                    disabled={sampleInputJsonMode}
+                    className="h-7 w-7 p-0 hover:bg-slate-200 dark:hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {isPrettyInputFormat ? (
+                      <Minimize2 className="h-3.5 w-3.5" />
+                    ) : (
+                      <Maximize2 className="h-3.5 w-3.5" />
+                    )}
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>{sampleInputJsonMode ? 'Not available in JSON viewer mode' : (isPrettyInputFormat ? 'Switch to compact format' : 'Switch to pretty format')}</p>
+                </TooltipContent>
+              </Tooltip>
+              
+              {/* Copy Button - rightmost */}
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Button
@@ -580,25 +605,6 @@ const CodeEditor = () => {
                 </TooltipTrigger>
                 <TooltipContent>
                   <p>Copy sample input to clipboard</p>
-                </TooltipContent>
-              </Tooltip>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setIsPrettyInputFormat(!isPrettyInputFormat)}
-                    className="h-7 w-7 p-0 hover:bg-slate-200 dark:hover:bg-slate-700"
-                  >
-                    {isPrettyInputFormat ? (
-                      <Minimize2 className="h-3.5 w-3.5" />
-                    ) : (
-                      <Maximize2 className="h-3.5 w-3.5" />
-                    )}
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>{isPrettyInputFormat ? 'Switch to compact format' : 'Switch to pretty format'}</p>
                 </TooltipContent>
               </Tooltip>
             </div>
@@ -694,29 +700,7 @@ const CodeEditor = () => {
               Result
             </label>
             <div className="flex items-center space-x-2">
-              {/* JSON Viewer Toggle for Result */}
-              {isValidJSON(result) && (
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => setResultJsonMode(!resultJsonMode)}
-                      className="h-7 w-7 p-0 hover:bg-slate-200 dark:hover:bg-slate-700"
-                    >
-                      {resultJsonMode ? (
-                        <FileText className="h-3.5 w-3.5" />
-                      ) : (
-                        <Eye className="h-3.5 w-3.5" />
-                      )}
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>{resultJsonMode ? 'Switch to text view' : 'Switch to JSON viewer'}</p>
-                  </TooltipContent>
-                </Tooltip>
-              )}
-              {/* Collapse Controls for Result JSON Viewer */}
+              {/* Collapse Controls for Result JSON Viewer - leftmost when active */}
               {isValidJSON(result) && resultJsonMode && (
                 <>
                   <Tooltip>
@@ -751,6 +735,53 @@ const CodeEditor = () => {
                   </Tooltip>
                 </>
               )}
+              
+              {/* JSON Viewer Toggle for Result */}
+              {isValidJSON(result) && (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setResultJsonMode(!resultJsonMode)}
+                      className="h-7 w-7 p-0 hover:bg-slate-200 dark:hover:bg-slate-700"
+                    >
+                      {resultJsonMode ? (
+                        <FileText className="h-3.5 w-3.5" />
+                      ) : (
+                        <Eye className="h-3.5 w-3.5" />
+                      )}
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>{resultJsonMode ? 'Switch to text view' : 'Switch to JSON viewer'}</p>
+                  </TooltipContent>
+                </Tooltip>
+              )}
+              
+              {/* Pretty/Compact Format Toggle - disabled in JSON viewer mode */}
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setIsPrettyFormat(!isPrettyFormat)}
+                    disabled={resultJsonMode}
+                    className="h-7 w-7 p-0 hover:bg-slate-200 dark:hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {isPrettyFormat ? (
+                      <Minimize2 className="h-3.5 w-3.5" />
+                    ) : (
+                      <Maximize2 className="h-3.5 w-3.5" />
+                    )}
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>{resultJsonMode ? 'Not available in JSON viewer mode' : (isPrettyFormat ? 'Switch to compact format' : 'Switch to pretty format')}</p>
+                </TooltipContent>
+              </Tooltip>
+              
+              {/* Copy Button - rightmost */}
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Button
@@ -764,25 +795,6 @@ const CodeEditor = () => {
                 </TooltipTrigger>
                 <TooltipContent>
                   <p>Copy result to clipboard</p>
-                </TooltipContent>
-              </Tooltip>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setIsPrettyFormat(!isPrettyFormat)}
-                    className="h-7 w-7 p-0 hover:bg-slate-200 dark:hover:bg-slate-700"
-                  >
-                    {isPrettyFormat ? (
-                      <Minimize2 className="h-3.5 w-3.5" />
-                    ) : (
-                      <Maximize2 className="h-3.5 w-3.5" />
-                    )}
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>{isPrettyFormat ? 'Switch to compact format' : 'Switch to pretty format'}</p>
                 </TooltipContent>
               </Tooltip>
             </div>
