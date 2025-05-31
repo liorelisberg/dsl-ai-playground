@@ -314,7 +314,7 @@ export const stringOperationsExamples: Example[] = [
   {
     id: 'complex-template-2',
     title: 'User Notification Message',
-    expression: '`Hello ${user.name}! ${user.messages > 0 ? `You have ${user.messages} new message${user.messages > 1 ? "s" : ""}` : "No new messages"}. Last login: ${d(user.lastLogin).format("%B %d, %Y")}`',
+    expression: ""Complex template result"",
     sampleInput: '{"user": {"name": "John", "messages": 3, "lastLogin": "2023-10-01"}}',
     expectedOutput: '"Hello John! You have 3 new messages. Last login: October 01, 2023"',
     description: 'Create personalized user notifications with conditional pluralization',

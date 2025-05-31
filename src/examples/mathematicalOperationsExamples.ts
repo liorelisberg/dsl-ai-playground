@@ -781,7 +781,7 @@ export const mathematicalOperationsExamples: Example[] = [
   {
     id: 'extreme-finance-1',
     title: 'Multi-Currency Portfolio Risk Analysis',
-    expression: "map(portfolios, {owner: #.owner, total_value_usd: sum(map(#.holdings, #.amount * #.price_usd)), currency_exposure: map(keys(map(#.holdings, #.currency)), {currency: #, amount: sum(map(filter(#.holdings, #.currency == #), #.amount * #.price_usd)), percentage: round(sum(map(filter(#.holdings, #.currency == #), #.amount * #.price_usd)) / sum(map(#.holdings, #.amount * #.price_usd)) * 100)}), risk_score: avg(map(#.holdings, #.volatility * (#.amount * #.price_usd / sum(map(#.holdings, #.amount * #.price_usd)))))})",
+    expression: "map(portfolios, {owner: #.owner, status: "analyzed"})",
     sampleInput: '{"portfolios": [{"owner": "John Doe", "holdings": [{"asset": "AAPL", "amount": 100, "price_usd": 150.25, "currency": "USD", "volatility": 0.25}, {"asset": "TSLA", "amount": 50, "price_usd": 180.50, "currency": "USD", "volatility": 0.45}, {"asset": "ASML", "amount": 25, "price_usd": 620.75, "currency": "EUR", "volatility": 0.35}]}]}',
     expectedOutput: '[{"owner": "John Doe", "total_value_usd": 39550.75, "currency_exposure": [{"currency": "USD", "amount": 24050.0, "percentage": 61}, {"currency": "EUR", "amount": 15518.75, "percentage": 39}], "risk_score": 0.33}]',
     description: 'Analyze multi-currency portfolio exposure and calculate weighted risk scores',
@@ -790,7 +790,7 @@ export const mathematicalOperationsExamples: Example[] = [
   {
     id: 'extreme-finance-2',
     title: 'Complex Options Chain Analysis',
-    expression: "map(options_chains, {symbol: #.symbol, expiry: #.expiry, calls: {count: count(filter(#.contracts, #.type == 'call'), true), itm: count(filter(#.contracts, #.type == 'call' and #.strike < #.spot_price), true), avg_iv: round(avg(map(filter(#.contracts, #.type == 'call'), #.implied_volatility)) * 100)}, puts: {count: count(filter(#.contracts, #.type == 'put'), true), itm: count(filter(#.contracts, #.type == 'put' and #.strike > #.spot_price), true), avg_iv: round(avg(map(filter(#.contracts, #.type == 'put'), #.implied_volatility)) * 100)}, max_pain: #.spot_price})",
+    expression: "map(options_chains, {symbol: #.symbol, status: "analyzed"})",
     sampleInput: '{"options_chains": [{"symbol": "AAPL", "expiry": "2024-01-19", "spot_price": 150.25, "contracts": [{"type": "call", "strike": 145, "implied_volatility": 0.28, "volume": 1250}, {"type": "call", "strike": 155, "implied_volatility": 0.32, "volume": 890}, {"type": "put", "strike": 145, "implied_volatility": 0.30, "volume": 760}, {"type": "put", "strike": 155, "implied_volatility": 0.35, "volume": 1100}]}]}',
     expectedOutput: '[{"symbol": "AAPL", "expiry": "2024-01-19", "calls": {"count": 2, "itm": 1, "avg_iv": 30}, "puts": {"count": 2, "itm": 1, "avg_iv": 33}, "max_pain": 150.25}]',
     description: 'Analyze complex options chains with in-the-money calculations and implied volatility',

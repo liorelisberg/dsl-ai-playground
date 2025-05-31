@@ -22,7 +22,7 @@ export const unary_operationsExamples: Example[] = [
   {
     id: 'unary-3',
     title: 'Greater Than Comparison',
-    expression: '> 5',
+    expression: "$ > 5",
     sampleInput: '{"$": 10}',
     expectedOutput: 'true',
     description: 'Check if context value ($) is greater than 5',
@@ -31,7 +31,7 @@ export const unary_operationsExamples: Example[] = [
   {
     id: 'unary-4',
     title: 'Less Than Comparison',
-    expression: '< 10',
+    expression: "$ < 10",
     sampleInput: '{"$": 5}',
     expectedOutput: 'true',
     description: 'Check if context value ($) is less than 10',
@@ -40,7 +40,7 @@ export const unary_operationsExamples: Example[] = [
   {
     id: 'unary-5',
     title: 'Greater Than or Equal',
-    expression: '>= 10',
+    expression: "$ >= 10",
     sampleInput: '{"$": 10}',
     expectedOutput: 'true',
     description: 'Check if context value ($) is greater than or equal to 10',
@@ -49,7 +49,7 @@ export const unary_operationsExamples: Example[] = [
   {
     id: 'unary-6',
     title: 'Less Than or Equal',
-    expression: '<= 5',
+    expression: "$ <= 5",
     sampleInput: '{"$": 5}',
     expectedOutput: 'true',
     description: 'Check if context value ($) is less than or equal to 5',
@@ -103,7 +103,7 @@ export const unary_operationsExamples: Example[] = [
   {
     id: 'unary-12',
     title: 'Combined Comparison',
-    expression: '> 5 and < 10',
+    expression: "$ > 5 and $ < 10",
     sampleInput: '{"$": 5}',
     expectedOutput: 'false',
     description: 'Check if context value ($) is greater than 5 AND less than 10',
@@ -112,7 +112,7 @@ export const unary_operationsExamples: Example[] = [
   {
     id: 'unary-13',
     title: 'Range and Comparison',
-    expression: '[-10..0] and > -5',
+    expression: "$ in [-10..0] and $ > -5",
     sampleInput: '{"$": -4.99}',
     expectedOutput: 'true',
     description: 'Check if context value ($) is in range AND greater than -5',

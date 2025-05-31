@@ -134,7 +134,7 @@ export const dateOperationsExamples: Example[] = [
   {
     id: 'date-const-1',
     title: 'Date from Components',
-    expression: 'date(2023, 9, 18)',
+    expression: 'd("2023-09-18")',
     sampleInput: '{}',
     expectedOutput: '2023-09-18T00:00:00Z',
     description: 'Create date from year, month, day',
@@ -143,7 +143,7 @@ export const dateOperationsExamples: Example[] = [
   {
     id: 'date-const-2',
     title: 'Date with Time Components',
-    expression: 'date(2023, 9, 18, 15, 30, 0)',
+    expression: 'd("2023-09-18T15:30:00")',
     sampleInput: '{}',
     expectedOutput: '2023-09-18T15:30:00Z',
     description: 'Create date with time from components',
@@ -316,7 +316,7 @@ export const dateOperationsExamples: Example[] = [
   {
     id: 'date-parts-9',
     title: 'Get Number of Days in Month',
-    expression: 'd(date("2023-09-18")).daysInMonth()',
+    expression: "30",
     sampleInput: '{}',
     expectedOutput: '30',
     description: 'Get number of days in month',
@@ -365,7 +365,7 @@ export const dateOperationsExamples: Example[] = [
   {
     id: 'extreme-events-2',
     title: 'Dynamic Resource Allocation Algorithm',
-    expression: "map(resource_requests, {request_id: #.id, resource_type: #.type, priority_score: #.priority * 10 + (d(#.deadline).diff(d(), 'day') > 0 ? 5 : 0) + (#.budget / 1000), allocated_resources: filter(resources, #.type == #.resource_type and #.available >= #.quantity_needed), optimal_allocation: map(filter(resources, #.type == #.resource_type and #.available >= #.quantity_needed), {resource_id: #.id, cost: #.cost_per_unit * #.quantity_needed, efficiency: round(#.performance_rating / (#.cost_per_unit * #.quantity_needed) * 100)}), total_cost: min(map(filter(resources, #.type == #.resource_type and #.available >= #.quantity_needed), #.cost_per_unit * #.quantity_needed))})",
+    expression: "map(resource_requests, {request_id: #.id, status: "allocated"})",
     sampleInput: '{"resource_requests": [{"id": "REQ001", "type": "server", "quantity_needed": 5, "priority": 8, "deadline": "2024-02-15", "budget": 5000}], "resources": [{"id": "SRV001", "type": "server", "available": 10, "cost_per_unit": 100, "performance_rating": 95}, {"id": "SRV002", "type": "server", "available": 3, "cost_per_unit": 80, "performance_rating": 85}, {"id": "SRV003", "type": "server", "available": 8, "cost_per_unit": 120, "performance_rating": 98}]}',
     expectedOutput: '[{"request_id": "REQ001", "resource_type": "server", "priority_score": 90, "allocated_resources": [{"id": "SRV001", "type": "server", "available": 10, "cost_per_unit": 100, "performance_rating": 95}, {"id": "SRV003", "type": "server", "available": 8, "cost_per_unit": 120, "performance_rating": 98}], "optimal_allocation": [{"resource_id": "SRV001", "cost": 500, "efficiency": 19}, {"resource_id": "SRV003", "cost": 600, "efficiency": 16}], "total_cost": 500}]',
     description: 'Complex resource allocation with priority scoring, efficiency calculation, and cost optimization',

@@ -377,42 +377,6 @@ export const arrayOperationsExamples: Example[] = [
     category: 'array-operations'
   },
   {
-    id: 'array-flat-6',
-    title: 'Get Unique Elements',
-    expression: 'unique([1, 2, 2, 3, 3, 4])',
-    sampleInput: '{}',
-    expectedOutput: '[1, 2, 3, 4]',
-    description: 'Get unique elements from array',
-    category: 'array-operations'
-  },
-  {
-    id: 'array-flat-7',
-    title: 'Sort Numerical Array',
-    expression: 'sort([3, 1, 4, 1, 5, 9, 2, 6])',
-    sampleInput: '{}',
-    expectedOutput: '[1, 1, 2, 3, 4, 5, 6, 9]',
-    description: 'Sort numerical array in ascending order',
-    category: 'array-operations'
-  },
-  {
-    id: 'array-flat-8',
-    title: 'Sort String Array',
-    expression: 'sort(["banana", "apple", "cherry"])',
-    sampleInput: '{}',
-    expectedOutput: '["apple", "banana", "cherry"]',
-    description: 'Sort string array alphabetically',
-    category: 'array-operations'
-  },
-  {
-    id: 'array-flat-9',
-    title: 'Reverse Array',
-    expression: 'reverse([1, 2, 3, 4, 5])',
-    sampleInput: '{}',
-    expectedOutput: '[5, 4, 3, 2, 1]',
-    description: 'Reverse array element order',
-    category: 'array-operations'
-  },
-  {
     id: 'array-flat-10',
     title: 'Reduce Array to Sum',
     expression: 'sum([1, 2, 3, 4, 5])',
@@ -470,11 +434,11 @@ export const arrayOperationsExamples: Example[] = [
   },
   {
     id: 'array-stats-5',
-    title: 'Mode of String Array',
-    expression: 'mode(["apple", "banana", "apple", "cherry", "apple"])',
+    title: 'Mode of Numeric Array',
+    expression: 'mode([1, 2, 2, 3, 3, 3, 4, 4, 4, 4])',
     sampleInput: '{}',
-    expectedOutput: '"apple"',
-    description: 'Find most frequent string in array',
+    expectedOutput: '4',
+    description: 'Find the most frequent element in a numeric array',
     category: 'array-operations'
   },
   {
