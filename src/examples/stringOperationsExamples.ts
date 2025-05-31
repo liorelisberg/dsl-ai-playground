@@ -115,6 +115,69 @@ export const stringOperationsExamples: Example[] = [
     category: 'string-operations'
   },
   {
+    id: 'str-12b',
+    title: 'Email Parts Extraction',
+    expression: 'extract("user@example.com", "([^@]+)@([^.]+)\\.(.+)")',
+    sampleInput: '{}',
+    expectedOutput: '["user@example.com", "user", "example", "com"]',
+    description: 'Extract username, domain, and TLD from email using regex groups',
+    category: 'string-operations'
+  },
+  {
+    id: 'str-12c',
+    title: 'Phone Number Extraction',
+    expression: 'extract("(555) 123-4567", "\\((\\d{3})\\) (\\d{3})-(\\d{4})")',
+    sampleInput: '{}',
+    expectedOutput: '["(555) 123-4567", "555", "123", "4567"]',
+    description: 'Extract area code and number parts from formatted phone number',
+    category: 'string-operations'
+  },
+  {
+    id: 'str-12d',
+    title: 'URL Components Extraction',
+    expression: 'extract("https://api.example.com:8080/v1/users", "(https?)://([^:]+):(\\d+)(/.*)")',
+    sampleInput: '{}',
+    expectedOutput: '["https://api.example.com:8080/v1/users", "https", "api.example.com", "8080", "/v1/users"]',
+    description: 'Extract protocol, domain, port, and path from URL',
+    category: 'string-operations'
+  },
+  {
+    id: 'str-12e',
+    title: 'Version Number Extraction',
+    expression: 'extract("v1.2.3-beta", "v(\\d+)\\.(\\d+)\\.(\\d+)(?:-(.+))?")',
+    sampleInput: '{}',
+    expectedOutput: '["v1.2.3-beta", "1", "2", "3", "beta"]',
+    description: 'Extract major, minor, patch, and pre-release from version string',
+    category: 'string-operations'
+  },
+  {
+    id: 'str-12f',
+    title: 'Time Extraction',
+    expression: 'extract("14:30:25", "(\\d{2}):(\\d{2}):(\\d{2})")',
+    sampleInput: '{}',
+    expectedOutput: '["14:30:25", "14", "30", "25"]',
+    description: 'Extract hours, minutes, and seconds from time string',
+    category: 'string-operations'
+  },
+  {
+    id: 'str-12g',
+    title: 'File Path Extraction',
+    expression: 'extract("/home/user/documents/file.txt", "^(.+)/([^/]+)\\.([^.]+)$")',
+    sampleInput: '{}',
+    expectedOutput: '["/home/user/documents/file.txt", "/home/user/documents", "file", "txt"]',
+    description: 'Extract directory path, filename, and extension from file path',
+    category: 'string-operations'
+  },
+  {
+    id: 'str-12h',
+    title: 'Currency Amount Extraction',
+    expression: 'extract("$1,234.56", "\\$([0-9,]+)\\.([0-9]{2})")',
+    sampleInput: '{}',
+    expectedOutput: '["$1,234.56", "1,234", "56"]',
+    description: 'Extract dollars and cents from currency string',
+    category: 'string-operations'
+  },
+  {
     id: 'str-13',
     title: 'URL Parts Extraction',
     expression: 'contains("example.com", "example")',
