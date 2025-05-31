@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
-import { Play, Book, Code2, Sparkles, Shuffle, Minimize2, Maximize2 } from 'lucide-react';
+import { Play, Book, Code2, Sparkles, Shuffle, Minimize2, Maximize2, Copy } from 'lucide-react';
 import { evaluateExpression } from '../../services/dslService';
 import { useToast } from '@/hooks/use-toast';
 import ExamplesDrawer from './ExamplesDrawer';
@@ -107,6 +107,41 @@ const CodeEditor = () => {
 
   const handleSampleInputChange = (value: string) => {
     setSampleInput(value);
+  };
+
+  // Copy handlers
+  const handleCopyResult = async () => {
+    try {
+      const textToCopy = formatResult(result);
+      await navigator.clipboard.writeText(textToCopy);
+      toast({
+        title: "Copied!",
+        description: "Result copied to clipboard",
+      });
+    } catch (error) {
+      toast({
+        title: "Copy Failed",
+        description: "Unable to copy result to clipboard",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const handleCopySampleInput = async () => {
+    try {
+      const textToCopy = getDisplayValue();
+      await navigator.clipboard.writeText(textToCopy);
+      toast({
+        title: "Copied!",
+        description: "Sample input copied to clipboard",
+      });
+    } catch (error) {
+      toast({
+        title: "Copy Failed",
+        description: "Unable to copy sample input to clipboard",
+        variant: "destructive"
+      });
+    }
   };
 
   // Get display value for sample input (only format if valid JSON and not currently being edited)
@@ -217,25 +252,42 @@ const CodeEditor = () => {
               <Code2 className="h-4 w-4 mr-2 text-indigo-500" />
               Sample Input (JSON)
             </label>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setIsPrettyInputFormat(!isPrettyInputFormat)}
-                  className="h-7 w-7 p-0 hover:bg-slate-200 dark:hover:bg-slate-700"
-                >
-                  {isPrettyInputFormat ? (
-                    <Minimize2 className="h-3.5 w-3.5" />
-                  ) : (
-                    <Maximize2 className="h-3.5 w-3.5" />
-                  )}
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>{isPrettyInputFormat ? 'Switch to compact format' : 'Switch to pretty format'}</p>
-              </TooltipContent>
-            </Tooltip>
+            <div className="flex items-center space-x-2">
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={handleCopySampleInput}
+                    className="h-7 w-7 p-0 hover:bg-slate-200 dark:hover:bg-slate-700"
+                  >
+                    <Copy className="h-3.5 w-3.5" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Copy sample input to clipboard</p>
+                </TooltipContent>
+              </Tooltip>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setIsPrettyInputFormat(!isPrettyInputFormat)}
+                    className="h-7 w-7 p-0 hover:bg-slate-200 dark:hover:bg-slate-700"
+                  >
+                    {isPrettyInputFormat ? (
+                      <Minimize2 className="h-3.5 w-3.5" />
+                    ) : (
+                      <Maximize2 className="h-3.5 w-3.5" />
+                    )}
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>{isPrettyInputFormat ? 'Switch to compact format' : 'Switch to pretty format'}</p>
+                </TooltipContent>
+              </Tooltip>
+            </div>
           </div>
           <Card className="border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 shadow-lg rounded-2xl">
             <Textarea
@@ -253,25 +305,42 @@ const CodeEditor = () => {
               <Play className="h-4 w-4 mr-2 text-emerald-500" />
               Result
             </label>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setIsPrettyFormat(!isPrettyFormat)}
-                  className="h-7 w-7 p-0 hover:bg-slate-200 dark:hover:bg-slate-700"
-                >
-                  {isPrettyFormat ? (
-                    <Minimize2 className="h-3.5 w-3.5" />
-                  ) : (
-                    <Maximize2 className="h-3.5 w-3.5" />
-                  )}
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>{isPrettyFormat ? 'Switch to compact format' : 'Switch to pretty format'}</p>
-              </TooltipContent>
-            </Tooltip>
+            <div className="flex items-center space-x-2">
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={handleCopyResult}
+                    className="h-7 w-7 p-0 hover:bg-slate-200 dark:hover:bg-slate-700"
+                  >
+                    <Copy className="h-3.5 w-3.5" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Copy result to clipboard</p>
+                </TooltipContent>
+              </Tooltip>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setIsPrettyFormat(!isPrettyFormat)}
+                    className="h-7 w-7 p-0 hover:bg-slate-200 dark:hover:bg-slate-700"
+                  >
+                    {isPrettyFormat ? (
+                      <Minimize2 className="h-3.5 w-3.5" />
+                    ) : (
+                      <Maximize2 className="h-3.5 w-3.5" />
+                    )}
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>{isPrettyFormat ? 'Switch to compact format' : 'Switch to pretty format'}</p>
+                </TooltipContent>
+              </Tooltip>
+            </div>
           </div>
           <Card className="border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-800 shadow-lg rounded-2xl ring-1 ring-slate-200 dark:ring-slate-700">
             <div className="p-6 min-h-[120px]">
