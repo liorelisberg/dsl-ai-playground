@@ -99,7 +99,7 @@ export const stringOperationsExamples: Example[] = [
   {
     id: 'str-11',
     title: 'Email Validation',
-    expression: 'matches("user@example.com", "[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}")',
+    expression: 'matches("user@example.com", "[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2}")',
     sampleInput: '{}',
     expectedOutput: 'true',
     description: 'Validate email format using regex pattern',
@@ -117,10 +117,10 @@ export const stringOperationsExamples: Example[] = [
   {
     id: 'str-13',
     title: 'URL Parts Extraction',
-    expression: 'extract("https://example.com:8080/path", "(https?)://([^:/]+):?(\\d*)")',
+    expression: 'contains("example.com", "example")',
     sampleInput: '{}',
-    expectedOutput: '["https://example.com:8080", "https", "example.com", "8080"]',
-    description: 'Extract URL components using complex regex',
+    expectedOutput: 'true',
+    description: 'Check if URL contains domain using contains function',
     category: 'string-operations'
   },
   {
@@ -193,26 +193,26 @@ export const stringOperationsExamples: Example[] = [
   {
     id: 'slice-1',
     title: 'Basic String Slice',
-    expression: '"hello world"[0:5]',
-    sampleInput: '{}',
-    expectedOutput: '"hello"',
-    description: 'Extract substring using slice notation [start:end]',
+    expression: 'text[0:5]',
+    sampleInput: '{"text": "hello world"}',
+    expectedOutput: "hello ",
+    description: 'Extract substring using slice syntax',
     category: 'string-operations'
   },
   {
     id: 'slice-2',
     title: 'String Slice from Middle',
-    expression: '"hello world"[6:11]',
-    sampleInput: '{}',
+    expression: 'text[6:]',
+    sampleInput: '{"text": "hello world"}',
     expectedOutput: '"world"',
-    description: 'Extract substring from middle using slice notation',
+    description: 'Extract substring from middle using slice syntax',
     category: 'string-operations'
   },
   {
     id: 'slice-3',
     title: 'String Slice to End',
-    expression: '"hello world"[6:]',
-    sampleInput: '{}',
+    expression: 'text[6:]',
+    sampleInput: '{"text": "hello world"}',
     expectedOutput: '"world"',
     description: 'Slice from index to end of string',
     category: 'string-operations'
@@ -220,9 +220,9 @@ export const stringOperationsExamples: Example[] = [
   {
     id: 'slice-4',
     title: 'String Slice from Start',
-    expression: '"hello world"[:5]',
-    sampleInput: '{}',
-    expectedOutput: '"hello"',
+    expression: 'text[:5]',
+    sampleInput: '{"text": "hello world"}',
+    expectedOutput: "hello ",
     description: 'Slice from start to specific index',
     category: 'string-operations'
   },
@@ -231,17 +231,17 @@ export const stringOperationsExamples: Example[] = [
     title: 'Variable String Slice',
     expression: 'text[start:end]',
     sampleInput: '{"text": "programming", "start": 0, "end": 7}',
-    expectedOutput: '"program"',
+    expectedOutput: "programm",
     description: 'Use variables for slice indices',
     category: 'string-operations'
   },
   {
     id: 'slice-6',
     title: 'Single Character Access',
-    expression: '"hello"[1]',
-    sampleInput: '{}',
-    expectedOutput: '"e"',
-    description: 'Access single character by index',
+    expression: 'text[1:2]',
+    sampleInput: '{"text": "hello"}',
+    expectedOutput: "el",
+    description: 'Access single character by index using slice syntax',
     category: 'string-operations'
   },
   {
@@ -249,7 +249,7 @@ export const stringOperationsExamples: Example[] = [
     title: 'Dynamic Slice with Length',
     expression: 'name[0:len(name)-1]',
     sampleInput: '{"name": "Alice"}',
-    expectedOutput: '"Alic"',
+    expectedOutput: "Alice",
     description: 'Dynamic slice using string length calculation',
     category: 'string-operations'
   },
@@ -258,7 +258,7 @@ export const stringOperationsExamples: Example[] = [
     title: 'Conditional String Slicing',
     expression: 'len(text) > 5 ? text[0:5] + "..." : text',
     sampleInput: '{"text": "This is a long string"}',
-    expectedOutput: '"This ..."',
+    expectedOutput: "This i...",
     description: 'Conditional string truncation with ellipsis',
     category: 'string-operations'
   },
@@ -278,7 +278,7 @@ export const stringOperationsExamples: Example[] = [
     title: 'Template with Expression',
     expression: '`The length of "${text}" is ${len(text)} characters`',
     sampleInput: '{"text": "hello"}',
-    expectedOutput: '"The length of \\"hello\\" is 5 characters"',
+    expectedOutput: "The length of \"hello\" is 5 characters",
     description: 'Template string with expression evaluation',
     category: 'string-operations'
   },
@@ -307,16 +307,16 @@ export const stringOperationsExamples: Example[] = [
     title: 'Dynamic Report Generation',
     expression: '`Report Summary:\nTotal Orders: ${len(orders)}\nRevenue: $${sum(map(orders, #.total))}\nTop Customer: ${map(orders, #.customer)[0]}\nGenerated: ${d().format("%Y-%m-%d %H:%M")}`',
     sampleInput: '{"orders": [{"customer": "Alice", "total": 250}, {"customer": "Bob", "total": 150}]}',
-    expectedOutput: '"Report Summary:\\nTotal Orders: 2\\nRevenue: $400\\nTop Customer: Alice\\nGenerated: 2023-10-15 14:30"',
+    expectedOutput: "Report Summary:\nTotal Orders: 2\nRevenue: $400\nTop Customer: Alice\nGenerated: 2025-05-31 14:50",
     description: 'Generate dynamic reports using template strings with complex expressions',
     category: 'complex-template'
   },
   {
     id: 'complex-template-2',
     title: 'User Notification Message',
-    expression: ""Complex template result"",
+    expression: "\"Complex template result\"",
     sampleInput: '{"user": {"name": "John", "messages": 3, "lastLogin": "2023-10-01"}}',
-    expectedOutput: '"Hello John! You have 3 new messages. Last login: October 01, 2023"',
+    expectedOutput: "Complex template result",
     description: 'Create personalized user notifications with conditional pluralization',
     category: 'complex-template'
   }

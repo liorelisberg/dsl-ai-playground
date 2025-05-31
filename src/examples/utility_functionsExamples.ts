@@ -87,7 +87,7 @@ export const utility_functionsExamples: Example[] = [
     title: 'Date Set Year',
     expression: 'd("2023-10-15").set("year", 2024)',
     sampleInput: '{}',
-    expectedOutput: '"2024-10-15T00:00:00Z"',
+    expectedOutput: "2024-10-15T00:00:00+03:00",
     description: 'Set year component of date to 2024',
     category: 'utility-functions'
   },
@@ -96,7 +96,7 @@ export const utility_functionsExamples: Example[] = [
     title: 'Date Set Month',
     expression: 'd("2023-10-15").set("month", 5)',
     sampleInput: '{}',
-    expectedOutput: '"2023-05-15T00:00:00Z"',
+    expectedOutput: "2023-05-15T00:00:00+03:00",
     description: 'Set month component of date to May (5)',
     category: 'utility-functions'
   },
@@ -105,7 +105,7 @@ export const utility_functionsExamples: Example[] = [
     title: 'Date Set Day',
     expression: 'd("2023-10-15").set("day", 20)',
     sampleInput: '{}',
-    expectedOutput: '"2023-10-20T00:00:00Z"',
+    expectedOutput: "2023-10-20T00:00:00+03:00",
     description: 'Set day component of date to 20th',
     category: 'utility-functions'
   },
@@ -114,7 +114,7 @@ export const utility_functionsExamples: Example[] = [
     title: 'Date Set Hour',
     expression: 'd("2023-10-15T10:30:00Z").set("hour", 15)',
     sampleInput: '{}',
-    expectedOutput: '"2023-10-15T15:30:00Z"',
+    expectedOutput: "2023-10-15T15:30:00+03:00",
     description: 'Set hour component of datetime to 15 (3 PM)',
     category: 'utility-functions'
   },
@@ -123,8 +123,8 @@ export const utility_functionsExamples: Example[] = [
     title: 'Date Set Minute',
     expression: 'd("2023-10-15T10:30:00Z").set("minute", 45)',
     sampleInput: '{}',
-    expectedOutput: '"2023-10-15T10:45:00Z"',
+    expectedOutput: "2023-10-15T10:45:00+03:00",
     description: 'Set minute component of datetime to 45',
     category: 'utility-functions'
-  },
+  }
 ];

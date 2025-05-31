@@ -72,5 +72,5 @@ export const rangeExamples: Example[] = [
     expectedOutput: '[0, 2, 4, 6, 8, 10]',
     description: 'Filter even numbers from range',
     category: 'range'
-  },
+  }
 ];

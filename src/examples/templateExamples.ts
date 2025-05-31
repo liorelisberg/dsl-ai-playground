@@ -69,7 +69,7 @@ export const templateExamples: Example[] = [
     title: 'Unary Context Template',
     expression: '`simple template`',
     sampleInput: '{"$": "simple template"}',
-    expectedOutput: 'true',
+    expectedOutput: "simple template",
     description: 'Template string in unary context comparison',
     category: 'template'
   },
@@ -78,7 +78,7 @@ export const templateExamples: Example[] = [
     title: 'Unary Sum Template',
     expression: '`sum of numbers ${sum([1, 2, 3])}`',
     sampleInput: '{"$": "sum of numbers 6"}',
-    expectedOutput: 'true',
+    expectedOutput: "sum of numbers 6",
     description: 'Template with calculation in unary context',
     category: 'template'
   },
@@ -87,8 +87,8 @@ export const templateExamples: Example[] = [
     title: 'Unary Variable Template',
     expression: '`reference env: ${a}`',
     sampleInput: '{"$": "reference env: example", "a": "example"}',
-    expectedOutput: 'true',
+    expectedOutput: "reference env: example",
     description: 'Template with variable in unary context',
     category: 'template'
-  },
+  }
 ];

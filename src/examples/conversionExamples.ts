@@ -72,5 +72,5 @@ export const conversionExamples: Example[] = [
     expectedOutput: 'false',
     description: 'Convert string "false" to boolean',
     category: 'conversion'
-  },
+  }
 ];

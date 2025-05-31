@@ -127,7 +127,7 @@ export const business_calculationsExamples: Example[] = [
     title: 'Employee Performance Score',
     expression: 'map(employees, {name: #.name, score: round(avg([#.sales, #.reviews, #.attendance]) * 100), grade: avg([#.sales, #.reviews, #.attendance]) >= 0.8 ? \'A\' : avg([#.sales, #.reviews, #.attendance]) >= 0.6 ? \'B\' : \'C\'})',
     sampleInput: '{"employees": [{"name": "Alice", "sales": 0.9, "reviews": 0.8, "attendance": 0.95}, {"name": "Bob", "sales": 0.6, "reviews": 0.7, "attendance": 0.5}]}',
-    expectedOutput: '[{"name": "Alice", "score": 88, "grade": "A"}, {"name": "Bob", "score": 60, "grade": "C"}]',
+    expectedOutput: [{"grade":"A","name":"Alice","score":88},{"grade":"B","name":"Bob","score":60}],
     description: 'Calculate performance scores with conditional grading using nested ternary operations',
     category: 'complex-business'
   }

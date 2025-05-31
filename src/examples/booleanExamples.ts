@@ -90,5 +90,5 @@ export const booleanExamples: Example[] = [
     expectedOutput: 'false',
     description: 'False OR NOT variable combination',
     category: 'boolean'
-  },
+  }
 ];

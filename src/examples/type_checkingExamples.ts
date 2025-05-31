@@ -198,5 +198,5 @@ export const type_checkingExamples: Example[] = [
     expectedOutput: '"array"',
     description: 'Detect type of array value',
     category: 'type-checking'
-  },
+  }
 ];

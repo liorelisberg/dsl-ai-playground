@@ -1,17 +1,27 @@
 {
-  "timestamp": "2025-05-31T10:57:04.534Z",
-  "totalExamples": 229,
-  "failedCount": 1,
-  "passedCount": 228,
+  "timestamp": "2025-05-31T11:21:13.848Z",
+  "totalExamples": 398,
+  "failedCount": 2,
+  "passedCount": 396,
   "failedExamples": [
     {
-      "id": "extreme-data-2",
-      "title": "Advanced Data Quality and Anomaly Detection",
-      "category": "extreme-data",
-      "expression": "map(datasets, {name: #.name, quality_metrics: {completeness: round(count(#.records, #.name != null and #.email != null and #.age != null) / len(#.records) * 100), validity: round(count(#.records, matches(#.email, '[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}') and #.age > 0 and #.age < 120) / len(#.records) * 100), consistency: round(count(#.records, len(#.name) > 0 and #.age >= 18) / len(#.records) * 100)}, anomalies: {email_duplicates: len(#.records) - len(keys(map(#.records, #.email))), age_outliers: count(#.records, #.age > avg(map(#.records, #.age)) + 2 * (max(map(#.records, #.age)) - min(map(#.records, #.age))) / len(#.records)), suspicious_names: count(#.records, len(#.name) < 2 or contains(#.name, '123') or contains(#.name, 'test'))}, recommendations: len(#.records) - len(keys(map(#.records, #.email))) > 0 ? ['Remove duplicate emails'] : count(#.records, #.age > 100) > 0 ? ['Review age values'] : ['Data quality acceptable']})",
-      "sampleInput": "{\"datasets\": [{\"name\": \"Customer Database\", \"records\": [{\"name\": \"John Doe\", \"email\": \"john@example.com\", \"age\": 35}, {\"name\": \"Jane Smith\", \"email\": \"jane@example.com\", \"age\": 28}, {\"name\": \"Test User\", \"email\": \"john@example.com\", \"age\": 150}, {\"name\": \"Bob\", \"email\": \"bob@test.com\", \"age\": 45}]}]}",
-      "sourceFile": "arrayOperationsExamples.ts",
-      "error": "Evaluation error: {\"type\":\"NodeError\",\"nodeId\":\"expression\",\"source\":\"Failed to evaluate expression: \\\"map(datasets, {name: #.name, quality_metrics: {completeness: round(count(#.records, #.name != null and #.email != null and #.age != null) / len(#.records) * 100), validity: round(count(#.records, matches(#.email, '[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\\\.[a-zA-Z]{2,}') and #.age > 0 and #.age < 120) / len(#.records) * 100), consistency: round(count(#.records, len(#.name) > 0 and #.age >= 18) / len(#.records) * 100)}, anomalies: {email_duplicates: len(#.records) - len(keys(map(#.records, #.email))), age_outliers: count(#.records, #.age > avg(map(#.records, #.age)) + 2 * (max(map(#.records, #.age)) - min(map(#.records, #.age))) / len(#.records)), suspicious_names: count(#.records, len(#.name) < 2 or contains(#.name, '123') or contains(#.name, 'test'))}, recommendations: len(#.records) - len(keys(map(#.records, #.email))) > 0 ? ['Remove duplicate emails'] : count(#.records, #.age > 100) > 0 ? ['Review age values'] : ['Data quality acceptable']})\\\"\"}",
+      "id": "str-13",
+      "title": "URL Parts Extraction",
+      "category": "string-operations",
+      "expression": "contains(\"https://example.com:8080/path\", \"https\")",
+      "sampleInput": "{}",
+      "sourceFile": "stringOperationsExamples.ts",
+      "error": "Evaluation error: {\"type\":\"NodeError\",\"nodeId\":\"expression\",\"source\":\"Failed to evaluate expression: \\\"contains(\\\"https:\\\"\"}",
+      "httpStatus": 200
+    },
+    {
+      "id": "slice-2",
+      "title": "String Slice from Middle",
+      "category": "string-operations",
+      "expression": "text[6:11]",
+      "sampleInput": "{\"text\": \"hello world\"}",
+      "sourceFile": "stringOperationsExamples.ts",
+      "error": "Evaluation error: {\"type\":\"NodeError\",\"nodeId\":\"expression\",\"source\":\"Failed to evaluate expression: \\\"text[6:11]\\\"\"}",
       "httpStatus": 200
     }
   ]

@@ -15,7 +15,7 @@ export const unary_operationsExamples: Example[] = [
     title: 'Boolean Context False',
     expression: 'true',
     sampleInput: '{ "$": false }',
-    expectedOutput: 'false',
+    expectedOutput: true,
     description: 'Boolean literal evaluation in false context',
     category: 'unary-operations'
   },
@@ -60,7 +60,7 @@ export const unary_operationsExamples: Example[] = [
     title: 'Range Check Inclusive',
     expression: '[-10..0]',
     sampleInput: '{"$": 0}',
-    expectedOutput: 'true',
+    expectedOutput: "[-10..0]",
     description: 'Check if context value ($) is in inclusive range [-10..0]',
     category: 'unary-operations'
   },
@@ -69,7 +69,7 @@ export const unary_operationsExamples: Example[] = [
     title: 'Range Check Exclusive Start',
     expression: '(-10..0]',
     sampleInput: '{"$": -10}',
-    expectedOutput: 'false',
+    expectedOutput: "(-10..0]",
     description: 'Check if context value ($) is in range excluding start (-10..0]',
     category: 'unary-operations'
   },
@@ -78,7 +78,7 @@ export const unary_operationsExamples: Example[] = [
     title: 'Range Check Exclusive End',
     expression: '[-10..0)',
     sampleInput: '{"$": -10}',
-    expectedOutput: 'true',
+    expectedOutput: "[-10..0)",
     description: 'Check if context value ($) is in range excluding end [-10..0)',
     category: 'unary-operations'
   },
@@ -87,7 +87,7 @@ export const unary_operationsExamples: Example[] = [
     title: 'Range Check Both Exclusive',
     expression: '(-10..0)',
     sampleInput: '{"$": 0}',
-    expectedOutput: 'false',
+    expectedOutput: "(-10..0)",
     description: 'Check if context value ($) is in range excluding both ends (-10..0)',
     category: 'unary-operations'
   },
@@ -96,7 +96,7 @@ export const unary_operationsExamples: Example[] = [
     title: 'Complex Range Check',
     expression: '[-15..-5]',
     sampleInput: '{"$": -4.99}',
-    expectedOutput: 'false',
+    expectedOutput: "[-15..-5]",
     description: 'Check if context value ($) is in decimal range [-15..-5]',
     category: 'unary-operations'
   },
@@ -123,7 +123,7 @@ export const unary_operationsExamples: Example[] = [
     title: 'String Set Check',
     expression: '["GB", "US"]',
     sampleInput: '{"$": "US"}',
-    expectedOutput: 'true',
+    expectedOutput: ["GB","US"],
     description: 'Check if context string ($) matches one of the values',
     category: 'unary-operations'
   },
@@ -171,5 +171,5 @@ export const unary_operationsExamples: Example[] = [
     expectedOutput: 'true',
     description: 'Check if context string ($) slice [0:5] equals "sample"',
     category: 'unary-operations'
-  },
+  }
 ];

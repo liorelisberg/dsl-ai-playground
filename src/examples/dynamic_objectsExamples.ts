@@ -144,5 +144,5 @@ export const dynamic_objectsExamples: Example[] = [
     expectedOutput: '{"BOOKS":25}',
     description: 'Transform property value to create dynamic key',
     category: 'dynamic-objects'
-  },
+  }
 ];

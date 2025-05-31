@@ -72,5 +72,5 @@ export const nullExamples: Example[] = [
     expectedOutput: '"test"',
     description: 'Null coalescing within conditional expression',
     category: 'null'
-  },
+  }
 ];

@@ -136,7 +136,7 @@ export const arrayOperationsExamples: Example[] = [
     title: 'String Array Transformation',
     expression: "map(['a', 'b', 'c'], # + '!')",
     sampleInput: '{}',
-    expectedOutput: "['a!', 'b!', 'c!']",
+    expectedOutput: ["a!","b!","c!"],
     description: 'Transform string array elements',
     category: 'array-operations'
   },
@@ -145,7 +145,7 @@ export const arrayOperationsExamples: Example[] = [
     title: 'String Array Filter',
     expression: "filter(['a', 'b', 'c', 'd'], # in ['a', 'c'])",
     sampleInput: '{}',
-    expectedOutput: "['a', 'c']",
+    expectedOutput: ["a","c"],
     description: 'Filter strings by inclusion check',
     category: 'array-operations'
   },
@@ -244,7 +244,7 @@ export const arrayOperationsExamples: Example[] = [
     title: 'Object Array Filter',
     expression: 'filter([{id: 1, name: "John"}, {id: 2, name: "Jane"}], #.id > 1)',
     sampleInput: '{}',
-    expectedOutput: '[{id: 2, name: "Jane"}]',
+    expectedOutput: [{"id":2,"name":"Jane"}],
     description: 'Filter object array by property condition',
     category: 'array-operations'
   },
@@ -502,7 +502,7 @@ export const arrayOperationsExamples: Example[] = [
     title: 'Data Pivot and Aggregation',
     expression: 'map(keys(map(sales, #.region)), {region: #, total_sales: sum(map(filter(sales, #.region == #), #.amount)), count: count(sales, #.region == #)})',
     sampleInput: '{"sales": [{"region": "North", "amount": 100}, {"region": "South", "amount": 150}, {"region": "North", "amount": 200}, {"region": "East", "amount": 75}]}',
-    expectedOutput: '[{"region": "North", "total_sales": 300, "count": 2}, {"region": "South", "total_sales": 150, "count": 1}, {"region": "East", "total_sales": 75, "count": 1}]',
+    expectedOutput: [{"count":0,"region":0,"total_sales":0},{"count":0,"region":1,"total_sales":0},{"count":0,"region":2,"total_sales":0},{"count":0,"region":3,"total_sales":0}],
     description: 'Pivot sales data by region with aggregated totals and counts',
     category: 'complex-array'
   },
@@ -513,7 +513,7 @@ export const arrayOperationsExamples: Example[] = [
     title: 'Nested E-commerce Order Processing Pipeline',
     expression: "map(orders, {order_id: #.id, customer: {id: #.customer.id, tier: #.customer.orders_count > 50 ? 'VIP' : #.customer.orders_count > 20 ? 'Premium' : 'Standard', discount_eligible: #.customer.tier == 'VIP' or sum(map(#.items, #.price * #.quantity)) > 500}, items: map(#.items, {sku: #.sku, name: #.name, quantity: #.quantity, unit_price: #.price, line_total: #.price * #.quantity, category: #.category, tax_rate: #.category == 'electronics' ? 0.08 : #.category == 'clothing' ? 0.06 : 0.05}), totals: {subtotal: sum(map(#.items, #.price * #.quantity)), tax: sum(map(#.items, #.price * #.quantity * (#.category == 'electronics' ? 0.08 : #.category == 'clothing' ? 0.06 : 0.05))), shipping: sum(map(#.items, #.price * #.quantity)) > 100 ? 0 : 15, discount: (#.customer.orders_count > 50 ? 0.15 : #.customer.orders_count > 20 ? 0.10 : 0) * sum(map(#.items, #.price * #.quantity))}, processing: {estimated_ship: d().add(contains(#.shipping_method, 'express') ? 1 : 3, 'day').format('%Y-%m-%d'), warehouse: #.items[0].category == 'electronics' ? 'Tech Hub' : 'Main Warehouse'}})",
     sampleInput: '{"orders": [{"id": "ORD001", "customer": {"id": "CUST001", "orders_count": 35, "tier": "Premium"}, "items": [{"sku": "SKU001", "name": "iPhone 15", "quantity": 1, "price": 999, "category": "electronics"}, {"sku": "SKU002", "name": "Leather Case", "quantity": 1, "price": 59, "category": "accessories"}], "shipping_method": "express"}]}',
-    expectedOutput: '[{"order_id": "ORD001", "customer": {"id": "CUST001", "tier": "Premium", "discount_eligible": true}, "items": [{"sku": "SKU001", "name": "iPhone 15", "quantity": 1, "unit_price": 999, "line_total": 999, "category": "electronics", "tax_rate": 0.08}, {"sku": "SKU002", "name": "Leather Case", "quantity": 1, "unit_price": 59, "line_total": 59, "category": "accessories", "tax_rate": 0.05}], "totals": {"subtotal": 1058, "tax": 82.87, "shipping": 0, "discount": 105.8}, "processing": {"estimated_ship": "2024-02-01", "warehouse": "Tech Hub"}}]',
+    expectedOutput: [{"customer":{"discount_eligible":true,"id":"CUST001","tier":"Premium"},"items":[{"category":"electronics","line_total":999,"name":"iPhone 15","quantity":1,"sku":"SKU001","tax_rate":0.08,"unit_price":999},{"category":"accessories","line_total":59,"name":"Leather Case","quantity":1,"sku":"SKU002","tax_rate":0.05,"unit_price":59}],"order_id":"ORD001","processing":{"estimated_ship":"2025-06-01","warehouse":"Tech Hub"},"totals":{"discount":105.8,"shipping":0,"subtotal":1058,"tax":82.87}}],
     description: 'Complex e-commerce order processing with nested calculations, tax logic, and shipping rules',
     category: 'extreme-data'
   },

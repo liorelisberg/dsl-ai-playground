@@ -11,23 +11,33 @@ interface GlobalDragDropZoneProps {
   onDragComplete: () => void;
 }
 
+interface FileRejectionError {
+  code: string;
+  message: string;
+}
+
+interface FileRejection {
+  file: File;
+  errors: FileRejectionError[];
+}
+
 export const GlobalDragDropZone: React.FC<GlobalDragDropZoneProps> = ({
   onUploadSuccess,
   onUploadError,
   onDragComplete
 }) => {
-  const onDrop = useCallback(async (acceptedFiles: File[], fileRejections: any[]) => {
+  const onDrop = useCallback(async (acceptedFiles: File[], fileRejections: FileRejection[]) => {
     onDragComplete(); // Hide the modal immediately
     
     // Handle rejections
     if (fileRejections.length > 0) {
       const rejection = fileRejections[0];
-      if (rejection.errors.some((e: any) => e.code === 'file-too-large')) {
+      if (rejection.errors.some((e: FileRejectionError) => e.code === 'file-too-large')) {
         const errorMsg = 'File size exceeds 256KB limit';
         onUploadError(errorMsg);
         return;
       }
-      if (rejection.errors.some((e: any) => e.code === 'file-invalid-type')) {
+      if (rejection.errors.some((e: FileRejectionError) => e.code === 'file-invalid-type')) {
         const errorMsg = 'Please upload a valid JSON file';
         onUploadError(errorMsg);
         return;

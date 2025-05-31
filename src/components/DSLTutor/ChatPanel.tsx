@@ -28,6 +28,13 @@ interface UploadedFile {
   content: unknown;
 }
 
+interface SemanticMetadata {
+  semanticSimilarity?: number;
+  contextUsed?: boolean;
+  userExpertise?: string;
+  semanticMatches?: number;
+}
+
 const ChatPanel: React.FC<ChatPanelProps> = ({ 
   chatHistory, 
   onNewMessage, 
@@ -290,7 +297,7 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
   };
 
   // Render semantic metadata badges
-  const renderSemanticMetadata = (metadata: any) => {
+  const renderSemanticMetadata = (metadata: SemanticMetadata) => {
     if (!metadata) return null;
 
     return (

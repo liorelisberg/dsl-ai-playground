@@ -1,11 +1,11 @@
 import React, { useState, useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
-import { Upload, File, X, Check, FileJson, AlertCircle } from 'lucide-react';
+import { Upload, File, X, Check, FileJson, AlertCircle, CheckCircle2, Trash2 } from 'lucide-react';
 import { toast } from "@/hooks/use-toast";
 
 export interface JsonMetadata {
@@ -16,37 +16,57 @@ export interface JsonMetadata {
 }
 
 interface JsonUploadProps {
-  onUploadSuccess: (metadata: JsonMetadata) => void;
-  onUploadError: (error: string) => void;
-  currentFile?: JsonMetadata | null;
+  onUploadSuccess?: (metadata: JsonMetadata) => void;
+  onUploadError?: (error: string) => void;
   onClearFile?: () => void;
+  currentFile?: JsonMetadata | null;
+}
+
+interface FileRejectionError {
+  code: string;
+  message: string;
+}
+
+interface FileRejection {
+  file: File;
+  errors: FileRejectionError[];
 }
 
 export const JsonUpload: React.FC<JsonUploadProps> = ({ 
   onUploadSuccess, 
   onUploadError,
-  currentFile,
-  onClearFile
+  onClearFile,
+  currentFile
 }) => {
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [preview, setPreview] = useState<string>('');
   const [error, setError] = useState<string>('');
 
-  const onDrop = useCallback(async (acceptedFiles: File[], fileRejections: any[]) => {
+  const onDrop = useCallback(async (acceptedFiles: File[], fileRejections: FileRejection[]) => {
     // Handle rejections
     if (fileRejections.length > 0) {
       const rejection = fileRejections[0];
-      if (rejection.errors.some((e: any) => e.code === 'file-too-large')) {
+      if (rejection.errors.some((e: FileRejectionError) => e.code === 'file-too-large')) {
         const errorMsg = 'File size exceeds 256KB limit';
         setError(errorMsg);
-        onUploadError(errorMsg);
+        onUploadError?.(errorMsg);
+        toast({
+          title: "File Too Large",
+          description: errorMsg,
+          variant: "destructive"
+        });
         return;
       }
-      if (rejection.errors.some((e: any) => e.code === 'file-invalid-type')) {
+      if (rejection.errors.some((e: FileRejectionError) => e.code === 'file-invalid-type')) {
         const errorMsg = 'Please upload a valid JSON file';
         setError(errorMsg);
-        onUploadError(errorMsg);
+        onUploadError?.(errorMsg);
+        toast({
+          title: "Invalid File Type",
+          description: errorMsg,
+          variant: "destructive"
+        });
         return;
       }
     }
@@ -104,7 +124,7 @@ export const JsonUpload: React.FC<JsonUploadProps> = ({
         uploadTime: new Date().toISOString()
       };
 
-      onUploadSuccess(metadata);
+      onUploadSuccess?.(metadata);
       
       toast({
         title: "File Uploaded Successfully",
@@ -114,7 +134,7 @@ export const JsonUpload: React.FC<JsonUploadProps> = ({
     } catch (error) {
       const errorMsg = error instanceof Error ? error.message : 'Upload failed';
       setError(errorMsg);
-      onUploadError(errorMsg);
+      onUploadError?.(errorMsg);
       toast({
         title: "Upload Failed",
         description: errorMsg,

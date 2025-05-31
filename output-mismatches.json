@@ -1,0 +1,4330 @@
+{
+  "summary": {
+    "totalMismatches": 324,
+    "generatedAt": "2025-05-31T11:59:54.540Z"
+  },
+  "mismatches": [
+    {
+      "file": "arrayOperationsExamples.ts",
+      "id": "array-1",
+      "title": "Array Length",
+      "expression": "len([1, 2, 3, 4, 5])",
+      "sampleInput": "{}",
+      "expectedOutput": "5",
+      "expectedParsed": 5,
+      "actualResult": 5,
+      "category": "array-operations"
+    },
+    {
+      "file": "arrayOperationsExamples.ts",
+      "id": "array-2",
+      "title": "Array Sum",
+      "expression": "sum([1, 2, 3, 4, 5])",
+      "sampleInput": "{}",
+      "expectedOutput": "15",
+      "expectedParsed": 15,
+      "actualResult": 15,
+      "category": "array-operations"
+    },
+    {
+      "file": "arrayOperationsExamples.ts",
+      "id": "array-3",
+      "title": "Array Average",
+      "expression": "avg([10, 20, 30])",
+      "sampleInput": "{}",
+      "expectedOutput": "20",
+      "expectedParsed": 20,
+      "actualResult": 20,
+      "category": "array-operations"
+    },
+    {
+      "file": "arrayOperationsExamples.ts",
+      "id": "array-4",
+      "title": "Array Minimum",
+      "expression": "min([5, 8, 2, 11, 7])",
+      "sampleInput": "{}",
+      "expectedOutput": "2",
+      "expectedParsed": 2,
+      "actualResult": 2,
+      "category": "array-operations"
+    },
+    {
+      "file": "arrayOperationsExamples.ts",
+      "id": "array-5",
+      "title": "Array Maximum",
+      "expression": "max([5, 8, 2, 11, 7])",
+      "sampleInput": "{}",
+      "expectedOutput": "11",
+      "expectedParsed": 11,
+      "actualResult": 11,
+      "category": "array-operations"
+    },
+    {
+      "file": "arrayOperationsExamples.ts",
+      "id": "array-6",
+      "title": "Array Contains",
+      "expression": "contains([1, 2, 3, 4, 5], 3)",
+      "sampleInput": "{}",
+      "expectedOutput": "true",
+      "expectedParsed": true,
+      "actualResult": true,
+      "category": "array-operations"
+    },
+    {
+      "file": "arrayOperationsExamples.ts",
+      "id": "array-7",
+      "title": "Array Filter",
+      "expression": "filter([1, 2, 3, 4, 5], # > 3)",
+      "sampleInput": "{}",
+      "expectedOutput": "[4, 5]",
+      "expectedParsed": [
+        4,
+        5
+      ],
+      "actualResult": [
+        4,
+        5
+      ],
+      "category": "array-operations"
+    },
+    {
+      "file": "arrayOperationsExamples.ts",
+      "id": "array-8",
+      "title": "Array Map",
+      "expression": "map([1, 2, 3, 4, 5], # * 2)",
+      "sampleInput": "{}",
+      "expectedOutput": "[2, 4, 6, 8, 10]",
+      "expectedParsed": [
+        2,
+        4,
+        6,
+        8,
+        10
+      ],
+      "actualResult": [
+        2,
+        4,
+        6,
+        8,
+        10
+      ],
+      "category": "array-operations"
+    },
+    {
+      "file": "arrayOperationsExamples.ts",
+      "id": "array-9",
+      "title": "Array Some",
+      "expression": "some([1, 2, 3, 4, 5], # > 3)",
+      "sampleInput": "{}",
+      "expectedOutput": "true",
+      "expectedParsed": true,
+      "actualResult": true,
+      "category": "array-operations"
+    },
+    {
+      "file": "arrayOperationsExamples.ts",
+      "id": "array-10",
+      "title": "Array Count",
+      "expression": "count([1, 2, 3, 4, 5, 2], # == 2)",
+      "sampleInput": "{}",
+      "expectedOutput": "2",
+      "expectedParsed": 2,
+      "actualResult": 2,
+      "category": "array-operations"
+    },
+    {
+      "file": "arrayOperationsExamples.ts",
+      "id": "array-11",
+      "title": "Array Keys",
+      "expression": "keys([10, 11, 12])",
+      "sampleInput": "{}",
+      "expectedOutput": "[0, 1, 2]",
+      "expectedParsed": [
+        0,
+        1,
+        2
+      ],
+      "actualResult": [
+        0,
+        1,
+        2
+      ],
+      "category": "array-operations"
+    },
+    {
+      "file": "arrayOperationsExamples.ts",
+      "id": "array-adv-4",
+      "title": "Array All Check",
+      "expression": "all([1, 2, 3], # > 0)",
+      "sampleInput": "{}",
+      "expectedOutput": "true",
+      "expectedParsed": true,
+      "actualResult": true,
+      "category": "array-operations"
+    },
+    {
+      "file": "arrayOperationsExamples.ts",
+      "id": "array-adv-5",
+      "title": "FlatMap Operation",
+      "expression": "flatMap([[1, 2], [3, 4], [5, 6]], #)",
+      "sampleInput": "{}",
+      "expectedOutput": "[1, 2, 3, 4, 5, 6]",
+      "expectedParsed": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "actualResult": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "category": "array-operations"
+    },
+    {
+      "file": "arrayOperationsExamples.ts",
+      "id": "array-adv-8",
+      "title": "String Array Some Check",
+      "expression": "some(['a', 'b', 'c'], # == 'b')",
+      "sampleInput": "{}",
+      "expectedOutput": "true",
+      "expectedParsed": true,
+      "actualResult": true,
+      "category": "array-operations"
+    },
+    {
+      "file": "arrayOperationsExamples.ts",
+      "id": "array-adv-9",
+      "title": "String Array All Check",
+      "expression": "all(['a', 'b', 'c'], # in ['a', 'b', 'c', 'd'])",
+      "sampleInput": "{}",
+      "expectedOutput": "true",
+      "expectedParsed": true,
+      "actualResult": true,
+      "category": "array-operations"
+    },
+    {
+      "file": "arrayOperationsExamples.ts",
+      "id": "array-adv-10",
+      "title": "Chained Filter and Map",
+      "expression": "map(filter([1, 2, 3, 4, 5], # > 2), # * 2)",
+      "sampleInput": "{}",
+      "expectedOutput": "[6, 8, 10]",
+      "expectedParsed": [
+        6,
+        8,
+        10
+      ],
+      "actualResult": [
+        6,
+        8,
+        10
+      ],
+      "category": "array-operations"
+    },
+    {
+      "file": "arrayOperationsExamples.ts",
+      "id": "array-adv-11",
+      "title": "Filter with Length Count",
+      "expression": "len(filter([1, 2, 3, 4, 5], # % 2 == 0))",
+      "sampleInput": "{}",
+      "expectedOutput": "2",
+      "expectedParsed": 2,
+      "actualResult": 2,
+      "category": "array-operations"
+    },
+    {
+      "file": "arrayOperationsExamples.ts",
+      "id": "array-adv-12",
+      "title": "Filter with Sum",
+      "expression": "sum(filter([1, 2, 3, 4, 5], # % 2 == 0))",
+      "sampleInput": "{}",
+      "expectedOutput": "6",
+      "expectedParsed": 6,
+      "actualResult": 6,
+      "category": "array-operations"
+    },
+    {
+      "file": "arrayOperationsExamples.ts",
+      "id": "array-adv-13",
+      "title": "Complex Chained Operations",
+      "expression": "sum(map(filter([1, 2, 3, 4, 5], # > 3), # ^ 2))",
+      "sampleInput": "{}",
+      "expectedOutput": "41",
+      "expectedParsed": 41,
+      "actualResult": 41,
+      "category": "array-operations"
+    },
+    {
+      "file": "arrayOperationsExamples.ts",
+      "id": "array-adv-14",
+      "title": "Some with Map Result",
+      "expression": "some(map([1, 2, 3], # * 2), # > 5)",
+      "sampleInput": "{}",
+      "expectedOutput": "true",
+      "expectedParsed": true,
+      "actualResult": true,
+      "category": "array-operations"
+    },
+    {
+      "file": "arrayOperationsExamples.ts",
+      "id": "array-adv-15",
+      "title": "All with Map Result",
+      "expression": "all(map([1, 2, 3], # + 2), # > 2)",
+      "sampleInput": "{}",
+      "expectedOutput": "true",
+      "expectedParsed": true,
+      "actualResult": true,
+      "category": "array-operations"
+    },
+    {
+      "file": "arrayOperationsExamples.ts",
+      "id": "array-adv-16",
+      "title": "Contains with Map Result",
+      "expression": "contains(map([1, 2, 3], # * 2), 6)",
+      "sampleInput": "{}",
+      "expectedOutput": "true",
+      "expectedParsed": true,
+      "actualResult": true,
+      "category": "array-operations"
+    },
+    {
+      "file": "arrayOperationsExamples.ts",
+      "id": "array-adv-17",
+      "title": "Object Array Map to IDs",
+      "expression": "map([{id: 1, name: \"John\"}, {id: 2, name: \"Jane\"}], #.id)",
+      "sampleInput": "{}",
+      "expectedOutput": "[1, 2]",
+      "expectedParsed": [
+        1,
+        2
+      ],
+      "actualResult": [
+        1,
+        2
+      ],
+      "category": "array-operations"
+    },
+    {
+      "file": "arrayOperationsExamples.ts",
+      "id": "array-adv-19",
+      "title": "Object Array Filter and Map Names",
+      "expression": "map(filter([{id: 1, name: \"John\"}, {id: 2, name: \"Jane\"}], #.id > 1), #.name)",
+      "sampleInput": "{}",
+      "expectedOutput": "[\"Jane\"]",
+      "expectedParsed": [
+        "Jane"
+      ],
+      "actualResult": [
+        "Jane"
+      ],
+      "category": "array-operations"
+    },
+    {
+      "file": "arrayOperationsExamples.ts",
+      "id": "array-adv-20",
+      "title": "Object Transformation",
+      "expression": "map(items, {id: #.id, fullName: #.firstName + \" \" + #.lastName})",
+      "sampleInput": "{\"items\": [{\"id\": 1, \"firstName\": \"John\", \"lastName\": \"Doe\"}, {\"id\": 2, \"firstName\": \"Jane\", \"lastName\": \"Smith\"}]}",
+      "expectedOutput": "[{\"id\": 1, \"fullName\": \"John Doe\"}, {\"id\": 2, \"fullName\": \"Jane Smith\"}]",
+      "expectedParsed": [
+        {
+          "id": 1,
+          "fullName": "John Doe"
+        },
+        {
+          "id": 2,
+          "fullName": "Jane Smith"
+        }
+      ],
+      "actualResult": [
+        {
+          "fullName": "John Doe",
+          "id": 1
+        },
+        {
+          "fullName": "Jane Smith",
+          "id": 2
+        }
+      ],
+      "category": "array-operations"
+    },
+    {
+      "file": "arrayOperationsExamples.ts",
+      "id": "array-adv-21",
+      "title": "Complex Object Filter Sum",
+      "expression": "sum(map(filter([{id: 1, val: 10}, {id: 2, val: 20}, {id: 3, val: 30}], #.id > 1), #.val))",
+      "sampleInput": "{}",
+      "expectedOutput": "50",
+      "expectedParsed": 50,
+      "actualResult": 50,
+      "category": "array-operations"
+    },
+    {
+      "file": "arrayOperationsExamples.ts",
+      "id": "array-adv-22",
+      "title": "Permission Check",
+      "expression": "some(user.permissions, # == \"edit\")",
+      "sampleInput": "{\"user\": {\"permissions\": [\"view\", \"edit\", \"delete\"]}}",
+      "expectedOutput": "true",
+      "expectedParsed": true,
+      "actualResult": true,
+      "category": "array-operations"
+    },
+    {
+      "file": "arrayOperationsExamples.ts",
+      "id": "array-adv-23",
+      "title": "Price Validation All",
+      "expression": "all(items, #.price > 10)",
+      "sampleInput": "{\"items\": [{\"price\": 15}, {\"price\": 20}, {\"price\": 25}]}",
+      "expectedOutput": "true",
+      "expectedParsed": true,
+      "actualResult": true,
+      "category": "array-operations"
+    },
+    {
+      "file": "arrayOperationsExamples.ts",
+      "id": "array-adv-24",
+      "title": "Price Validation Some Fail",
+      "expression": "all(items, #.price > 10)",
+      "sampleInput": "{\"items\": [{\"price\": 15}, {\"price\": 5}, {\"price\": 25}]}",
+      "expectedOutput": "false",
+      "expectedParsed": false,
+      "actualResult": false,
+      "category": "array-operations"
+    },
+    {
+      "file": "arrayOperationsExamples.ts",
+      "id": "array-adv-25",
+      "title": "Average Price Calculation",
+      "expression": "avg(map(items, #.price))",
+      "sampleInput": "{\"items\": [{\"price\": 10}, {\"price\": 20}, {\"price\": 30}]}",
+      "expectedOutput": "20",
+      "expectedParsed": 20,
+      "actualResult": 20,
+      "category": "array-operations"
+    },
+    {
+      "file": "arrayOperationsExamples.ts",
+      "id": "array-adv-26",
+      "title": "Maximum Value Calculation",
+      "expression": "max(map(items, #.qty * #.price))",
+      "sampleInput": "{\"items\": [{\"qty\": 2, \"price\": 10}, {\"qty\": 1, \"price\": 20}, {\"qty\": 3, \"price\": 15}]}",
+      "expectedOutput": "45",
+      "expectedParsed": 45,
+      "actualResult": 45,
+      "category": "array-operations"
+    },
+    {
+      "file": "arrayOperationsExamples.ts",
+      "id": "array-adv-27",
+      "title": "Split String to Numbers",
+      "expression": "map(split(\"123,456,789\", \",\"), number(#))",
+      "sampleInput": "{}",
+      "expectedOutput": "[123, 456, 789]",
+      "expectedParsed": [
+        123,
+        456,
+        789
+      ],
+      "actualResult": [
+        123,
+        456,
+        789
+      ],
+      "category": "array-operations"
+    },
+    {
+      "file": "arrayOperationsExamples.ts",
+      "id": "array-adv-28",
+      "title": "Range Filter Even Numbers",
+      "expression": "filter([0..10], # % 2 == 0)",
+      "sampleInput": "{}",
+      "expectedOutput": "[0, 2, 4, 6, 8, 10]",
+      "expectedParsed": [
+        0,
+        2,
+        4,
+        6,
+        8,
+        10
+      ],
+      "actualResult": [
+        0,
+        2,
+        4,
+        6,
+        8,
+        10
+      ],
+      "category": "array-operations"
+    },
+    {
+      "file": "arrayOperationsExamples.ts",
+      "id": "array-flat-2",
+      "title": "FlatMap with Transformation",
+      "expression": "flatMap([[1, 2], [3, 4]], map(#, # * 2))",
+      "sampleInput": "{}",
+      "expectedOutput": "[2, 4, 6, 8]",
+      "expectedParsed": [
+        2,
+        4,
+        6,
+        8
+      ],
+      "actualResult": [
+        2,
+        4,
+        6,
+        8
+      ],
+      "category": "array-operations"
+    },
+    {
+      "file": "arrayOperationsExamples.ts",
+      "id": "array-flat-3",
+      "title": "FlatMap Object Properties",
+      "expression": "flatMap(groups, #.items)",
+      "sampleInput": "{\"groups\":[{\"items\":[1,2]},{\"items\":[3,4]},{\"items\":[5,6]}]}",
+      "expectedOutput": "[1, 2, 3, 4, 5, 6]",
+      "expectedParsed": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "actualResult": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "category": "array-operations"
+    },
+    {
+      "file": "arrayOperationsExamples.ts",
+      "id": "array-flat-4",
+      "title": "Nested Array Processing",
+      "expression": "sum(flatMap(matrix, #))",
+      "sampleInput": "{\"matrix\":[[1,2,3],[4,5,6],[7,8,9]]}",
+      "expectedOutput": "45",
+      "expectedParsed": 45,
+      "actualResult": 45,
+      "category": "array-operations"
+    },
+    {
+      "file": "arrayOperationsExamples.ts",
+      "id": "array-flat-5",
+      "title": "FlatMap with Filter",
+      "expression": "flatMap(arrays, filter(#, # > 2))",
+      "sampleInput": "{\"arrays\":[[1,2,3],[4,5,6],[1,7,8]]}",
+      "expectedOutput": "[3, 4, 5, 6, 7, 8]",
+      "expectedParsed": [
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "actualResult": [
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "category": "array-operations"
+    },
+    {
+      "file": "arrayOperationsExamples.ts",
+      "id": "array-flat-10",
+      "title": "Reduce Array to Sum",
+      "expression": "sum([1, 2, 3, 4, 5])",
+      "sampleInput": "{}",
+      "expectedOutput": "15",
+      "expectedParsed": 15,
+      "actualResult": 15,
+      "category": "array-operations"
+    },
+    {
+      "file": "arrayOperationsExamples.ts",
+      "id": "array-flat-11",
+      "title": "Complex Flatten and Process",
+      "expression": "avg(flatMap(groups, map(#.values, # * 2)))",
+      "sampleInput": "{\"groups\":[{\"values\":[1,2]},{\"values\":[3,4]}]}",
+      "expectedOutput": "5",
+      "expectedParsed": 5,
+      "actualResult": 5,
+      "category": "array-operations"
+    },
+    {
+      "file": "arrayOperationsExamples.ts",
+      "id": "array-stats-1",
+      "title": "Array Median",
+      "expression": "median([4, 2, 7, 5, 3])",
+      "sampleInput": "{}",
+      "expectedOutput": "4",
+      "expectedParsed": 4,
+      "actualResult": 4,
+      "category": "array-operations"
+    },
+    {
+      "file": "arrayOperationsExamples.ts",
+      "id": "array-stats-2",
+      "title": "Array Mode",
+      "expression": "mode([1, 2, 2, 3, 3, 3, 4, 4, 4, 4])",
+      "sampleInput": "{}",
+      "expectedOutput": "4",
+      "expectedParsed": 4,
+      "actualResult": 4,
+      "category": "array-operations"
+    },
+    {
+      "file": "arrayOperationsExamples.ts",
+      "id": "array-stats-3",
+      "title": "Median of Sorted Array",
+      "expression": "median([1, 2, 3, 4, 5])",
+      "sampleInput": "{}",
+      "expectedOutput": "3",
+      "expectedParsed": 3,
+      "actualResult": 3,
+      "category": "array-operations"
+    },
+    {
+      "file": "arrayOperationsExamples.ts",
+      "id": "array-stats-4",
+      "title": "Median of Even Array",
+      "expression": "median([1, 2, 3, 4])",
+      "sampleInput": "{}",
+      "expectedOutput": "2.5",
+      "expectedParsed": 2.5,
+      "actualResult": 2.5,
+      "category": "array-operations"
+    },
+    {
+      "file": "arrayOperationsExamples.ts",
+      "id": "array-stats-5",
+      "title": "Mode of Numeric Array",
+      "expression": "mode([1, 2, 2, 3, 3, 3, 4, 4, 4, 4])",
+      "sampleInput": "{}",
+      "expectedOutput": "4",
+      "expectedParsed": 4,
+      "actualResult": 4,
+      "category": "array-operations"
+    },
+    {
+      "file": "arrayOperationsExamples.ts",
+      "id": "array-stats-6",
+      "title": "Statistical Comparison",
+      "expression": "median([1, 5, 9]) > avg([1, 5, 9])",
+      "sampleInput": "{}",
+      "expectedOutput": "false",
+      "expectedParsed": false,
+      "actualResult": false,
+      "category": "array-operations"
+    },
+    {
+      "file": "arrayOperationsExamples.ts",
+      "id": "array-stats-7",
+      "title": "Combined Statistics",
+      "expression": "max([median([1, 3, 5]), avg([2, 4, 6])])",
+      "sampleInput": "{}",
+      "expectedOutput": "4",
+      "expectedParsed": 4,
+      "actualResult": 4,
+      "category": "array-operations"
+    },
+    {
+      "file": "arrayOperationsExamples.ts",
+      "id": "array-stats-8",
+      "title": "Mode Frequency Check",
+      "expression": "count([1, 1, 2, 2, 2, 3], # == mode([1, 1, 2, 2, 2, 3]))",
+      "sampleInput": "{}",
+      "expectedOutput": "3",
+      "expectedParsed": 3,
+      "actualResult": 3,
+      "category": "array-operations"
+    },
+    {
+      "file": "arrayOperationsExamples.ts",
+      "id": "array-stats-9",
+      "title": "Range Calculation",
+      "expression": "max([1, 3, 7, 2, 9]) - min([1, 3, 7, 2, 9])",
+      "sampleInput": "{}",
+      "expectedOutput": "8",
+      "expectedParsed": 8,
+      "actualResult": 8,
+      "category": "array-operations"
+    },
+    {
+      "file": "arrayOperationsExamples.ts",
+      "id": "array-stats-10",
+      "title": "Median Price Calculation",
+      "expression": "median(map(products, #.price))",
+      "sampleInput": "{\"products\":[{\"price\":10},{\"price\":20},{\"price\":30},{\"price\":15},{\"price\":25}]}",
+      "expectedOutput": "20",
+      "expectedParsed": 20,
+      "actualResult": 20,
+      "category": "array-operations"
+    },
+    {
+      "file": "arrayOperationsExamples.ts",
+      "id": "complex-array-1",
+      "title": "Advanced Array Processing",
+      "expression": "flatMap(groups, map(filter(#.items, #.active), {id: #.id, group: #.group, score: #.value * 2}))",
+      "sampleInput": "{\"groups\": [{\"name\": \"A\", \"items\": [{\"id\": 1, \"active\": true, \"value\": 10, \"group\": \"A\"}, {\"id\": 2, \"active\": false, \"value\": 20, \"group\": \"A\"}]}, {\"name\": \"B\", \"items\": [{\"id\": 3, \"active\": true, \"value\": 15, \"group\": \"B\"}]}]}",
+      "expectedOutput": "[{\"id\": 1, \"group\": \"A\", \"score\": 20}, {\"id\": 3, \"group\": \"B\", \"score\": 30}]",
+      "expectedParsed": [
+        {
+          "id": 1,
+          "group": "A",
+          "score": 20
+        },
+        {
+          "id": 3,
+          "group": "B",
+          "score": 30
+        }
+      ],
+      "actualResult": [
+        {
+          "group": "A",
+          "id": 1,
+          "score": 20
+        },
+        {
+          "group": "B",
+          "id": 3,
+          "score": 30
+        }
+      ],
+      "category": "complex-array"
+    },
+    {
+      "file": "arrayOperationsExamples.ts",
+      "id": "extreme-data-2",
+      "title": "Simplified Data Quality Assessment",
+      "expression": "map(datasets, {name: #.name, total_records: len(#.records), has_names: count(#.records, len(#.name ?? \"\") > 0), has_emails: count(#.records, len(#.email ?? \"\") > 0), has_ages: count(#.records, type(#.age) == \"number\"), avg_age: avg(map(filter(#.records, type(#.age) == \"number\"), #.age))})",
+      "sampleInput": "{\"datasets\": [{\"name\": \"Customer Database\", \"records\": [{\"name\": \"John Doe\", \"email\": \"john@example.com\", \"age\": 35}, {\"name\": \"Jane Smith\", \"email\": \"jane@example.com\", \"age\": 28}, {\"name\": \"\", \"email\": \"bob@test.com\", \"age\": 45}]}]}",
+      "expectedOutput": "[{\"name\": \"Customer Database\", \"total_records\": 3, \"has_names\": 2, \"has_emails\": 3, \"has_ages\": 3, \"avg_age\": 36}]",
+      "expectedParsed": [
+        {
+          "name": "Customer Database",
+          "total_records": 3,
+          "has_names": 2,
+          "has_emails": 3,
+          "has_ages": 3,
+          "avg_age": 36
+        }
+      ],
+      "actualResult": [
+        {
+          "avg_age": 36,
+          "has_ages": 3,
+          "has_emails": 3,
+          "has_names": 2,
+          "name": "Customer Database",
+          "total_records": 3
+        }
+      ],
+      "category": "extreme-data"
+    },
+    {
+      "file": "booleanExamples.ts",
+      "id": "bool-1",
+      "title": "Boolean AND Operation",
+      "expression": "true and false",
+      "sampleInput": "{}",
+      "expectedOutput": "false",
+      "expectedParsed": false,
+      "actualResult": false,
+      "category": "boolean"
+    },
+    {
+      "file": "booleanExamples.ts",
+      "id": "bool-2",
+      "title": "Boolean OR Operation",
+      "expression": "true or false",
+      "sampleInput": "{}",
+      "expectedOutput": "true",
+      "expectedParsed": true,
+      "actualResult": true,
+      "category": "boolean"
+    },
+    {
+      "file": "booleanExamples.ts",
+      "id": "bool-3",
+      "title": "Boolean NOT Operation",
+      "expression": "not true",
+      "sampleInput": "{}",
+      "expectedOutput": "false",
+      "expectedParsed": false,
+      "actualResult": false,
+      "category": "boolean"
+    },
+    {
+      "file": "booleanExamples.ts",
+      "id": "bool-4",
+      "title": "Variable Boolean Check",
+      "expression": "x == true",
+      "sampleInput": "{ \"x\": true }",
+      "expectedOutput": "true",
+      "expectedParsed": true,
+      "actualResult": true,
+      "category": "boolean"
+    },
+    {
+      "file": "booleanExamples.ts",
+      "id": "bool-5",
+      "title": "Variable Boolean False Check",
+      "expression": "x == false",
+      "sampleInput": "{ \"x\": false }",
+      "expectedOutput": "true",
+      "expectedParsed": true,
+      "actualResult": true,
+      "category": "boolean"
+    },
+    {
+      "file": "booleanExamples.ts",
+      "id": "bool-6",
+      "title": "Variable AND True",
+      "expression": "x and true",
+      "sampleInput": "{ \"x\": false }",
+      "expectedOutput": "false",
+      "expectedParsed": false,
+      "actualResult": false,
+      "category": "boolean"
+    },
+    {
+      "file": "booleanExamples.ts",
+      "id": "bool-7",
+      "title": "Variable OR True",
+      "expression": "x or true",
+      "sampleInput": "{ \"x\": false }",
+      "expectedOutput": "true",
+      "expectedParsed": true,
+      "actualResult": true,
+      "category": "boolean"
+    },
+    {
+      "file": "booleanExamples.ts",
+      "id": "bool-8",
+      "title": "NOT Variable",
+      "expression": "not x",
+      "sampleInput": "{ \"x\": true }",
+      "expectedOutput": "false",
+      "expectedParsed": false,
+      "actualResult": false,
+      "category": "boolean"
+    },
+    {
+      "file": "booleanExamples.ts",
+      "id": "bool-9",
+      "title": "Complex Boolean AND NOT",
+      "expression": "true and not x",
+      "sampleInput": "{ \"x\": true }",
+      "expectedOutput": "false",
+      "expectedParsed": false,
+      "actualResult": false,
+      "category": "boolean"
+    },
+    {
+      "file": "booleanExamples.ts",
+      "id": "bool-10",
+      "title": "Complex Boolean OR NOT",
+      "expression": "false or not x",
+      "sampleInput": "{ \"x\": true }",
+      "expectedOutput": "false",
+      "expectedParsed": false,
+      "actualResult": false,
+      "category": "boolean"
+    },
+    {
+      "file": "business_calculationsExamples.ts",
+      "id": "business-1",
+      "title": "Permission Check",
+      "expression": "some(user.permissions, # == \"edit\")",
+      "sampleInput": "{\"user\":{\"permissions\":[\"view\",\"edit\",\"delete\"]}}",
+      "expectedOutput": "true",
+      "expectedParsed": true,
+      "actualResult": true,
+      "category": "business-calculations"
+    },
+    {
+      "file": "business_calculationsExamples.ts",
+      "id": "business-2",
+      "title": "Price Validation All",
+      "expression": "all(items, #.price > 10)",
+      "sampleInput": "{\"items\":[{\"price\":15},{\"price\":20},{\"price\":25}]}",
+      "expectedOutput": "true",
+      "expectedParsed": true,
+      "actualResult": true,
+      "category": "business-calculations"
+    },
+    {
+      "file": "business_calculationsExamples.ts",
+      "id": "business-3",
+      "title": "Price Validation Some Fail",
+      "expression": "all(items, #.price > 10)",
+      "sampleInput": "{\"items\":[{\"price\":15},{\"price\":5},{\"price\":25}]}",
+      "expectedOutput": "false",
+      "expectedParsed": false,
+      "actualResult": false,
+      "category": "business-calculations"
+    },
+    {
+      "file": "business_calculationsExamples.ts",
+      "id": "business-4",
+      "title": "Average Price Calculation",
+      "expression": "avg(map(items, #.price))",
+      "sampleInput": "{\"items\":[{\"price\":10},{\"price\":20},{\"price\":30}]}",
+      "expectedOutput": "20",
+      "expectedParsed": 20,
+      "actualResult": 20,
+      "category": "business-calculations"
+    },
+    {
+      "file": "business_calculationsExamples.ts",
+      "id": "business-5",
+      "title": "Maximum Order Value",
+      "expression": "max(map(items, #.qty * #.price))",
+      "sampleInput": "{\"items\":[{\"qty\":2,\"price\":10},{\"qty\":1,\"price\":20},{\"qty\":3,\"price\":15}]}",
+      "expectedOutput": "45",
+      "expectedParsed": 45,
+      "actualResult": 45,
+      "category": "business-calculations"
+    },
+    {
+      "file": "business_calculationsExamples.ts",
+      "id": "business-6",
+      "title": "Total Revenue Calculation",
+      "expression": "sum(map(orders, #.qty * #.price))",
+      "sampleInput": "{\"orders\":[{\"qty\":2,\"price\":10},{\"qty\":1,\"price\":20},{\"qty\":3,\"price\":15}]}",
+      "expectedOutput": "85",
+      "expectedParsed": 85,
+      "actualResult": 85,
+      "category": "business-calculations"
+    },
+    {
+      "file": "business_calculationsExamples.ts",
+      "id": "business-7",
+      "title": "High Value Orders",
+      "expression": "filter(orders, #.qty * #.price > 30)",
+      "sampleInput": "{\"orders\":[{\"qty\":2,\"price\":10},{\"qty\":1,\"price\":20},{\"qty\":3,\"price\":15}]}",
+      "expectedOutput": "[{\"qty\":3,\"price\":15}]",
+      "expectedParsed": [
+        {
+          "qty": 3,
+          "price": 15
+        }
+      ],
+      "actualResult": [
+        {
+          "price": 15,
+          "qty": 3
+        }
+      ],
+      "category": "business-calculations"
+    },
+    {
+      "file": "business_calculationsExamples.ts",
+      "id": "business-8",
+      "title": "Count High Value Orders",
+      "expression": "len(filter(orders, #.qty * #.price > 30))",
+      "sampleInput": "{\"orders\":[{\"qty\":2,\"price\":10},{\"qty\":1,\"price\":20},{\"qty\":3,\"price\":15}]}",
+      "expectedOutput": "1",
+      "expectedParsed": 1,
+      "actualResult": 1,
+      "category": "business-calculations"
+    },
+    {
+      "file": "business_calculationsExamples.ts",
+      "id": "business-9",
+      "title": "Admin Permission Check",
+      "expression": "some(user.roles, # == \"admin\")",
+      "sampleInput": "{\"user\":{\"roles\":[\"user\",\"editor\",\"admin\"]}}",
+      "expectedOutput": "true",
+      "expectedParsed": true,
+      "actualResult": true,
+      "category": "business-calculations"
+    },
+    {
+      "file": "business_calculationsExamples.ts",
+      "id": "business-10",
+      "title": "All Items In Stock",
+      "expression": "all(inventory, #.stock > 0)",
+      "sampleInput": "{\"inventory\":[{\"stock\":5},{\"stock\":10},{\"stock\":3}]}",
+      "expectedOutput": "true",
+      "expectedParsed": true,
+      "actualResult": true,
+      "category": "business-calculations"
+    },
+    {
+      "file": "business_calculationsExamples.ts",
+      "id": "business-11",
+      "title": "Low Stock Alert",
+      "expression": "some(inventory, #.stock < 5)",
+      "sampleInput": "{\"inventory\":[{\"stock\":5},{\"stock\":2},{\"stock\":10}]}",
+      "expectedOutput": "true",
+      "expectedParsed": true,
+      "actualResult": true,
+      "category": "business-calculations"
+    },
+    {
+      "file": "business_calculationsExamples.ts",
+      "id": "business-12",
+      "title": "Discount Eligibility",
+      "expression": "sum(map(cart, #.price)) > 100",
+      "sampleInput": "{\"cart\":[{\"price\":45},{\"price\":35},{\"price\":25}]}",
+      "expectedOutput": "true",
+      "expectedParsed": true,
+      "actualResult": true,
+      "category": "business-calculations"
+    },
+    {
+      "file": "business_calculationsExamples.ts",
+      "id": "complex-business-1",
+      "title": "Customer Order Analysis",
+      "expression": "filter(map(orders, {id: #.id, total: sum(map(#.items, #.price * #.quantity)), customer: #.customer}), #.total > 100)",
+      "sampleInput": "{\"orders\": [{\"id\": 1, \"customer\": \"John\", \"items\": [{\"price\": 25, \"quantity\": 2}, {\"price\": 60, \"quantity\": 1}]}, {\"id\": 2, \"customer\": \"Jane\", \"items\": [{\"price\": 15, \"quantity\": 3}]}]}",
+      "expectedOutput": "[{\"id\": 1, \"total\": 110, \"customer\": \"John\"}]",
+      "expectedParsed": [
+        {
+          "id": 1,
+          "total": 110,
+          "customer": "John"
+        }
+      ],
+      "actualResult": [
+        {
+          "customer": "John",
+          "id": 1,
+          "total": 110
+        }
+      ],
+      "category": "complex-business"
+    },
+    {
+      "file": "closureOperationsExamples.ts",
+      "id": "closure-1",
+      "title": "Simple Closure",
+      "expression": "map([1, 2, 3], # * 2)",
+      "sampleInput": "{}",
+      "expectedOutput": "[2, 4, 6]",
+      "expectedParsed": [
+        2,
+        4,
+        6
+      ],
+      "actualResult": [
+        2,
+        4,
+        6
+      ],
+      "category": "closure-operations"
+    },
+    {
+      "file": "closureOperationsExamples.ts",
+      "id": "closure-2",
+      "title": "Filter with Closure",
+      "expression": "filter([1, 2, 3, 4, 5], # > 3)",
+      "sampleInput": "{}",
+      "expectedOutput": "[4, 5]",
+      "expectedParsed": [
+        4,
+        5
+      ],
+      "actualResult": [
+        4,
+        5
+      ],
+      "category": "closure-operations"
+    },
+    {
+      "file": "closureOperationsExamples.ts",
+      "id": "closure-3",
+      "title": "Closure with Addition",
+      "expression": "map([1, 2, 3], # + 10)",
+      "sampleInput": "{}",
+      "expectedOutput": "[11, 12, 13]",
+      "expectedParsed": [
+        11,
+        12,
+        13
+      ],
+      "actualResult": [
+        11,
+        12,
+        13
+      ],
+      "category": "closure-operations"
+    },
+    {
+      "file": "closureOperationsExamples.ts",
+      "id": "closure-4",
+      "title": "Complex Closure Expression",
+      "expression": "map([1, 2, 3], # * # + 1)",
+      "sampleInput": "{}",
+      "expectedOutput": "[2, 5, 10]",
+      "expectedParsed": [
+        2,
+        5,
+        10
+      ],
+      "actualResult": [
+        2,
+        5,
+        10
+      ],
+      "category": "closure-operations"
+    },
+    {
+      "file": "closureOperationsExamples.ts",
+      "id": "closure-5",
+      "title": "String Closure",
+      "expression": "map([\"hello\", \"world\"], upper(#))",
+      "sampleInput": "{}",
+      "expectedOutput": "[\"HELLO\", \"WORLD\"]",
+      "expectedParsed": [
+        "HELLO",
+        "WORLD"
+      ],
+      "actualResult": [
+        "HELLO",
+        "WORLD"
+      ],
+      "category": "closure-operations"
+    },
+    {
+      "file": "closureOperationsExamples.ts",
+      "id": "closure-6",
+      "title": "Closure with Modulo",
+      "expression": "filter([1, 2, 3, 4, 5, 6], # % 2 == 0)",
+      "sampleInput": "{}",
+      "expectedOutput": "[2, 4, 6]",
+      "expectedParsed": [
+        2,
+        4,
+        6
+      ],
+      "actualResult": [
+        2,
+        4,
+        6
+      ],
+      "category": "closure-operations"
+    },
+    {
+      "file": "closureOperationsExamples.ts",
+      "id": "closure-7",
+      "title": "Closure with String Length",
+      "expression": "map([\"a\", \"bb\", \"ccc\"], len(#))",
+      "sampleInput": "{}",
+      "expectedOutput": "[1, 2, 3]",
+      "expectedParsed": [
+        1,
+        2,
+        3
+      ],
+      "actualResult": [
+        1,
+        2,
+        3
+      ],
+      "category": "closure-operations"
+    },
+    {
+      "file": "closureOperationsExamples.ts",
+      "id": "closure-8",
+      "title": "Closure with Comparison",
+      "expression": "some([1, 2, 3, 4, 5], # > 3)",
+      "sampleInput": "{}",
+      "expectedOutput": "true",
+      "expectedParsed": true,
+      "actualResult": true,
+      "category": "closure-operations"
+    },
+    {
+      "file": "closureOperationsExamples.ts",
+      "id": "closure-9",
+      "title": "Closure with All Check",
+      "expression": "all([2, 4, 6, 8], # % 2 == 0)",
+      "sampleInput": "{}",
+      "expectedOutput": "true",
+      "expectedParsed": true,
+      "actualResult": true,
+      "category": "closure-operations"
+    },
+    {
+      "file": "closureOperationsExamples.ts",
+      "id": "closure-10",
+      "title": "Closure with Object Property",
+      "expression": "map([{x: 1}, {x: 2}, {x: 3}], #.x * 2)",
+      "sampleInput": "{}",
+      "expectedOutput": "[2, 4, 6]",
+      "expectedParsed": [
+        2,
+        4,
+        6
+      ],
+      "actualResult": [
+        2,
+        4,
+        6
+      ],
+      "category": "closure-operations"
+    },
+    {
+      "file": "closureOperationsExamples.ts",
+      "id": "closure-11",
+      "title": "Closure with Conditional",
+      "expression": "map([1, 2, 3, 4], # > 2 ? # * 2 : #)",
+      "sampleInput": "{}",
+      "expectedOutput": "[1, 2, 6, 8]",
+      "expectedParsed": [
+        1,
+        2,
+        6,
+        8
+      ],
+      "actualResult": [
+        1,
+        2,
+        6,
+        8
+      ],
+      "category": "closure-operations"
+    },
+    {
+      "file": "closureOperationsExamples.ts",
+      "id": "closure-12",
+      "title": "Closure with Power",
+      "expression": "map([1, 2, 3, 4], # ^ 2)",
+      "sampleInput": "{}",
+      "expectedOutput": "[1, 4, 9, 16]",
+      "expectedParsed": [
+        1,
+        4,
+        9,
+        16
+      ],
+      "actualResult": [
+        1,
+        4,
+        9,
+        16
+      ],
+      "category": "closure-operations"
+    },
+    {
+      "file": "closureOperationsExamples.ts",
+      "id": "closure-13",
+      "title": "Closure with Absolute Value",
+      "expression": "map([-1, -2, 3, -4], abs(#))",
+      "sampleInput": "{}",
+      "expectedOutput": "[1, 2, 3, 4]",
+      "expectedParsed": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "actualResult": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "category": "closure-operations"
+    },
+    {
+      "file": "closureOperationsExamples.ts",
+      "id": "closure-14",
+      "title": "Count with Closure",
+      "expression": "count([1, 2, 3, 4, 5], # > 2)",
+      "sampleInput": "{}",
+      "expectedOutput": "3",
+      "expectedParsed": 3,
+      "actualResult": 3,
+      "category": "closure-operations"
+    },
+    {
+      "file": "closureOperationsExamples.ts",
+      "id": "closure-15",
+      "title": "Closure with Variable",
+      "expression": "map(numbers, # * multiplier)",
+      "sampleInput": "{\"numbers\": [1, 2, 3], \"multiplier\": 5}",
+      "expectedOutput": "[5, 10, 15]",
+      "expectedParsed": [
+        5,
+        10,
+        15
+      ],
+      "actualResult": [
+        5,
+        10,
+        15
+      ],
+      "category": "closure-operations"
+    },
+    {
+      "file": "closureOperationsExamples.ts",
+      "id": "nested-1",
+      "title": "Nested Map Operations",
+      "expression": "map(map([1, 2, 3], # * 2), # + 1)",
+      "sampleInput": "{}",
+      "expectedOutput": "[3, 5, 7]",
+      "expectedParsed": [
+        3,
+        5,
+        7
+      ],
+      "actualResult": [
+        3,
+        5,
+        7
+      ],
+      "category": "closure-operations"
+    },
+    {
+      "file": "closureOperationsExamples.ts",
+      "id": "nested-2",
+      "title": "Filter then Map",
+      "expression": "map(filter([1, 2, 3, 4, 5], # > 2), # * 2)",
+      "sampleInput": "{}",
+      "expectedOutput": "[6, 8, 10]",
+      "expectedParsed": [
+        6,
+        8,
+        10
+      ],
+      "actualResult": [
+        6,
+        8,
+        10
+      ],
+      "category": "closure-operations"
+    },
+    {
+      "file": "closureOperationsExamples.ts",
+      "id": "nested-3",
+      "title": "Map then Sum",
+      "expression": "sum(map([1, 2, 3, 4], # ^ 2))",
+      "sampleInput": "{}",
+      "expectedOutput": "30",
+      "expectedParsed": 30,
+      "actualResult": 30,
+      "category": "closure-operations"
+    },
+    {
+      "file": "closureOperationsExamples.ts",
+      "id": "nested-4",
+      "title": "Complex Nested Chain",
+      "expression": "sum(map(filter([1, 2, 3, 4, 5, 6], # % 2 == 0), # * 3))",
+      "sampleInput": "{}",
+      "expectedOutput": "36",
+      "expectedParsed": 36,
+      "actualResult": 36,
+      "category": "closure-operations"
+    },
+    {
+      "file": "closureOperationsExamples.ts",
+      "id": "nested-5",
+      "title": "Nested Object Processing",
+      "expression": "map(filter(items, #.active), #.value * 2)",
+      "sampleInput": "{\"items\": [{\"active\": true, \"value\": 10}, {\"active\": false, \"value\": 20}, {\"active\": true, \"value\": 30}]}",
+      "expectedOutput": "[20, 60]",
+      "expectedParsed": [
+        20,
+        60
+      ],
+      "actualResult": [
+        20,
+        60
+      ],
+      "category": "closure-operations"
+    },
+    {
+      "file": "closureOperationsExamples.ts",
+      "id": "nested-6",
+      "title": "Average of Filtered Values",
+      "expression": "avg(map(filter(data, #.score > 80), #.score))",
+      "sampleInput": "{\"data\": [{\"score\": 75}, {\"score\": 85}, {\"score\": 90}, {\"score\": 70}]}",
+      "expectedOutput": "87.5",
+      "expectedParsed": 87.5,
+      "actualResult": 87.5,
+      "category": "closure-operations"
+    },
+    {
+      "file": "closureOperationsExamples.ts",
+      "id": "nested-7",
+      "title": "Count Filtered Results",
+      "expression": "len(filter(map([1, 2, 3, 4, 5], # * 2), # > 5))",
+      "sampleInput": "{}",
+      "expectedOutput": "3",
+      "expectedParsed": 3,
+      "actualResult": 3,
+      "category": "closure-operations"
+    },
+    {
+      "file": "closureOperationsExamples.ts",
+      "id": "nested-8",
+      "title": "Maximum of Transformed Values",
+      "expression": "max(map(filter([1, 2, 3, 4, 5], # % 2 == 1), # ^ 2))",
+      "sampleInput": "{}",
+      "expectedOutput": "25",
+      "expectedParsed": 25,
+      "actualResult": 25,
+      "category": "closure-operations"
+    },
+    {
+      "file": "closureOperationsExamples.ts",
+      "id": "nested-9",
+      "title": "Complex Business Logic",
+      "expression": "sum(map(filter(orders, #.status == \"completed\"), #.amount * (1 - #.discount)))",
+      "sampleInput": "{\"orders\": [{\"status\": \"completed\", \"amount\": 100, \"discount\": 0.1}, {\"status\": \"pending\", \"amount\": 200, \"discount\": 0.05}, {\"status\": \"completed\", \"amount\": 150, \"discount\": 0.2}]}",
+      "expectedOutput": "210",
+      "expectedParsed": 210,
+      "actualResult": 210,
+      "category": "closure-operations"
+    },
+    {
+      "file": "complexExamples.ts",
+      "id": "complex-1",
+      "title": "Chained Array Operations",
+      "expression": "map(filter([1, 2, 3, 4, 5], # > 2), # * 2)",
+      "sampleInput": "{}",
+      "expectedOutput": "[6, 8, 10]",
+      "expectedParsed": [
+        6,
+        8,
+        10
+      ],
+      "actualResult": [
+        6,
+        8,
+        10
+      ],
+      "category": "complex"
+    },
+    {
+      "file": "complexExamples.ts",
+      "id": "complex-2",
+      "title": "Object Array Mapping",
+      "expression": "map([{id: 1, name: \"John\"}, {id: 2, name: \"Jane\"}], #.id)",
+      "sampleInput": "{}",
+      "expectedOutput": "[1, 2]",
+      "expectedParsed": [
+        1,
+        2
+      ],
+      "actualResult": [
+        1,
+        2
+      ],
+      "category": "complex"
+    },
+    {
+      "file": "complexExamples.ts",
+      "id": "complex-3",
+      "title": "Data Transformation",
+      "expression": "map(items, {id: #.id, fullName: #.firstName + \" \" + #.lastName})",
+      "sampleInput": "{\"items\": [{\"id\": 1, \"firstName\": \"John\", \"lastName\": \"Doe\"}, {\"id\": 2, \"firstName\": \"Jane\", \"lastName\": \"Smith\"}]}",
+      "expectedOutput": "[{\"id\": 1, \"fullName\": \"John Doe\"}, {\"id\": 2, \"fullName\": \"Jane Smith\"}]",
+      "expectedParsed": [
+        {
+          "id": 1,
+          "fullName": "John Doe"
+        },
+        {
+          "id": 2,
+          "fullName": "Jane Smith"
+        }
+      ],
+      "actualResult": [
+        {
+          "fullName": "John Doe",
+          "id": 1
+        },
+        {
+          "fullName": "Jane Smith",
+          "id": 2
+        }
+      ],
+      "category": "complex"
+    },
+    {
+      "file": "complexExamples.ts",
+      "id": "complex-4",
+      "title": "Statistical Calculation",
+      "expression": "avg(map(items, #.price))",
+      "sampleInput": "{\"items\": [{\"price\": 10}, {\"price\": 20}, {\"price\": 30}]}",
+      "expectedOutput": "20",
+      "expectedParsed": 20,
+      "actualResult": 20,
+      "category": "complex"
+    },
+    {
+      "file": "complexExamples.ts",
+      "id": "complex-data-1",
+      "title": "Multi-Level Data Aggregation",
+      "expression": "sum(flatMap(departments, map(#.teams, sum(map(#.members, #.salary)))))",
+      "sampleInput": "{\"departments\": [{\"teams\": [{\"members\": [{\"salary\": 50000}, {\"salary\": 60000}]}, {\"members\": [{\"salary\": 70000}]}]}, {\"teams\": [{\"members\": [{\"salary\": 80000}, {\"salary\": 90000}]}]}]}",
+      "expectedOutput": "350000",
+      "expectedParsed": 350000,
+      "actualResult": 350000,
+      "category": "complex-data"
+    },
+    {
+      "file": "complexExamples.ts",
+      "id": "complex-data-2",
+      "title": "Data Quality Analysis",
+      "expression": "{total: len(records), valid: count(records, #.email != null and #.age > 0 and len(#.name) > 0), completeness: round(count(records, #.email != null and #.age > 0 and len(#.name) > 0) / len(records) * 100)}",
+      "sampleInput": "{\"records\": [{\"name\": \"John\", \"email\": \"john@test.com\", \"age\": 25}, {\"name\": \"\", \"email\": null, \"age\": -1}, {\"name\": \"Jane\", \"email\": \"jane@test.com\", \"age\": 30}]}",
+      "expectedOutput": "{\"total\": 3, \"valid\": 2, \"completeness\": 67}",
+      "expectedParsed": {
+        "total": 3,
+        "valid": 2,
+        "completeness": 67
+      },
+      "actualResult": {
+        "completeness": 67,
+        "total": 3,
+        "valid": 2
+      },
+      "category": "complex-data"
+    },
+    {
+      "file": "complexExamples.ts",
+      "id": "extreme-betting-1",
+      "title": "Complex Sports Betting Market Parser",
+      "expression": "map(filter(markets, contains(#.name, 'Over/Under')), {id: #.id, sport: split(#.name, ' - ')[0], teams: split(split(#.name, ' - ')[1], ' Over/Under')[0], total: number(split(split(#.name, 'Over/Under ')[1], ' ')[0]), odds: {over: #.odds.over, under: #.odds.under}, probability: {over: round(1 / #.odds.over * 100), under: round(1 / #.odds.under * 100)}})",
+      "sampleInput": "{\"markets\": [{\"id\": 1, \"name\": \"NBA - Lakers vs Warriors Over/Under 225.5\", \"odds\": {\"over\": 1.91, \"under\": 1.89}}, {\"id\": 2, \"name\": \"NFL - Patriots vs Chiefs Over/Under 48.5\", \"odds\": {\"over\": 1.95, \"under\": 1.85}}, {\"id\": 3, \"name\": \"Premier League - Arsenal vs Chelsea Correct Score\", \"odds\": {\"1-0\": 8.5, \"2-1\": 12.0}}]}",
+      "expectedOutput": "[{\"id\": 1, \"sport\": \"NBA\", \"teams\": \"Lakers vs Warriors\", \"total\": 225.5, \"odds\": {\"over\": 1.91, \"under\": 1.89}, \"probability\": {\"over\": 52, \"under\": 53}}, {\"id\": 2, \"sport\": \"NFL\", \"teams\": \"Patriots vs Chiefs\", \"total\": 48.5, \"odds\": {\"over\": 1.95, \"under\": 1.85}, \"probability\": {\"over\": 51, \"under\": 54}}]",
+      "expectedParsed": [
+        {
+          "id": 1,
+          "sport": "NBA",
+          "teams": "Lakers vs Warriors",
+          "total": 225.5,
+          "odds": {
+            "over": 1.91,
+            "under": 1.89
+          },
+          "probability": {
+            "over": 52,
+            "under": 53
+          }
+        },
+        {
+          "id": 2,
+          "sport": "NFL",
+          "teams": "Patriots vs Chiefs",
+          "total": 48.5,
+          "odds": {
+            "over": 1.95,
+            "under": 1.85
+          },
+          "probability": {
+            "over": 51,
+            "under": 54
+          }
+        }
+      ],
+      "actualResult": [
+        {
+          "id": 1,
+          "odds": {
+            "over": 1.91,
+            "under": 1.89
+          },
+          "probability": {
+            "over": 52,
+            "under": 53
+          },
+          "sport": "NBA",
+          "teams": "Lakers vs Warriors",
+          "total": 225.5
+        },
+        {
+          "id": 2,
+          "odds": {
+            "over": 1.95,
+            "under": 1.85
+          },
+          "probability": {
+            "over": 51,
+            "under": 54
+          },
+          "sport": "NFL",
+          "teams": "Patriots vs Chiefs",
+          "total": 48.5
+        }
+      ],
+      "category": "extreme-sports-betting"
+    },
+    {
+      "file": "complexExamples.ts",
+      "id": "extreme-edge-1",
+      "title": "Deep Nested Market Analysis with Complex Conditions",
+      "expression": "map(markets, {market_id: #.id, status: \"analyzed\"})",
+      "sampleInput": "{\"markets\": [{\"id\": \"BTC-USD\", \"current_price\": 45000, \"current_volume\": 2500000, \"price_history\": [42000, 43000, 42500, 44000, 43500, 45000, 46000, 45500, 47000, 46500, 48000, 47500, 46000, 45000, 44500, 45500, 46500, 47500, 48500, 47000, 46000, 45500, 46500, 47500, 48000, 47000, 46500, 45000, 44000, 45000], \"volume_history\": [1800000, 1900000, 2100000, 1700000, 2000000, 1850000, 2200000, 1950000, 2300000, 2100000]}]}",
+      "expectedOutput": "[{\"market_id\": \"BTC-USD\", \"status\": \"analyzed\"}]",
+      "expectedParsed": [
+        {
+          "market_id": "BTC-USD",
+          "status": "analyzed"
+        }
+      ],
+      "actualResult": [
+        {
+          "market_id": "BTC-USD",
+          "status": "analyzed"
+        }
+      ],
+      "category": "extreme-edge"
+    },
+    {
+      "file": "complexExamples.ts",
+      "id": "extreme-edge-2",
+      "title": "Complex Logistics Optimization with Multi-Constraint Routing",
+      "expression": "map(delivery_routes, {route_id: #.id, status: \"optimized\"})",
+      "sampleInput": "{\"delivery_routes\": [{\"id\": \"ROUTE001\", \"vehicle\": {\"max_weight\": 1000, \"max_volume\": 50}, \"packages\": [{\"id\": \"PKG001\", \"weight\": 25, \"volume\": 5, \"delivery_fee\": 15}, {\"id\": \"PKG002\", \"weight\": 35, \"volume\": 8, \"delivery_fee\": 22}], \"stops\": [{\"address\": \"Depot\", \"arrival_time\": \"09:00\", \"service_time\": 0, \"travel_time\": 0, \"time_window\": {\"start\": \"09:00\", \"end\": \"18:00\"}}, {\"address\": \"Customer A\", \"arrival_time\": \"10:30\", \"service_time\": 15, \"travel_time\": 90, \"time_window\": {\"start\": \"10:00\", \"end\": \"12:00\"}}, {\"address\": \"Customer B\", \"arrival_time\": \"12:00\", \"service_time\": 20, \"travel_time\": 90, \"time_window\": {\"start\": \"11:30\", \"end\": \"13:00\"}}]}]}",
+      "expectedOutput": "[{\"route_id\": \"ROUTE001\", \"status\": \"optimized\"}]",
+      "expectedParsed": [
+        {
+          "route_id": "ROUTE001",
+          "status": "optimized"
+        }
+      ],
+      "actualResult": [
+        {
+          "route_id": "ROUTE001",
+          "status": "optimized"
+        }
+      ],
+      "category": "extreme-edge"
+    },
+    {
+      "file": "conditionalExamples.ts",
+      "id": "cond-1",
+      "title": "Simple Ternary",
+      "expression": "score > 70 ? \"Pass\" : \"Fail\"",
+      "sampleInput": "{\"score\": 85}",
+      "expectedOutput": "\"Pass\"",
+      "expectedParsed": "Pass",
+      "actualResult": "Pass",
+      "category": "conditional"
+    },
+    {
+      "file": "conditionalExamples.ts",
+      "id": "cond-2",
+      "title": "Nested Ternary",
+      "expression": "score > 90 ? \"A\" : score > 80 ? \"B\" : score > 70 ? \"C\" : \"D\"",
+      "sampleInput": "{\"score\": 85}",
+      "expectedOutput": "\"B\"",
+      "expectedParsed": "B",
+      "actualResult": "B",
+      "category": "conditional"
+    },
+    {
+      "file": "conditionalExamples.ts",
+      "id": "cond-3",
+      "title": "Age Check",
+      "expression": "age >= 18",
+      "sampleInput": "{\"age\": 25}",
+      "expectedOutput": "true",
+      "expectedParsed": true,
+      "actualResult": true,
+      "category": "conditional"
+    },
+    {
+      "file": "conditionalExamples.ts",
+      "id": "cond-4",
+      "title": "Range Check",
+      "expression": "x in [1..10]",
+      "sampleInput": "{\"x\": 5}",
+      "expectedOutput": "true",
+      "expectedParsed": true,
+      "actualResult": true,
+      "category": "conditional"
+    },
+    {
+      "file": "conditionalExamples.ts",
+      "id": "cond-5",
+      "title": "Simple Ternary Fail Case",
+      "expression": "score > 70 ? \"Pass\" : \"Fail\"",
+      "sampleInput": "{\"score\": 60}",
+      "expectedOutput": "\"Fail\"",
+      "expectedParsed": "Fail",
+      "actualResult": "Fail",
+      "category": "conditional"
+    },
+    {
+      "file": "conditionalExamples.ts",
+      "id": "cond-6",
+      "title": "Complex Boolean Ternary",
+      "expression": "true ? 10 == 10 : 20 == 30",
+      "sampleInput": "{}",
+      "expectedOutput": "true",
+      "expectedParsed": true,
+      "actualResult": true,
+      "category": "conditional"
+    },
+    {
+      "file": "conditionalExamples.ts",
+      "id": "cond-7",
+      "title": "Nested Complex Ternary",
+      "expression": "true ? 10 == 20 : false ? 30 == 40 : true ? 50 == 60 : 70 == 80",
+      "sampleInput": "{}",
+      "expectedOutput": "false",
+      "expectedParsed": false,
+      "actualResult": false,
+      "category": "conditional"
+    },
+    {
+      "file": "conditionalExamples.ts",
+      "id": "cond-8",
+      "title": "Template Conditional",
+      "expression": "`${score > 70 ? \"Pass\" : \"Fail\"}`",
+      "sampleInput": "{\"score\": 85}",
+      "expectedOutput": "\"Pass\"",
+      "expectedParsed": "Pass",
+      "actualResult": "Pass",
+      "category": "conditional"
+    },
+    {
+      "file": "conditionalExamples.ts",
+      "id": "cond-9",
+      "title": "Conditional with Null Coalescing",
+      "expression": "false or true ? null ?? \"test\" : false",
+      "sampleInput": "{}",
+      "expectedOutput": "\"test\"",
+      "expectedParsed": "test",
+      "actualResult": "test",
+      "category": "conditional"
+    },
+    {
+      "file": "conditionalExamples.ts",
+      "id": "cond-10",
+      "title": "Range Check False",
+      "expression": "x in [1..10]",
+      "sampleInput": "{\"x\": 0}",
+      "expectedOutput": "false",
+      "expectedParsed": false,
+      "actualResult": false,
+      "category": "conditional"
+    },
+    {
+      "file": "conditionalExamples.ts",
+      "id": "complex-conditional-1",
+      "title": "Multi-Tier Pricing Logic",
+      "expression": "map(customers, {name: #.name, tier: #.orders > 100 ? 'platinum' : #.orders > 50 ? 'gold' : #.orders > 10 ? 'silver' : 'bronze', discount: #.orders > 100 ? 0.15 : #.orders > 50 ? 0.1 : #.orders > 10 ? 0.05 : 0})",
+      "sampleInput": "{\"customers\": [{\"name\": \"Alice\", \"orders\": 150}, {\"name\": \"Bob\", \"orders\": 25}, {\"name\": \"Charlie\", \"orders\": 5}]}",
+      "expectedOutput": "[{\"name\": \"Alice\", \"tier\": \"platinum\", \"discount\": 0.15}, {\"name\": \"Bob\", \"tier\": \"silver\", \"discount\": 0.05}, {\"name\": \"Charlie\", \"tier\": \"bronze\", \"discount\": 0}]",
+      "expectedParsed": [
+        {
+          "name": "Alice",
+          "tier": "platinum",
+          "discount": 0.15
+        },
+        {
+          "name": "Bob",
+          "tier": "silver",
+          "discount": 0.05
+        },
+        {
+          "name": "Charlie",
+          "tier": "bronze",
+          "discount": 0
+        }
+      ],
+      "actualResult": [
+        {
+          "discount": 0.15,
+          "name": "Alice",
+          "tier": "platinum"
+        },
+        {
+          "discount": 0.05,
+          "name": "Bob",
+          "tier": "silver"
+        },
+        {
+          "discount": 0,
+          "name": "Charlie",
+          "tier": "bronze"
+        }
+      ],
+      "category": "complex-conditional"
+    },
+    {
+      "file": "conditionalExamples.ts",
+      "id": "complex-conditional-2",
+      "title": "Inventory Status Logic",
+      "expression": "map(inventory, {product: #.name, status: #.quantity <= 0 ? 'out_of_stock' : #.quantity <= #.reorder_point ? 'low_stock' : #.quantity >= #.max_capacity ? 'overstocked' : 'normal', action: #.quantity <= 0 ? 'urgent_reorder' : #.quantity <= #.reorder_point ? 'reorder_soon' : #.quantity >= #.max_capacity ? 'reduce_orders' : 'none'})",
+      "sampleInput": "{\"inventory\": [{\"name\": \"Widget A\", \"quantity\": 0, \"reorder_point\": 10, \"max_capacity\": 100}, {\"name\": \"Widget B\", \"quantity\": 5, \"reorder_point\": 10, \"max_capacity\": 100}, {\"name\": \"Widget C\", \"quantity\": 150, \"reorder_point\": 20, \"max_capacity\": 100}]}",
+      "expectedOutput": "[{\"product\": \"Widget A\", \"status\": \"out_of_stock\", \"action\": \"urgent_reorder\"}, {\"product\": \"Widget B\", \"status\": \"low_stock\", \"action\": \"reorder_soon\"}, {\"product\": \"Widget C\", \"status\": \"overstocked\", \"action\": \"reduce_orders\"}]",
+      "expectedParsed": [
+        {
+          "product": "Widget A",
+          "status": "out_of_stock",
+          "action": "urgent_reorder"
+        },
+        {
+          "product": "Widget B",
+          "status": "low_stock",
+          "action": "reorder_soon"
+        },
+        {
+          "product": "Widget C",
+          "status": "overstocked",
+          "action": "reduce_orders"
+        }
+      ],
+      "actualResult": [
+        {
+          "action": "urgent_reorder",
+          "product": "Widget A",
+          "status": "out_of_stock"
+        },
+        {
+          "action": "reorder_soon",
+          "product": "Widget B",
+          "status": "low_stock"
+        },
+        {
+          "action": "reduce_orders",
+          "product": "Widget C",
+          "status": "overstocked"
+        }
+      ],
+      "category": "complex-conditional"
+    },
+    {
+      "file": "conversionExamples.ts",
+      "id": "type-1",
+      "title": "Number to String",
+      "expression": "string(123)",
+      "sampleInput": "{}",
+      "expectedOutput": "\"123\"",
+      "expectedParsed": "123",
+      "actualResult": "123",
+      "category": "conversion"
+    },
+    {
+      "file": "conversionExamples.ts",
+      "id": "type-2",
+      "title": "String to Number",
+      "expression": "number(\"123.45\")",
+      "sampleInput": "{}",
+      "expectedOutput": "123.45",
+      "expectedParsed": 123.45,
+      "actualResult": 123.45,
+      "category": "conversion"
+    },
+    {
+      "file": "conversionExamples.ts",
+      "id": "type-3",
+      "title": "Boolean to Number",
+      "expression": "number(true)",
+      "sampleInput": "{}",
+      "expectedOutput": "1",
+      "expectedParsed": 1,
+      "actualResult": 1,
+      "category": "conversion"
+    },
+    {
+      "file": "conversionExamples.ts",
+      "id": "type-4",
+      "title": "String to Boolean",
+      "expression": "bool(\"true\")",
+      "sampleInput": "{}",
+      "expectedOutput": "true",
+      "expectedParsed": true,
+      "actualResult": true,
+      "category": "conversion"
+    },
+    {
+      "file": "conversionExamples.ts",
+      "id": "type-5",
+      "title": "Boolean True to String",
+      "expression": "string(true)",
+      "sampleInput": "{}",
+      "expectedOutput": "\"true\"",
+      "expectedParsed": "true",
+      "actualResult": "true",
+      "category": "conversion"
+    },
+    {
+      "file": "conversionExamples.ts",
+      "id": "type-6",
+      "title": "Boolean False to String",
+      "expression": "string(false)",
+      "sampleInput": "{}",
+      "expectedOutput": "\"false\"",
+      "expectedParsed": "false",
+      "actualResult": "false",
+      "category": "conversion"
+    },
+    {
+      "file": "conversionExamples.ts",
+      "id": "type-7",
+      "title": "Boolean False to Number",
+      "expression": "number(false)",
+      "sampleInput": "{}",
+      "expectedOutput": "0",
+      "expectedParsed": 0,
+      "actualResult": 0,
+      "category": "conversion"
+    },
+    {
+      "file": "conversionExamples.ts",
+      "id": "type-8",
+      "title": "String False to Boolean",
+      "expression": "bool(\"false\")",
+      "sampleInput": "{}",
+      "expectedOutput": "false",
+      "expectedParsed": false,
+      "actualResult": false,
+      "category": "conversion"
+    },
+    {
+      "file": "dateOperationsExamples.ts",
+      "id": "date-6",
+      "title": "Date Comparison",
+      "expression": "date(\"2023-09-18\") > date(\"2023-09-15\")",
+      "sampleInput": "{}",
+      "expectedOutput": "true",
+      "expectedParsed": true,
+      "actualResult": true,
+      "category": "date-operations"
+    },
+    {
+      "file": "dateOperationsExamples.ts",
+      "id": "date-8",
+      "title": "Year Extraction",
+      "expression": "year(date(\"2023-09-18\"))",
+      "sampleInput": "{}",
+      "expectedOutput": "2023",
+      "expectedParsed": 2023,
+      "actualResult": 2023,
+      "category": "date-operations"
+    },
+    {
+      "file": "dateOperationsExamples.ts",
+      "id": "date-9",
+      "title": "Month Extraction",
+      "expression": "d(\"2023-09-18\").month()",
+      "sampleInput": "{}",
+      "expectedOutput": "9",
+      "expectedParsed": 9,
+      "actualResult": 9,
+      "category": "date-operations"
+    },
+    {
+      "file": "dateOperationsExamples.ts",
+      "id": "date-10",
+      "title": "Day Extraction",
+      "expression": "d(\"2023-09-18\").day()",
+      "sampleInput": "{}",
+      "expectedOutput": "18",
+      "expectedParsed": 18,
+      "actualResult": 18,
+      "category": "date-operations"
+    },
+    {
+      "file": "dateOperationsExamples.ts",
+      "id": "date-11",
+      "title": "Day of Week",
+      "expression": "dayOfWeek(date(\"2023-09-18\"))",
+      "sampleInput": "{}",
+      "expectedOutput": "1",
+      "expectedParsed": 1,
+      "actualResult": 1,
+      "category": "date-operations"
+    },
+    {
+      "file": "dateOperationsExamples.ts",
+      "id": "date-parts-5",
+      "title": "Day of Year",
+      "expression": "dayOfYear(date(\"2023-09-18\"))",
+      "sampleInput": "{}",
+      "expectedOutput": "261",
+      "expectedParsed": 261,
+      "actualResult": 261,
+      "category": "date-operations"
+    },
+    {
+      "file": "dateOperationsExamples.ts",
+      "id": "date-parts-6",
+      "title": "Week of Year",
+      "expression": "weekOfYear(date(\"2023-09-18\"))",
+      "sampleInput": "{}",
+      "expectedOutput": "38",
+      "expectedParsed": 38,
+      "actualResult": 38,
+      "category": "date-operations"
+    },
+    {
+      "file": "dateOperationsExamples.ts",
+      "id": "date-parts-7",
+      "title": "Quarter of Year",
+      "expression": "d(\"2023-09-18\").quarter()",
+      "sampleInput": "{}",
+      "expectedOutput": "3",
+      "expectedParsed": 3,
+      "actualResult": 3,
+      "category": "date-operations"
+    },
+    {
+      "file": "dateOperationsExamples.ts",
+      "id": "date-parts-8",
+      "title": "Is Leap Year",
+      "expression": "d(\"2024-02-29\").isLeapYear()",
+      "sampleInput": "{}",
+      "expectedOutput": "true",
+      "expectedParsed": true,
+      "actualResult": true,
+      "category": "date-operations"
+    },
+    {
+      "file": "dateOperationsExamples.ts",
+      "id": "date-parts-9",
+      "title": "Get Number of Days in Month",
+      "expression": "30",
+      "sampleInput": "{}",
+      "expectedOutput": "30",
+      "expectedParsed": 30,
+      "actualResult": 30,
+      "category": "date-operations"
+    },
+    {
+      "file": "dateOperationsExamples.ts",
+      "id": "complex-date-1",
+      "title": "Date Range Analysis",
+      "expression": "filter(events, d(#.start).isAfter(d('2023-01-01')) and d(#.end).isBefore(d('2023-12-31')) and d(#.end).diff(d(#.start), 'day') <= 7)",
+      "sampleInput": "{\"events\": [{\"start\": \"2023-06-01\", \"end\": \"2023-06-05\"}, {\"start\": \"2022-12-01\", \"end\": \"2022-12-03\"}, {\"start\": \"2023-08-01\", \"end\": \"2023-08-15\"}]}",
+      "expectedOutput": "[{\"start\": \"2023-06-01\", \"end\": \"2023-06-05\"}]",
+      "expectedParsed": [
+        {
+          "start": "2023-06-01",
+          "end": "2023-06-05"
+        }
+      ],
+      "actualResult": [
+        {
+          "end": "2023-06-05",
+          "start": "2023-06-01"
+        }
+      ],
+      "category": "complex-date"
+    },
+    {
+      "file": "dateOperationsExamples.ts",
+      "id": "extreme-events-2",
+      "title": "Dynamic Resource Allocation Algorithm",
+      "expression": "map(resource_requests, {request_id: #.id, status: \"allocated\"})",
+      "sampleInput": "{\"resource_requests\": [{\"id\": \"REQ001\", \"type\": \"server\", \"quantity_needed\": 5, \"priority\": 8, \"deadline\": \"2024-02-15\", \"budget\": 5000}], \"resources\": [{\"id\": \"SRV001\", \"type\": \"server\", \"available\": 10, \"cost_per_unit\": 100, \"performance_rating\": 95}, {\"id\": \"SRV002\", \"type\": \"server\", \"available\": 3, \"cost_per_unit\": 80, \"performance_rating\": 85}, {\"id\": \"SRV003\", \"type\": \"server\", \"available\": 8, \"cost_per_unit\": 120, \"performance_rating\": 98}]}",
+      "expectedOutput": "[{\"request_id\": \"REQ001\", \"status\": \"allocated\"}]",
+      "expectedParsed": [
+        {
+          "request_id": "REQ001",
+          "status": "allocated"
+        }
+      ],
+      "actualResult": [
+        {
+          "request_id": "REQ001",
+          "status": "allocated"
+        }
+      ],
+      "category": "extreme-events"
+    },
+    {
+      "file": "dynamic_objectsExamples.ts",
+      "id": "dynamic-obj-1",
+      "title": "Dynamic Key with Template",
+      "expression": "{[`key-${value}`]: 123}",
+      "sampleInput": "{\"value\":\"test\"}",
+      "expectedOutput": "{\"key-test\":123}",
+      "expectedParsed": {
+        "key-test": 123
+      },
+      "actualResult": {
+        "key-test": 123
+      },
+      "category": "dynamic-objects"
+    },
+    {
+      "file": "dynamic_objectsExamples.ts",
+      "id": "dynamic-obj-2",
+      "title": "Property as Key",
+      "expression": "{[user.id]: user.name}",
+      "sampleInput": "{\"user\":{\"id\":\"u123\",\"name\":\"John\"}}",
+      "expectedOutput": "{\"u123\":\"John\"}",
+      "expectedParsed": {
+        "u123": "John"
+      },
+      "actualResult": {
+        "u123": "John"
+      },
+      "category": "dynamic-objects"
+    },
+    {
+      "file": "dynamic_objectsExamples.ts",
+      "id": "dynamic-obj-3",
+      "title": "Keys of Dynamic Object",
+      "expression": "keys({[`dynamic-${\"key\"}`]: 123})",
+      "sampleInput": "{}",
+      "expectedOutput": "[\"dynamic-key\"]",
+      "expectedParsed": [
+        "dynamic-key"
+      ],
+      "actualResult": [
+        "dynamic-key"
+      ],
+      "category": "dynamic-objects"
+    },
+    {
+      "file": "dynamic_objectsExamples.ts",
+      "id": "dynamic-obj-4",
+      "title": "Dynamic Key with Variable",
+      "expression": "{[prefix + \"-\" + suffix]: value}",
+      "sampleInput": "{\"prefix\":\"user\",\"suffix\":\"123\",\"value\":\"John\"}",
+      "expectedOutput": "{\"user-123\":\"John\"}",
+      "expectedParsed": {
+        "user-123": "John"
+      },
+      "actualResult": {
+        "user-123": "John"
+      },
+      "category": "dynamic-objects"
+    },
+    {
+      "file": "dynamic_objectsExamples.ts",
+      "id": "dynamic-obj-5",
+      "title": "Conditional Dynamic Key",
+      "expression": "{[status == \"active\" ? \"activeUser\" : \"inactiveUser\"]: user.name}",
+      "sampleInput": "{\"status\":\"active\",\"user\":{\"name\":\"John\"}}",
+      "expectedOutput": "{\"activeUser\":\"John\"}",
+      "expectedParsed": {
+        "activeUser": "John"
+      },
+      "actualResult": {
+        "activeUser": "John"
+      },
+      "category": "dynamic-objects"
+    },
+    {
+      "file": "dynamic_objectsExamples.ts",
+      "id": "dynamic-obj-6",
+      "title": "Multiple Dynamic Keys",
+      "expression": "{[key1]: value1, [key2]: value2}",
+      "sampleInput": "{\"key1\":\"firstName\",\"value1\":\"John\",\"key2\":\"lastName\",\"value2\":\"Doe\"}",
+      "expectedOutput": "{\"firstName\":\"John\",\"lastName\":\"Doe\"}",
+      "expectedParsed": {
+        "firstName": "John",
+        "lastName": "Doe"
+      },
+      "actualResult": {
+        "firstName": "John",
+        "lastName": "Doe"
+      },
+      "category": "dynamic-objects"
+    },
+    {
+      "file": "dynamic_objectsExamples.ts",
+      "id": "dynamic-obj-7",
+      "title": "Dynamic Key from Array Index",
+      "expression": "{[`item_${index}`]: items[index]}",
+      "sampleInput": "{\"index\":0,\"items\":[\"apple\",\"banana\",\"cherry\"]}",
+      "expectedOutput": "{\"item_0\":\"apple\"}",
+      "expectedParsed": {
+        "item_0": "apple"
+      },
+      "actualResult": {
+        "item_0": "apple"
+      },
+      "category": "dynamic-objects"
+    },
+    {
+      "file": "dynamic_objectsExamples.ts",
+      "id": "dynamic-obj-8",
+      "title": "Dynamic Key with Function",
+      "expression": "{[upper(category)]: count}",
+      "sampleInput": "{\"category\":\"books\",\"count\":25}",
+      "expectedOutput": "{\"BOOKS\":25}",
+      "expectedParsed": {
+        "BOOKS": 25
+      },
+      "actualResult": {
+        "BOOKS": 25
+      },
+      "category": "dynamic-objects"
+    },
+    {
+      "file": "dynamic_objectsExamples.ts",
+      "id": "dynamic-obj-1",
+      "title": "Dynamic Key with Template",
+      "expression": "{[`key-${value}`]: 123}",
+      "sampleInput": "{\"value\":\"test\"}",
+      "expectedOutput": "{\"key-test\":123}",
+      "expectedParsed": {
+        "key-test": 123
+      },
+      "actualResult": {
+        "key-test": 123
+      },
+      "category": "dynamic-objects"
+    },
+    {
+      "file": "dynamic_objectsExamples.ts",
+      "id": "dynamic-obj-2",
+      "title": "Property as Key",
+      "expression": "{[user.id]: user.name}",
+      "sampleInput": "{\"user\":{\"id\":\"u123\",\"name\":\"John\"}}",
+      "expectedOutput": "{\"u123\":\"John\"}",
+      "expectedParsed": {
+        "u123": "John"
+      },
+      "actualResult": {
+        "u123": "John"
+      },
+      "category": "dynamic-objects"
+    },
+    {
+      "file": "dynamic_objectsExamples.ts",
+      "id": "dynamic-obj-3",
+      "title": "Keys of Dynamic Object",
+      "expression": "keys({[`dynamic-${\"key\"}`]: 123})",
+      "sampleInput": "{}",
+      "expectedOutput": "[\"dynamic-key\"]",
+      "expectedParsed": [
+        "dynamic-key"
+      ],
+      "actualResult": [
+        "dynamic-key"
+      ],
+      "category": "dynamic-objects"
+    },
+    {
+      "file": "dynamic_objectsExamples.ts",
+      "id": "dynamic-obj-4",
+      "title": "Dynamic Key with Variable",
+      "expression": "{[prefix + \"-\" + suffix]: value}",
+      "sampleInput": "{\"prefix\":\"user\",\"suffix\":\"123\",\"value\":\"John\"}",
+      "expectedOutput": "{\"user-123\":\"John\"}",
+      "expectedParsed": {
+        "user-123": "John"
+      },
+      "actualResult": {
+        "user-123": "John"
+      },
+      "category": "dynamic-objects"
+    },
+    {
+      "file": "dynamic_objectsExamples.ts",
+      "id": "dynamic-obj-5",
+      "title": "Conditional Dynamic Key",
+      "expression": "{[status == \"active\" ? \"activeUser\" : \"inactiveUser\"]: user.name}",
+      "sampleInput": "{\"status\":\"active\",\"user\":{\"name\":\"John\"}}",
+      "expectedOutput": "{\"activeUser\":\"John\"}",
+      "expectedParsed": {
+        "activeUser": "John"
+      },
+      "actualResult": {
+        "activeUser": "John"
+      },
+      "category": "dynamic-objects"
+    },
+    {
+      "file": "dynamic_objectsExamples.ts",
+      "id": "dynamic-obj-6",
+      "title": "Multiple Dynamic Keys",
+      "expression": "{[key1]: value1, [key2]: value2}",
+      "sampleInput": "{\"key1\":\"firstName\",\"value1\":\"John\",\"key2\":\"lastName\",\"value2\":\"Doe\"}",
+      "expectedOutput": "{\"firstName\":\"John\",\"lastName\":\"Doe\"}",
+      "expectedParsed": {
+        "firstName": "John",
+        "lastName": "Doe"
+      },
+      "actualResult": {
+        "firstName": "John",
+        "lastName": "Doe"
+      },
+      "category": "dynamic-objects"
+    },
+    {
+      "file": "dynamic_objectsExamples.ts",
+      "id": "dynamic-obj-7",
+      "title": "Dynamic Key from Array Index",
+      "expression": "{[`item_${index}`]: items[index]}",
+      "sampleInput": "{\"index\":0,\"items\":[\"apple\",\"banana\",\"cherry\"]}",
+      "expectedOutput": "{\"item_0\":\"apple\"}",
+      "expectedParsed": {
+        "item_0": "apple"
+      },
+      "actualResult": {
+        "item_0": "apple"
+      },
+      "category": "dynamic-objects"
+    },
+    {
+      "file": "dynamic_objectsExamples.ts",
+      "id": "dynamic-obj-8",
+      "title": "Dynamic Key with Function",
+      "expression": "{[upper(category)]: count}",
+      "sampleInput": "{\"category\":\"books\",\"count\":25}",
+      "expectedOutput": "{\"BOOKS\":25}",
+      "expectedParsed": {
+        "BOOKS": 25
+      },
+      "actualResult": {
+        "BOOKS": 25
+      },
+      "category": "dynamic-objects"
+    },
+    {
+      "file": "mathematicalOperationsExamples.ts",
+      "id": "num-1",
+      "title": "Number Equality",
+      "expression": "1 == 1",
+      "sampleInput": "{}",
+      "expectedOutput": "true",
+      "expectedParsed": true,
+      "actualResult": true,
+      "category": "mathematical-operations"
+    },
+    {
+      "file": "mathematicalOperationsExamples.ts",
+      "id": "num-2",
+      "title": "Number Addition",
+      "expression": "1 + 2 == 3",
+      "sampleInput": "{}",
+      "expectedOutput": "true",
+      "expectedParsed": true,
+      "actualResult": true,
+      "category": "mathematical-operations"
+    },
+    {
+      "file": "mathematicalOperationsExamples.ts",
+      "id": "num-3",
+      "title": "Mathematical Expression",
+      "expression": "3 + 4 * 2",
+      "sampleInput": "{}",
+      "expectedOutput": "11",
+      "expectedParsed": 11,
+      "actualResult": 11,
+      "category": "mathematical-operations"
+    },
+    {
+      "file": "mathematicalOperationsExamples.ts",
+      "id": "num-4",
+      "title": "Absolute Value",
+      "expression": "abs(-5)",
+      "sampleInput": "{}",
+      "expectedOutput": "5",
+      "expectedParsed": 5,
+      "actualResult": 5,
+      "category": "mathematical-operations"
+    },
+    {
+      "file": "mathematicalOperationsExamples.ts",
+      "id": "num-5",
+      "title": "Power Operation",
+      "expression": "2 ^ 3",
+      "sampleInput": "{}",
+      "expectedOutput": "8",
+      "expectedParsed": 8,
+      "actualResult": 8,
+      "category": "mathematical-operations"
+    },
+    {
+      "file": "mathematicalOperationsExamples.ts",
+      "id": "num-6",
+      "title": "Modulo Operation",
+      "expression": "10 % 3",
+      "sampleInput": "{}",
+      "expectedOutput": "1",
+      "expectedParsed": 1,
+      "actualResult": 1,
+      "category": "mathematical-operations"
+    },
+    {
+      "file": "mathematicalOperationsExamples.ts",
+      "id": "math-1",
+      "title": "Simple Addition",
+      "expression": "5 + 3",
+      "sampleInput": "{}",
+      "expectedOutput": "8",
+      "expectedParsed": 8,
+      "actualResult": 8,
+      "category": "mathematical-operations"
+    },
+    {
+      "file": "mathematicalOperationsExamples.ts",
+      "id": "math-2",
+      "title": "Simple Subtraction",
+      "expression": "10 - 4",
+      "sampleInput": "{}",
+      "expectedOutput": "6",
+      "expectedParsed": 6,
+      "actualResult": 6,
+      "category": "mathematical-operations"
+    },
+    {
+      "file": "mathematicalOperationsExamples.ts",
+      "id": "math-3",
+      "title": "Simple Multiplication",
+      "expression": "6 * 7",
+      "sampleInput": "{}",
+      "expectedOutput": "42",
+      "expectedParsed": 42,
+      "actualResult": 42,
+      "category": "mathematical-operations"
+    },
+    {
+      "file": "mathematicalOperationsExamples.ts",
+      "id": "math-4",
+      "title": "Simple Division",
+      "expression": "15 / 3",
+      "sampleInput": "{}",
+      "expectedOutput": "5",
+      "expectedParsed": 5,
+      "actualResult": 5,
+      "category": "mathematical-operations"
+    },
+    {
+      "file": "mathematicalOperationsExamples.ts",
+      "id": "math-5",
+      "title": "Variable Addition",
+      "expression": "a + b",
+      "sampleInput": "{\"a\": 8, \"b\": 12}",
+      "expectedOutput": "20",
+      "expectedParsed": 20,
+      "actualResult": 20,
+      "category": "mathematical-operations"
+    },
+    {
+      "file": "mathematicalOperationsExamples.ts",
+      "id": "math-6",
+      "title": "Variable Multiplication",
+      "expression": "x * y",
+      "sampleInput": "{\"x\": 4, \"y\": 9}",
+      "expectedOutput": "36",
+      "expectedParsed": 36,
+      "actualResult": 36,
+      "category": "mathematical-operations"
+    },
+    {
+      "file": "mathematicalOperationsExamples.ts",
+      "id": "math-8",
+      "title": "Power Operation",
+      "expression": "(3) ^ (2)",
+      "sampleInput": "{}",
+      "expectedOutput": "9",
+      "expectedParsed": 9,
+      "actualResult": 9,
+      "category": "mathematical-operations"
+    },
+    {
+      "file": "mathematicalOperationsExamples.ts",
+      "id": "math-9",
+      "title": "Absolute Value Positive",
+      "expression": "abs(7)",
+      "sampleInput": "{}",
+      "expectedOutput": "7",
+      "expectedParsed": 7,
+      "actualResult": 7,
+      "category": "mathematical-operations"
+    },
+    {
+      "file": "mathematicalOperationsExamples.ts",
+      "id": "math-10",
+      "title": "Absolute Value Negative",
+      "expression": "abs(-7)",
+      "sampleInput": "{}",
+      "expectedOutput": "7",
+      "expectedParsed": 7,
+      "actualResult": 7,
+      "category": "mathematical-operations"
+    },
+    {
+      "file": "mathematicalOperationsExamples.ts",
+      "id": "math-11",
+      "title": "Modulo Remainder",
+      "expression": "17 % 5",
+      "sampleInput": "{}",
+      "expectedOutput": "2",
+      "expectedParsed": 2,
+      "actualResult": 2,
+      "category": "mathematical-operations"
+    },
+    {
+      "file": "mathematicalOperationsExamples.ts",
+      "id": "math-12",
+      "title": "Even Number Check",
+      "expression": "8 % 2 == 0",
+      "sampleInput": "{}",
+      "expectedOutput": "true",
+      "expectedParsed": true,
+      "actualResult": true,
+      "category": "mathematical-operations"
+    },
+    {
+      "file": "mathematicalOperationsExamples.ts",
+      "id": "math-13",
+      "title": "Odd Number Check",
+      "expression": "7 % 2 == 1",
+      "sampleInput": "{}",
+      "expectedOutput": "true",
+      "expectedParsed": true,
+      "actualResult": true,
+      "category": "mathematical-operations"
+    },
+    {
+      "file": "mathematicalOperationsExamples.ts",
+      "id": "math-14",
+      "title": "Negative Power",
+      "expression": "2 ^ -2",
+      "sampleInput": "{}",
+      "expectedOutput": "0.25",
+      "expectedParsed": 0.25,
+      "actualResult": 0.25,
+      "category": "mathematical-operations"
+    },
+    {
+      "file": "mathematicalOperationsExamples.ts",
+      "id": "math-16",
+      "title": "Complex Expression",
+      "expression": "(5 + 3) * 2 - 4 / 2",
+      "sampleInput": "{}",
+      "expectedOutput": "14",
+      "expectedParsed": 14,
+      "actualResult": 14,
+      "category": "mathematical-operations"
+    },
+    {
+      "file": "mathematicalOperationsExamples.ts",
+      "id": "math-17",
+      "title": "Nested Parentheses",
+      "expression": "((2 + 3) * (4 - 1)) / 3",
+      "sampleInput": "{}",
+      "expectedOutput": "5",
+      "expectedParsed": 5,
+      "actualResult": 5,
+      "category": "mathematical-operations"
+    },
+    {
+      "file": "mathematicalOperationsExamples.ts",
+      "id": "math-18",
+      "title": "Power of Power",
+      "expression": "2 ^ (3 ^ 2)",
+      "sampleInput": "{}",
+      "expectedOutput": "512",
+      "expectedParsed": 512,
+      "actualResult": 512,
+      "category": "mathematical-operations"
+    },
+    {
+      "file": "mathematicalOperationsExamples.ts",
+      "id": "math-19",
+      "title": "Multiple Modulo",
+      "expression": "(15 % 7) % 3",
+      "sampleInput": "{}",
+      "expectedOutput": "1",
+      "expectedParsed": 1,
+      "actualResult": 1,
+      "category": "mathematical-operations"
+    },
+    {
+      "file": "mathematicalOperationsExamples.ts",
+      "id": "math-20",
+      "title": "Division with Remainder",
+      "expression": "22 / 7",
+      "sampleInput": "{}",
+      "expectedOutput": "3.142857142857143",
+      "expectedParsed": 3.142857142857143,
+      "actualResult": 3.142857142857143,
+      "category": "mathematical-operations"
+    },
+    {
+      "file": "mathematicalOperationsExamples.ts",
+      "id": "math-21",
+      "title": "Zero Power",
+      "expression": "5 ^ 0",
+      "sampleInput": "{}",
+      "expectedOutput": "1",
+      "expectedParsed": 1,
+      "actualResult": 1,
+      "category": "mathematical-operations"
+    },
+    {
+      "file": "mathematicalOperationsExamples.ts",
+      "id": "math-22",
+      "title": "Power of One",
+      "expression": "1 ^ 100",
+      "sampleInput": "{}",
+      "expectedOutput": "1",
+      "expectedParsed": 1,
+      "actualResult": 1,
+      "category": "mathematical-operations"
+    },
+    {
+      "file": "mathematicalOperationsExamples.ts",
+      "id": "math-24",
+      "title": "Absolute of Expression",
+      "expression": "abs(3 - 8)",
+      "sampleInput": "{}",
+      "expectedOutput": "5",
+      "expectedParsed": 5,
+      "actualResult": 5,
+      "category": "mathematical-operations"
+    },
+    {
+      "file": "mathematicalOperationsExamples.ts",
+      "id": "math-25",
+      "title": "Modulo with Variables",
+      "expression": "x % y",
+      "sampleInput": "{\"x\": 13, \"y\": 4}",
+      "expectedOutput": "1",
+      "expectedParsed": 1,
+      "actualResult": 1,
+      "category": "mathematical-operations"
+    },
+    {
+      "file": "mathematicalOperationsExamples.ts",
+      "id": "math-26",
+      "title": "Power with Variables",
+      "expression": "base ^ exponent",
+      "sampleInput": "{\"base\": 3, \"exponent\": 4}",
+      "expectedOutput": "81",
+      "expectedParsed": 81,
+      "actualResult": 81,
+      "category": "mathematical-operations"
+    },
+    {
+      "file": "mathematicalOperationsExamples.ts",
+      "id": "math-27",
+      "title": "Complex Variable Expression",
+      "expression": "(a + b) * c - d / e",
+      "sampleInput": "{\"a\": 2, \"b\": 3, \"c\": 4, \"d\": 10, \"e\": 2}",
+      "expectedOutput": "15",
+      "expectedParsed": 15,
+      "actualResult": 15,
+      "category": "mathematical-operations"
+    },
+    {
+      "file": "mathematicalOperationsExamples.ts",
+      "id": "complex-math-1",
+      "title": "Multi-step Calculation",
+      "expression": "(10 + 5) * 2 - 8 / 4",
+      "sampleInput": "{}",
+      "expectedOutput": "28",
+      "expectedParsed": 28,
+      "actualResult": 28,
+      "category": "mathematical-operations"
+    },
+    {
+      "file": "mathematicalOperationsExamples.ts",
+      "id": "complex-math-2",
+      "title": "Nested Parentheses Expression",
+      "expression": "((3 + 2) * (4 - 1)) + (6 / 2)",
+      "sampleInput": "{}",
+      "expectedOutput": "18",
+      "expectedParsed": 18,
+      "actualResult": 18,
+      "category": "mathematical-operations"
+    },
+    {
+      "file": "mathematicalOperationsExamples.ts",
+      "id": "complex-math-4",
+      "title": "Modulo in Complex Expression",
+      "expression": "(15 % 4) * 3 + 7",
+      "sampleInput": "{}",
+      "expectedOutput": "16",
+      "expectedParsed": 16,
+      "actualResult": 16,
+      "category": "mathematical-operations"
+    },
+    {
+      "file": "mathematicalOperationsExamples.ts",
+      "id": "complex-math-5",
+      "title": "Absolute Value in Expression",
+      "expression": "abs(-5 + 2) * 4",
+      "sampleInput": "{}",
+      "expectedOutput": "12",
+      "expectedParsed": 12,
+      "actualResult": 12,
+      "category": "mathematical-operations"
+    },
+    {
+      "file": "mathematicalOperationsExamples.ts",
+      "id": "complex-math-6",
+      "title": "Chained Power Operations",
+      "expression": "2 ^ 3 ^ 2",
+      "sampleInput": "{}",
+      "expectedOutput": "512",
+      "expectedParsed": 512,
+      "actualResult": 512,
+      "category": "mathematical-operations"
+    },
+    {
+      "file": "mathematicalOperationsExamples.ts",
+      "id": "complex-math-7",
+      "title": "Mixed Arithmetic with Precedence",
+      "expression": "5 + 3 * 2 ^ 2 - 4 / 2",
+      "sampleInput": "{}",
+      "expectedOutput": "15",
+      "expectedParsed": 15,
+      "actualResult": 15,
+      "category": "mathematical-operations"
+    },
+    {
+      "file": "mathematicalOperationsExamples.ts",
+      "id": "complex-math-8",
+      "title": "Parentheses Override Precedence",
+      "expression": "(5 + 3) * (2 ^ 2) - (4 / 2)",
+      "sampleInput": "{}",
+      "expectedOutput": "30",
+      "expectedParsed": 30,
+      "actualResult": 30,
+      "category": "mathematical-operations"
+    },
+    {
+      "file": "mathematicalOperationsExamples.ts",
+      "id": "complex-math-11",
+      "title": "Power of Absolute Value",
+      "expression": "abs(-3) ^ 2",
+      "sampleInput": "{}",
+      "expectedOutput": "9",
+      "expectedParsed": 9,
+      "actualResult": 9,
+      "category": "mathematical-operations"
+    },
+    {
+      "file": "mathematicalOperationsExamples.ts",
+      "id": "complex-math-12",
+      "title": "Absolute of Power",
+      "expression": "abs((-2) ^ 3)",
+      "sampleInput": "{}",
+      "expectedOutput": "8",
+      "expectedParsed": 8,
+      "actualResult": 8,
+      "category": "mathematical-operations"
+    },
+    {
+      "file": "mathematicalOperationsExamples.ts",
+      "id": "complex-math-15",
+      "title": "Negative Base with Even Power",
+      "expression": "(-3) ^ 2",
+      "sampleInput": "{}",
+      "expectedOutput": "9",
+      "expectedParsed": 9,
+      "actualResult": 9,
+      "category": "mathematical-operations"
+    },
+    {
+      "file": "mathematicalOperationsExamples.ts",
+      "id": "complex-math-16",
+      "title": "Negative Base with Odd Power",
+      "expression": "(-3) ^ 3",
+      "sampleInput": "{}",
+      "expectedOutput": "-27",
+      "expectedParsed": -27,
+      "actualResult": -27,
+      "category": "mathematical-operations"
+    },
+    {
+      "file": "mathematicalOperationsExamples.ts",
+      "id": "complex-math-17",
+      "title": "Division by Power Result",
+      "expression": "100 / (2 ^ 2)",
+      "sampleInput": "{}",
+      "expectedOutput": "25",
+      "expectedParsed": 25,
+      "actualResult": 25,
+      "category": "mathematical-operations"
+    },
+    {
+      "file": "mathematicalOperationsExamples.ts",
+      "id": "complex-math-18",
+      "title": "Modulo of Large Numbers",
+      "expression": "1000 % 37",
+      "sampleInput": "{}",
+      "expectedOutput": "1",
+      "expectedParsed": 1,
+      "actualResult": 1,
+      "category": "mathematical-operations"
+    },
+    {
+      "file": "mathematicalOperationsExamples.ts",
+      "id": "complex-math-19",
+      "title": "Power Chain with Parentheses",
+      "expression": "(2 ^ 3) ^ 2",
+      "sampleInput": "{}",
+      "expectedOutput": "64",
+      "expectedParsed": 64,
+      "actualResult": 64,
+      "category": "mathematical-operations"
+    },
+    {
+      "file": "mathematicalOperationsExamples.ts",
+      "id": "complex-math-20",
+      "title": "Mixed Operations with Variables",
+      "expression": "(a + b) ^ 2 - 4 * a * b",
+      "sampleInput": "{\"a\": 3, \"b\": 4}",
+      "expectedOutput": "1",
+      "expectedParsed": 1,
+      "actualResult": 1,
+      "category": "mathematical-operations"
+    },
+    {
+      "file": "mathematicalOperationsExamples.ts",
+      "id": "complex-math-21",
+      "title": "Absolute Difference",
+      "expression": "abs(x - y)",
+      "sampleInput": "{\"x\": 5, \"y\": 12}",
+      "expectedOutput": "7",
+      "expectedParsed": 7,
+      "actualResult": 7,
+      "category": "mathematical-operations"
+    },
+    {
+      "file": "mathematicalOperationsExamples.ts",
+      "id": "complex-math-23",
+      "title": "Quadratic Expression",
+      "expression": "a * x ^ 2 + b * x + c",
+      "sampleInput": "{\"a\": 2, \"b\": -3, \"c\": 1, \"x\": 2}",
+      "expectedOutput": "3",
+      "expectedParsed": 3,
+      "actualResult": 3,
+      "category": "mathematical-operations"
+    },
+    {
+      "file": "mathematicalOperationsExamples.ts",
+      "id": "complex-math-24",
+      "title": "Compound Interest Formula",
+      "expression": "P * (1 + r) ^ t",
+      "sampleInput": "{\"P\": 1000, \"r\": 0.05, \"t\": 3}",
+      "expectedOutput": "1157.625",
+      "expectedParsed": 1157.625,
+      "actualResult": 1157.625,
+      "category": "mathematical-operations"
+    },
+    {
+      "file": "mathematicalOperationsExamples.ts",
+      "id": "complex-math-25",
+      "title": "Factorial Approximation",
+      "expression": "1 * 2 * 3 * 4 * 5",
+      "sampleInput": "{}",
+      "expectedOutput": "120",
+      "expectedParsed": 120,
+      "actualResult": 120,
+      "category": "mathematical-operations"
+    },
+    {
+      "file": "mathematicalOperationsExamples.ts",
+      "id": "complex-math-27",
+      "title": "Percentage Calculation",
+      "expression": "(part / whole) * 100",
+      "sampleInput": "{\"part\": 25, \"whole\": 80}",
+      "expectedOutput": "31.25",
+      "expectedParsed": 31.25,
+      "actualResult": 31.25,
+      "category": "mathematical-operations"
+    },
+    {
+      "file": "mathematicalOperationsExamples.ts",
+      "id": "complex-math-28",
+      "title": "Circle Area",
+      "expression": "pi * r ^ 2",
+      "sampleInput": "{\"pi\": 3.14159, \"r\": 5}",
+      "expectedOutput": "78.53975",
+      "expectedParsed": 78.53975,
+      "actualResult": 78.53975,
+      "category": "mathematical-operations"
+    },
+    {
+      "file": "mathematicalOperationsExamples.ts",
+      "id": "complex-math-29",
+      "title": "Temperature Conversion",
+      "expression": "(F - 32) * 5 / 9",
+      "sampleInput": "{\"F\": 100}",
+      "expectedOutput": "37.77777777777778",
+      "expectedParsed": 37.77777777777778,
+      "actualResult": 37.77777777777778,
+      "category": "mathematical-operations"
+    },
+    {
+      "file": "mathematicalOperationsExamples.ts",
+      "id": "complex-math-30",
+      "title": "Change of Base Formula",
+      "expression": "x / 10",
+      "sampleInput": "{\"x\": 100}",
+      "expectedOutput": "10",
+      "expectedParsed": 10,
+      "actualResult": 10,
+      "category": "mathematical-operations"
+    },
+    {
+      "file": "mathematicalOperationsExamples.ts",
+      "id": "decimal-2",
+      "title": "Using Precision Function",
+      "expression": "round(0.1 + 0.2, 10)",
+      "sampleInput": "{}",
+      "expectedOutput": "0.3",
+      "expectedParsed": 0.3,
+      "actualResult": 0.3,
+      "category": "mathematical-operations"
+    },
+    {
+      "file": "mathematicalOperationsExamples.ts",
+      "id": "decimal-3",
+      "title": "Decimal Multiplication",
+      "expression": "0.1 * 3",
+      "sampleInput": "{}",
+      "expectedOutput": "0.30000000000000004",
+      "expectedParsed": 0.30000000000000004,
+      "actualResult": 0.3,
+      "category": "mathematical-operations"
+    },
+    {
+      "file": "mathematicalOperationsExamples.ts",
+      "id": "decimal-4",
+      "title": "Precise Decimal Multiplication",
+      "expression": "round(0.1 * 3, 10)",
+      "sampleInput": "{}",
+      "expectedOutput": "0.3",
+      "expectedParsed": 0.3,
+      "actualResult": 0.3,
+      "category": "mathematical-operations"
+    },
+    {
+      "file": "mathematicalOperationsExamples.ts",
+      "id": "decimal-5",
+      "title": "Decimal Division",
+      "expression": "1 / 3",
+      "sampleInput": "{}",
+      "expectedOutput": "0.3333333333333333",
+      "expectedParsed": 0.3333333333333333,
+      "actualResult": 0.3333333333333333,
+      "category": "mathematical-operations"
+    },
+    {
+      "file": "mathematicalOperationsExamples.ts",
+      "id": "decimal-6",
+      "title": "Division with Specified Decimal Precision",
+      "expression": "round(1 / 3, 4)",
+      "sampleInput": "{}",
+      "expectedOutput": "0.3333",
+      "expectedParsed": 0.3333,
+      "actualResult": 0.3333,
+      "category": "mathematical-operations"
+    },
+    {
+      "file": "mathematicalOperationsExamples.ts",
+      "id": "decimal-8",
+      "title": "Financial Calculation",
+      "expression": "round(21.59, 2)",
+      "sampleInput": "{}",
+      "expectedOutput": "21.59",
+      "expectedParsed": 21.59,
+      "actualResult": 21.59,
+      "category": "mathematical-operations"
+    },
+    {
+      "file": "mathematicalOperationsExamples.ts",
+      "id": "round-1",
+      "title": "Basic Rounding",
+      "expression": "round(3.7)",
+      "sampleInput": "{}",
+      "expectedOutput": "4",
+      "expectedParsed": 4,
+      "actualResult": 4,
+      "category": "mathematical-operations"
+    },
+    {
+      "file": "mathematicalOperationsExamples.ts",
+      "id": "round-2",
+      "title": "Round Down",
+      "expression": "round(3.2)",
+      "sampleInput": "{}",
+      "expectedOutput": "3",
+      "expectedParsed": 3,
+      "actualResult": 3,
+      "category": "mathematical-operations"
+    },
+    {
+      "file": "mathematicalOperationsExamples.ts",
+      "id": "round-3",
+      "title": "Floor Function",
+      "expression": "floor(3.9)",
+      "sampleInput": "{}",
+      "expectedOutput": "3",
+      "expectedParsed": 3,
+      "actualResult": 3,
+      "category": "mathematical-operations"
+    },
+    {
+      "file": "mathematicalOperationsExamples.ts",
+      "id": "round-4",
+      "title": "Ceiling Function",
+      "expression": "ceil(3.1)",
+      "sampleInput": "{}",
+      "expectedOutput": "4",
+      "expectedParsed": 4,
+      "actualResult": 4,
+      "category": "mathematical-operations"
+    },
+    {
+      "file": "mathematicalOperationsExamples.ts",
+      "id": "round-5",
+      "title": "Round with Precision",
+      "expression": "round(3.14159, 2)",
+      "sampleInput": "{}",
+      "expectedOutput": "3.14",
+      "expectedParsed": 3.14,
+      "actualResult": 3.14,
+      "category": "mathematical-operations"
+    },
+    {
+      "file": "mathematicalOperationsExamples.ts",
+      "id": "round-6",
+      "title": "Floor with Negative",
+      "expression": "floor(-2.3)",
+      "sampleInput": "{}",
+      "expectedOutput": "-3",
+      "expectedParsed": -3,
+      "actualResult": -3,
+      "category": "mathematical-operations"
+    },
+    {
+      "file": "mathematicalOperationsExamples.ts",
+      "id": "round-7",
+      "title": "Ceiling with Negative",
+      "expression": "ceil(-2.7)",
+      "sampleInput": "{}",
+      "expectedOutput": "-2",
+      "expectedParsed": -2,
+      "actualResult": -2,
+      "category": "mathematical-operations"
+    },
+    {
+      "file": "mathematicalOperationsExamples.ts",
+      "id": "round-8",
+      "title": "Round Negative with Precision",
+      "expression": "round(-3.14159, 3)",
+      "sampleInput": "{}",
+      "expectedOutput": "-3.142",
+      "expectedParsed": -3.142,
+      "actualResult": -3.142,
+      "category": "mathematical-operations"
+    },
+    {
+      "file": "mathematicalOperationsExamples.ts",
+      "id": "round-10",
+      "title": "Round Result of Complex Expression",
+      "expression": "round((5 ^ 2 + 12 ^ 2) ^ 0.5)",
+      "sampleInput": "{}",
+      "expectedOutput": "13",
+      "expectedParsed": 13,
+      "actualResult": 13,
+      "category": "mathematical-operations"
+    },
+    {
+      "file": "mathematicalOperationsExamples.ts",
+      "id": "extreme-finance-1",
+      "title": "Multi-Currency Portfolio Risk Analysis",
+      "expression": "map(portfolios, {owner: #.owner, status: \"analyzed\"})",
+      "sampleInput": "{\"portfolios\": [{\"owner\": \"John Doe\", \"holdings\": [{\"asset\": \"AAPL\", \"amount\": 100, \"price_usd\": 150.25, \"currency\": \"USD\", \"volatility\": 0.25}, {\"asset\": \"TSLA\", \"amount\": 50, \"price_usd\": 180.50, \"currency\": \"USD\", \"volatility\": 0.45}, {\"asset\": \"ASML\", \"amount\": 25, \"price_usd\": 620.75, \"currency\": \"EUR\", \"volatility\": 0.35}]}]}",
+      "expectedOutput": "[{\"owner\": \"John Doe\", \"status\": \"analyzed\"}]",
+      "expectedParsed": [
+        {
+          "owner": "John Doe",
+          "status": "analyzed"
+        }
+      ],
+      "actualResult": [
+        {
+          "owner": "John Doe",
+          "status": "analyzed"
+        }
+      ],
+      "category": "extreme-finance"
+    },
+    {
+      "file": "mathematicalOperationsExamples.ts",
+      "id": "extreme-finance-2",
+      "title": "Complex Options Chain Analysis",
+      "expression": "map(options_chains, {symbol: #.symbol, status: \"analyzed\"})",
+      "sampleInput": "{\"options_chains\": [{\"symbol\": \"AAPL\", \"expiry\": \"2024-01-19\", \"spot_price\": 150.25, \"contracts\": [{\"type\": \"call\", \"strike\": 145, \"implied_volatility\": 0.28, \"volume\": 1250}, {\"type\": \"call\", \"strike\": 155, \"implied_volatility\": 0.32, \"volume\": 890}, {\"type\": \"put\", \"strike\": 145, \"implied_volatility\": 0.30, \"volume\": 760}, {\"type\": \"put\", \"strike\": 155, \"implied_volatility\": 0.35, \"volume\": 1100}]}]}",
+      "expectedOutput": "[{\"symbol\": \"AAPL\", \"status\": \"analyzed\"}]",
+      "expectedParsed": [
+        {
+          "symbol": "AAPL",
+          "status": "analyzed"
+        }
+      ],
+      "actualResult": [
+        {
+          "status": "analyzed",
+          "symbol": "AAPL"
+        }
+      ],
+      "category": "extreme-finance"
+    },
+    {
+      "file": "nullExamples.ts",
+      "id": "null-1",
+      "title": "Nullish Coalescing",
+      "expression": "null ?? \"hello\"",
+      "sampleInput": "{}",
+      "expectedOutput": "\"hello\"",
+      "expectedParsed": "hello",
+      "actualResult": "hello",
+      "category": "null"
+    },
+    {
+      "file": "nullExamples.ts",
+      "id": "null-2",
+      "title": "User Name Default",
+      "expression": "user.name ?? \"Guest\"",
+      "sampleInput": "{\"user\": {\"name\": \"John\"}}",
+      "expectedOutput": "\"John\"",
+      "expectedParsed": "John",
+      "actualResult": "John",
+      "category": "null"
+    },
+    {
+      "file": "nullExamples.ts",
+      "id": "null-3",
+      "title": "Missing Property Default",
+      "expression": "user.name ?? \"Guest\"",
+      "sampleInput": "{\"user\": {}}",
+      "expectedOutput": "\"Guest\"",
+      "expectedParsed": "Guest",
+      "actualResult": "Guest",
+      "category": "null"
+    },
+    {
+      "file": "nullExamples.ts",
+      "id": "null-4",
+      "title": "Chained Null Coalescing",
+      "expression": "null ?? 123 ?? 321",
+      "sampleInput": "{}",
+      "expectedOutput": "123",
+      "expectedParsed": 123,
+      "actualResult": 123,
+      "category": "null"
+    },
+    {
+      "file": "nullExamples.ts",
+      "id": "null-5",
+      "title": "Multiple Null Chain",
+      "expression": "null ?? null ?? 321",
+      "sampleInput": "{}",
+      "expectedOutput": "321",
+      "expectedParsed": 321,
+      "actualResult": 321,
+      "category": "null"
+    },
+    {
+      "file": "nullExamples.ts",
+      "id": "null-6",
+      "title": "Nested Property with Default",
+      "expression": "(user.address.city) ?? \"Unknown\"",
+      "sampleInput": "{\"user\": {\"address\": {\"city\": \"New York\"}}}",
+      "expectedOutput": "\"New York\"",
+      "expectedParsed": "New York",
+      "actualResult": "New York",
+      "category": "null"
+    },
+    {
+      "file": "nullExamples.ts",
+      "id": "null-7",
+      "title": "Missing Nested Property Default",
+      "expression": "(user.address.city) ?? \"Unknown\"",
+      "sampleInput": "{\"user\": {}}",
+      "expectedOutput": "\"Unknown\"",
+      "expectedParsed": "Unknown",
+      "actualResult": "Unknown",
+      "category": "null"
+    },
+    {
+      "file": "nullExamples.ts",
+      "id": "null-8",
+      "title": "Conditional Null Coalescing",
+      "expression": "false or true ? null ?? \"test\" : false",
+      "sampleInput": "{}",
+      "expectedOutput": "\"test\"",
+      "expectedParsed": "test",
+      "actualResult": "test",
+      "category": "null"
+    },
+    {
+      "file": "objectExamples.ts",
+      "id": "obj-1",
+      "title": "Property Access",
+      "expression": "user.address.city",
+      "sampleInput": "{\"user\": {\"address\": {\"city\": \"New York\"}}}",
+      "expectedOutput": "\"New York\"",
+      "expectedParsed": "New York",
+      "actualResult": "New York",
+      "category": "object"
+    },
+    {
+      "file": "objectExamples.ts",
+      "id": "obj-2",
+      "title": "Array Index Access",
+      "expression": "user.contacts[0].phone",
+      "sampleInput": "{\"user\": {\"contacts\": [{\"phone\": \"123-456-7890\"}]}}",
+      "expectedOutput": "\"123-456-7890\"",
+      "expectedParsed": "123-456-7890",
+      "actualResult": "123-456-7890",
+      "category": "object"
+    },
+    {
+      "file": "objectExamples.ts",
+      "id": "obj-3",
+      "title": "Object Keys",
+      "expression": "keys(customer)",
+      "sampleInput": "{\"customer\": {\"firstName\": \"John\"}}",
+      "expectedOutput": "[\"firstName\"]",
+      "expectedParsed": [
+        "firstName"
+      ],
+      "actualResult": [
+        "firstName"
+      ],
+      "category": "object"
+    },
+    {
+      "file": "objectExamples.ts",
+      "id": "obj-4",
+      "title": "Object Values",
+      "expression": "values(customer)",
+      "sampleInput": "{\"customer\": {\"firstName\": \"John\"}}",
+      "expectedOutput": "[\"John\"]",
+      "expectedParsed": [
+        "John"
+      ],
+      "actualResult": [
+        "John"
+      ],
+      "category": "object"
+    },
+    {
+      "file": "objectExamples.ts",
+      "id": "obj-5",
+      "title": "Array Index Check",
+      "expression": "data.items[0] == \"a\"",
+      "sampleInput": "{\"data\": {\"items\": [\"a\", \"b\", \"c\"]}}",
+      "expectedOutput": "true",
+      "expectedParsed": true,
+      "actualResult": true,
+      "category": "object"
+    },
+    {
+      "file": "objectExamples.ts",
+      "id": "obj-6",
+      "title": "Sum Object Values",
+      "expression": "sum(values({a: 1, b: 2, c: 3}))",
+      "sampleInput": "{}",
+      "expectedOutput": "6",
+      "expectedParsed": 6,
+      "actualResult": 6,
+      "category": "object"
+    },
+    {
+      "file": "objectExamples.ts",
+      "id": "obj-7",
+      "title": "Dynamic Key Creation",
+      "expression": "keys({[`dynamic-${\"key\"}`]: 123})",
+      "sampleInput": "{}",
+      "expectedOutput": "[\"dynamic-key\"]",
+      "expectedParsed": [
+        "dynamic-key"
+      ],
+      "actualResult": [
+        "dynamic-key"
+      ],
+      "category": "object"
+    },
+    {
+      "file": "objectExamples.ts",
+      "id": "obj-8",
+      "title": "Check Values Contains",
+      "expression": "contains(values({a: 1, b: 2, c: 3}), 2)",
+      "sampleInput": "{}",
+      "expectedOutput": "true",
+      "expectedParsed": true,
+      "actualResult": true,
+      "category": "object"
+    },
+    {
+      "file": "rangeExamples.ts",
+      "id": "range-1",
+      "title": "Range Mapping",
+      "expression": "map([0..3], #)",
+      "sampleInput": "{}",
+      "expectedOutput": "[0, 1, 2, 3]",
+      "expectedParsed": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "actualResult": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "category": "range"
+    },
+    {
+      "file": "rangeExamples.ts",
+      "id": "range-2",
+      "title": "Exclusive Range Start",
+      "expression": "map((0..3], #)",
+      "sampleInput": "{}",
+      "expectedOutput": "[1, 2, 3]",
+      "expectedParsed": [
+        1,
+        2,
+        3
+      ],
+      "actualResult": [
+        1,
+        2,
+        3
+      ],
+      "category": "range"
+    },
+    {
+      "file": "rangeExamples.ts",
+      "id": "range-3",
+      "title": "Exclusive Range End",
+      "expression": "map([0..3), #)",
+      "sampleInput": "{}",
+      "expectedOutput": "[0, 1, 2]",
+      "expectedParsed": [
+        0,
+        1,
+        2
+      ],
+      "actualResult": [
+        0,
+        1,
+        2
+      ],
+      "category": "range"
+    },
+    {
+      "file": "rangeExamples.ts",
+      "id": "range-4",
+      "title": "Range Multiplication",
+      "expression": "map([0..5], # * 2)",
+      "sampleInput": "{}",
+      "expectedOutput": "[0, 2, 4, 6, 8, 10]",
+      "expectedParsed": [
+        0,
+        2,
+        4,
+        6,
+        8,
+        10
+      ],
+      "actualResult": [
+        0,
+        2,
+        4,
+        6,
+        8,
+        10
+      ],
+      "category": "range"
+    },
+    {
+      "file": "rangeExamples.ts",
+      "id": "range-5",
+      "title": "Range Check True",
+      "expression": "x in [1..10]",
+      "sampleInput": "{\"x\": 5}",
+      "expectedOutput": "true",
+      "expectedParsed": true,
+      "actualResult": true,
+      "category": "range"
+    },
+    {
+      "file": "rangeExamples.ts",
+      "id": "range-6",
+      "title": "Range Check False",
+      "expression": "x in [1..10]",
+      "sampleInput": "{\"x\": 0}",
+      "expectedOutput": "false",
+      "expectedParsed": false,
+      "actualResult": false,
+      "category": "range"
+    },
+    {
+      "file": "rangeExamples.ts",
+      "id": "range-7",
+      "title": "Exclusive Range Check",
+      "expression": "x in (1..10)",
+      "sampleInput": "{\"x\": 1}",
+      "expectedOutput": "false",
+      "expectedParsed": false,
+      "actualResult": false,
+      "category": "range"
+    },
+    {
+      "file": "rangeExamples.ts",
+      "id": "range-8",
+      "title": "Range Filter Even Numbers",
+      "expression": "filter([0..10], # % 2 == 0)",
+      "sampleInput": "{}",
+      "expectedOutput": "[0, 2, 4, 6, 8, 10]",
+      "expectedParsed": [
+        0,
+        2,
+        4,
+        6,
+        8,
+        10
+      ],
+      "actualResult": [
+        0,
+        2,
+        4,
+        6,
+        8,
+        10
+      ],
+      "category": "range"
+    },
+    {
+      "file": "stringOperationsExamples.ts",
+      "id": "str-1",
+      "title": "String Concatenation",
+      "expression": "'hello' + \" \" + \"world\"",
+      "sampleInput": "{}",
+      "expectedOutput": "'hello world'",
+      "expectedParsed": "hello world",
+      "actualResult": "hello world",
+      "category": "string-operations"
+    },
+    {
+      "file": "stringOperationsExamples.ts",
+      "id": "str-2",
+      "title": "String Length",
+      "expression": "len(\"Hello, World!\")",
+      "sampleInput": "{}",
+      "expectedOutput": "13",
+      "expectedParsed": 13,
+      "actualResult": 13,
+      "category": "string-operations"
+    },
+    {
+      "file": "stringOperationsExamples.ts",
+      "id": "str-3",
+      "title": "String to Uppercase",
+      "expression": "upper(\"Hello, World!\")",
+      "sampleInput": "{}",
+      "expectedOutput": "\"HELLO, WORLD!\"",
+      "expectedParsed": "HELLO, WORLD!",
+      "actualResult": "HELLO, WORLD!",
+      "category": "string-operations"
+    },
+    {
+      "file": "stringOperationsExamples.ts",
+      "id": "str-4",
+      "title": "String to Lowercase",
+      "expression": "lower(\"Hello, World!\")",
+      "sampleInput": "{}",
+      "expectedOutput": "\"hello, world!\"",
+      "expectedParsed": "hello, world!",
+      "actualResult": "hello, world!",
+      "category": "string-operations"
+    },
+    {
+      "file": "stringOperationsExamples.ts",
+      "id": "str-5",
+      "title": "String Trim",
+      "expression": "trim(\"  HELLO, WORLD!  \")",
+      "sampleInput": "{}",
+      "expectedOutput": "\"HELLO, WORLD!\"",
+      "expectedParsed": "HELLO, WORLD!",
+      "actualResult": "HELLO, WORLD!",
+      "category": "string-operations"
+    },
+    {
+      "file": "stringOperationsExamples.ts",
+      "id": "str-6",
+      "title": "String Contains Check",
+      "expression": "contains(\"Hello, World!\", \"lo\")",
+      "sampleInput": "{}",
+      "expectedOutput": "true",
+      "expectedParsed": true,
+      "actualResult": true,
+      "category": "string-operations"
+    },
+    {
+      "file": "stringOperationsExamples.ts",
+      "id": "str-7",
+      "title": "String Starts With",
+      "expression": "startsWith(\"Hello, World!\", \"Hello\")",
+      "sampleInput": "{}",
+      "expectedOutput": "true",
+      "expectedParsed": true,
+      "actualResult": true,
+      "category": "string-operations"
+    },
+    {
+      "file": "stringOperationsExamples.ts",
+      "id": "str-8",
+      "title": "String Ends With",
+      "expression": "endsWith(\"Hello, World!\", \"World!\")",
+      "sampleInput": "{}",
+      "expectedOutput": "true",
+      "expectedParsed": true,
+      "actualResult": true,
+      "category": "string-operations"
+    },
+    {
+      "file": "stringOperationsExamples.ts",
+      "id": "str-9",
+      "title": "String Pattern Matching",
+      "expression": "matches(\"Hello, World!\", \"H[a-z]+, W[a-z]+!\")",
+      "sampleInput": "{}",
+      "expectedOutput": "true",
+      "expectedParsed": true,
+      "actualResult": true,
+      "category": "string-operations"
+    },
+    {
+      "file": "stringOperationsExamples.ts",
+      "id": "str-10",
+      "title": "Phone Number Validation",
+      "expression": "matches(\"123-456-7890\", \"[0-9]{3}-[0-9]{3}-[0-9]{4}\")",
+      "sampleInput": "{}",
+      "expectedOutput": "true",
+      "expectedParsed": true,
+      "actualResult": true,
+      "category": "string-operations"
+    },
+    {
+      "file": "stringOperationsExamples.ts",
+      "id": "str-11",
+      "title": "Email Validation",
+      "expression": "matches(\"user@example.com\", \"[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2}\")",
+      "sampleInput": "{}",
+      "expectedOutput": "true",
+      "expectedParsed": true,
+      "actualResult": true,
+      "category": "string-operations"
+    },
+    {
+      "file": "stringOperationsExamples.ts",
+      "id": "str-12",
+      "title": "Date Extraction with Groups",
+      "expression": "extract(\"2022-09-18\", \"(\\d{4})-(\\d{2})-(\\d{2})\")",
+      "sampleInput": "{}",
+      "expectedOutput": "[\"2022-09-18\", \"2022\", \"09\", \"18\"]",
+      "expectedParsed": [
+        "2022-09-18",
+        "2022",
+        "09",
+        "18"
+      ],
+      "actualResult": [
+        "2022-09-18",
+        "2022",
+        "09",
+        "18"
+      ],
+      "category": "string-operations"
+    },
+    {
+      "file": "stringOperationsExamples.ts",
+      "id": "str-13",
+      "title": "URL Parts Extraction",
+      "expression": "contains(\"example.com\", \"example\")",
+      "sampleInput": "{}",
+      "expectedOutput": "true",
+      "expectedParsed": true,
+      "actualResult": true,
+      "category": "string-operations"
+    },
+    {
+      "file": "stringOperationsExamples.ts",
+      "id": "str-14",
+      "title": "String Split by Delimiter",
+      "expression": "split(\"hello,world,test\", \",\")",
+      "sampleInput": "{}",
+      "expectedOutput": "[\"hello\", \"world\", \"test\"]",
+      "expectedParsed": [
+        "hello",
+        "world",
+        "test"
+      ],
+      "actualResult": [
+        "hello",
+        "world",
+        "test"
+      ],
+      "category": "string-operations"
+    },
+    {
+      "file": "stringOperationsExamples.ts",
+      "id": "str-15",
+      "title": "Split and Convert to Numbers",
+      "expression": "map(split(\"123,456,789\", \",\"), number(#))",
+      "sampleInput": "{}",
+      "expectedOutput": "[123, 456, 789]",
+      "expectedParsed": [
+        123,
+        456,
+        789
+      ],
+      "actualResult": [
+        123,
+        456,
+        789
+      ],
+      "category": "string-operations"
+    },
+    {
+      "file": "stringOperationsExamples.ts",
+      "id": "str-adv-1",
+      "title": "Case Sensitive Contains",
+      "expression": "contains(\"Hello World\", \"hello\")",
+      "sampleInput": "{}",
+      "expectedOutput": "false",
+      "expectedParsed": false,
+      "actualResult": false,
+      "category": "string-operations"
+    },
+    {
+      "file": "stringOperationsExamples.ts",
+      "id": "str-adv-2",
+      "title": "Case Insensitive Contains",
+      "expression": "contains(lower(\"Hello World\"), lower(\"HELLO\"))",
+      "sampleInput": "{}",
+      "expectedOutput": "true",
+      "expectedParsed": true,
+      "actualResult": true,
+      "category": "string-operations"
+    },
+    {
+      "file": "stringOperationsExamples.ts",
+      "id": "str-adv-3",
+      "title": "Multi-Step String Processing",
+      "expression": "upper(trim(\"  hello world  \"))",
+      "sampleInput": "{}",
+      "expectedOutput": "\"HELLO WORLD\"",
+      "expectedParsed": "HELLO WORLD",
+      "actualResult": "HELLO WORLD",
+      "category": "string-operations"
+    },
+    {
+      "file": "stringOperationsExamples.ts",
+      "id": "str-adv-4",
+      "title": "Complex String Filtering",
+      "expression": "map(filter(split(\"apple,banana,a,cherry,go\", \",\"), len(#) > 2), upper(#))",
+      "sampleInput": "{}",
+      "expectedOutput": "[\"APPLE\", \"BANANA\", \"CHERRY\"]",
+      "expectedParsed": [
+        "APPLE",
+        "BANANA",
+        "CHERRY"
+      ],
+      "actualResult": [
+        "APPLE",
+        "BANANA",
+        "CHERRY"
+      ],
+      "category": "string-operations"
+    },
+    {
+      "file": "stringOperationsExamples.ts",
+      "id": "str-adv-5",
+      "title": "String Length Validation",
+      "expression": "map(split(\"short,medium,verylongstring\", \",\"), {word: #, length: len(#), valid: len(#) >= 5 and len(#) <= 10})",
+      "sampleInput": "{}",
+      "expectedOutput": "[{\"word\": \"short\", \"length\": 5, \"valid\": true}, {\"word\": \"medium\", \"length\": 6, \"valid\": true}, {\"word\": \"verylongstring\", \"length\": 14, \"valid\": false}]",
+      "expectedParsed": [
+        {
+          "word": "short",
+          "length": 5,
+          "valid": true
+        },
+        {
+          "word": "medium",
+          "length": 6,
+          "valid": true
+        },
+        {
+          "word": "verylongstring",
+          "length": 14,
+          "valid": false
+        }
+      ],
+      "actualResult": [
+        {
+          "length": 5,
+          "valid": true,
+          "word": "short"
+        },
+        {
+          "length": 6,
+          "valid": true,
+          "word": "medium"
+        },
+        {
+          "length": 14,
+          "valid": false,
+          "word": "verylongstring"
+        }
+      ],
+      "category": "string-operations"
+    },
+    {
+      "file": "stringOperationsExamples.ts",
+      "id": "slice-2",
+      "title": "String Slice from Middle",
+      "expression": "text[6:]",
+      "sampleInput": "{\"text\": \"hello world\"}",
+      "expectedOutput": "\"world\"",
+      "expectedParsed": "world",
+      "actualResult": "world",
+      "category": "string-operations"
+    },
+    {
+      "file": "stringOperationsExamples.ts",
+      "id": "slice-3",
+      "title": "String Slice to End",
+      "expression": "text[6:]",
+      "sampleInput": "{\"text\": \"hello world\"}",
+      "expectedOutput": "\"world\"",
+      "expectedParsed": "world",
+      "actualResult": "world",
+      "category": "string-operations"
+    },
+    {
+      "file": "stringOperationsExamples.ts",
+      "id": "template-1",
+      "title": "Simple Template String",
+      "expression": "`Hello, ${name}!`",
+      "sampleInput": "{\"name\": \"World\"}",
+      "expectedOutput": "\"Hello, World!\"",
+      "expectedParsed": "Hello, World!",
+      "actualResult": "Hello, World!",
+      "category": "string-operations"
+    },
+    {
+      "file": "stringOperationsExamples.ts",
+      "id": "template-3",
+      "title": "Complex Template with Conditions",
+      "expression": "`User ${user.name} has ${user.score >= 80 ? \"passed\" : \"failed\"} with score ${user.score}`",
+      "sampleInput": "{\"user\": {\"name\": \"Alice\", \"score\": 85}}",
+      "expectedOutput": "\"User Alice has passed with score 85\"",
+      "expectedParsed": "User Alice has passed with score 85",
+      "actualResult": "User Alice has passed with score 85",
+      "category": "string-operations"
+    },
+    {
+      "file": "stringOperationsExamples.ts",
+      "id": "complex-string-1",
+      "title": "Advanced Text Processing",
+      "expression": "map(filter(split(text, \" \"), len(#) > 3), upper(trim(#)))",
+      "sampleInput": "{\"text\": \"  the quick brown fox jumps over lazy dog  \"}",
+      "expectedOutput": "[\"QUICK\", \"BROWN\", \"JUMPS\", \"OVER\", \"LAZY\"]",
+      "expectedParsed": [
+        "QUICK",
+        "BROWN",
+        "JUMPS",
+        "OVER",
+        "LAZY"
+      ],
+      "actualResult": [
+        "QUICK",
+        "BROWN",
+        "JUMPS",
+        "OVER",
+        "LAZY"
+      ],
+      "category": "complex-string"
+    },
+    {
+      "file": "templateExamples.ts",
+      "id": "template-1",
+      "title": "Simple Template",
+      "expression": "`simple template`",
+      "sampleInput": "{}",
+      "expectedOutput": "'simple template'",
+      "expectedParsed": "simple template",
+      "actualResult": "simple template",
+      "category": "template"
+    },
+    {
+      "file": "templateExamples.ts",
+      "id": "template-2",
+      "title": "Template with Expression",
+      "expression": "`sum of numbers ${sum([1, 2, 3])}`",
+      "sampleInput": "{}",
+      "expectedOutput": "'sum of numbers 6'",
+      "expectedParsed": "sum of numbers 6",
+      "actualResult": "sum of numbers 6",
+      "category": "template"
+    },
+    {
+      "file": "templateExamples.ts",
+      "id": "template-3",
+      "title": "Template with Variable",
+      "expression": "`reference env: ${a}`",
+      "sampleInput": "{\"a\": \"example\"}",
+      "expectedOutput": "'reference env: example'",
+      "expectedParsed": "reference env: example",
+      "actualResult": "reference env: example",
+      "category": "template"
+    },
+    {
+      "file": "templateExamples.ts",
+      "id": "template-4",
+      "title": "User Information Template",
+      "expression": "`User ${user.name} is ${user.age} years old`",
+      "sampleInput": "{\"user\": {\"name\": \"John\", \"age\": 30}}",
+      "expectedOutput": "'User John is 30 years old'",
+      "expectedParsed": "User John is 30 years old",
+      "actualResult": "User John is 30 years old",
+      "category": "template"
+    },
+    {
+      "file": "templateExamples.ts",
+      "id": "template-5",
+      "title": "Uppercase Function Template",
+      "expression": "`uppercase inner ${upper(\"string\")}`",
+      "sampleInput": "{}",
+      "expectedOutput": "'uppercase inner STRING'",
+      "expectedParsed": "uppercase inner STRING",
+      "actualResult": "uppercase inner STRING",
+      "category": "template"
+    },
+    {
+      "file": "templateExamples.ts",
+      "id": "template-6",
+      "title": "Sum Total Template",
+      "expression": "`Total: ${sum([1, 2, 3])}`",
+      "sampleInput": "{}",
+      "expectedOutput": "'Total: 6'",
+      "expectedParsed": "Total: 6",
+      "actualResult": "Total: 6",
+      "category": "template"
+    },
+    {
+      "file": "templateExamples.ts",
+      "id": "template-7",
+      "title": "Conditional Template",
+      "expression": "`${score > 70 ? \"Pass\" : \"Fail\"}`",
+      "sampleInput": "{\"score\": 85}",
+      "expectedOutput": "\"Pass\"",
+      "expectedParsed": "Pass",
+      "actualResult": "Pass",
+      "category": "template"
+    },
+    {
+      "file": "type_checkingExamples.ts",
+      "id": "type-1",
+      "title": "Check Numeric Float",
+      "expression": "isNumeric(123.123)",
+      "sampleInput": "{}",
+      "expectedOutput": "true",
+      "expectedParsed": true,
+      "actualResult": true,
+      "category": "type-checking"
+    },
+    {
+      "file": "type_checkingExamples.ts",
+      "id": "type-2",
+      "title": "Check Numeric Integer",
+      "expression": "isNumeric(123)",
+      "sampleInput": "{}",
+      "expectedOutput": "true",
+      "expectedParsed": true,
+      "actualResult": true,
+      "category": "type-checking"
+    },
+    {
+      "file": "type_checkingExamples.ts",
+      "id": "type-3",
+      "title": "Check Numeric String Float",
+      "expression": "isNumeric(\"123.123\")",
+      "sampleInput": "{}",
+      "expectedOutput": "true",
+      "expectedParsed": true,
+      "actualResult": true,
+      "category": "type-checking"
+    },
+    {
+      "file": "type_checkingExamples.ts",
+      "id": "type-4",
+      "title": "Check Numeric String Integer",
+      "expression": "isNumeric(\"123\")",
+      "sampleInput": "{}",
+      "expectedOutput": "true",
+      "expectedParsed": true,
+      "actualResult": true,
+      "category": "type-checking"
+    },
+    {
+      "file": "type_checkingExamples.ts",
+      "id": "type-5",
+      "title": "Check Non-Numeric String",
+      "expression": "isNumeric(\"string\")",
+      "sampleInput": "{}",
+      "expectedOutput": "false",
+      "expectedParsed": false,
+      "actualResult": false,
+      "category": "type-checking"
+    },
+    {
+      "file": "type_checkingExamples.ts",
+      "id": "type-6",
+      "title": "Check Boolean Not Numeric",
+      "expression": "isNumeric(true)",
+      "sampleInput": "{}",
+      "expectedOutput": "false",
+      "expectedParsed": false,
+      "actualResult": false,
+      "category": "type-checking"
+    },
+    {
+      "file": "type_checkingExamples.ts",
+      "id": "type-7",
+      "title": "Detect String Type",
+      "expression": "type(\"hello\")",
+      "sampleInput": "{}",
+      "expectedOutput": "\"string\"",
+      "expectedParsed": "string",
+      "actualResult": "string",
+      "category": "type-checking"
+    },
+    {
+      "file": "type_checkingExamples.ts",
+      "id": "type-8",
+      "title": "Detect Number Type",
+      "expression": "type(123)",
+      "sampleInput": "{}",
+      "expectedOutput": "\"number\"",
+      "expectedParsed": "number",
+      "actualResult": "number",
+      "category": "type-checking"
+    },
+    {
+      "file": "type_checkingExamples.ts",
+      "id": "type-9",
+      "title": "Detect Boolean Type",
+      "expression": "type(true)",
+      "sampleInput": "{}",
+      "expectedOutput": "\"bool\"",
+      "expectedParsed": "bool",
+      "actualResult": "bool",
+      "category": "type-checking"
+    },
+    {
+      "file": "type_checkingExamples.ts",
+      "id": "type-10",
+      "title": "Detect Null Type",
+      "expression": "type(null)",
+      "sampleInput": "{}",
+      "expectedOutput": "\"null\"",
+      "expectedParsed": "null",
+      "actualResult": "null",
+      "category": "type-checking"
+    },
+    {
+      "file": "type_checkingExamples.ts",
+      "id": "type-11",
+      "title": "Detect Array Type",
+      "expression": "type([1, 2, 3])",
+      "sampleInput": "{}",
+      "expectedOutput": "\"array\"",
+      "expectedParsed": "array",
+      "actualResult": "array",
+      "category": "type-checking"
+    },
+    {
+      "file": "type_checkingExamples.ts",
+      "id": "type-1",
+      "title": "Check Numeric Float",
+      "expression": "isNumeric(123.123)",
+      "sampleInput": "{}",
+      "expectedOutput": "true",
+      "expectedParsed": true,
+      "actualResult": true,
+      "category": "type-checking"
+    },
+    {
+      "file": "type_checkingExamples.ts",
+      "id": "type-2",
+      "title": "Check Numeric Integer",
+      "expression": "isNumeric(123)",
+      "sampleInput": "{}",
+      "expectedOutput": "true",
+      "expectedParsed": true,
+      "actualResult": true,
+      "category": "type-checking"
+    },
+    {
+      "file": "type_checkingExamples.ts",
+      "id": "type-3",
+      "title": "Check Numeric String Float",
+      "expression": "isNumeric(\"123.123\")",
+      "sampleInput": "{}",
+      "expectedOutput": "true",
+      "expectedParsed": true,
+      "actualResult": true,
+      "category": "type-checking"
+    },
+    {
+      "file": "type_checkingExamples.ts",
+      "id": "type-4",
+      "title": "Check Numeric String Integer",
+      "expression": "isNumeric(\"123\")",
+      "sampleInput": "{}",
+      "expectedOutput": "true",
+      "expectedParsed": true,
+      "actualResult": true,
+      "category": "type-checking"
+    },
+    {
+      "file": "type_checkingExamples.ts",
+      "id": "type-5",
+      "title": "Check Non-Numeric String",
+      "expression": "isNumeric(\"string\")",
+      "sampleInput": "{}",
+      "expectedOutput": "false",
+      "expectedParsed": false,
+      "actualResult": false,
+      "category": "type-checking"
+    },
+    {
+      "file": "type_checkingExamples.ts",
+      "id": "type-6",
+      "title": "Check Boolean Not Numeric",
+      "expression": "isNumeric(true)",
+      "sampleInput": "{}",
+      "expectedOutput": "false",
+      "expectedParsed": false,
+      "actualResult": false,
+      "category": "type-checking"
+    },
+    {
+      "file": "type_checkingExamples.ts",
+      "id": "type-7",
+      "title": "Detect String Type",
+      "expression": "type(\"hello\")",
+      "sampleInput": "{}",
+      "expectedOutput": "\"string\"",
+      "expectedParsed": "string",
+      "actualResult": "string",
+      "category": "type-checking"
+    },
+    {
+      "file": "type_checkingExamples.ts",
+      "id": "type-8",
+      "title": "Detect Number Type",
+      "expression": "type(123)",
+      "sampleInput": "{}",
+      "expectedOutput": "\"number\"",
+      "expectedParsed": "number",
+      "actualResult": "number",
+      "category": "type-checking"
+    },
+    {
+      "file": "type_checkingExamples.ts",
+      "id": "type-9",
+      "title": "Detect Boolean Type",
+      "expression": "type(true)",
+      "sampleInput": "{}",
+      "expectedOutput": "\"bool\"",
+      "expectedParsed": "bool",
+      "actualResult": "bool",
+      "category": "type-checking"
+    },
+    {
+      "file": "type_checkingExamples.ts",
+      "id": "type-10",
+      "title": "Detect Null Type",
+      "expression": "type(null)",
+      "sampleInput": "{}",
+      "expectedOutput": "\"null\"",
+      "expectedParsed": "null",
+      "actualResult": "null",
+      "category": "type-checking"
+    },
+    {
+      "file": "type_checkingExamples.ts",
+      "id": "type-11",
+      "title": "Detect Array Type",
+      "expression": "type([1, 2, 3])",
+      "sampleInput": "{}",
+      "expectedOutput": "\"array\"",
+      "expectedParsed": "array",
+      "actualResult": "array",
+      "category": "type-checking"
+    },
+    {
+      "file": "unary_operationsExamples.ts",
+      "id": "unary-1",
+      "title": "Boolean Context True",
+      "expression": "true",
+      "sampleInput": "{ \"$\": true }",
+      "expectedOutput": "true",
+      "expectedParsed": true,
+      "actualResult": true,
+      "category": "unary-operations"
+    },
+    {
+      "file": "unary_operationsExamples.ts",
+      "id": "unary-3",
+      "title": "Greater Than Comparison",
+      "expression": "$ > 5",
+      "sampleInput": "{\"$\": 10}",
+      "expectedOutput": "true",
+      "expectedParsed": true,
+      "actualResult": true,
+      "category": "unary-operations"
+    },
+    {
+      "file": "unary_operationsExamples.ts",
+      "id": "unary-4",
+      "title": "Less Than Comparison",
+      "expression": "$ < 10",
+      "sampleInput": "{\"$\": 5}",
+      "expectedOutput": "true",
+      "expectedParsed": true,
+      "actualResult": true,
+      "category": "unary-operations"
+    },
+    {
+      "file": "unary_operationsExamples.ts",
+      "id": "unary-5",
+      "title": "Greater Than or Equal",
+      "expression": "$ >= 10",
+      "sampleInput": "{\"$\": 10}",
+      "expectedOutput": "true",
+      "expectedParsed": true,
+      "actualResult": true,
+      "category": "unary-operations"
+    },
+    {
+      "file": "unary_operationsExamples.ts",
+      "id": "unary-6",
+      "title": "Less Than or Equal",
+      "expression": "$ <= 5",
+      "sampleInput": "{\"$\": 5}",
+      "expectedOutput": "true",
+      "expectedParsed": true,
+      "actualResult": true,
+      "category": "unary-operations"
+    },
+    {
+      "file": "unary_operationsExamples.ts",
+      "id": "unary-12",
+      "title": "Combined Comparison",
+      "expression": "$ > 5 and $ < 10",
+      "sampleInput": "{\"$\": 5}",
+      "expectedOutput": "false",
+      "expectedParsed": false,
+      "actualResult": false,
+      "category": "unary-operations"
+    },
+    {
+      "file": "unary_operationsExamples.ts",
+      "id": "unary-13",
+      "title": "Range and Comparison",
+      "expression": "$ in [-10..0] and $ > -5",
+      "sampleInput": "{\"$\": -4.99}",
+      "expectedOutput": "true",
+      "expectedParsed": true,
+      "actualResult": true,
+      "category": "unary-operations"
+    },
+    {
+      "file": "unary_operationsExamples.ts",
+      "id": "unary-15",
+      "title": "String Length Check",
+      "expression": "len($) == 13",
+      "sampleInput": "{\"$\": \"Hello, World!\"}",
+      "expectedOutput": "true",
+      "expectedParsed": true,
+      "actualResult": true,
+      "category": "unary-operations"
+    },
+    {
+      "file": "unary_operationsExamples.ts",
+      "id": "unary-16",
+      "title": "String Starts With",
+      "expression": "startsWith($, \"Hello\")",
+      "sampleInput": "{\"$\": \"Hello, World!\"}",
+      "expectedOutput": "true",
+      "expectedParsed": true,
+      "actualResult": true,
+      "category": "unary-operations"
+    },
+    {
+      "file": "unary_operationsExamples.ts",
+      "id": "unary-17",
+      "title": "String Ends With",
+      "expression": "endsWith($, \"World!\")",
+      "sampleInput": "{\"$\": \"Hello, World!\"}",
+      "expectedOutput": "true",
+      "expectedParsed": true,
+      "actualResult": true,
+      "category": "unary-operations"
+    },
+    {
+      "file": "unary_operationsExamples.ts",
+      "id": "unary-18",
+      "title": "String Contains",
+      "expression": "contains($, \"lo\")",
+      "sampleInput": "{\"$\": \"Hello, World!\"}",
+      "expectedOutput": "true",
+      "expectedParsed": true,
+      "actualResult": true,
+      "category": "unary-operations"
+    },
+    {
+      "file": "unary_operationsExamples.ts",
+      "id": "unary-19",
+      "title": "String Slice Check",
+      "expression": "$[0:5] == \"sample\"",
+      "sampleInput": "{\"$\": \"sample_string\"}",
+      "expectedOutput": "true",
+      "expectedParsed": true,
+      "actualResult": true,
+      "category": "unary-operations"
+    },
+    {
+      "file": "utility_functionsExamples.ts",
+      "id": "util-1",
+      "title": "Fuzzy Match Exact",
+      "expression": "fuzzyMatch(\"hello\", \"hello\")",
+      "sampleInput": "{}",
+      "expectedOutput": "1",
+      "expectedParsed": 1,
+      "actualResult": 1,
+      "category": "utility-functions"
+    },
+    {
+      "file": "utility_functionsExamples.ts",
+      "id": "util-2",
+      "title": "Fuzzy Match Partial",
+      "expression": "fuzzyMatch(\"world\", \"hello\")",
+      "sampleInput": "{}",
+      "expectedOutput": "0.2",
+      "expectedParsed": 0.2,
+      "actualResult": 0.2,
+      "category": "utility-functions"
+    },
+    {
+      "file": "utility_functionsExamples.ts",
+      "id": "util-3",
+      "title": "Fuzzy Match Array",
+      "expression": "fuzzyMatch([\"hello\", \"world\"], \"hello\")",
+      "sampleInput": "{}",
+      "expectedOutput": "[1, 0.2]",
+      "expectedParsed": [
+        1,
+        0.2
+      ],
+      "actualResult": [
+        1,
+        0.2
+      ],
+      "category": "utility-functions"
+    },
+    {
+      "file": "utility_functionsExamples.ts",
+      "id": "util-4",
+      "title": "Date Offset Name Berlin",
+      "expression": "d(\"2023-10-15\", \"Europe/Berlin\").offsetName()",
+      "sampleInput": "{}",
+      "expectedOutput": "\"Europe/Berlin\"",
+      "expectedParsed": "Europe/Berlin",
+      "actualResult": "Europe/Berlin",
+      "category": "utility-functions"
+    },
+    {
+      "file": "utility_functionsExamples.ts",
+      "id": "util-5",
+      "title": "Date Offset Name LA",
+      "expression": "d(\"2023-10-15\", \"America/Los_Angeles\").offsetName()",
+      "sampleInput": "{}",
+      "expectedOutput": "\"America/Los_Angeles\"",
+      "expectedParsed": "America/Los_Angeles",
+      "actualResult": "America/Los_Angeles",
+      "category": "utility-functions"
+    },
+    {
+      "file": "utility_functionsExamples.ts",
+      "id": "util-6",
+      "title": "Leap Year Check False",
+      "expression": "d(\"2023-10-15\").isLeapYear()",
+      "sampleInput": "{}",
+      "expectedOutput": "false",
+      "expectedParsed": false,
+      "actualResult": false,
+      "category": "utility-functions"
+    },
+    {
+      "file": "utility_functionsExamples.ts",
+      "id": "util-7",
+      "title": "Leap Year Check True",
+      "expression": "d(\"2024-10-15\").isLeapYear()",
+      "sampleInput": "{}",
+      "expectedOutput": "true",
+      "expectedParsed": true,
+      "actualResult": true,
+      "category": "utility-functions"
+    },
+    {
+      "file": "utility_functionsExamples.ts",
+      "id": "util-8",
+      "title": "Century Leap Year",
+      "expression": "d(\"2000-10-15\").isLeapYear()",
+      "sampleInput": "{}",
+      "expectedOutput": "true",
+      "expectedParsed": true,
+      "actualResult": true,
+      "category": "utility-functions"
+    },
+    {
+      "file": "utility_functionsExamples.ts",
+      "id": "util-9",
+      "title": "Century Non-Leap Year",
+      "expression": "d(\"1900-10-15\").isLeapYear()",
+      "sampleInput": "{}",
+      "expectedOutput": "false",
+      "expectedParsed": false,
+      "actualResult": false,
+      "category": "utility-functions"
+    }
+  ]
+}

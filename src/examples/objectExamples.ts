@@ -72,5 +72,5 @@ export const objectExamples: Example[] = [
     expectedOutput: 'true',
     description: 'Check if object values contain a specific value',
     category: 'object'
-  },
+  }
 ];
