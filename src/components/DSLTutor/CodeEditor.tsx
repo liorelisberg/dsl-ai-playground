@@ -30,6 +30,11 @@ const CodeEditor = () => {
   const [sampleInputJsonMode, setSampleInputJsonMode] = useState(false); // false = text, true = JSON viewer
   const [resultJsonMode, setResultJsonMode] = useState(false); // false = text, true = JSON viewer
   
+  // Advanced JSON viewer features
+  const [sampleInputCollapsed, setSampleInputCollapsed] = useState(1); // Default collapse level
+  const [resultCollapsed, setResultCollapsed] = useState(1); // Default collapse level
+  const [copiedPath, setCopiedPath] = useState<string>(''); // For path copying feedback
+  
   // Ref to track available height for calculations
   const containerRef = useRef<HTMLDivElement>(null);
   const [availableHeight, setAvailableHeight] = useState(600); // Default fallback
@@ -388,6 +393,33 @@ const CodeEditor = () => {
     </Tooltip>
   );
 
+  // Helper function to copy JSON path to clipboard
+  const handleCopyPath = async (path: string) => {
+    try {
+      await navigator.clipboard.writeText(path);
+      setCopiedPath(path);
+      setTimeout(() => setCopiedPath(''), 2000); // Clear after 2 seconds
+      toast({
+        title: "Path Copied!",
+        description: `JSON path: ${path}`,
+      });
+    } catch (error) {
+      toast({
+        title: "Copy Failed",
+        description: "Unable to copy path to clipboard",
+        variant: "destructive"
+      });
+    }
+  };
+
+  // Helper function to format and generate JSON paths
+  const getJsonPath = (keyPath: (string | number)[]): string => {
+    if (keyPath.length === 0) return '$';
+    return '$.' + keyPath.map(key => 
+      typeof key === 'number' ? `[${key}]` : key
+    ).join('.');
+  };
+
   return (
     <div className="flex flex-col h-full">
       {/* Editor Header */}
@@ -504,6 +536,41 @@ const CodeEditor = () => {
                   </TooltipContent>
                 </Tooltip>
               )}
+              {/* Collapse Controls for Sample Input JSON Viewer */}
+              {isValidJSON(sampleInput) && sampleInputJsonMode && (
+                <>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setSampleInputCollapsed(prev => Math.max(0, prev - 1))}
+                        className="h-7 w-7 p-0 hover:bg-slate-200 dark:hover:bg-slate-700"
+                      >
+                        <Maximize2 className="h-3.5 w-3.5" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Expand more levels</p>
+                    </TooltipContent>
+                  </Tooltip>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setSampleInputCollapsed(prev => prev + 1)}
+                        className="h-7 w-7 p-0 hover:bg-slate-200 dark:hover:bg-slate-700"
+                      >
+                        <Minimize2 className="h-3.5 w-3.5" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Collapse more levels</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </>
+              )}
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Button
@@ -546,10 +613,74 @@ const CodeEditor = () => {
                 <JsonView 
                   value={safeParseJSON(sampleInput)} 
                   style={getJsonViewerTheme()}
-                  collapsed={1}
+                  collapsed={sampleInputCollapsed}
                   enableClipboard={false}
                   displayDataTypes={false}
-                />
+                  onExpand={({ keyName, value, keyid }) => {
+                    // Optional: Add expand/collapse logging
+                    console.log('Expanded/Collapsed:', { keyName, value: typeof value, keyid });
+                  }}
+                >
+                  {/* Enhanced String Rendering for URLs and Images */}
+                  <JsonView.String
+                    render={({ children, ...props }, { type, value, keyName }) => {
+                      if (type === 'value') {
+                        // Check if it's a URL
+                        const isUrl = typeof value === 'string' && /^https?:\/\//.test(value);
+                        const isImageUrl = typeof value === 'string' && /\.(jpg|jpeg|png|gif|webp|svg)$/i.test(value);
+                        
+                        if (isImageUrl) {
+                          return (
+                            <div className="inline-flex items-center gap-2">
+                              <span {...props}>{children}</span>
+                              <img 
+                                src={value} 
+                                alt="Preview" 
+                                className="h-8 w-8 object-cover rounded border border-slate-200 dark:border-slate-600"
+                                onError={(e) => {
+                                  e.currentTarget.style.display = 'none';
+                                }}
+                              />
+                            </div>
+                          );
+                        }
+                        
+                        if (isUrl) {
+                          return (
+                            <a 
+                              href={value} 
+                              target="_blank" 
+                              rel="noopener noreferrer" 
+                              className="text-blue-600 dark:text-blue-400 hover:underline"
+                              {...props}
+                            >
+                              {children}
+                            </a>
+                          );
+                        }
+                      }
+                      return <span {...props}>{children}</span>;
+                    }}
+                  />
+                  
+                  {/* Row Click for Path Copying */}
+                  <JsonView.Row
+                    render={(props, { keyName, value, keys = [] }) => {
+                      return (
+                        <div
+                          {...props}
+                          className={`${props.className || ''} hover:bg-slate-50 dark:hover:bg-slate-800/50 cursor-pointer rounded px-1`}
+                          title={`Click to copy path: ${getJsonPath(keys)}`}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            const path = getJsonPath(keys);
+                            handleCopyPath(path);
+                          }}
+                        />
+                      );
+                    }}
+                  />
+                </JsonView>
               </div>
             ) : (
               <Textarea
@@ -593,6 +724,41 @@ const CodeEditor = () => {
                   </TooltipContent>
                 </Tooltip>
               )}
+              {/* Collapse Controls for Result JSON Viewer */}
+              {isValidJSON(result) && resultJsonMode && (
+                <>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setResultCollapsed(prev => Math.max(0, prev - 1))}
+                        className="h-7 w-7 p-0 hover:bg-slate-200 dark:hover:bg-slate-700"
+                      >
+                        <Maximize2 className="h-3.5 w-3.5" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Expand more levels</p>
+                    </TooltipContent>
+                  </Tooltip>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setResultCollapsed(prev => prev + 1)}
+                        className="h-7 w-7 p-0 hover:bg-slate-200 dark:hover:bg-slate-700"
+                      >
+                        <Minimize2 className="h-3.5 w-3.5" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Collapse more levels</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </>
+              )}
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Button
@@ -635,10 +801,74 @@ const CodeEditor = () => {
                 <JsonView 
                   value={safeParseJSON(result)} 
                   style={getJsonViewerTheme()}
-                  collapsed={1}
+                  collapsed={resultCollapsed}
                   enableClipboard={false}
                   displayDataTypes={false}
-                />
+                  onExpand={({ keyName, value, keyid }) => {
+                    // Optional: Add expand/collapse logging
+                    console.log('Result Expanded/Collapsed:', { keyName, value: typeof value, keyid });
+                  }}
+                >
+                  {/* Enhanced String Rendering for URLs and Images */}
+                  <JsonView.String
+                    render={({ children, ...props }, { type, value, keyName }) => {
+                      if (type === 'value') {
+                        // Check if it's a URL
+                        const isUrl = typeof value === 'string' && /^https?:\/\//.test(value);
+                        const isImageUrl = typeof value === 'string' && /\.(jpg|jpeg|png|gif|webp|svg)$/i.test(value);
+                        
+                        if (isImageUrl) {
+                          return (
+                            <div className="inline-flex items-center gap-2">
+                              <span {...props}>{children}</span>
+                              <img 
+                                src={value} 
+                                alt="Preview" 
+                                className="h-8 w-8 object-cover rounded border border-slate-200 dark:border-slate-600"
+                                onError={(e) => {
+                                  e.currentTarget.style.display = 'none';
+                                }}
+                              />
+                            </div>
+                          );
+                        }
+                        
+                        if (isUrl) {
+                          return (
+                            <a 
+                              href={value} 
+                              target="_blank" 
+                              rel="noopener noreferrer" 
+                              className="text-blue-600 dark:text-blue-400 hover:underline"
+                              {...props}
+                            >
+                              {children}
+                            </a>
+                          );
+                        }
+                      }
+                      return <span {...props}>{children}</span>;
+                    }}
+                  />
+                  
+                  {/* Row Click for Path Copying */}
+                  <JsonView.Row
+                    render={(props, { keyName, value, keys = [] }) => {
+                      return (
+                        <div
+                          {...props}
+                          className={`${props.className || ''} hover:bg-slate-50 dark:hover:bg-slate-800/50 cursor-pointer rounded px-1`}
+                          title={`Click to copy path: ${getJsonPath(keys)}`}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            const path = getJsonPath(keys);
+                            handleCopyPath(path);
+                          }}
+                        />
+                      );
+                    }}
+                  />
+                </JsonView>
               </div>
             ) : (
               <div className="p-6 h-full overflow-auto pb-8">
