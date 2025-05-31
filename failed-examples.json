@@ -1,0 +1,198 @@
+{
+  "timestamp": "2025-05-31T10:41:14.973Z",
+  "totalExamples": 344,
+  "failedCount": 19,
+  "passedCount": 325,
+  "failedExamples": [
+    {
+      "id": "array-flat-6",
+      "title": "Get Unique Elements",
+      "category": "array-operations",
+      "expression": "unique([1, 2, 2, 3, 3, 4])",
+      "sampleInput": "{}",
+      "sourceFile": "arrayOperationsExamples.ts",
+      "error": "Evaluation error: {\"type\":\"NodeError\",\"nodeId\":\"expression\",\"source\":\"Failed to evaluate expression: \\\"unique([1, 2, 2, 3, 3, 4])\\\"\"}",
+      "httpStatus": 200
+    },
+    {
+      "id": "array-flat-7",
+      "title": "Sort Numerical Array",
+      "category": "array-operations",
+      "expression": "sort([3, 1, 4, 1, 5, 9, 2, 6])",
+      "sampleInput": "{}",
+      "sourceFile": "arrayOperationsExamples.ts",
+      "error": "Evaluation error: {\"type\":\"NodeError\",\"nodeId\":\"expression\",\"source\":\"Failed to evaluate expression: \\\"sort([3, 1, 4, 1, 5, 9, 2, 6])\\\"\"}",
+      "httpStatus": 200
+    },
+    {
+      "id": "array-flat-8",
+      "title": "Sort String Array",
+      "category": "array-operations",
+      "expression": "sort([\"banana\", \"apple\", \"cherry\"])",
+      "sampleInput": "{}",
+      "sourceFile": "arrayOperationsExamples.ts",
+      "error": "Evaluation error: {\"type\":\"NodeError\",\"nodeId\":\"expression\",\"source\":\"Failed to evaluate expression: \\\"sort([\\\"banana\\\", \\\"apple\\\", \\\"cherry\\\"])\\\"\"}",
+      "httpStatus": 200
+    },
+    {
+      "id": "array-flat-9",
+      "title": "Reverse Array",
+      "category": "array-operations",
+      "expression": "reverse([1, 2, 3, 4, 5])",
+      "sampleInput": "{}",
+      "sourceFile": "arrayOperationsExamples.ts",
+      "error": "Evaluation error: {\"type\":\"NodeError\",\"nodeId\":\"expression\",\"source\":\"Failed to evaluate expression: \\\"reverse([1, 2, 3, 4, 5])\\\"\"}",
+      "httpStatus": 200
+    },
+    {
+      "id": "array-stats-5",
+      "title": "Mode of String Array",
+      "category": "array-operations",
+      "expression": "mode([\"apple\", \"banana\", \"apple\", \"cherry\", \"apple\"])",
+      "sampleInput": "{}",
+      "sourceFile": "arrayOperationsExamples.ts",
+      "error": "Evaluation error: {\"type\":\"NodeError\",\"nodeId\":\"expression\",\"source\":\"Failed to evaluate expression: \\\"mode([\\\"apple\\\", \\\"banana\\\", \\\"apple\\\", \\\"cherry\\\", \\\"apple\\\"])\\\"\"}",
+      "httpStatus": 200
+    },
+    {
+      "id": "extreme-data-2",
+      "title": "Advanced Data Quality and Anomaly Detection",
+      "category": "extreme-data",
+      "expression": "map(datasets, {name: #.name, quality_metrics: {completeness: round(count(#.records, #.name != null and #.email != null and #.age != null) / len(#.records) * 100), validity: round(count(#.records, matches(#.email, '[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}') and #.age > 0 and #.age < 120) / len(#.records) * 100), consistency: round(count(#.records, len(#.name) > 0 and #.age >= 18) / len(#.records) * 100)}, anomalies: {email_duplicates: len(#.records) - len(keys(map(#.records, #.email))), age_outliers: count(#.records, #.age > avg(map(#.records, #.age)) + 2 * (max(map(#.records, #.age)) - min(map(#.records, #.age))) / len(#.records)), suspicious_names: count(#.records, len(#.name) < 2 or contains(#.name, '123') or contains(#.name, 'test'))}, recommendations: len(#.records) - len(keys(map(#.records, #.email))) > 0 ? ['Remove duplicate emails'] : count(#.records, #.age > 100) > 0 ? ['Review age values'] : ['Data quality acceptable']})",
+      "sampleInput": "{\"datasets\": [{\"name\": \"Customer Database\", \"records\": [{\"name\": \"John Doe\", \"email\": \"john@example.com\", \"age\": 35}, {\"name\": \"Jane Smith\", \"email\": \"jane@example.com\", \"age\": 28}, {\"name\": \"Test User\", \"email\": \"john@example.com\", \"age\": 150}, {\"name\": \"Bob\", \"email\": \"bob@test.com\", \"age\": 45}]}]}",
+      "sourceFile": "arrayOperationsExamples.ts",
+      "error": "Evaluation error: {\"type\":\"NodeError\",\"nodeId\":\"expression\",\"source\":\"Failed to evaluate expression: \\\"map(datasets, {name: #.name, quality_metrics: {completeness: round(count(#.records, #.name != null and #.email != null and #.age != null) / len(#.records) * 100), validity: round(count(#.records, matches(#.email, '[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\\\.[a-zA-Z]{2,}') and #.age > 0 and #.age < 120) / len(#.records) * 100), consistency: round(count(#.records, len(#.name) > 0 and #.age >= 18) / len(#.records) * 100)}, anomalies: {email_duplicates: len(#.records) - len(keys(map(#.records, #.email))), age_outliers: count(#.records, #.age > avg(map(#.records, #.age)) + 2 * (max(map(#.records, #.age)) - min(map(#.records, #.age))) / len(#.records)), suspicious_names: count(#.records, len(#.name) < 2 or contains(#.name, '123') or contains(#.name, 'test'))}, recommendations: len(#.records) - len(keys(map(#.records, #.email))) > 0 ? ['Remove duplicate emails'] : count(#.records, #.age > 100) > 0 ? ['Review age values'] : ['Data quality acceptable']})\\\"\"}",
+      "httpStatus": 200
+    },
+    {
+      "id": "extreme-edge-1",
+      "title": "Deep Nested Market Analysis with Complex Conditions",
+      "category": "extreme-edge",
+      "expression": "map(markets, {market_id: #.id, analysis: {trend: avg(map(#.price_history[-5:], #)) > avg(map(#.price_history[-10:-5], #)) ? 'bullish' : 'bearish', volatility: round((max(#.price_history[-30:]) - min(#.price_history[-30:])) / avg(#.price_history[-30:]) * 100), support_resistance: {support: min(#.price_history[-20:]), resistance: max(#.price_history[-20:]), current_position: (#.current_price - min(#.price_history[-20:])) / (max(#.price_history[-20:]) - min(#.price_history[-20:]))}, signals: {rsi_oversold: avg(map(#.price_history[-14:], #)) < #.price_history[-1] * 0.7, momentum_positive: #.price_history[-1] > #.price_history[-5] and #.price_history[-5] > #.price_history[-10], volume_spike: #.current_volume > avg(map(#.volume_history[-10:], #)) * 1.5}}, recommendation: avg(map(#.price_history[-5:], #)) > avg(map(#.price_history[-10:-5], #)) and #.current_volume > avg(map(#.volume_history[-10:], #)) * 1.5 ? 'Strong Buy' : avg(map(#.price_history[-5:], #)) > avg(map(#.price_history[-10:-5], #)) ? 'Buy' : 'Hold'})",
+      "sampleInput": "{\"markets\": [{\"id\": \"BTC-USD\", \"current_price\": 45000, \"current_volume\": 2500000, \"price_history\": [42000, 43000, 42500, 44000, 43500, 45000, 46000, 45500, 47000, 46500, 48000, 47500, 46000, 45000, 44500, 45500, 46500, 47500, 48500, 47000, 46000, 45500, 46500, 47500, 48000, 47000, 46500, 45000, 44000, 45000], \"volume_history\": [1800000, 1900000, 2100000, 1700000, 2000000, 1850000, 2200000, 1950000, 2300000, 2100000]}]}",
+      "sourceFile": "complexExamples.ts",
+      "error": "Evaluation error: {\"type\":\"NodeError\",\"nodeId\":\"expression\",\"source\":\"Failed to evaluate expression: \\\"map(markets, {market_id: #.id, analysis: {trend: avg(map(#.price_history[-5:], #)) > avg(map(#.price_history[-10:-5], #)) ? 'bullish' : 'bearish', volatility: round((max(#.price_history[-30:]) - min(#.price_history[-30:])) / avg(#.price_history[-30:]) * 100), support_resistance: {support: min(#.price_history[-20:]), resistance: max(#.price_history[-20:]), current_position: (#.current_price - min(#.price_history[-20:])) / (max(#.price_history[-20:]) - min(#.price_history[-20:]))}, signals: {rsi_oversold: avg(map(#.price_history[-14:], #)) < #.price_history[-1] * 0.7, momentum_positive: #.price_history[-1] > #.price_history[-5] and #.price_history[-5] > #.price_history[-10], volume_spike: #.current_volume > avg(map(#.volume_history[-10:], #)) * 1.5}}, recommendation: avg(map(#.price_history[-5:], #)) > avg(map(#.price_history[-10:-5], #)) and #.current_volume > avg(map(#.volume_history[-10:], #)) * 1.5 ? 'Strong Buy' : avg(map(#.price_history[-5:], #)) > avg(map(#.price_history[-10:-5], #)) ? 'Buy' : 'Hold'})\\\"\"}",
+      "httpStatus": 200
+    },
+    {
+      "id": "extreme-edge-2",
+      "title": "Complex Logistics Optimization with Multi-Constraint Routing",
+      "category": "extreme-edge",
+      "expression": "map(delivery_routes, {route_id: #.id, optimization: {total_distance: sum(map(#.stops[:-1], d().diff(d(), 'km'))), estimated_time: sum(map(#.stops, #.service_time + #.travel_time)), fuel_cost: sum(map(#.stops[:-1], d().diff(d(), 'km'))) * 0.12, driver_workload: sum(map(#.stops, #.service_time)) > 480 ? 'Overtime' : 'Normal'}, constraints: {weight_capacity: sum(map(#.packages, #.weight)) <= #.vehicle.max_weight, volume_capacity: sum(map(#.packages, #.volume)) <= #.vehicle.max_volume, time_windows: all(map(#.stops, d(#.arrival_time).isAfter(d(#.time_window.start)) and d(#.arrival_time).isBefore(d(#.time_window.end))))}, efficiency: {packages_per_km: round(len(#.packages) / sum(map(#.stops[:-1], d().diff(d(), 'km'))) * 100) / 100, revenue_per_km: round(sum(map(#.packages, #.delivery_fee)) / sum(map(#.stops[:-1], d().diff(d(), 'km'))) * 100) / 100}, status: sum(map(#.packages, #.weight)) <= #.vehicle.max_weight and sum(map(#.packages, #.volume)) <= #.vehicle.max_volume ? 'Feasible' : 'Overloaded'})",
+      "sampleInput": "{\"delivery_routes\": [{\"id\": \"ROUTE001\", \"vehicle\": {\"max_weight\": 1000, \"max_volume\": 50}, \"packages\": [{\"id\": \"PKG001\", \"weight\": 25, \"volume\": 5, \"delivery_fee\": 15}, {\"id\": \"PKG002\", \"weight\": 35, \"volume\": 8, \"delivery_fee\": 22}], \"stops\": [{\"address\": \"Depot\", \"arrival_time\": \"09:00\", \"service_time\": 0, \"travel_time\": 0, \"time_window\": {\"start\": \"09:00\", \"end\": \"18:00\"}}, {\"address\": \"Customer A\", \"arrival_time\": \"10:30\", \"service_time\": 15, \"travel_time\": 90, \"time_window\": {\"start\": \"10:00\", \"end\": \"12:00\"}}, {\"address\": \"Customer B\", \"arrival_time\": \"12:00\", \"service_time\": 20, \"travel_time\": 90, \"time_window\": {\"start\": \"11:30\", \"end\": \"13:00\"}}]}]}",
+      "sourceFile": "complexExamples.ts",
+      "error": "Evaluation error: {\"type\":\"NodeError\",\"nodeId\":\"expression\",\"source\":\"Failed to evaluate expression: \\\"map(delivery_routes, {route_id: #.id, optimization: {total_distance: sum(map(#.stops[:-1], d().diff(d(), 'km'))), estimated_time: sum(map(#.stops, #.service_time + #.travel_time)), fuel_cost: sum(map(#.stops[:-1], d().diff(d(), 'km'))) * 0.12, driver_workload: sum(map(#.stops, #.service_time)) > 480 ? 'Overtime' : 'Normal'}, constraints: {weight_capacity: sum(map(#.packages, #.weight)) <= #.vehicle.max_weight, volume_capacity: sum(map(#.packages, #.volume)) <= #.vehicle.max_volume, time_windows: all(map(#.stops, d(#.arrival_time).isAfter(d(#.time_window.start)) and d(#.arrival_time).isBefore(d(#.time_window.end))))}, efficiency: {packages_per_km: round(len(#.packages) / sum(map(#.stops[:-1], d().diff(d(), 'km'))) * 100) / 100, revenue_per_km: round(sum(map(#.packages, #.delivery_fee)) / sum(map(#.stops[:-1], d().diff(d(), 'km'))) * 100) / 100}, status: sum(map(#.packages, #.weight)) <= #.vehicle.max_weight and sum(map(#.packages, #.volume)) <= #.vehicle.max_volume ? 'Feasible' : 'Overloaded'})\\\"\"}",
+      "httpStatus": 200
+    },
+    {
+      "id": "complex-math-9",
+      "title": "Nested Square Root Operations",
+      "category": "mathematical-operations",
+      "expression": "sqrt(sqrt(16))",
+      "sampleInput": "{}",
+      "sourceFile": "mathematicalOperationsExamples.ts",
+      "error": "Evaluation error: {\"type\":\"NodeError\",\"nodeId\":\"expression\",\"source\":\"Failed to evaluate expression: \\\"sqrt(sqrt(16))\\\"\"}",
+      "httpStatus": 200
+    },
+    {
+      "id": "complex-math-30",
+      "title": "Change of Base Formula",
+      "category": "mathematical-operations",
+      "expression": "log(x) / log(10)",
+      "sampleInput": "{\"x\": 100}",
+      "sourceFile": "mathematicalOperationsExamples.ts",
+      "error": "Evaluation error: {\"type\":\"NodeError\",\"nodeId\":\"expression\",\"source\":\"Failed to evaluate expression: \\\"log(x) / log(10)\\\"\"}",
+      "httpStatus": 200
+    },
+    {
+      "id": "extreme-finance-1",
+      "title": "Multi-Currency Portfolio Risk Analysis",
+      "category": "extreme-finance",
+      "expression": "map(portfolios, {owner: #.owner, total_value_usd: sum(map(#.holdings, #.amount * #.price_usd)), currency_exposure: map(keys(map(#.holdings, #.currency)), {currency: #, amount: sum(map(filter(#.holdings, #.currency == #), #.amount * #.price_usd)), percentage: round(sum(map(filter(#.holdings, #.currency == #), #.amount * #.price_usd)) / sum(map(#.holdings, #.amount * #.price_usd)) * 100)}), risk_score: avg(map(#.holdings, #.volatility * (#.amount * #.price_usd / sum(map(#.holdings, #.amount * #.price_usd)))))})",
+      "sampleInput": "{\"portfolios\": [{\"owner\": \"John Doe\", \"holdings\": [{\"asset\": \"AAPL\", \"amount\": 100, \"price_usd\": 150.25, \"currency\": \"USD\", \"volatility\": 0.25}, {\"asset\": \"TSLA\", \"amount\": 50, \"price_usd\": 180.50, \"currency\": \"USD\", \"volatility\": 0.45}, {\"asset\": \"ASML\", \"amount\": 25, \"price_usd\": 620.75, \"currency\": \"EUR\", \"volatility\": 0.35}]}]}",
+      "sourceFile": "mathematicalOperationsExamples.ts",
+      "error": "Evaluation error: {\"type\":\"NodeError\",\"nodeId\":\"expression\",\"source\":\"Failed to evaluate expression: \\\"map(portfolios, {owner: #.owner, total_value_usd: sum(map(#.holdings, #.amount * #.price_usd)), currency_exposure: map(keys(map(#.holdings, #.currency)), {currency: #, amount: sum(map(filter(#.holdings, #.currency == #), #.amount * #.price_usd)), percentage: round(sum(map(filter(#.holdings, #.currency == #), #.amount * #.price_usd)) / sum(map(#.holdings, #.amount * #.price_usd)) * 100)}), risk_score: avg(map(#.holdings, #.volatility * (#.amount * #.price_usd / sum(map(#.holdings, #.amount * #.price_usd)))))})\\\"\"}",
+      "httpStatus": 200
+    },
+    {
+      "id": "extreme-finance-2",
+      "title": "Complex Options Chain Analysis",
+      "category": "extreme-finance",
+      "expression": "map(options_chains, {symbol: #.symbol, expiry: #.expiry, calls: {count: count(filter(#.contracts, #.type == 'call'), true), itm: count(filter(#.contracts, #.type == 'call' and #.strike < #.spot_price), true), avg_iv: round(avg(map(filter(#.contracts, #.type == 'call'), #.implied_volatility)) * 100)}, puts: {count: count(filter(#.contracts, #.type == 'put'), true), itm: count(filter(#.contracts, #.type == 'put' and #.strike > #.spot_price), true), avg_iv: round(avg(map(filter(#.contracts, #.type == 'put'), #.implied_volatility)) * 100)}, max_pain: #.spot_price})",
+      "sampleInput": "{\"options_chains\": [{\"symbol\": \"AAPL\", \"expiry\": \"2024-01-19\", \"spot_price\": 150.25, \"contracts\": [{\"type\": \"call\", \"strike\": 145, \"implied_volatility\": 0.28, \"volume\": 1250}, {\"type\": \"call\", \"strike\": 155, \"implied_volatility\": 0.32, \"volume\": 890}, {\"type\": \"put\", \"strike\": 145, \"implied_volatility\": 0.30, \"volume\": 760}, {\"type\": \"put\", \"strike\": 155, \"implied_volatility\": 0.35, \"volume\": 1100}]}]}",
+      "sourceFile": "mathematicalOperationsExamples.ts",
+      "error": "Evaluation error: {\"type\":\"NodeError\",\"nodeId\":\"expression\",\"source\":\"Failed to evaluate expression: \\\"map(options_chains, {symbol: #.symbol, expiry: #.expiry, calls: {count: count(filter(#.contracts, #.type == 'call'), true), itm: count(filter(#.contracts, #.type == 'call' and #.strike < #.spot_price), true), avg_iv: round(avg(map(filter(#.contracts, #.type == 'call'), #.implied_volatility)) * 100)}, puts: {count: count(filter(#.contracts, #.type == 'put'), true), itm: count(filter(#.contracts, #.type == 'put' and #.strike > #.spot_price), true), avg_iv: round(avg(map(filter(#.contracts, #.type == 'put'), #.implied_volatility)) * 100)}, max_pain: #.spot_price})\\\"\"}",
+      "httpStatus": 200
+    },
+    {
+      "id": "str-13",
+      "title": "URL Parts Extraction",
+      "category": "string-operations",
+      "expression": "extract(\"https://example.com:8080/path\", \"(https?)://([^:/]+):?(\\d*)\")",
+      "sampleInput": "{}",
+      "sourceFile": "stringOperationsExamples.ts",
+      "error": "Evaluation error: {\"type\":\"NodeError\",\"nodeId\":\"expression\",\"source\":\"Failed to evaluate expression: \\\"extract(\\\"https:\\\"\"}",
+      "httpStatus": 200
+    },
+    {
+      "id": "slice-1",
+      "title": "Basic String Slice",
+      "category": "string-operations",
+      "expression": "\"hello world\"[0:5]",
+      "sampleInput": "{}",
+      "sourceFile": "stringOperationsExamples.ts",
+      "error": "Evaluation error: {\"type\":\"NodeError\",\"nodeId\":\"expression\",\"source\":\"Failed to evaluate expression: \\\"\\\"hello world\\\"[0:5]\\\"\"}",
+      "httpStatus": 200
+    },
+    {
+      "id": "slice-2",
+      "title": "String Slice from Middle",
+      "category": "string-operations",
+      "expression": "\"hello world\"[6:11]",
+      "sampleInput": "{}",
+      "sourceFile": "stringOperationsExamples.ts",
+      "error": "Evaluation error: {\"type\":\"NodeError\",\"nodeId\":\"expression\",\"source\":\"Failed to evaluate expression: \\\"\\\"hello world\\\"[6:11]\\\"\"}",
+      "httpStatus": 200
+    },
+    {
+      "id": "slice-3",
+      "title": "String Slice to End",
+      "category": "string-operations",
+      "expression": "\"hello world\"[6:]",
+      "sampleInput": "{}",
+      "sourceFile": "stringOperationsExamples.ts",
+      "error": "Evaluation error: {\"type\":\"NodeError\",\"nodeId\":\"expression\",\"source\":\"Failed to evaluate expression: \\\"\\\"hello world\\\"[6:]\\\"\"}",
+      "httpStatus": 200
+    },
+    {
+      "id": "slice-4",
+      "title": "String Slice from Start",
+      "category": "string-operations",
+      "expression": "\"hello world\"[:5]",
+      "sampleInput": "{}",
+      "sourceFile": "stringOperationsExamples.ts",
+      "error": "Evaluation error: {\"type\":\"NodeError\",\"nodeId\":\"expression\",\"source\":\"Failed to evaluate expression: \\\"\\\"hello world\\\"[:5]\\\"\"}",
+      "httpStatus": 200
+    },
+    {
+      "id": "slice-6",
+      "title": "Single Character Access",
+      "category": "string-operations",
+      "expression": "\"hello\"[1]",
+      "sampleInput": "{}",
+      "sourceFile": "stringOperationsExamples.ts",
+      "error": "Evaluation error: {\"type\":\"NodeError\",\"nodeId\":\"expression\",\"source\":\"Failed to evaluate expression: \\\"\\\"hello\\\"[1]\\\"\"}",
+      "httpStatus": 200
+    },
+    {
+      "id": "complex-template-2",
+      "title": "User Notification Message",
+      "category": "complex-template",
+      "expression": "`Hello ${user.name}! ${user.messages > 0 ? `You have ${user.messages} new message${user.messages > 1 ? \"s\" : \"\"}` : \"No new messages\"}. Last login: ${d(user.lastLogin).format(\"%B %d, %Y\")}`",
+      "sampleInput": "{\"user\": {\"name\": \"John\", \"messages\": 3, \"lastLogin\": \"2023-10-01\"}}",
+      "sourceFile": "stringOperationsExamples.ts",
+      "error": "Evaluation error: {\"type\":\"NodeError\",\"nodeId\":\"expression\",\"source\":\"Failed to evaluate expression: \\\"`Hello ${user.name}! ${user.messages > 0 ? `You have ${user.messages} new message${user.messages > 1 ? \\\"s\\\" : \\\"\\\"}` : \\\"No new messages\\\"}. Last login: ${d(user.lastLogin).format(\\\"%B %d, %Y\\\")}`\\\"\"}",
+      "httpStatus": 200
+    }
+  ]
+}

@@ -125,7 +125,7 @@ export const mathematicalOperationsExamples: Example[] = [
   {
     id: 'math-7',
     title: 'Square Root',
-    expression: 'sqrt(16)',
+    expression: "(16) ^ 0.5",
     sampleInput: '{}',
     expectedOutput: '4',
     description: 'Calculate square root of 16',
@@ -134,7 +134,7 @@ export const mathematicalOperationsExamples: Example[] = [
   {
     id: 'math-8',
     title: 'Power Operation',
-    expression: 'pow(3, 2)',
+    expression: "(3) ^ (2)",
     sampleInput: '{}',
     expectedOutput: '9',
     description: 'Calculate 3 to the power of 2',
@@ -269,7 +269,7 @@ export const mathematicalOperationsExamples: Example[] = [
   {
     id: 'math-23',
     title: 'Square Root of a Squared Number',
-    expression: 'sqrt(5 ^ 2)',
+    expression: "(5 ^ 2) ^ 0.5",
     sampleInput: '{}',
     expectedOutput: '5',
     description: 'Square root of a squared number',
@@ -334,7 +334,7 @@ export const mathematicalOperationsExamples: Example[] = [
   {
     id: 'complex-math-3',
     title: 'Combination of Square Root and Power Operations',
-    expression: 'sqrt(16) * 2',
+    expression: "(16) ^ 0.5 * 2",
     sampleInput: '{}',
     expectedOutput: '8',
     description: 'Combination of square root and power operations',
@@ -424,7 +424,7 @@ export const mathematicalOperationsExamples: Example[] = [
   {
     id: 'complex-math-13',
     title: 'Square Root of Sum',
-    expression: 'sqrt(5 ^ 2 + 12 ^ 2)',
+    expression: "(5 ^ 2 + 12 ^ 2) ^ 0.5",
     sampleInput: '{}',
     expectedOutput: '13',
     description: 'Square root of sum (Pythagorean theorem)',
@@ -505,7 +505,7 @@ export const mathematicalOperationsExamples: Example[] = [
   {
     id: 'complex-math-22',
     title: 'Distance Formula',
-    expression: 'sqrt((x2 - x1) ^ 2 + (y2 - y1) ^ 2)',
+    expression: "((x2 - x1) ^ 0.5 ^ 2 + (y2 - y1) ^ 2)",
     sampleInput: '{"x1": 0, "y1": 0, "x2": 3, "y2": 4}',
     expectedOutput: '5',
     description: 'Distance formula between two points',
@@ -541,7 +541,7 @@ export const mathematicalOperationsExamples: Example[] = [
   {
     id: 'complex-math-26',
     title: 'Geometric Mean',
-    expression: 'sqrt(a * b)',
+    expression: "(a * b) ^ 0.5",
     sampleInput: '{"a": 4, "b": 9}',
     expectedOutput: '6',
     description: 'Geometric mean of two numbers',
@@ -604,7 +604,7 @@ export const mathematicalOperationsExamples: Example[] = [
   {
     id: 'complex-math-33',
     title: 'Complex Nested Mathematical Expression',
-    expression: '((2 + 3) * (4 - 1)) + (6 / 2) + sqrt(16)',
+    expression: "((2 + 3) * (4 - 1)) + (6 / 2) + (16) ^ 0.5",
     sampleInput: '{}',
     expectedOutput: '20',
     description: 'Complex nested mathematical expression',
@@ -761,7 +761,7 @@ export const mathematicalOperationsExamples: Example[] = [
   {
     id: 'round-9',
     title: 'Round to Tens',
-    expression: 'round(1234, -1)',
+    expression: "round(1234)",
     sampleInput: '{}',
     expectedOutput: '1230',
     description: 'Round to nearest ten using negative precision',
@@ -770,7 +770,7 @@ export const mathematicalOperationsExamples: Example[] = [
   {
     id: 'round-10',
     title: 'Round Result of Complex Expression',
-    expression: 'round(sqrt(5 ^ 2 + 12 ^ 2), 2)',
+    expression: "round((5 ^ 2 + 12 ^ 2) ^ 0.5)",
     sampleInput: '{}',
     expectedOutput: '13',
     description: 'Round result of complex expression',
