@@ -19,7 +19,6 @@ export interface ChatResponse {
   error?: string;
   metadata?: {
     semanticMatches?: number;
-    userExpertise?: 'beginner' | 'intermediate' | 'advanced';
     conversationFlow?: string;
     semanticSimilarity?: number;
     processingTime?: number;

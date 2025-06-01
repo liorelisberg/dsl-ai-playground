@@ -140,7 +140,7 @@ export class ConversationStateManager {
     };
   }
 
-  getTopicExpertise(sessionId: string, topic: string): number {
+  getTopicFamiliarity(sessionId: string, topic: string): number {
     if (!this.userProfiles.has(sessionId)) return 0;
     
     const profile = this.userProfiles.get(sessionId)!;

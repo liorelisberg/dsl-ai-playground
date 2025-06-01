@@ -278,7 +278,7 @@ async function runFlowTest(flow) {
 
       // Show metadata
       if (response.metadata) {
-        console.log(chalk.magenta(`📊 Metadata: ${response.metadata.semanticMatches} matches, ${response.metadata.userExpertise} expertise, ${response.metadata.tokenEfficiency}% efficiency`));
+        console.log(chalk.magenta(`📊 Metadata: ${response.metadata.semanticMatches} matches, ${response.metadata.conversationFlow} flow, ${response.metadata.tokenEfficiency}% efficiency`));
       }
 
     } catch (error) {
