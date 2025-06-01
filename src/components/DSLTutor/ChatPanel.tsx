@@ -11,6 +11,7 @@ import remarkGfm from 'remark-gfm';
 import { ChatMessage, ChatResponse } from '@/types/chat';
 import { JsonMetadata } from './JsonUpload';
 import { sendChatMessage } from '@/services/chatService';
+import DSLCodeBlock from './DSLCodeBlock';
 
 interface ChatPanelProps {
   chatHistory: ChatMessage[];
@@ -21,6 +22,7 @@ interface ChatPanelProps {
   onJsonUploadSuccess?: (metadata: JsonMetadata) => void;
   onJsonUploadError?: (error: string) => void;
   onClearJsonFile?: () => void;
+  onChatToParser?: (expression: string, input: string) => void;
 }
 
 interface UploadedFile {
@@ -40,7 +42,8 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
   currentJsonFile,
   onJsonUploadSuccess,
   onJsonUploadError,
-  onClearJsonFile
+  onClearJsonFile,
+  onChatToParser
 }) => {
   const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -398,9 +401,10 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
                 >
                   {message.role === 'assistant' ? (
                     <div className="prose prose-sm max-w-none dark:prose-invert">
-                      <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                        {message.content}
-                      </ReactMarkdown>
+                      <DSLCodeBlock 
+                        content={message.content}
+                        onChatToParser={onChatToParser}
+                      />
                     </div>
                   ) : (
                     <div className="prose prose-sm max-w-none">

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import ChatPanel from './ChatPanel';
 import CodeEditor from './CodeEditor';
 import { JsonMetadata } from './JsonUpload';
@@ -7,6 +7,11 @@ import { ThemeToggle } from '../ui/theme-toggle';
 import { ChatMessage } from '../../types/chat';
 import { useConnectionStatus } from '../../hooks/useConnectionStatus';
 import { sendChatMessage } from '../../services/chatService';
+
+// Interface for CodeEditor ref methods
+interface CodeEditorRef {
+  handleChatTransfer: (expression: string, input: string) => void;
+}
 
 const DSLTutor = () => {
   const [chatHistory, setChatHistory] = useState<ChatMessage[]>([
@@ -67,6 +72,19 @@ const DSLTutor = () => {
       };
       
       handleNewMessage(errorMessage);
+    }
+  };
+
+  // NEW: Handler for chat to transfer expressions to parser  
+  const handleChatToParser = (expression: string, input: string) => {
+    // This will be handled by CodeEditor to update its state
+    // We'll pass this callback to ChatPanel, and CodeEditor will receive the data via props
+    console.log('💬→🔧 Chat to Parser transfer:', { expression, input });
+    
+    // For now, we'll use a ref to directly update CodeEditor
+    // In a production app, we'd use a more sophisticated state management solution
+    if (codeEditorRef.current) {
+      codeEditorRef.current.handleChatTransfer(expression, input);
     }
   };
 
@@ -144,6 +162,9 @@ const DSLTutor = () => {
     };
   }, []);
 
+  // Ref to access CodeEditor methods
+  const codeEditorRef = useRef<CodeEditorRef | null>(null);
+
   return (
     <div className="h-screen flex flex-col bg-slate-100 dark:bg-slate-900">
       {/* Header */}
@@ -174,12 +195,14 @@ const DSLTutor = () => {
             onJsonUploadSuccess={handleJsonUploadSuccess}
             onJsonUploadError={handleJsonUploadError}
             onClearJsonFile={handleClearJsonFile}
+            onChatToParser={handleChatToParser}
           />
         </div>
 
         {/* Expression Workbench - 42% of space */}
         <div className="flex-shrink-0 bg-slate-50 dark:bg-slate-900 min-w-0 border-l border-slate-200 dark:border-slate-700" style={{ flex: '0 0 42%' }}>
           <CodeEditor
+            ref={codeEditorRef}
             onParserToChat={handleParserToChat}
           />
         </div>

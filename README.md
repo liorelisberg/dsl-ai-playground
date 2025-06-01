@@ -2,14 +2,15 @@
 
 **An intelligent Domain-Specific Language (DSL) learning platform with sophisticated AI assistance, semantic search, and real-time code execution.**
 
-## 🎯 **Current Status: PRODUCTION READY**
+## 🎯 **Current Status: PRODUCTION READY v3.2.0**
 
 - ✅ **Phase 1**: Core DSL Engine & Advanced Token Management (Complete)
 - ✅ **Phase 2**: Conversation Continuity & Semantic Enhancement (Complete) 
 - ✅ **Phase 3**: Advanced AI Services & Multi-layer Architecture (Complete)
 - ✅ **Phase 4**: UX/UI Polish & TypeScript Excellence (Complete)
+- ✅ **Phase 5**: Enhanced Chat → Parser Integration with Smart Titles (Complete)
 
-**🆕 Latest: Production-ready platform with sophisticated backend services and comprehensive testing**
+**🆕 Latest v3.2.0: Enhanced Chat → Parser integration with descriptive titles, adaptive UI, and critical data structure validation**
 
 ## ✨ **Key Features**
 
@@ -20,11 +21,16 @@
 - **Professional Design**: Indigo-to-emerald gradient with dark/light themes
 
 ### 🧠 **Advanced AI Assistant**
+- **Enhanced Chat → Parser Integration**: Smart titles and adaptive UI for seamless learning
+  - Descriptive example titles with `${title}` markers for clarity
+  - Adaptive button UI: single example → button, multiple → dropdown
+  - Critical data structure validation preventing invalid expressions
 - **Semantic Understanding**: Vector-based knowledge retrieval with SemanticVectorStore integration
 - **Context Awareness**: Sophisticated conversation state management and user profiling
 - **JSON Integration**: Upload data for personalized DSL examples and suggestions
 - **Session Continuity**: Persistent conversation history across interactions
 - **Intelligent Rate Limiting**: Advanced throttling and resilience patterns
+- **Parser → Chat Integration**: "Ask About This" button transfers expressions for AI analysis
 
 ### ⚡ **Expression Workbench**
 - **Real-time Evaluation**: Sub-millisecond DSL expression execution
@@ -147,6 +153,11 @@ age >= 18 ? "Adult" : "Minor"
 ```
 
 ### **2. Advanced AI Chat Features**
+- **🎯 Enhanced Chat → Parser Integration**: Transfer examples with smart titles
+  - AI provides `${title}` markers for descriptive example names
+  - Single example → "Try This" button for instant transfer
+  - Multiple examples → dropdown menu with cleaned titles (no "Example N:" prefixes)
+  - Critical validation ensures arrays are properly wrapped in objects
 - **🎯 Semantic Understanding**: Vector-based knowledge retrieval for relevant responses
 - **📁 Upload JSON**: Drag & drop files for context-aware suggestions
 - **❓ Ask Questions**: "How do I use the filter function in ZEN?"

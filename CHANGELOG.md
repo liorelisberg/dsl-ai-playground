@@ -8,12 +8,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Enhanced Chat → Parser Integration**: Complete UX upgrade with smart titles and validation
+  - **Descriptive Titles**: AI includes `${title}` markers for clear example naming
+  - **Adaptive UI**: Single example → "Try This" button, multiple → dropdown menu
+  - **Title Cleanup**: Removes "Example N:" prefixes, truncates long titles (40 chars)
+  - **Data Structure Validation**: Prevents invalid expressions that would fail
+    - Arrays must be wrapped in objects: `{"users": [...]}` not `[...]`
+    - Array operations require "#" operator: `filter(users, #.age > 18)`
+    - No "this" references allowed, must use actual object keys
+  - **Comprehensive Testing**: 15 passing tests covering all title scenarios
 - **Parser → Chat Integration**: "Ask About This" button in Expression Workbench
   - Smart state management (disabled until expression evaluation)
   - Contextual prompts for working vs failing expressions
   - Async AI response generation with loading states
   - Toast notifications for user feedback
   - Automatic state reset when loading new examples
+- **Enhanced System Prompt**: Critical data structure rules to prevent AI hallucinations
+  - Prevents generation of invalid ZEN DSL expressions
+  - Enforces proper array wrapping and operator usage
+  - Includes wrong vs right examples for clarity
 
 ### Changed
 - **ZEN DSL Comment Support Removed**: Aligned with language specification

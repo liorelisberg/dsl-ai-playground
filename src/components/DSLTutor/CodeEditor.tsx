@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback, useImperativeHandle, forwardRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
@@ -19,7 +19,11 @@ interface CodeEditorProps {
   onParserToChat?: (expression: string, input: string, result: string, isSuccess: boolean) => Promise<void>;
 }
 
-const CodeEditor: React.FC<CodeEditorProps> = ({ onParserToChat }) => {
+export interface CodeEditorRef {
+  handleChatTransfer: (expression: string, input: string) => void;
+}
+
+const CodeEditor = forwardRef<CodeEditorRef, CodeEditorProps>(({ onParserToChat }, ref) => {
   const [code, setCode] = useState('upper(user.name)');
   const [sampleInput, setSampleInput] = useState('{"user": {"name": "john doe", "age": 30}}');
   const [result, setResult] = useState<string>('');
@@ -463,6 +467,23 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ onParserToChat }) => {
       typeof key === 'number' ? `[${key}]` : key
     ).join('.');
   };
+
+  // Use useImperativeHandle to expose handleChatTransfer method
+  useImperativeHandle(ref, () => ({
+    handleChatTransfer: (expression: string, input: string) => {
+      // Transfer expression and input from chat to parser
+      setCode(expression);
+      setSampleInput(input);
+      
+      // Reset evaluation state when loading new content from chat
+      setHasEvaluated(false);
+      setLastEvaluationSuccess(false);
+      setResult('');
+      
+      // Log the transfer for debugging
+      console.log('🔄 Chat transfer received:', { expression, input });
+    },
+  }));
 
   return (
     <div className="flex flex-col h-full">
@@ -966,6 +987,8 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ onParserToChat }) => {
       />
     </div>
   );
-};
+});
+
+CodeEditor.displayName = 'CodeEditor';
 
 export default CodeEditor;
