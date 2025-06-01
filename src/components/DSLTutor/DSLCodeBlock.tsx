@@ -7,7 +7,8 @@ import remarkGfm from 'remark-gfm';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus, prism } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { useTheme } from 'next-themes';
-import { Hash, Play, Database } from 'lucide-react';
+import { Hash, Play, Database, Copy, Check } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 interface DSLCodeBlockProps {
   content: string;
@@ -87,6 +88,7 @@ const DSLCodeBlock: React.FC<DSLCodeBlockProps> = ({
   onChatToParser 
 }) => {
   const [isTransferring, setIsTransferring] = useState(false);
+  const [copiedBlocks, setCopiedBlocks] = useState<{[key: string]: boolean}>({});
   const { theme } = useTheme();
   
   // Extract pairs from message content (for Try buttons)
@@ -107,6 +109,30 @@ const DSLCodeBlock: React.FC<DSLCodeBlockProps> = ({
       isBalanced: stats.isBalanced
     });
   }
+
+  const copyToClipboard = async (text: string, blockId: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopiedBlocks(prev => ({ ...prev, [blockId]: true }));
+      
+      toast({
+        title: "Copied!",
+        description: "Code has been copied to your clipboard.",
+      });
+      
+      // Reset the copied state after 2 seconds
+      setTimeout(() => {
+        setCopiedBlocks(prev => ({ ...prev, [blockId]: false }));
+      }, 2000);
+    } catch (error) {
+      console.error('Copy failed:', error);
+      toast({
+        title: "Copy Failed",
+        description: "Unable to copy to clipboard.",
+        variant: "destructive"
+      });
+    }
+  };
 
   const handleTransfer = async (pair: ExpressionPair) => {
     if (!onChatToParser) {
@@ -193,12 +219,26 @@ const DSLCodeBlock: React.FC<DSLCodeBlockProps> = ({
               <div className="space-y-0">
                 {/* Sample Input */}
                 <div className="border-b border-slate-200 dark:border-slate-700">
-                  <div className="px-4 py-2 bg-slate-100 dark:bg-slate-700/50 border-b border-slate-200 dark:border-slate-600">
-                    <div className="flex items-center space-x-2">
-                      <Database className="h-3 w-3 text-slate-600 dark:text-slate-400" />
-                      <span className="text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wide">
-                        Sample Input
-                      </span>
+                  <div className="px-4 py-2 bg-slate-100 dark:bg-slate-700/50 border-b border-slate-200 dark:border-slate-600 relative">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-2">
+                        <Database className="h-3 w-3 text-slate-600 dark:text-slate-400" />
+                        <span className="text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wide">
+                          Sample Input
+                        </span>
+                      </div>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => copyToClipboard(block.input || '', `input-${index}`)}
+                        className="h-6 w-6 p-0 hover:bg-slate-200 dark:hover:bg-slate-600"
+                      >
+                        {copiedBlocks[`input-${index}`] ? (
+                          <Check className="h-3 w-3 text-green-600 dark:text-green-400" />
+                        ) : (
+                          <Copy className="h-3 w-3 text-slate-500 dark:text-slate-400" />
+                        )}
+                      </Button>
                     </div>
                   </div>
                   <div className="p-0">
@@ -219,12 +259,26 @@ const DSLCodeBlock: React.FC<DSLCodeBlockProps> = ({
 
                 {/* ZEN Expression */}
                 <div>
-                  <div className="px-4 py-2 bg-slate-100 dark:bg-slate-700/50 border-b border-slate-200 dark:border-slate-600">
-                    <div className="flex items-center space-x-2">
-                      <Play className="h-3 w-3 text-slate-600 dark:text-slate-400" />
-                      <span className="text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wide">
-                        ZEN Expression
-                      </span>
+                  <div className="px-4 py-2 bg-slate-100 dark:bg-slate-700/50 border-b border-slate-200 dark:border-slate-600 relative">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-2">
+                        <Play className="h-3 w-3 text-slate-600 dark:text-slate-400" />
+                        <span className="text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wide">
+                          ZEN Expression
+                        </span>
+                      </div>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => copyToClipboard(block.expression || '', `expression-${index}`)}
+                        className="h-6 w-6 p-0 hover:bg-slate-200 dark:hover:bg-slate-600"
+                      >
+                        {copiedBlocks[`expression-${index}`] ? (
+                          <Check className="h-3 w-3 text-green-600 dark:text-green-400" />
+                        ) : (
+                          <Copy className="h-3 w-3 text-slate-500 dark:text-slate-400" />
+                        )}
+                      </Button>
                     </div>
                   </div>
                   <div className="p-0">

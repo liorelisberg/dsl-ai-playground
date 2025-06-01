@@ -128,8 +128,9 @@ console.log('=========================');
 console.log('✅ Text blocks render as regular markdown');
 console.log('✅ DSL examples render as structured code blocks with:');
 console.log('   📝 Title header with hash icon');
-console.log('   📊 JSON input with syntax highlighting');
-console.log('   ⚡ ZEN expression with syntax highlighting');
+console.log('   📊 JSON input with syntax highlighting + copy button');
+console.log('   ⚡ ZEN expression with syntax highlighting + copy button');
+console.log('   📋 Individual copy buttons for each code section');
 console.log('   🎨 Professional styling with proper sections');
 
 console.log('\n🧪 Manual Testing Steps:');
@@ -140,15 +141,24 @@ console.log('3. Verify structured display:');
 console.log('   - Clear section headers with icons');
 console.log('   - Proper JSON syntax highlighting');
 console.log('   - Clean ZEN expression formatting');
+console.log('   - Copy buttons in top right of each section');
 console.log('   - Try This buttons work correctly');
+console.log('4. Test copy functionality:');
+console.log('   - Click copy button on Sample Input section');
+console.log('   - Click copy button on ZEN Expression section');
+console.log('   - Verify toast notifications appear');
+console.log('   - Check buttons show checkmark when copied');
 
 console.log('\n💡 Look for these visual improvements:');
 console.log('=====================================');
 console.log('• Title sections with indigo header background');
 console.log('• Separate Sample Input and ZEN Expression sections');
+console.log('• Copy buttons in top right corner of each section');
+console.log('• Copy/Check icon state changes with hover effects');
 console.log('• Syntax highlighting for JSON (light/dark theme)');
 console.log('• JavaScript-style highlighting for expressions');
 console.log('• Clean borders and spacing between sections');
+console.log('• Toast notifications for successful copy operations');
 
 console.log('\n🔥 Enhanced Chat → Parser Integration Complete!');
-console.log('Now with beautiful structured code block display! 🎨'); 
+console.log('Now with beautiful structured code blocks AND copy functionality! 🎨📋'); 
