@@ -19,7 +19,7 @@ export const evaluateExpression = async (
   expression: string,
   data: unknown
 ): Promise<DSLEvaluationResult> => {
-  const cleanExpression = expression.replace(/\/\/.*$/gm, '').trim();
+  const cleanExpression = expression.trim();
   
   if (!cleanExpression) {
     return { result: 'No expression provided' };
