@@ -381,4 +381,214 @@ age + 1
       });
     });
   });
+
+  describe('Educational Question Scenarios', () => {
+    test('should handle educational content without DSL markers', () => {
+      const educationalContent = `
+# ZEN String Functions
+
+ZEN provides several built-in string functions for text manipulation:
+
+## Core String Functions
+
+**upper(string)** - Converts text to uppercase
+- Example: upper("hello") returns "HELLO"
+
+**lower(string)** - Converts text to lowercase  
+- Example: lower("WORLD") returns "world"
+
+**len(string)** - Returns the length of a string
+- Example: len("test") returns 4
+
+**contains(string, substring)** - Checks if string contains substring
+- Example: contains("hello world", "world") returns true
+
+**startsWith(string, prefix)** - Checks if string starts with prefix
+- Example: startsWith("hello", "he") returns true
+
+**endsWith(string, suffix)** - Checks if string ends with suffix
+- Example: endsWith("hello", "lo") returns true
+
+## Advanced Functions
+
+**trim(string)** - Removes whitespace from both ends
+**split(string, delimiter)** - Splits string into array
+**replace(string, old, new)** - Replaces occurrences
+
+These functions can be combined for complex text processing operations.
+      `;
+
+      const pairs = extractExpressionPairs(educationalContent);
+      const stats = getPairStatistics(educationalContent);
+      
+      // Educational content typically has no DSL markers
+      expect(pairs).toHaveLength(0);
+      expect(stats.hasMarkers).toBe(false);
+      expect(stats.inputBlocks).toBe(0);
+      expect(stats.expressionBlocks).toBe(0);
+      expect(stats.resultBlocks).toBe(0);
+    });
+
+    test('should handle mixed educational content with some DSL examples', () => {
+      const mixedContent = `
+# String Functions Explanation
+
+ZEN provides powerful string manipulation functions:
+
+## The upper() function
+Converts text to uppercase. Here's how it works:
+
+\${title}
+Converting name to uppercase
+\${title}
+
+\${inputBlock}
+{name: "john doe"}
+\${inputBlock}
+
+\${expressionBlock}
+upper(name)
+\${expressionBlock}
+
+\${resultBlock}
+"JOHN DOE"
+\${resultBlock}
+
+## The len() function
+Returns the length of a string. Very useful for validation.
+
+## The contains() function
+Checks if a string contains a substring. Case-sensitive by default.
+
+You can combine these functions for more complex operations.
+      `;
+
+      const pairs = extractExpressionPairs(mixedContent);
+      const stats = getPairStatistics(mixedContent);
+      
+      // Should extract the one DSL example from educational content
+      expect(pairs).toHaveLength(1);
+      expect(pairs[0]).toEqual({
+        input: '{name: "john doe"}',
+        expression: 'upper(name)',
+        result: '"JOHN DOE"',
+        title: 'Converting name to uppercase',
+        index: 0
+      });
+      expect(stats.hasMarkers).toBe(true);
+      expect(stats.inputBlocks).toBe(1);
+      expect(stats.expressionBlocks).toBe(1);
+      expect(stats.resultBlocks).toBe(1);
+    });
+
+    test('should handle "Explain ALL string functions" scenario', () => {
+      // Simulate typical AI response to "Explain ALL string functions in ZEN"
+      const allStringFunctionsResponse = `
+# Complete Guide to ZEN String Functions
+
+ZEN DSL provides comprehensive string manipulation capabilities. Here are ALL the string functions available:
+
+## Basic String Operations
+
+### upper(string)
+Converts text to uppercase.
+- Returns: String in uppercase
+- Example: upper("hello") → "HELLO"
+
+### lower(string) 
+Converts text to lowercase.
+- Returns: String in lowercase
+- Example: lower("WORLD") → "world"
+
+### len(string)
+Returns the length/character count of a string.
+- Returns: Number
+- Example: len("test") → 4
+
+## String Testing Functions
+
+### contains(string, substring)
+Checks if a string contains another string.
+- Returns: Boolean
+- Case-sensitive
+- Example: contains("hello world", "world") → true
+
+### startsWith(string, prefix)
+Tests if string begins with specified prefix.
+- Returns: Boolean
+- Example: startsWith("hello", "he") → true
+
+### endsWith(string, suffix)
+Tests if string ends with specified suffix.
+- Returns: Boolean  
+- Example: endsWith("hello", "lo") → true
+
+## String Modification Functions
+
+### trim(string)
+Removes whitespace from both ends of string.
+- Returns: Trimmed string
+- Example: trim("  hello  ") → "hello"
+
+### replace(string, oldValue, newValue)
+Replaces all occurrences of oldValue with newValue.
+- Returns: Modified string
+- Example: replace("hello world", "world", "ZEN") → "hello ZEN"
+
+### split(string, delimiter)
+Splits string into array using delimiter.
+- Returns: Array of strings
+- Example: split("a,b,c", ",") → ["a", "b", "c"]
+
+## String Extraction Functions
+
+### substring(string, start, end?)
+Extracts portion of string between start and end positions.
+- Returns: Substring
+- Example: substring("hello", 1, 4) → "ell"
+
+## Usage Notes
+
+- All string functions are case-sensitive unless noted
+- String positions are 0-indexed
+- Functions can be chained for complex operations
+- Use with conditional expressions for powerful text processing
+
+For practical examples with real data, ask me to "show string function examples" and I'll provide working code samples.
+      `;
+
+      const pairs = extractExpressionPairs(allStringFunctionsResponse);
+      const stats = getPairStatistics(allStringFunctionsResponse);
+      
+      // Pure educational content - no DSL markers expected
+      expect(pairs).toHaveLength(0);
+      expect(stats.hasMarkers).toBe(false);
+      expect(stats.inputBlocks).toBe(0);
+      expect(stats.expressionBlocks).toBe(0);
+      expect(stats.resultBlocks).toBe(0);
+    });
+
+    test('should handle educational content that mentions markers but does not use them', () => {
+      const contentWithMarkerMentions = `
+# How to Use DSL Examples
+
+When I provide DSL examples, I use special markers:
+
+- I wrap titles with \${title} markers
+- Input data goes in \${inputBlock} markers  
+- Expressions use \${expressionBlock} markers
+- Results are shown in \${resultBlock} markers
+
+However, this is just documentation - not actual examples.
+For real examples, ask me to "show me string operations" instead.
+      `;
+
+      const pairs = extractExpressionPairs(contentWithMarkerMentions);
+      const stats = getPairStatistics(contentWithMarkerMentions);
+      
+      // Should not extract pairs from documentation about markers
+      expect(pairs).toHaveLength(0);
+      expect(stats.hasMarkers).toBe(false);
+    });
+  });
 }); 

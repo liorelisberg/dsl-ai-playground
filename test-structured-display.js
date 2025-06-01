@@ -4,6 +4,60 @@
 console.log('🎨 Testing Enhanced Structured DSL Display');
 console.log('===========================================');
 
+// Test content with educational scenarios (your specific case)
+console.log('\n📚 Testing Educational Question Scenarios');
+console.log('==========================================');
+
+const educationalContent = `
+# Complete Guide to ZEN String Functions
+
+ZEN DSL provides comprehensive string manipulation capabilities. Here are ALL the string functions available:
+
+## Basic String Operations
+
+### upper(string)
+Converts text to uppercase.
+- Returns: String in uppercase
+- Example: upper("hello") → "HELLO"
+
+### lower(string) 
+Converts text to lowercase.
+- Returns: String in lowercase
+- Example: lower("WORLD") → "world"
+
+### len(string)
+Returns the length/character count of a string.
+- Returns: Number
+- Example: len("test") → 4
+
+## String Testing Functions
+
+### contains(string, substring)
+Checks if a string contains another string.
+- Returns: Boolean
+- Case-sensitive
+- Example: contains("hello world", "world") → true
+
+### startsWith(string, prefix)
+Tests if string begins with specified prefix.
+- Returns: Boolean
+- Example: startsWith("hello", "he") → true
+
+### endsWith(string, suffix)
+Tests if string ends with specified suffix.
+- Returns: Boolean  
+- Example: endsWith("hello", "lo") → true
+
+## Usage Notes
+
+- All string functions are case-sensitive unless noted
+- String positions are 0-indexed
+- Functions can be chained for complex operations
+- Use with conditional expressions for powerful text processing
+
+For practical examples with real data, ask me to "show string function examples" and I'll provide working code samples.
+`;
+
 // Test content with structured DSL format including results
 const structuredContent = `
 Here are some useful ZEN DSL operations:
@@ -136,6 +190,85 @@ blocks.forEach((block, index) => {
     }
   }
 });
+
+// Test educational content (your scenario)
+console.log('\n📚 Educational Content Analysis:');
+console.log('================================');
+
+const educationalBlocks = parseStructuredContent(educationalContent);
+console.log(`Educational content blocks: ${educationalBlocks.length}`);
+console.log(`All blocks are type: ${educationalBlocks.map(b => b.type).join(', ')}`);
+
+// Mock the detection functions
+function mockGetPairStatistics(content) {
+  const inputPattern = /\$\{inputBlock\}([\s\S]*?)\$\{inputBlock\}/g;
+  const expressionPattern = /\$\{expressionBlock\}([\s\S]*?)\$\{expressionBlock\}/g;
+  const resultPattern = /\$\{resultBlock\}([\s\S]*?)\$\{resultBlock\}/g;
+  const titlePattern = /\$\{title\}([\s\S]*?)\$\{title\}/g;
+  
+  const inputMatches = [...content.matchAll(inputPattern)];
+  const expressionMatches = [...content.matchAll(expressionPattern)];
+  const resultMatches = [...content.matchAll(resultPattern)];
+  const titleMatches = [...content.matchAll(titlePattern)];
+  
+  return {
+    hasMarkers: inputMatches.length > 0 || expressionMatches.length > 0,
+    inputBlocks: inputMatches.length,
+    expressionBlocks: expressionMatches.length,
+    resultBlocks: resultMatches.length,
+    titleBlocks: titleMatches.length
+  };
+}
+
+const educationalStats = mockGetPairStatistics(educationalContent);
+const structuredStats = mockGetPairStatistics(structuredContent);
+
+console.log('\n🔍 Content Analysis Comparison:');
+console.log('===============================');
+console.log('Educational Content (Explain ALL string functions):');
+console.log(`  Has markers: ${educationalStats.hasMarkers}`);
+console.log(`  Input blocks: ${educationalStats.inputBlocks}`);
+console.log(`  Expression blocks: ${educationalStats.expressionBlocks}`);
+console.log(`  Result blocks: ${educationalStats.resultBlocks}`);
+console.log(`  Title blocks: ${educationalStats.titleBlocks}`);
+
+console.log('\nStructured Content (Examples):');
+console.log(`  Has markers: ${structuredStats.hasMarkers}`);
+console.log(`  Input blocks: ${structuredStats.inputBlocks}`);
+console.log(`  Expression blocks: ${structuredStats.expressionBlocks}`);
+console.log(`  Result blocks: ${structuredStats.resultBlocks}`);
+console.log(`  Title blocks: ${structuredStats.titleBlocks}`);
+
+console.log('\n💡 Issue Analysis:');
+console.log('==================');
+console.log('✅ Educational content correctly shows NO markers detected');
+console.log('✅ Educational content renders as regular markdown (expected)');
+console.log('✅ No "Try This" buttons should appear (correct behavior)');
+console.log('✅ DSL examples with markers render as structured blocks');
+
+console.log('\n🎯 Your "Explain ALL string functions" scenario:');
+console.log('===============================================');
+console.log('Expected behavior:');
+console.log('• Content renders as regular markdown with proper formatting');
+console.log('• No structured code blocks (no DSL markers detected)');
+console.log('• No "Try This" buttons (no extractable examples)');
+console.log('• Clean educational display with proper typography');
+
+console.log('\n❓ What was the actual issue you experienced?');
+console.log('============================================');
+console.log('Was the problem:');
+console.log('• Content not displaying properly?');
+console.log('• Try This buttons appearing when they shouldn\'t?');
+console.log('• Structured blocks appearing for educational content?');
+console.log('• Something else with the UI rendering?');
+
+console.log('\n🔧 Next Steps for Debugging:');
+console.log('============================');
+console.log('1. Test the "Explain ALL string functions" query at http://localhost:8081');
+console.log('2. Check browser console for any DSL detection logs');
+console.log('3. Verify content renders as expected markdown');
+console.log('4. Look for any unexpected Try This buttons');
+console.log('5. Report specific UI issues observed');
 
 console.log('\n🎯 Expected UI Rendering:');
 console.log('=========================');

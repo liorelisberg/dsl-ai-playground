@@ -8,6 +8,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Enhanced Result Block Display**: Professional structured code sections with copy functionality
+  - **Result Block Markers**: AI uses `${resultBlock}` for expected output display
+  - **Professional Styling**: Expected Result section with emerald theme and CheckCircle icon
+  - **Copy Functionality**: Individual copy buttons for input, expression, and result sections
+  - **Syntax Highlighting**: JSON formatting for results with dark/light theme support
+  - **Comprehensive Testing**: 21 passing tests including result block functionality
+- **Educational Question Handling**: Improved support for non-example AI responses
+  - **Marker Detection Fix**: Distinguishes between documentation mentions vs actual DSL markers
+  - **Educational Content Support**: Clean markdown rendering for "Explain ALL functions" queries
+  - **False Positive Prevention**: No "Try This" buttons on educational content
+  - **Test Coverage**: 4 new tests for educational scenarios including your specific case
 - **Enhanced Chat → Parser Integration**: Complete UX upgrade with smart titles and validation
   - **Descriptive Titles**: AI includes `${title}` markers for clear example naming
   - **Adaptive UI**: Single example → "Try This" button, multiple → dropdown menu

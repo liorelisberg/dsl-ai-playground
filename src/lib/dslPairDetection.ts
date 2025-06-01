@@ -110,10 +110,14 @@ export const generatePairTitle = (pair: ExpressionPair, allPairs: ExpressionPair
  * This helps detect if the AI is following the format correctly
  */
 export const hasValidMarkerFormat = (content: string): boolean => {
-  const hasInputMarkers = content.includes('${inputBlock}');
-  const hasExpressionMarkers = content.includes('${expressionBlock}');
+  // Check for properly paired markers (opening and closing)
+  const inputPattern = /\$\{inputBlock\}([\s\S]*?)\$\{inputBlock\}/g;
+  const expressionPattern = /\$\{expressionBlock\}([\s\S]*?)\$\{expressionBlock\}/g;
   
-  return hasInputMarkers && hasExpressionMarkers;
+  const inputMatches = [...content.matchAll(inputPattern)];
+  const expressionMatches = [...content.matchAll(expressionPattern)];
+  
+  return inputMatches.length > 0 && expressionMatches.length > 0;
 };
 
 /**
@@ -127,15 +131,21 @@ export function getPairStatistics(content: string): {
   titleBlocks: number;
   isBalanced: boolean;
 } {
-  const inputMatches = content.match(/\$\{inputBlock\}/g);
-  const expressionMatches = content.match(/\$\{expressionBlock\}/g);
-  const resultMatches = content.match(/\$\{resultBlock\}/g);
-  const titleMatches = content.match(/\$\{title\}/g);
+  // Use proper pattern matching to detect only valid paired markers
+  const inputPattern = /\$\{inputBlock\}([\s\S]*?)\$\{inputBlock\}/g;
+  const expressionPattern = /\$\{expressionBlock\}([\s\S]*?)\$\{expressionBlock\}/g;
+  const resultPattern = /\$\{resultBlock\}([\s\S]*?)\$\{resultBlock\}/g;
+  const titlePattern = /\$\{title\}([\s\S]*?)\$\{title\}/g;
   
-  const inputBlocks = inputMatches ? inputMatches.length / 2 : 0;
-  const expressionBlocks = expressionMatches ? expressionMatches.length / 2 : 0;
-  const resultBlocks = resultMatches ? resultMatches.length / 2 : 0;
-  const titleBlocks = titleMatches ? titleMatches.length / 2 : 0;
+  const inputMatches = [...content.matchAll(inputPattern)];
+  const expressionMatches = [...content.matchAll(expressionPattern)];
+  const resultMatches = [...content.matchAll(resultPattern)];
+  const titleMatches = [...content.matchAll(titlePattern)];
+  
+  const inputBlocks = inputMatches.length;
+  const expressionBlocks = expressionMatches.length;
+  const resultBlocks = resultMatches.length;
+  const titleBlocks = titleMatches.length;
   
   return {
     hasMarkers: inputBlocks > 0 || expressionBlocks > 0 || resultBlocks > 0 || titleBlocks > 0,
