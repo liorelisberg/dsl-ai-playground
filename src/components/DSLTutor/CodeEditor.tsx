@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
-import { Play, Book, Code2, Sparkles, Shuffle, Minimize2, Maximize2, Copy, GripVertical, Eye, FileText } from 'lucide-react';
+import { Play, Book, Code2, Sparkles, Shuffle, Minimize2, Maximize2, Copy, GripVertical, Eye, FileText, MessageCircle } from 'lucide-react';
 import { evaluateExpression } from '../../services/dslService';
 import { useToast } from '@/hooks/use-toast';
 import ExamplesDrawer from './ExamplesDrawer';
@@ -15,7 +15,11 @@ import {
 import JsonView from '@uiw/react-json-view';
 import { useTheme } from 'next-themes';
 
-const CodeEditor = () => {
+interface CodeEditorProps {
+  onParserToChat?: (expression: string, input: string, result: string, isSuccess: boolean) => void;
+}
+
+const CodeEditor: React.FC<CodeEditorProps> = ({ onParserToChat }) => {
   const [code, setCode] = useState('// Enter your DSL expression here\nupper(user.name)');
   const [sampleInput, setSampleInput] = useState('{"user": {"name": "john doe", "age": 30}}');
   const [result, setResult] = useState<string>('');
@@ -24,6 +28,10 @@ const CodeEditor = () => {
   const [lastRandomExampleId, setLastRandomExampleId] = useState<string | null>(null);
   const [isPrettyFormat, setIsPrettyFormat] = useState(true);
   const [isPrettyInputFormat, setIsPrettyInputFormat] = useState(true);
+  
+  // New state to track evaluation status for "Ask About This" button
+  const [hasEvaluated, setHasEvaluated] = useState(false);
+  const [lastEvaluationSuccess, setLastEvaluationSuccess] = useState(false);
   
   // JSON Viewer modes
   const [sampleInputJsonMode, setSampleInputJsonMode] = useState(false); // false = text, true = JSON viewer
@@ -199,9 +207,18 @@ const CodeEditor = () => {
     try {
       const response = await evaluateExpression(code, sampleInput);
       setResult(response.result || response.error || 'No result');
+      setHasEvaluated(true);
+      // Success if no error property exists
+      const isSuccess = !response.error;
+      setLastEvaluationSuccess(isSuccess);
+      if (onParserToChat) {
+        onParserToChat(code, sampleInput, response.result || response.error || 'No result', isSuccess);
+      }
     } catch (error) {
       console.error('Execution error:', error);
       setResult('Error: Failed to execute expression');
+      setHasEvaluated(true);
+      setLastEvaluationSuccess(false);
       toast({
         title: "Execution Error",
         description: "Failed to execute the expression. Please check your syntax.",
@@ -216,6 +233,10 @@ const CodeEditor = () => {
     setCode(example.expression);
     setSampleInput(example.sampleInput);
     setShowExamples(false);
+    // Reset evaluation state when loading new example
+    setHasEvaluated(false);
+    setLastEvaluationSuccess(false);
+    setResult('');
   };
 
   const handleRandomExample = () => {
@@ -248,8 +269,10 @@ const CodeEditor = () => {
       description: `${randomExample.title} (${randomExample.category})`,
     });
 
-    // Clear previous result to encourage running the new example
+    // Clear previous result and reset evaluation state
     setResult('');
+    setHasEvaluated(false);
+    setLastEvaluationSuccess(false);
   };
 
   const handleSampleInputChange = (value: string) => {
@@ -272,6 +295,21 @@ const CodeEditor = () => {
         variant: "destructive"
       });
     }
+  };
+
+  // Handler for "Ask About This" button
+  const handleAskAboutThis = () => {
+    if (!onParserToChat || !hasEvaluated) return;
+
+    onParserToChat(code, sampleInput, result, lastEvaluationSuccess);
+    
+    // Show feedback toast
+    toast({
+      title: "Sent to Chat",
+      description: lastEvaluationSuccess 
+        ? "Asking AI to explain your working expression" 
+        : "Asking AI to debug your failing expression",
+    });
   };
 
   const handleCopySampleInput = async () => {
@@ -795,6 +833,31 @@ const CodeEditor = () => {
                 </TooltipTrigger>
                 <TooltipContent>
                   <p>Copy result to clipboard</p>
+                </TooltipContent>
+              </Tooltip>
+              
+              {/* Ask About This Button */}
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={handleAskAboutThis}
+                    disabled={!hasEvaluated || !onParserToChat}
+                    className="h-7 w-7 p-0 hover:bg-slate-200 dark:hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <MessageCircle className="h-3.5 w-3.5" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>
+                    {!hasEvaluated 
+                      ? 'Run expression first to enable this feature'
+                      : lastEvaluationSuccess 
+                        ? 'Ask AI to explain this working expression' 
+                        : 'Ask AI to debug this failing expression'
+                    }
+                  </p>
                 </TooltipContent>
               </Tooltip>
             </div>

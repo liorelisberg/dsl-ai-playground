@@ -29,6 +29,21 @@ const DSLTutor = () => {
     });
   };
 
+  // Handler for parser to send analysis request to chat
+  const handleParserToChat = (expression: string, input: string, result: string, isSuccess: boolean) => {
+    const prompt = isSuccess 
+      ? `I have a working expression, explain it. Expression: ${expression}, Input: ${input}, Result: ${result}`
+      : `I have a failing expression, explain why it fails. Expression: ${expression}, Input: ${input}, Error: ${result}`;
+
+    const userMessage: ChatMessage = {
+      role: 'user',
+      content: prompt,
+      timestamp: new Date().toISOString()
+    };
+
+    handleNewMessage(userMessage);
+  };
+
   const handleJsonUploadSuccess = (metadata: JsonMetadata) => {
     setCurrentJsonFile(metadata);
     
@@ -138,7 +153,9 @@ const DSLTutor = () => {
 
         {/* Expression Workbench - 42% of space */}
         <div className="flex-shrink-0 bg-slate-50 dark:bg-slate-900 min-w-0 border-l border-slate-200 dark:border-slate-700" style={{ flex: '0 0 42%' }}>
-          <CodeEditor />
+          <CodeEditor
+            onParserToChat={handleParserToChat}
+          />
         </div>
       </div>
 
