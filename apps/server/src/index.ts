@@ -93,7 +93,8 @@ app.listen(config.server.port, async () => {
     await vectorStore.initialize();
     
     // Auto-load DSL knowledge base
-    await vectorStore.autoLoadKnowledgeBase();
+    // DISABLED: .mdc files should not be loaded into knowledge base
+    // await vectorStore.autoLoadKnowledgeBase();
     
     const info = await vectorStore.getCollectionInfo();
     console.log(`✅ Knowledge base ready: ${info.count} documents loaded`);

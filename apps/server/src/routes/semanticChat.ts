@@ -344,7 +344,8 @@ This demonstrates correct ZEN DSL syntax. Always use ZEN functions and operators
     await semanticStore.upsertDocuments(documents);
     
     // Also ensure .mdc rules are loaded for comprehensive coverage
-    await ensureMdcRulesLoaded();
+    // DISABLED: .mdc files should not be loaded into knowledge base  
+    // await ensureMdcRulesLoaded();
     
     console.log(`✅ Enhanced knowledge base loaded:`);
     console.log(`   📄 ZEN Examples: ${examples.length}`);
