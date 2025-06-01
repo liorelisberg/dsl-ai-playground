@@ -6,6 +6,7 @@ import { GlobalDragDropZone } from './GlobalDragDropZone';
 import { ThemeToggle } from '../ui/theme-toggle';
 import { ChatMessage } from '../../types/chat';
 import { useConnectionStatus } from '../../hooks/useConnectionStatus';
+import { sendChatMessage } from '../../services/chatService';
 
 const DSLTutor = () => {
   const [chatHistory, setChatHistory] = useState<ChatMessage[]>([
@@ -30,7 +31,7 @@ const DSLTutor = () => {
   };
 
   // Handler for parser to send analysis request to chat
-  const handleParserToChat = (expression: string, input: string, result: string, isSuccess: boolean) => {
+  const handleParserToChat = async (expression: string, input: string, result: string, isSuccess: boolean) => {
     const prompt = isSuccess 
       ? `I have a working expression, explain it. Expression: ${expression}, Input: ${input}, Result: ${result}`
       : `I have a failing expression, explain why it fails. Expression: ${expression}, Input: ${input}, Error: ${result}`;
@@ -41,7 +42,32 @@ const DSLTutor = () => {
       timestamp: new Date().toISOString()
     };
 
+    // Add user message to chat
     handleNewMessage(userMessage);
+
+    // Get AI response (import and call the chat service)
+    try {
+      const response = await sendChatMessage(prompt, [...chatHistory, userMessage]);
+      
+      const assistantMessage: ChatMessage = {
+        role: 'assistant',
+        content: response.text,
+        timestamp: new Date().toISOString(),
+        metadata: response.metadata
+      };
+
+      handleNewMessage(assistantMessage);
+    } catch (error) {
+      console.error('Parser to chat error:', error);
+      
+      const errorMessage: ChatMessage = {
+        role: 'assistant',
+        content: "I'm sorry, I'm having trouble analyzing your expression right now. Please try again in a moment.",
+        timestamp: new Date().toISOString()
+      };
+      
+      handleNewMessage(errorMessage);
+    }
   };
 
   const handleJsonUploadSuccess = (metadata: JsonMetadata) => {

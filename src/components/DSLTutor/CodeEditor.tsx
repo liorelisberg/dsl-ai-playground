@@ -16,7 +16,7 @@ import JsonView from '@uiw/react-json-view';
 import { useTheme } from 'next-themes';
 
 interface CodeEditorProps {
-  onParserToChat?: (expression: string, input: string, result: string, isSuccess: boolean) => void;
+  onParserToChat?: (expression: string, input: string, result: string, isSuccess: boolean) => Promise<void>;
 }
 
 const CodeEditor: React.FC<CodeEditorProps> = ({ onParserToChat }) => {
@@ -32,6 +32,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ onParserToChat }) => {
   // New state to track evaluation status for "Ask About This" button
   const [hasEvaluated, setHasEvaluated] = useState(false);
   const [lastEvaluationSuccess, setLastEvaluationSuccess] = useState(false);
+  const [isAskingAI, setIsAskingAI] = useState(false); // New state for AI request loading
   
   // JSON Viewer modes
   const [sampleInputJsonMode, setSampleInputJsonMode] = useState(false); // false = text, true = JSON viewer
@@ -211,9 +212,6 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ onParserToChat }) => {
       // Success if no error property exists
       const isSuccess = !response.error;
       setLastEvaluationSuccess(isSuccess);
-      if (onParserToChat) {
-        onParserToChat(code, sampleInput, response.result || response.error || 'No result', isSuccess);
-      }
     } catch (error) {
       console.error('Execution error:', error);
       setResult('Error: Failed to execute expression');
@@ -298,18 +296,30 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ onParserToChat }) => {
   };
 
   // Handler for "Ask About This" button
-  const handleAskAboutThis = () => {
+  const handleAskAboutThis = async () => {
     if (!onParserToChat || !hasEvaluated) return;
 
-    onParserToChat(code, sampleInput, result, lastEvaluationSuccess);
-    
-    // Show feedback toast
-    toast({
-      title: "Sent to Chat",
-      description: lastEvaluationSuccess 
-        ? "Asking AI to explain your working expression" 
-        : "Asking AI to debug your failing expression",
-    });
+    setIsAskingAI(true);
+    try {
+      await onParserToChat(code, sampleInput, result, lastEvaluationSuccess);
+      
+      // Show feedback toast
+      toast({
+        title: "Sent to Chat",
+        description: lastEvaluationSuccess 
+          ? "Asking AI to explain your working expression" 
+          : "Asking AI to debug your failing expression",
+      });
+    } catch (error) {
+      console.error('Chat communication error:', error);
+      toast({
+        title: "Chat Communication Error",
+        description: "Failed to communicate with AI. Please try again later.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsAskingAI(false);
+    }
   };
 
   const handleCopySampleInput = async () => {
@@ -843,7 +853,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ onParserToChat }) => {
                     variant="ghost"
                     size="sm"
                     onClick={handleAskAboutThis}
-                    disabled={!hasEvaluated || !onParserToChat}
+                    disabled={!hasEvaluated || !onParserToChat || isAskingAI}
                     className="h-7 w-7 p-0 hover:bg-slate-200 dark:hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     <MessageCircle className="h-3.5 w-3.5" />
@@ -851,11 +861,15 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ onParserToChat }) => {
                 </TooltipTrigger>
                 <TooltipContent>
                   <p>
-                    {!hasEvaluated 
-                      ? 'Run expression first to enable this feature'
-                      : lastEvaluationSuccess 
-                        ? 'Ask AI to explain this working expression' 
-                        : 'Ask AI to debug this failing expression'
+                    {!onParserToChat 
+                      ? 'Chat communication not available'
+                      : !hasEvaluated 
+                        ? 'Run expression first to enable this feature'
+                        : isAskingAI 
+                          ? 'Asking AI...'
+                          : lastEvaluationSuccess 
+                            ? 'Ask AI to explain this working expression' 
+                            : 'Ask AI to debug this failing expression'
                     }
                   </p>
                 </TooltipContent>
