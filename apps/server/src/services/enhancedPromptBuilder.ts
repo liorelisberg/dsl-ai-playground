@@ -201,59 +201,63 @@ export class EnhancedPromptBuilder {
     const personalizations: string[] = [];
     let systemPrompt = this.BASE_SYSTEM_PROMPT;
 
-    // Add expertise-level guidance
-    if (profile) {
-      switch (profile.expertiseLevel) {
-        case 'beginner':
-          systemPrompt += `\n\nYou are working with a beginner who benefits from clear explanations, step-by-step guidance, and practical ZEN examples. Always explain concepts before diving into implementation details using ZEN syntax.`;
-          personalizations.push('beginner-friendly tone');
-          break;
-        case 'intermediate':
-          systemPrompt += `\n\nYou are working with someone who has intermediate ZEN DSL knowledge. They understand basics but appreciate deeper insights, best practices, and when to use different ZEN approaches.`;
-          personalizations.push('intermediate-level insights');
-          break;
-        case 'advanced':
-          systemPrompt += `\n\nYou are working with an advanced ZEN user who values efficiency, performance considerations, edge cases, and implementation details. They can handle complex ZEN concepts and appreciate technical depth.`;
-          personalizations.push('advanced technical depth');
-          break;
-      }
-    }
-
-    // Add conversation flow awareness
-    if (context) {
-      switch (context.flowType) {
-        case 'learning':
-          systemPrompt += `\n\nThe user is in learning mode. Focus on building ZEN understanding, provide educational context, and suggest progressive learning paths using ZEN syntax.`;
-          personalizations.push('learning-focused approach');
-          break;
-        case 'problem-solving':
-          systemPrompt += `\n\nThe user is trying to solve a specific problem. Be solution-oriented, provide practical ZEN implementations, and consider edge cases in ZEN DSL.`;
-          personalizations.push('solution-oriented responses');
-          break;
-        case 'debugging':
-          systemPrompt += `\n\nThe user is troubleshooting a ZEN DSL issue. Be systematic, help identify root causes, and provide clear debugging steps using correct ZEN syntax.`;
-          personalizations.push('debugging assistance');
-          break;
-        case 'exploration':
-          systemPrompt += `\n\nThe user is exploring ZEN DSL capabilities. Provide comprehensive coverage of ZEN functions, suggest related ZEN concepts, and encourage discovery.`;
-          personalizations.push('exploratory guidance');
-          break;
-      }
-    }
-
-    // 🎯 BREVITY HANDLING
-    if (isBrevityRequest) {
-      systemPrompt += `\n\n🎯 BREVITY MODE: The user requested a brief response. Provide:
-- Concise, direct answers
-- Essential ZEN syntax only 
-- Minimal explanations
-- Focus on core functionality
-- Use bullet points or short lists when appropriate
-- Skip verbose examples unless specifically requested`;
-      personalizations.push('brevity mode enabled');
-    }
+    // Add context-aware system guidance
+    systemPrompt += this.buildContextualGuidance(strategy, profile, context);
 
     return { content: systemPrompt, personalizations };
+  }
+
+  private buildContextualGuidance(
+    strategy: AdaptiveResponse,
+    profile?: UserProfile,
+    context?: ConversationContext
+  ): string {
+    let guidance = '\n\n**Response Guidelines:**\n';
+    
+    // Complexity-based guidance
+    switch (strategy.complexityLevel) {
+      case 'basic':
+        guidance += '- Provide clear, step-by-step explanations\n';
+        guidance += '- Include simple examples\n';
+        guidance += '- Avoid complex technical details\n';
+        break;
+      case 'intermediate':
+        guidance += '- Balance explanation with practical examples\n';
+        guidance += '- Include some technical context\n';
+        guidance += '- Show alternative approaches when relevant\n';
+        break;
+      case 'advanced':
+        guidance += '- Focus on efficiency and best practices\n';
+        guidance += '- Include performance considerations\n';
+        guidance += '- Discuss edge cases and alternatives\n';
+        break;
+    }
+
+    // Context-specific guidance
+    if (context?.flowType) {
+      guidance += `\n**Conversation Context:** ${context.flowType}\n`;
+      
+      switch (context.flowType) {
+        case 'learning':
+          guidance += '- Prioritize educational value\n';
+          guidance += '- Build on previous concepts\n';
+          break;
+        case 'debugging':
+          guidance += '- Focus on problem identification\n';
+          guidance += '- Provide troubleshooting steps\n';
+          break;
+        case 'problem-solving':
+          guidance += '- Offer practical solutions\n';
+          guidance += '- Consider implementation details\n';
+          break;
+        case 'exploration':
+          guidance += '- Show diverse possibilities\n';
+          guidance += '- Encourage experimentation\n';
+          break;
+      }
+    }
+
+    return guidance;
   }
 
   /**
@@ -416,94 +420,38 @@ export class EnhancedPromptBuilder {
     isBrevityRequest: boolean = false,
     hasHistory: boolean = false
   ): { content: string; adaptations: string[] } {
-    
     const adaptations: string[] = [];
-    let content = '**Response Guidelines:**\n';
+    let content = '\n**Response Guidelines:**\n';
 
-    const guidelines: string[] = [];
-
-    // 🔗 CONVERSATION CONTINUITY RULES (Phase 2.2)
-    if (hasHistory) {
-      guidelines.push('🔗 REFERENCE previous conversation elements explicitly');
-      guidelines.push('📚 CONNECT new concepts to topics already discussed');
-      guidelines.push('🎯 USE conversation markers: "As we discussed...", "Building on our discussion of...", "Continuing from..."');
-      guidelines.push('🧵 ACKNOWLEDGE the user\'s learning progression and previous questions');
-      guidelines.push('📈 SHOW awareness of the conversation journey and context');
-      adaptations.push('conversation continuity rules applied');
-    }
-
-    // 🎯 BREVITY FIRST - Override complexity if brevity requested
-    if (isBrevityRequest) {
-      guidelines.push('⚡ BRIEF MODE: Keep response concise and direct');
-      guidelines.push('📝 Use bullet points or short lists');
-      guidelines.push('🔑 Focus on essential ZEN syntax only');
-      guidelines.push('⚠️ Skip lengthy explanations');
-      adaptations.push('brevity guidelines applied');
+    // Complexity-specific guidelines  
+    if (strategy.complexityLevel === 'basic') {
+      content += '- Provide step-by-step explanations\n';
+      content += '- Use simple language and clear examples\n';
+      content += '- Focus on core concepts before details\n';
+      adaptations.push('simplified for basic level');
+    } else if (strategy.complexityLevel === 'advanced') {
+      content += '- Include technical depth and edge cases\n';
+      content += '- Show optimization opportunities\n';
+      content += '- Discuss implementation considerations\n';
+      adaptations.push('enhanced for advanced level');
     } else {
-      // Complexity-based guidelines (only if not brief)
-      switch (strategy.complexityLevel) {
-        case 'basic':
-          guidelines.push('Use simple, clear language with ZEN examples');
-          guidelines.push('Explain ZEN concepts step-by-step');
-          guidelines.push('Avoid technical jargon');
-          adaptations.push('basic complexity guidelines');
-          break;
-        case 'intermediate':
-          guidelines.push('Balance ZEN explanation with implementation');
-          guidelines.push('Include ZEN best practices');
-          guidelines.push('Mention alternative ZEN approaches');
-          adaptations.push('intermediate complexity guidelines');
-          break;
-        case 'advanced':
-          guidelines.push('Focus on ZEN implementation details');
-          guidelines.push('Discuss ZEN performance implications');
-          guidelines.push('Cover ZEN edge cases');
-          adaptations.push('advanced complexity guidelines');
-          break;
-      }
+      content += '- Balance explanation with practical examples\n';
+      content += '- Include relevant context and alternatives\n';
+      adaptations.push('balanced for intermediate level');
     }
 
-    // Core ZEN guidelines (always apply)
-    guidelines.push('🚫 NEVER use JavaScript syntax (.length, .toUpperCase(), etc.)');
-    guidelines.push('✅ ALWAYS use ZEN syntax (len(), upper(), filter(), etc.)');
-    guidelines.push('📋 Include ZEN function names in responses');
-
-    // Example inclusion (adjust for brevity)
-    if (strategy.includeExamples && !isBrevityRequest) {
-      guidelines.push('Include practical ZEN code examples');
-      guidelines.push('Show before/after scenarios with ZEN syntax');
-      adaptations.push('include ZEN examples guideline');
-    } else if (strategy.includeExamples && isBrevityRequest) {
-      guidelines.push('Include minimal ZEN syntax examples only');
-      adaptations.push('brief ZEN examples only');
+    // Context-aware guidelines
+    if (hasHistory) {
+      content += '- Build on previous conversation context\n';
+      content += '- Reference earlier examples when relevant\n';
+      adaptations.push('conversation-aware guidelines');
     }
 
-    // Background context (skip if brevity requested)
-    if (strategy.includeBackground && !isBrevityRequest) {
-      guidelines.push('Provide ZEN conceptual background');
-      guidelines.push('Explain the "why" behind ZEN solutions');
-      adaptations.push('include ZEN background guideline');
+    // Brevity handling
+    if (isBrevityRequest) {
+      content += '\n🎯 **BREVITY MODE**: Provide concise, direct answers with essential information only.\n';
+      adaptations.push('brevity mode enabled');
     }
-
-    // User interaction style
-    if (profile && !isBrevityRequest) {
-      switch (profile.interactionStyle) {
-        case 'concise':
-          guidelines.push('Keep ZEN responses focused and brief');
-          adaptations.push('concise style preference');
-          break;
-        case 'examples-focused':
-          guidelines.push('Emphasize practical ZEN examples');
-          adaptations.push('ZEN examples-focused style');
-          break;
-        case 'explanatory':
-          guidelines.push('Provide thorough ZEN explanations');
-          adaptations.push('explanatory ZEN style preference');
-          break;
-      }
-    }
-
-    content += guidelines.map(guideline => `- ${guideline}`).join('\n');
 
     return { content, adaptations };
   }
@@ -542,20 +490,20 @@ export class EnhancedPromptBuilder {
     context?: ConversationContext
   ): PromptPersonalization {
     
-    const greetingStyle = profile?.expertiseLevel === 'beginner' ? 'encouraging' :
-                         profile?.expertiseLevel === 'advanced' ? 'professional' : 'friendly';
-
-    const explanationDepth = strategy.complexityLevel === 'basic' ? 'comprehensive' :
-                            strategy.complexityLevel === 'advanced' ? 'minimal' : 'standard';
-
+    const greetingStyle = profile?.preferredComplexity === 'basic' ? 'encouraging' :
+                         profile?.preferredComplexity === 'advanced' ? 'professional' : 'friendly';
+    
+    const explanationDepth = strategy.complexityLevel === 'basic' ? 'minimal' :
+                            strategy.complexityLevel === 'advanced' ? 'comprehensive' : 'standard';
+    
     const exampleCount = strategy.includeExamples ? 
-                        (strategy.complexityLevel === 'basic' ? 3 : 2) : 1;
-
+                        (strategy.complexityLevel === 'advanced' ? 3 : 2) : 1;
+    
     const technicalLevel = strategy.complexityLevel === 'basic' ? 'simplified' :
                           strategy.complexityLevel === 'advanced' ? 'technical' : 'standard';
-
-    const encouragementLevel = profile?.expertiseLevel === 'beginner' ? 'high' :
-                              context?.satisfaction && context.satisfaction < 0.5 ? 'medium' : 'low';
+    
+    const encouragementLevel = profile?.preferredComplexity === 'basic' ? 'high' :
+                              strategy.includeBackground ? 'medium' : 'low';
 
     return {
       greetingStyle,

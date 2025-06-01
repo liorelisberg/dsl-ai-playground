@@ -77,14 +77,10 @@ interface SemanticChatResponse {
   sessionId: string;
   metadata: {
     semanticMatches: number;
-    userExpertise: string;
     conversationFlow: string;
-    adaptations: string[];
-    personalizations: string[];
     tokenEfficiency: number;
     processingTime: number;
     semanticSimilarity: number;
-    // Phase 2.5: Add resilience metadata
     resilience?: {
       wasFallback: boolean;
       delayTime: number;
@@ -97,7 +93,6 @@ interface SemanticChatResponse {
         errorRate: number;
       };
     };
-    // Phase 3: Add topic management metadata
     topicManagement?: {
       zenRelevance: {
         isZenRelated: boolean;
@@ -163,19 +158,18 @@ async function handleSemanticChat(req: Request, res: Response): Promise<void> {
     const userProfile = stateManager.updateUserProfile(sessionId, message);
     const conversationContext = stateManager.updateConversationContext(sessionId, message, conversationHistory);
 
-    // 3. Phase 2: Generate conversation continuity context
-    const continuityContext = stateManager.generateConversationContinuityContext(sessionId, conversationHistory);
+    // 3. Create simplified conversation continuity context
+    const recentHistory = conversationHistory.slice(-8); // Keep last 8 turns
     
     console.log(`🔗 Conversation continuity:`);
-    console.log(`   Recent history: ${continuityContext.recentHistory.length} turns`);
-    console.log(`   Older summary: ${continuityContext.olderSummary ? 'Generated' : 'None'}`);
-    console.log(`   Flow type: ${continuityContext.conversationFlow}`);
-    console.log(`   Concepts discussed: ${continuityContext.conceptsDiscussed.size}`);
+    console.log(`   Recent history: ${recentHistory.length} turns`);
+    console.log(`   Flow type: ${conversationContext.flowType}`);
+    console.log(`   Concepts discussed: ${conversationContext.conceptsDiscussed.size}`);
 
     // 4. Phase 1: Calculate optimal token budget with enhanced allocation
     const tokenBudget = contextManager.calculateOptimalBudget(
       message,
-      continuityContext.recentHistory, // Use recent history for budget calculation
+      recentHistory, // Use recent history for budget calculation
       !!jsonContext,
       contextManager.assessQueryComplexity(message)
     );
@@ -192,27 +186,15 @@ async function handleSemanticChat(req: Request, res: Response): Promise<void> {
     console.log(`📚 Retrieved ${semanticResults.length} semantic matches (avg similarity: ${semanticResults.length > 0 ? (semanticResults.reduce((sum: number, r: { similarity: number }) => sum + r.similarity, 0) / semanticResults.length).toFixed(2) : 0})`);
 
     // 6. Generate adaptive strategy
-    const adaptiveStrategy = stateManager.generateAdaptiveStrategy(sessionId, message);
+    const adaptiveStrategy = stateManager.generateAdaptiveStrategy(sessionId, message, userProfile, conversationContext);
 
     // 7. Build enhanced prompt with conversation continuity
-    // Create chat history for prompt with older summary inclusion
-    let chatHistoryForPrompt = continuityContext.recentHistory;
-    
-    // Prepend older summary as system context if it exists
-    if (continuityContext.olderSummary) {
-      const summaryTurn: ChatTurn = {
-        role: 'assistant',
-        content: `[CONVERSATION CONTEXT] ${continuityContext.olderSummary}`,
-        timestamp: new Date(Date.now() - 1000) // Timestamp slightly before recent history
-      };
-      chatHistoryForPrompt = [summaryTurn, ...continuityContext.recentHistory];
-      console.log(`🧵 Added conversation summary: "${continuityContext.olderSummary}"`);
-    }
+    const chatHistoryForPrompt = recentHistory;
 
     const promptResult = promptBuilder.buildAdaptivePrompt(
       message,
       knowledgeCards, // Use converted knowledge cards
-      chatHistoryForPrompt, // Use history with summary
+      chatHistoryForPrompt, // Use recent history
       adaptiveStrategy,
       userProfile,
       conversationContext,
@@ -355,21 +337,17 @@ async function handleSemanticChat(req: Request, res: Response): Promise<void> {
       };
     }
 
-    // 13. Return response with resilience metadata
+    // 13. Return response with simplified metadata
     const responseData: SemanticChatResponse = {
       text: finalResponse,
       sessionId,
       metadata: {
         semanticMatches: semanticResults.length,
-        userExpertise: userProfile.expertiseLevel,
         conversationFlow: conversationContext.flowType,
-        adaptations: promptResult.adaptations,
-        personalizations: adaptiveStrategy.suggestedFollowUps,
-        tokenEfficiency: parseFloat(tokenEfficiency.toFixed(1)),
-        processingTime,
         semanticSimilarity: semanticResults.length > 0 ? 
           parseFloat((semanticResults.reduce((sum: number, r: { similarity: number }) => sum + r.similarity, 0) / semanticResults.length).toFixed(3)) : 0,
-        // Phase 2.5: Add resilience metadata
+        processingTime,
+        tokenEfficiency: parseFloat(tokenEfficiency.toFixed(1)),
         resilience: {
           wasFallback,
           delayTime,
@@ -382,7 +360,6 @@ async function handleSemanticChat(req: Request, res: Response): Promise<void> {
             errorRate: (1 - rateLimitStats.avgSuccessRate) * 100
           }
         },
-        // Phase 3: Add topic management metadata
         topicManagement: topicAnalysis
       }
     };
@@ -972,26 +949,24 @@ async function getSessionMetrics(req: Request, res: Response): Promise<void> {
     const { sessionId } = req.params;
     
     if (!sessionId) {
-      res.status(400).json({ error: 'Session ID required' });
+      res.status(400).json({ error: 'Session ID is required' });
       return;
     }
 
-    const metrics = stateManager.getSessionMetrics(sessionId);
-    const stateSummary = stateManager.getStateSummary(sessionId);
+    const metrics = stateManager.getLearningMetrics(sessionId);
     
     res.json({
       sessionId,
-      metrics,
-      stateSummary,
-      timestamp: new Date().toISOString()
+      metrics: {
+        topicsExplored: metrics.topicsExplored,
+        avgComplexity: metrics.avgComplexity,
+        satisfactionScore: metrics.satisfactionScore,
+        learningProgression: metrics.learningProgression
+      }
     });
-    
   } catch (error) {
-    console.error('❌ Session metrics error:', error);
-    res.status(500).json({ 
-      error: 'Failed to get session metrics',
-      details: error instanceof Error ? error.message : 'Unknown error'
-    });
+    console.error('❌ Failed to get session metrics:', error);
+    res.status(500).json({ error: 'Failed to retrieve session metrics' });
   }
 }
 

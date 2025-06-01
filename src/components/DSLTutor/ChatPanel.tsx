@@ -28,11 +28,14 @@ interface UploadedFile {
   content: unknown;
 }
 
-interface SemanticMetadata {
-  semanticSimilarity?: number;
-  contextUsed?: boolean;
-  userExpertise?: string;
+interface MessageMetadata {
+  tokenCount?: number;
   semanticMatches?: number;
+  conversationFlow?: string;
+  semanticSimilarity?: number;
+  processingTime?: number;
+  contextUsed?: boolean;
+  tokenEfficiency?: number;
 }
 
 const ChatPanel: React.FC<ChatPanelProps> = ({ 
@@ -297,32 +300,28 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
   };
 
   // Render semantic metadata badges
-  const renderSemanticMetadata = (metadata: SemanticMetadata) => {
+  const renderSemanticMetadata = (metadata: MessageMetadata) => {
     if (!metadata) return null;
 
     return (
-      <div className="mt-2 flex flex-wrap gap-1">
+      <div className="text-xs text-gray-500 mt-2 space-y-1">
+        {metadata.semanticMatches && (
+          <div>🔍 Matches: {metadata.semanticMatches}</div>
+        )}
+        {metadata.tokenCount && (
+          <div>📊 Tokens: {metadata.tokenCount}</div>
+        )}
         {metadata.semanticSimilarity && (
-          <Badge variant="outline" className="text-xs">
-            <Target className="h-3 w-3 mr-1" />
-            {metadata.semanticSimilarity}% similarity
-          </Badge>
+          <div>🎯 Relevance: {(metadata.semanticSimilarity * 100).toFixed(1)}%</div>
+        )}
+        {metadata.processingTime && (
+          <div>⚡ Time: {metadata.processingTime}ms</div>
         )}
         {metadata.contextUsed && (
-          <Badge variant="outline" className="text-xs">
-            <Brain className="h-3 w-3 mr-1" />
-            Context Applied
-          </Badge>
+          <div>🧠 Context: Used</div>
         )}
-        {metadata.userExpertise && (
-          <Badge variant="outline" className="text-xs">
-            Level: {metadata.userExpertise}
-          </Badge>
-        )}
-        {metadata.semanticMatches && (
-          <Badge variant="outline" className="text-xs">
-            {metadata.semanticMatches} patterns
-          </Badge>
+        {metadata.tokenEfficiency && (
+          <div>💡 Efficiency: {metadata.tokenEfficiency}%</div>
         )}
       </div>
     );

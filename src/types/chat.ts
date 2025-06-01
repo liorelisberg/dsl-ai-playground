@@ -2,14 +2,16 @@ export interface ChatMessage {
   role: 'user' | 'assistant';
   content: string;
   timestamp: string;
-  metadata?: {
-    semanticMatches?: number;
-    userExpertise?: 'beginner' | 'intermediate' | 'advanced';
-    conversationFlow?: string;
-    semanticSimilarity?: number;
-    processingTime?: number;
-    contextUsed?: boolean;
-  };
+  metadata?: ChatMetadata;
+}
+
+export interface ChatMetadata {
+  tokenCount?: number;
+  semanticMatches?: number;
+  conversationFlow?: string;
+  semanticSimilarity?: number;
+  processingTime?: number;
+  contextUsed?: boolean;
 }
 
 export interface ChatResponse {

@@ -11,7 +11,8 @@ const DSLTutor = () => {
   const [chatHistory, setChatHistory] = useState<ChatMessage[]>([
     {
       role: 'assistant',
-      content: 'Welcome to the **Intelligent DSL Tutor**! I\'m an AI assistant that learns from your data and conversation patterns to provide personalized help.\n\n🧠 **How I help you:**\n- Upload JSON data for context-aware suggestions\n- Learn your expertise level and adapt responses\n- Remember conversation topics for better continuity\n- Provide DSL examples tailored to your specific data\n\nFeel free to ask questions or upload JSON data to get started!',
+      content: 'Welcome to the ZEN DSL AI Playground! 🚀\n\nI\'m your intelligent DSL assistant, here to help you master ZEN expressions and data processing.\n',
+      // **What I can help with:**\n- ZEN DSL syntax and functions\n- Data transformation with arrays, strings, numbers\n- Interactive examples with your JSON data\n- Best practices and optimization tips\n- Debugging expressions and learning concepts\n\n**Enhanced Features:**\n- Smart conversation that understands context\n- Personalized examples based on your data\n- Session continuity for seamless learning\n\nFeel free to ask questions or upload JSON data to get started!',
       timestamp: new Date().toISOString()
     }
   ]);

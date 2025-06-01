@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Card } from "@/components/ui/card";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Brain, Eye, Trash2, Activity, Clock } from 'lucide-react';
+import { Brain, Eye, Trash2, Activity, Clock, User } from 'lucide-react';
 import { toast } from "@/hooks/use-toast";
 import { API_CONFIG } from '@/config/api';
 
@@ -16,8 +16,21 @@ interface ContextData {
   } | null;
   recentTopics: string[];
   userProfile: {
-    expertiseLevel: 'beginner' | 'intermediate' | 'advanced';
-    preferredStyle: string;
+    sessionCount: number;
+    preferredComplexity: 'basic' | 'intermediate' | 'advanced';
+    totalQueries: number;
+    conversationTopics: string[];
+  };
+  conversationContext: {
+    currentTopic: string;
+    topicDepth: number;
+    flowType: string;
+    conceptsDiscussed: number;
+    satisfaction: number;
+  };
+  semanticStats: {
+    totalDocuments: number;
+    lastUpdate: string;
   };
   lastActivity: string;
 }
@@ -143,7 +156,7 @@ export const ContextStatus: React.FC<ContextStatusProps> = ({ onClearContext }) 
         )}
         
         <div className="flex items-center space-x-2 text-xs text-gray-600">
-          <span>🎯 Level: {contextData.userProfile.expertiseLevel}</span>
+          <span>🎯 Level: {contextData.userProfile.preferredComplexity}</span>
           <span>•</span>
           <Clock className="h-3 w-3" />
           <span>{new Date(contextData.lastActivity).toLocaleTimeString()}</span>
@@ -193,10 +206,40 @@ export const ContextStatus: React.FC<ContextStatusProps> = ({ onClearContext }) 
 
           <div>
             <span className="font-medium">Conversation Style:</span>
-            <span className="ml-1">{contextData.userProfile.preferredStyle}</span>
+            <span className="ml-1">{contextData.conversationContext.currentTopic}</span>
           </div>
         </div>
       )}
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {/* User Profile Card */}
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium flex items-center gap-2">
+              <User className="h-4 w-4" />
+              User Profile
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-2">
+            <div className="flex justify-between text-sm">
+              <span className="text-muted-foreground">Sessions:</span>
+              <span className="font-medium">{contextData.userProfile.sessionCount}</span>
+            </div>
+            <div className="flex justify-between text-sm">
+              <span className="text-muted-foreground">Complexity:</span>
+              <span className="font-medium">{contextData.userProfile.preferredComplexity}</span>
+            </div>
+            <div className="flex justify-between text-sm">
+              <span className="text-muted-foreground">Total Queries:</span>
+              <span className="font-medium">{contextData.userProfile.totalQueries}</span>
+            </div>
+            <div className="flex justify-between text-sm">
+              <span className="text-muted-foreground">Topics:</span>
+              <span className="font-medium">{contextData.userProfile.conversationTopics.length}</span>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
     </Card>
   );
 }; 
