@@ -31,7 +31,7 @@ const TEST_FLOWS = [
       {
         id: 2, 
         message: "in as few words as possible, what are the capabilities of the string type? functions and operators",
-        expectedContexts: ["brevity", "string operations", "functions", "operators"],
+        expectedContexts: ["string operations", "functions", "operators"],
         expectedTopics: ["string capabilities"],
         shouldReference: []
       },

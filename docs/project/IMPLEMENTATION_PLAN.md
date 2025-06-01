@@ -858,35 +858,11 @@ describe('Non-ZEN Topic Deflection', () => {
 
 ## 🎯 Phase 5: Response Optimization
 
-### **Step 5.1: Enhanced Brevity Detection**
+### **Step 5.0: Content Control Framework**
 
-**Requirements:**
-- Expand brevity keyword detection beyond current basic set
-- Implement response length scaling based on request type
-- Create minimal/concise/detailed response templates
-- Maintain ZEN focus across all brevity levels
+**Scope:** Remove content control system - the model can handle context appropriately without artificial constraints.
 
-**Motivation:**
-Current brevity detection is limited and doesn't scale response appropriately. Users requesting "brief" answers often get full explanations, violating their explicit preferences.
-
-**Value:**
-- Respect user communication preferences
-- Appropriate response length matching request
-- Improved user satisfaction through preference adherence
-- Efficient token usage for brief requests
-
-**Files Modified:**
-- `apps/server/src/services/enhancedPromptBuilder.ts`
-
-**Test:** `test-enhanced-brevity.js`
-```javascript
-describe('Enhanced Brevity Detection', () => {
-  test('Minimal brevity requests honored', async () => {
-    const response = await sendMessage('What is len() in few words?', generateSessionId());
-    expect(response.text.split(' ').length).toBeLessThan(15);
-  });
-});
-```
+**Status:** ✅ **COMPLETED**
 
 ---
 

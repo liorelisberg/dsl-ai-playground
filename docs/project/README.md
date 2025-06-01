@@ -1,17 +1,17 @@
 # 🚀 DSL AI Playground - Project Documentation (Legacy)
 
-> **📝 Note**: This is legacy project documentation. For the latest documentation including Phase 3 Topic Management enhancements, see the main [README.md](../../README.md) at the project root.
+> **📝 Note**: This is legacy project documentation. For the latest documentation with lean system architecture, see the main [README.md](../../README.md) at the project root.
 
 **An intelligent Domain-Specific Language (DSL) learning platform with AI-powered assistance and real-time code execution.**
 
-## 🎯 **Current Status: ENHANCED PRODUCTION READY**
+## 🎯 **Current Status: LEAN PRODUCTION READY**
 
 - ✅ **Phase 1**: Core DSL Engine & Token Budget Expansion (100% Complete)
 - ✅ **Phase 2**: Conversation Continuity & Semantic Enhancement (100% Complete) 
-- ✅ **Phase 3**: Topic Management & Intelligence Layer (✨ **NEW** - 100% Complete)
+- ✅ **Phase 2.5**: System Cleanup & Lean Architecture (✨ **NEW** - 100% Complete)
 - ✅ **Phase 4**: UX/UI Polish & TypeScript Cleanup (100% Complete)
 
-**🆕 Latest Enhancement: Phase 3 Topic Intelligence System**
+**🆕 Latest Enhancement: Lean System Architecture - Simplified & Focused**
 
 ## 🔗 **Quick Links**
 
@@ -19,14 +19,6 @@
 - **📋 Implementation Plan**: [IMPLEMENTATION_PLAN.md](../../IMPLEMENTATION_PLAN.md) - Current development roadmap  
 - **🧪 Test Suite**: [tests/](../../tests/) - Organized test suite (E2E, Integration, Unit)
 - **⚙️ Configuration**: [config/](../../config/) - Centralized configuration files
-
-## 📊 **Phase 3 Topic Management Features**
-
-### **🧠 Topic Intelligence Layer** *(NEW)*
-- **🎯 Semantic Topic Detection**: Advanced similarity analysis with 75% accuracy
-- **🔍 ZEN Relevance Validation**: Smart content filtering with negative indicators  
-- **🛡️ Off-Topic Deflection**: Professional redirects with contextual bridges
-- **📊 Enhanced Analytics**: Topic transition analysis and confidence scoring
 
 ## ✨ **Key Features**
 
@@ -38,7 +30,7 @@
 
 ### 🧠 **Intelligent AI Assistant**
 - **Semantic Understanding**: 72% similarity matching with 113 knowledge documents
-- **Context Awareness**: Automatic user profiling and expertise detection
+- **Context Awareness**: Automatic user profiling and conversation flow tracking
 - **JSON Integration**: Upload data for personalized DSL examples and suggestions
 - **Session Continuity**: Remembers conversation history across interactions
 

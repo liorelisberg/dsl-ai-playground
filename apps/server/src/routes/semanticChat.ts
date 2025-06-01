@@ -15,7 +15,6 @@ import { JSONContextOptimizer } from '../services/jsonOptimizer';
 import { ResilientGeminiService } from '../services/resilientGeminiService';
 import { IntelligentRateLimitManager } from '../services/rateLimitManager';
 import { UserFeedbackManager } from '../services/userFeedbackManager';
-import { TopicManager } from '../services/topicManager';
 import { Document } from '../services/vectorStore';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -33,13 +32,12 @@ interface Example {
 
 const router: Router = Router();
 
-// Initialize services with Phase 2.5 resilience and Phase 3 topic management
+// Initialize services with Phase 2.5 resilience
 const semanticStore = new SemanticVectorStore();
-const stateManager = new ConversationStateManager(semanticStore);
+const stateManager = new ConversationStateManager();
 const promptBuilder = new EnhancedPromptBuilder();
 const contextManager = new DynamicContextManager();
 const jsonOptimizer = new JSONContextOptimizer();
-const topicManager = new TopicManager(semanticStore);
 
 // Phase 2.5: Initialize resilience services
 let resilientGeminiService: ResilientGeminiService | null = null;
@@ -76,11 +74,7 @@ interface SemanticChatResponse {
   text: string;
   sessionId: string;
   metadata: {
-    semanticMatches: number;
-    conversationFlow: string;
-    tokenEfficiency: number;
-    processingTime: number;
-    semanticSimilarity: number;
+    timestamp: string;
     resilience?: {
       wasFallback: boolean;
       delayTime: number;
@@ -91,23 +85,6 @@ interface SemanticChatResponse {
         activeSessions: number;
         queueLength: number;
         errorRate: number;
-      };
-    };
-    topicManagement?: {
-      zenRelevance: {
-        isZenRelated: boolean;
-        confidence: number;
-        detectedFunctions: string[];
-        zenConcepts: string[];
-      };
-      topicTransition: {
-        relationship: string;
-        similarity: number;
-        confidence: number;
-      } | null;
-      deflection: {
-        hasDeflection: boolean;
-        message: string | null;
       };
     };
   };
@@ -163,7 +140,7 @@ async function handleSemanticChat(req: Request, res: Response): Promise<void> {
     
     console.log(`🔗 Conversation continuity:`);
     console.log(`   Recent history: ${recentHistory.length} turns`);
-    console.log(`   Flow type: ${conversationContext.flowType}`);
+    console.log(`   Topic: ${conversationContext.currentTopic}`);
     console.log(`   Concepts discussed: ${conversationContext.conceptsDiscussed.size}`);
 
     // 4. Phase 1: Calculate optimal token budget with enhanced allocation
@@ -185,17 +162,17 @@ async function handleSemanticChat(req: Request, res: Response): Promise<void> {
 
     console.log(`📚 Retrieved ${semanticResults.length} semantic matches (avg similarity: ${semanticResults.length > 0 ? (semanticResults.reduce((sum: number, r: { similarity: number }) => sum + r.similarity, 0) / semanticResults.length).toFixed(2) : 0})`);
 
-    // 6. Generate adaptive strategy
-    const adaptiveStrategy = stateManager.generateAdaptiveStrategy(sessionId, message, userProfile, conversationContext);
+    // 6. Get simplified conversation state
+    const simpleResponse = stateManager.getSimpleConversationState(sessionId).simpleResponse;
 
-    // 7. Build enhanced prompt with conversation continuity
+    // 7. Build simplified prompt
     const chatHistoryForPrompt = recentHistory;
 
-    const promptResult = promptBuilder.buildAdaptivePrompt(
+    const promptResult = promptBuilder.buildSimplePrompt(
       message,
       knowledgeCards, // Use converted knowledge cards
       chatHistoryForPrompt, // Use recent history
-      adaptiveStrategy,
+      simpleResponse, // Use simplified response interface
       userProfile,
       conversationContext,
       jsonContext ? JSON.stringify(jsonContext, null, 2) : undefined
@@ -213,141 +190,50 @@ async function handleSemanticChat(req: Request, res: Response): Promise<void> {
       console.warn('⚠️  Prompt validation issues:', validation.issues);
     }
 
-    // 9. Phase 2.5: Generate response with resilience features
-    const rateLimitStartTime = Date.now();
-    const response = await rateLimitManager.executeWithRateLimit(
-      async () => {
-        const geminiResult = await resilientGeminiService!.generateContentWithFallback(
-          promptResult.prompt, 
-          sessionId
-        );
-        wasFallback = geminiResult.wasFallback;
-        modelUsed = geminiResult.model;
-        return geminiResult.text;
-      },
-      sessionId,
-      { tokens: promptResult.totalTokens }
+    // 12. Phase 2.5: Use resilient Gemini service for AI response
+    console.log(`🤖 Generating AI response using resilient service...`);
+    
+    const startGeminiTime = Date.now();
+    
+    const geminiResponse = await resilientGeminiService.generateContentWithFallback(
+      promptResult.prompt,
+      sessionId
     );
-
-    delayTime = Date.now() - rateLimitStartTime;
-
-    // 📝 LOG: Model response received
-    console.log(`📝 MODEL RESPONSE:`);
-    console.log(`   Length: ${response.length} chars`);
-    console.log(`   Word count: ~${response.split(/\s+/).length} words`);
-    console.log(`   First 200 chars: "${response.substring(0, 200)}..."`);
-    console.log(`   Last 100 chars: "...${response.substring(response.length - 100)}"`);
-
-    // 10. Phase 2.5: Generate user feedback based on resilience events
+    
+    const geminiTime = Date.now() - startGeminiTime;
+    
+    // Extract response details
+    wasFallback = geminiResponse.wasFallback;
+    delayTime = geminiTime;
+    modelUsed = geminiResponse.model;
+    
     const rateLimitStats = rateLimitManager.getStatistics();
-    const fallbackMetrics = resilientGeminiService.getFallbackMetrics();
+    const apiStressLevel = rateLimitStats.recentErrors > 3 ? 'high' : 
+                          rateLimitStats.queueLength > 5 ? 'medium' : 'low';
     
-    const apiStressLevel = feedbackManager.detectApiStressLevel({
-      recentFallbacks: fallbackMetrics.count,
-      avgResponseTime: delayTime,
-      errorRate: 1 - rateLimitStats.avgSuccessRate,
-      queueLength: rateLimitStats.queueLength
-    });
-
-    const feedbackMessage = feedbackManager.generateResilienceMessage({
-      wasFallback,
-      delayTime,
-      retryCount,
-      apiStress: apiStressLevel,
-      model: modelUsed
-    });
-
-    const finalResponse = feedbackManager.wrapResponseWithFeedback(response, feedbackMessage);
-
-    // 11. Update conversation history
-    const userTurn: ChatTurn = { role: 'user', content: message, timestamp: new Date() };
-    const assistantTurn: ChatTurn = { role: 'assistant', content: finalResponse, timestamp: new Date() };
+    const finalResponse = geminiResponse.text;
     
-    const updatedHistory = [...conversationHistory, userTurn, assistantTurn];
-    sessionHistories.set(sessionId, updatedHistory);
+    console.log(`🤖 AI Response generated:`);
+    console.log(`   Model: ${modelUsed}${wasFallback ? ' (fallback)' : ''}`);
+    console.log(`   Response time: ${geminiTime}ms`);
+    console.log(`   API Stress: ${apiStressLevel}`);
+    console.log(`   Rate Limit: ${rateLimitStats.activeSessions} sessions, ${rateLimitStats.queueLength} queued`);
 
-    // 12. Calculate metrics
-    const processingTime = Date.now() - startTime;
-    const tokenEfficiency = (promptResult.totalTokens / maxTokens) * 100;
+    // Add conversation turn to history
+    sessionHistories.set(sessionId, [
+      ...conversationHistory,
+      { role: 'user', content: message, timestamp: new Date() },
+      { role: 'assistant', content: finalResponse, timestamp: new Date() }
+    ]);
 
-    console.log(`✅ Semantic response generated in ${processingTime}ms (${tokenEfficiency.toFixed(1)}% token efficiency)`);
+    console.log(`✅ Response generated successfully`);
 
-    // 12.5. Phase 3: Add Topic Management & Intelligence Analysis
-    let topicAnalysis = null;
-    let zenRelevanceResult = null;
-    try {
-      // Validate ZEN relevance for the current message
-      zenRelevanceResult = await topicManager.validateZenRelevance(message);
-      
-      // Detect topic transitions if we have conversation history
-      let topicRelatedness = null;
-      if (conversationHistory.length > 0) {
-        const lastUserMessage = conversationHistory
-          .filter(turn => turn.role === 'user')
-          .slice(-1)[0];
-        
-        if (lastUserMessage) {
-          topicRelatedness = await topicManager.detectTopicRelatedness(
-            lastUserMessage.content,
-            message
-          );
-        }
-      }
-
-      // Generate off-topic deflection if needed
-      const deflectionMessage = topicManager.generateOffTopicDeflection(message, zenRelevanceResult);
-      
-      topicAnalysis = {
-        zenRelevance: {
-          isZenRelated: zenRelevanceResult.isZenRelated,
-          confidence: Math.round(zenRelevanceResult.confidence * 100) / 100,
-          detectedFunctions: zenRelevanceResult.detectedFunctions,
-          zenConcepts: zenRelevanceResult.zenConcepts
-        },
-        topicTransition: topicRelatedness ? {
-          relationship: topicRelatedness.relationship,
-          similarity: Math.round(topicRelatedness.similarity * 100) / 100,
-          confidence: Math.round(topicRelatedness.confidence * 100) / 100
-        } : null,
-        deflection: deflectionMessage ? {
-          hasDeflection: true,
-          message: deflectionMessage
-        } : {
-          hasDeflection: false,
-          message: null
-        }
-      };
-
-      console.log(`🧠 Phase 3 Topic Analysis:`);
-      console.log(`   ZEN Relevance: ${zenRelevanceResult.isZenRelated} (${(zenRelevanceResult.confidence * 100).toFixed(1)}%)`);
-      console.log(`   Functions: ${zenRelevanceResult.detectedFunctions.join(', ') || 'none'}`);
-      if (topicRelatedness) {
-        console.log(`   Topic Transition: ${topicRelatedness.relationship} (similarity: ${(topicRelatedness.similarity * 100).toFixed(1)}%)`);
-      }
-      if (deflectionMessage) {
-        console.log(`   🛡️  Off-topic deflection triggered`);
-      }
-
-    } catch (error) {
-      console.warn('⚠️  Phase 3 topic analysis failed:', error);
-      topicAnalysis = {
-        zenRelevance: { isZenRelated: true, confidence: 0.8, detectedFunctions: [], zenConcepts: [] },
-        topicTransition: null,
-        deflection: { hasDeflection: false, message: null }
-      };
-    }
-
-    // 13. Return response with simplified metadata
+    // Return response with simplified metadata
     const responseData: SemanticChatResponse = {
       text: finalResponse,
       sessionId,
       metadata: {
-        semanticMatches: semanticResults.length,
-        conversationFlow: conversationContext.flowType,
-        semanticSimilarity: semanticResults.length > 0 ? 
-          parseFloat((semanticResults.reduce((sum: number, r: { similarity: number }) => sum + r.similarity, 0) / semanticResults.length).toFixed(3)) : 0,
-        processingTime,
-        tokenEfficiency: parseFloat(tokenEfficiency.toFixed(1)),
+        timestamp: new Date().toISOString(),
         resilience: {
           wasFallback,
           delayTime,
@@ -357,10 +243,9 @@ async function handleSemanticChat(req: Request, res: Response): Promise<void> {
           rateLimitStats: {
             activeSessions: rateLimitStats.activeSessions,
             queueLength: rateLimitStats.queueLength,
-            errorRate: (1 - rateLimitStats.avgSuccessRate) * 100
+            errorRate: rateLimitStats.recentErrors
           }
-        },
-        topicManagement: topicAnalysis
+        }
       }
     };
 
@@ -377,7 +262,7 @@ async function handleSemanticChat(req: Request, res: Response): Promise<void> {
       message: userFriendlyMessage,
       retryAfter: 30000, // 30 seconds
       metadata: {
-        processingTime: Date.now() - startTime,
+        timestamp: new Date().toISOString(),
         errorType: (error as { status?: string }).status || 'unknown',
         resilience: {
           wasFallback,

@@ -6,23 +6,14 @@ export interface ChatMessage {
 }
 
 export interface ChatMetadata {
-  tokenCount?: number;
-  semanticMatches?: number;
-  conversationFlow?: string;
-  semanticSimilarity?: number;
-  processingTime?: number;
-  contextUsed?: boolean;
+  timestamp?: string;
 }
 
 export interface ChatResponse {
   text: string;
   error?: string;
   metadata?: {
-    semanticMatches?: number;
-    conversationFlow?: string;
-    semanticSimilarity?: number;
-    processingTime?: number;
-    contextUsed?: boolean;
+    timestamp?: string;
   };
 }
 

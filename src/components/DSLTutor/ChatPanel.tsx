@@ -29,13 +29,7 @@ interface UploadedFile {
 }
 
 interface MessageMetadata {
-  tokenCount?: number;
-  semanticMatches?: number;
-  conversationFlow?: string;
-  semanticSimilarity?: number;
-  processingTime?: number;
-  contextUsed?: boolean;
-  tokenEfficiency?: number;
+  timestamp?: string;
 }
 
 const ChatPanel: React.FC<ChatPanelProps> = ({ 
@@ -299,30 +293,20 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
     }
   };
 
-  // Render semantic metadata badges
-  const renderSemanticMetadata = (metadata: MessageMetadata) => {
-    if (!metadata) return null;
+  // Render simple time display
+  const renderTimeDisplay = (timestamp?: string) => {
+    if (!timestamp) return null;
+
+    const time = new Date(timestamp);
+    const timeString = time.toLocaleTimeString('en-US', { 
+      hour: '2-digit', 
+      minute: '2-digit',
+      hour12: false 
+    });
 
     return (
-      <div className="text-xs text-gray-500 mt-2 space-y-1">
-        {metadata.semanticMatches && (
-          <div>🔍 Matches: {metadata.semanticMatches}</div>
-        )}
-        {metadata.tokenCount && (
-          <div>📊 Tokens: {metadata.tokenCount}</div>
-        )}
-        {metadata.semanticSimilarity && (
-          <div>🎯 Relevance: {(metadata.semanticSimilarity * 100).toFixed(1)}%</div>
-        )}
-        {metadata.processingTime && (
-          <div>⚡ Time: {metadata.processingTime}ms</div>
-        )}
-        {metadata.contextUsed && (
-          <div>🧠 Context: Used</div>
-        )}
-        {metadata.tokenEfficiency && (
-          <div>💡 Efficiency: {metadata.tokenEfficiency}%</div>
-        )}
+      <div className="text-xs text-gray-500 mt-2">
+        🕐 {timeString}
       </div>
     );
   };
@@ -430,7 +414,7 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
                 </div>
                 
                 {/* Semantic Metadata for Assistant Messages */}
-                {message.role === 'assistant' && message.metadata && renderSemanticMetadata(message.metadata)}
+                {message.role === 'assistant' && message.metadata && renderTimeDisplay(message.metadata.timestamp)}
                 
                 {/* Copy Button */}
                 <Button

@@ -36,11 +36,7 @@ const DSLTutor = () => {
     const systemMessage: ChatMessage = {
       role: 'assistant',
       content: `✅ **JSON Context Added!**\n\nI now have access to your **${metadata.filename}** file with ${metadata.topLevelKeys.length} top-level keys. This will help me provide more relevant DSL examples and suggestions tailored to your data structure.\n\n**Available keys:** ${metadata.topLevelKeys.slice(0, 5).join(', ')}${metadata.topLevelKeys.length > 5 ? ` and ${metadata.topLevelKeys.length - 5} more` : ''}`,
-      timestamp: new Date().toISOString(),
-      metadata: {
-        contextUsed: true,
-        semanticMatches: metadata.topLevelKeys.length
-      }
+      timestamp: new Date().toISOString()
     };
     
     handleNewMessage(systemMessage);

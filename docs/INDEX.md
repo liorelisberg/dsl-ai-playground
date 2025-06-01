@@ -81,7 +81,7 @@ Complete Domain Specific Language (DSL) rule definitions in Markdown format (.md
 - **API Integration**: Gemini AI with rate limiting (6 req/30s)
 
 **Semantic Enhancement Pipeline:**
-1. User message analysis & expertise detection
+1. User message analysis & conversation flow tracking
 2. Conversation context updates (topic depth, flow analysis)
 3. Adaptive response strategy generation
 4. Semantic knowledge retrieval (up to 72% similarity)
