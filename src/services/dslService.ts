@@ -24,7 +24,7 @@ export const evaluateExpression = async (
     const response = await httpClient.request<DSLEvaluationResult>('/api/evaluate-dsl', {
       method: 'POST',
       body: {
-        expression: expression.replace(/\/\/.*$/gm, '').trim(),
+        expression: expression.trim(),
         data: data
       }
     });
@@ -45,7 +45,7 @@ export const evaluateExpression = async (
 
 // Fallback basic expression evaluator for offline/error scenarios
 function evaluateBasicExpression(expression: string, data: unknown): unknown {
-  const cleanExpression = expression.replace(/\/\/.*$/gm, '').trim();
+  const cleanExpression = expression.trim();
   
   if (!cleanExpression) {
     return 'No expression provided';

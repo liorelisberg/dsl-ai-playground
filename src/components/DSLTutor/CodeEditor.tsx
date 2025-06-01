@@ -20,7 +20,7 @@ interface CodeEditorProps {
 }
 
 const CodeEditor: React.FC<CodeEditorProps> = ({ onParserToChat }) => {
-  const [code, setCode] = useState('// Enter your DSL expression here\nupper(user.name)');
+  const [code, setCode] = useState('upper(user.name)');
   const [sampleInput, setSampleInput] = useState('{"user": {"name": "john doe", "age": 30}}');
   const [result, setResult] = useState<string>('');
   const [isLoading, setIsLoading] = useState(false);
