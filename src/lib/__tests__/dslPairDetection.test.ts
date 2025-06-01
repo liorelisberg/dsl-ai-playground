@@ -32,6 +32,7 @@ Result: "JOHN is 30 years old"
       expect(pairs[0]).toEqual({
         input: '{name: "John", age: 30}',
         expression: 'upper(name) + " is " + age + " years old"',
+        result: null,
         title: 'Example 1: Converting name to uppercase',
         index: 0
       });
@@ -74,12 +75,14 @@ upper(text)
       expect(pairs[0]).toEqual({
         input: '{numbers: [1, 2, 3]}',
         expression: 'sum(numbers)',
+        result: null,
         title: 'Example 1: Summing array numbers',
         index: 0
       });
       expect(pairs[1]).toEqual({
         input: '{text: "hello world"}',
         expression: 'upper(text)',
+        result: null,
         title: 'Example 2: Converting text to uppercase',
         index: 1
       });
@@ -184,6 +187,7 @@ upper(name)
       expect(pairs[0]).toEqual({
         input: '{name: "John"}',
         expression: 'upper(name)',
+        result: null,
         title: 'Test Example',
         index: 0
       });
@@ -213,19 +217,88 @@ upper(name)
       const pairs = extractExpressionPairs(content);
       expect(pairs).toHaveLength(0);
     });
+
+    test('should extract result blocks when present', () => {
+      const content = `
+\${title}
+Example with result
+\${title}
+
+\${inputBlock}
+{name: "John"}
+\${inputBlock}
+
+\${expressionBlock}
+upper(name)
+\${expressionBlock}
+
+\${resultBlock}
+"JOHN"
+\${resultBlock}
+      `;
+
+      const pairs = extractExpressionPairs(content);
+      
+      expect(pairs).toHaveLength(1);
+      expect(pairs[0]).toEqual({
+        input: '{name: "John"}',
+        expression: 'upper(name)',
+        result: '"JOHN"',
+        title: 'Example with result',
+        index: 0
+      });
+    });
+
+    test('should handle mixed examples with and without results', () => {
+      const content = `
+\${title}
+Example with result
+\${title}
+
+\${inputBlock}
+{name: "John"}
+\${inputBlock}
+
+\${expressionBlock}
+upper(name)
+\${expressionBlock}
+
+\${resultBlock}
+"JOHN"
+\${resultBlock}
+
+\${title}
+Example without result
+\${title}
+
+\${inputBlock}
+{age: 30}
+\${inputBlock}
+
+\${expressionBlock}
+age + 1
+\${expressionBlock}
+      `;
+
+      const pairs = extractExpressionPairs(content);
+      
+      expect(pairs).toHaveLength(2);
+      expect(pairs[0].result).toBe('"JOHN"');
+      expect(pairs[1].result).toBe(null);
+    });
   });
 
   describe('generatePairTitle', () => {
     test('should return "Try This" for single pair', () => {
-      const pairs = [{ expression: 'upper(name)', input: '{}', title: 'Test Example', index: 0 }];
+      const pairs = [{ expression: 'upper(name)', input: '{}', result: null, title: 'Test Example', index: 0 }];
       const title = generatePairTitle(pairs[0], pairs);
       expect(title).toBe('Try This');
     });
 
     test('should clean up extracted titles for display', () => {
       const pairs = [
-        { expression: 'filter(items)', input: '{}', title: 'Example 1: Filtering items by criteria', index: 0 },
-        { expression: 'map(users)', input: '{}', title: 'Example 2: Mapping user names', index: 1 }
+        { expression: 'filter(items)', input: '{}', result: null, title: 'Example 1: Filtering items by criteria', index: 0 },
+        { expression: 'map(users)', input: '{}', result: null, title: 'Example 2: Mapping user names', index: 1 }
       ];
       
       expect(generatePairTitle(pairs[0], pairs)).toBe('Filtering items by criteria');
@@ -237,10 +310,11 @@ upper(name)
         { 
           expression: 'filter(items)', 
           input: '{}', 
+          result: null,
           title: 'Example 1: This is a very long title that exceeds the maximum length limit and should be truncated', 
           index: 0 
         },
-        { expression: 'map(users)', input: '{}', title: 'Example 2: Short title', index: 1 }
+        { expression: 'map(users)', input: '{}', result: null, title: 'Example 2: Short title', index: 1 }
       ];
       
       const longTitle = generatePairTitle(pairs[0], pairs);
@@ -250,8 +324,8 @@ upper(name)
 
     test('should fallback to generic numbering for empty titles', () => {
       const pairs = [
-        { expression: 'name + age', input: '{}', title: '', index: 0 },
-        { expression: 'user.email', input: '{}', title: '   ', index: 1 }
+        { expression: 'name + age', input: '{}', result: null, title: '', index: 0 },
+        { expression: 'user.email', input: '{}', result: null, title: '   ', index: 1 }
       ];
       
       expect(generatePairTitle(pairs[0], pairs)).toBe('Example 1');
@@ -301,6 +375,7 @@ upper(name)
         titleBlocks: 1,
         inputBlocks: 1,
         expressionBlocks: 1,
+        resultBlocks: 0,
         hasMarkers: true,
         isBalanced: true
       });

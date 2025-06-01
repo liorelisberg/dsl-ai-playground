@@ -6,9 +6,10 @@
  */
 
 export interface ExpressionPair {
-  expression: string;
   input: string;
-  title: string;
+  expression: string;
+  result?: string;
+  title?: string;
   index: number;
 }
 
@@ -28,33 +29,34 @@ export interface ExpressionPair {
  * upper(name + " " + id)
  * ${expressionBlock}
  */
-export const extractExpressionPairs = (content: string): ExpressionPair[] => {
+export function extractExpressionPairs(content: string): ExpressionPair[] {
   const pairs: ExpressionPair[] = [];
   
   try {
-    // Find all title blocks using explicit markers
+    // Find all title blocks
     const titlePattern = /\$\{title\}([\s\S]*?)\$\{title\}/g;
     const titleMatches = [...content.matchAll(titlePattern)];
     
-    // Find all input blocks using explicit markers
     const inputPattern = /\$\{inputBlock\}([\s\S]*?)\$\{inputBlock\}/g;
     const inputMatches = [...content.matchAll(inputPattern)];
     
-    // Find all expression blocks using explicit markers  
     const expressionPattern = /\$\{expressionBlock\}([\s\S]*?)\$\{expressionBlock\}/g;
     const expressionMatches = [...content.matchAll(expressionPattern)];
     
-    // Pair them up in order (no validation - let parser handle errors)
+    const resultPattern = /\$\{resultBlock\}([\s\S]*?)\$\{resultBlock\}/g;
+    const resultMatches = [...content.matchAll(resultPattern)];
+    
     const minLength = Math.min(inputMatches.length, expressionMatches.length);
     
     for (let i = 0; i < minLength; i++) {
-      // Use extracted title if available, otherwise generate fallback
       const extractedTitle = titleMatches[i] ? titleMatches[i][1].trim() : null;
-      const fallbackTitle = generateFallbackTitle(i + 1, minLength);
+      const extractedResult = resultMatches[i] ? resultMatches[i][1].trim() : null;
+      const fallbackTitle = minLength === 1 ? "Try This Example" : `Try Example ${i + 1}`;
       
       pairs.push({
         input: inputMatches[i][1].trim(),
         expression: expressionMatches[i][1].trim(),
+        result: extractedResult,
         title: extractedTitle || fallbackTitle,
         index: i
       });
@@ -67,7 +69,7 @@ export const extractExpressionPairs = (content: string): ExpressionPair[] => {
   }
   
   return pairs;
-};
+}
 
 /**
  * Generate a fallback title when none is provided
@@ -117,16 +119,30 @@ export const hasValidMarkerFormat = (content: string): boolean => {
 /**
  * Extract paired content statistics for debugging
  */
-export const getPairStatistics = (content: string) => {
-  const titleMatches = [...content.matchAll(/\$\{title\}/g)];
-  const inputMatches = [...content.matchAll(/\$\{inputBlock\}/g)];
-  const expressionMatches = [...content.matchAll(/\$\{expressionBlock\}/g)];
+export function getPairStatistics(content: string): {
+  hasMarkers: boolean;
+  inputBlocks: number;
+  expressionBlocks: number;
+  resultBlocks: number;
+  titleBlocks: number;
+  isBalanced: boolean;
+} {
+  const inputMatches = content.match(/\$\{inputBlock\}/g);
+  const expressionMatches = content.match(/\$\{expressionBlock\}/g);
+  const resultMatches = content.match(/\$\{resultBlock\}/g);
+  const titleMatches = content.match(/\$\{title\}/g);
+  
+  const inputBlocks = inputMatches ? inputMatches.length / 2 : 0;
+  const expressionBlocks = expressionMatches ? expressionMatches.length / 2 : 0;
+  const resultBlocks = resultMatches ? resultMatches.length / 2 : 0;
+  const titleBlocks = titleMatches ? titleMatches.length / 2 : 0;
   
   return {
-    titleBlocks: titleMatches.length / 2,
-    inputBlocks: inputMatches.length / 2, // Each pair has 2 markers
-    expressionBlocks: expressionMatches.length / 2,
-    hasMarkers: inputMatches.length > 0 || expressionMatches.length > 0,
-    isBalanced: inputMatches.length === expressionMatches.length
+    hasMarkers: inputBlocks > 0 || expressionBlocks > 0 || resultBlocks > 0 || titleBlocks > 0,
+    inputBlocks,
+    expressionBlocks,
+    resultBlocks,
+    titleBlocks,
+    isBalanced: inputBlocks === expressionBlocks && inputBlocks > 0
   };
-}; 
+} 

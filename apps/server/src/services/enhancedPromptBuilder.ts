@@ -66,7 +66,34 @@ Example 1: Converting text to uppercase
 upper(name + " " + id)
 \${expressionBlock}
 
-Result: "HELLO WORLD"
+\${resultBlock}
+"HELLO WORLD"
+\${resultBlock}
+
+🎯 RESULT DISPLAY RULES:
+- Always include expected results using \${resultBlock} markers
+- Show the actual output value (string, number, array, object)
+- For arrays/objects, format as clean JSON (no extra quotes)
+- For strings, include quotes to show string type
+- For numbers/booleans, show the raw value
+- Keep results concise but complete
+
+✅ GOOD RESULT EXAMPLES:
+\${resultBlock}
+["Alice", "Bob", "Charlie"]
+\${resultBlock}
+
+\${resultBlock}
+{"name": "John", "age": 30}
+\${resultBlock}
+
+\${resultBlock}
+"UPPERCASE TEXT"
+\${resultBlock}
+
+\${resultBlock}
+42
+\${resultBlock}
 
 CRITICAL DATA STRUCTURE RULES:
 🚨 ARRAYS MUST BE WRAPPED: Raw arrays cannot be accessed directly in ZEN DSL expressions.
