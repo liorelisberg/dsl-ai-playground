@@ -1,17 +1,17 @@
 # 🚀 DSL AI Playground - Project Documentation (Legacy)
 
-> **📝 Note**: This is legacy project documentation. For the latest documentation with lean system architecture, see the main [README.md](../../README.md) at the project root.
+> **📝 Note**: This is legacy project documentation. For the latest documentation with production architecture, see the main [README.md](../../README.md) at the project root.
 
 **An intelligent Domain-Specific Language (DSL) learning platform with AI-powered assistance and real-time code execution.**
 
-## 🎯 **Current Status: LEAN PRODUCTION READY**
+## 🎯 **Current Status: PRODUCTION READY**
 
-- ✅ **Phase 1**: Core DSL Engine & Token Budget Expansion (100% Complete)
-- ✅ **Phase 2**: Conversation Continuity & Semantic Enhancement (100% Complete) 
-- ✅ **Phase 2.5**: System Cleanup & Lean Architecture (✨ **NEW** - 100% Complete)
-- ✅ **Phase 4**: UX/UI Polish & TypeScript Cleanup (100% Complete)
+- ✅ **Phase 1**: Core DSL Engine & Advanced Backend Services (Complete)
+- ✅ **Phase 2**: Conversation Continuity & Semantic Enhancement (Complete) 
+- ✅ **Phase 3**: Advanced AI Services & Multi-layer Architecture (Complete)
+- ✅ **Phase 4**: UX/UI Polish & Code Quality (Complete)
 
-**🆕 Latest Enhancement: Lean System Architecture - Simplified & Focused**
+**🆕 Latest Enhancement: Sophisticated 15-Service Architecture - Production Ready**
 
 ## 🔗 **Quick Links**
 
@@ -29,7 +29,7 @@
 - **Professional Design**: Indigo-to-emerald gradient with dark/light themes
 
 ### 🧠 **Intelligent AI Assistant**
-- **Semantic Understanding**: 72% similarity matching with 113 knowledge documents
+- **Semantic Understanding**: Vector-based knowledge retrieval with Google embeddings
 - **Context Awareness**: Automatic user profiling and conversation flow tracking
 - **JSON Integration**: Upload data for personalized DSL examples and suggestions
 - **Session Continuity**: Remembers conversation history across interactions
@@ -37,7 +37,7 @@
 ### ⚡ **Expression Workbench**
 - **Real-time Evaluation**: Sub-millisecond DSL expression execution
 - **Production Engine**: Rust-powered Zen Engine with enterprise reliability
-- **320+ Examples**: 100% validated examples with zero hallucinations
+- **424 Examples**: Validated examples across 19 categories
 - **Smart Editor**: Enhanced code editor with 42% more screen space
 - **Advanced JSON Viewer**: Professional data exploration with interactive features
   - **Smart View Modes**: Toggle between text editor and interactive JSON tree
@@ -49,9 +49,9 @@
 - **Dark Theme Optimized**: High-contrast colors for excellent visibility
 
 ### 🔧 **Production Quality**
-- **Zero TypeScript Errors**: Fixed 39+ lint errors for bulletproof type safety
-- **100% Example Accuracy**: Eliminated all hallucinated functions (down from 44)
-- **Comprehensive Testing**: Automated validation pipeline
+- **ESLint Clean**: Professional code quality with 3 minor React Fast Refresh warnings
+- **15-Service Architecture**: Sophisticated backend with specialized services
+- **Comprehensive Testing**: 3,464 lines of test coverage
 - **Enterprise Reliability**: Robust error handling and fallback mechanisms
 
 ## 🚀 **Quick Start**
@@ -104,10 +104,13 @@ src/
 ```
 apps/server/src/
 ├── routes/                 # API endpoints
-├── services/               # Core business logic
+├── services/               # Core business logic (15 services)
 │   ├── gemini.ts          # AI chat service
 │   ├── dslService.ts      # Expression evaluation
-│   └── semanticVectorStore.ts # Knowledge base
+│   ├── semanticVectorStore.ts # Knowledge base
+│   ├── resilientGeminiService.ts # AI resilience
+│   ├── rateLimitManager.ts # Request throttling
+│   └── [10 more services] # Advanced functionality
 └── index.ts               # Server entry point
 ```
 
@@ -140,7 +143,7 @@ users[0].email
 - **Debug Help**: "Why isn't my expression working?"
 
 ### **3. Example Library**
-- **320+ Validated Examples** across 17+ categories
+- **424 Validated Examples** across 19 categories
 - **Interactive Selection** with immediate loading
 - **Categorized by Complexity** (beginner → advanced)
 - **Real-world Scenarios** with sample data
@@ -160,14 +163,14 @@ pnpm run build:server    # Build backend
 pnpm run preview         # Preview production build
 
 # Quality Assurance
-pnpm run lint            # TypeScript validation (zero errors)
+pnpm run lint            # ESLint validation (3 minor warnings)
 pnpm run test            # Run test suite
 ```
 
 ### **Technology Stack**
 - **Frontend**: React 18, TypeScript, Vite, Tailwind CSS, shadcn/ui
 - **Backend**: Node.js, Express, TypeScript
-- **AI**: Google Gemini 2.5 Flash, Semantic Vector Search
+- **AI**: Google Gemini 2.0 Flash, Semantic Vector Search
 - **DSL Engine**: GoRules Zen Engine (Rust-powered)
 - **File Upload**: react-dropzone with validation
 - **JSON Viewer**: @uiw/react-json-view with custom theming and interactions
@@ -178,25 +181,26 @@ pnpm run test            # Run test suite
 - **Build Time**: ~5 seconds
 - **Hot Reload**: Instant
 - **Expression Evaluation**: <1ms (sub-millisecond)
-- **AI Response**: <8.3s (including embeddings)
 - **Connection Detection**: <2s
 
 ### **🎯 Quality Metrics**
-- **TypeScript Errors**: 0 (down from 39+)
-- **Example Accuracy**: 100% (up from 88%)
-- **Token Efficiency**: 62% improvement
-- **Semantic Similarity**: 72% average
-- **Knowledge Coverage**: 113 documents
+- **ESLint Status**: Clean with 3 minor React Fast Refresh warnings
+- **Example Coverage**: 424 examples across 19 categories
+- **Test Coverage**: 3,464 lines of comprehensive testing
+- **Service Architecture**: 15 specialized backend services
 
 ## 🔧 **API Endpoints**
 
 ### **Core Endpoints**
 ```
 POST   /api/chat/semantic       # Intelligent AI chat
+POST   /api/chat                # Standard chat endpoint
 POST   /api/evaluate-dsl        # Expression evaluation
 POST   /api/upload-json         # File upload with validation
-GET    /health                  # System health check
-GET    /api-docs                # Swagger documentation
+GET    /api/examples             # Retrieve DSL examples
+GET    /api/examples/categories  # Get example categories
+GET    /health                   # System health check
+GET    /api-docs                 # Swagger documentation
 ```
 
 ### **Response Format**
@@ -204,9 +208,7 @@ GET    /api-docs                # Swagger documentation
 {
   "text": "AI response content",
   "metadata": {
-    "semanticSimilarity": 85,
-    "contextUsed": true,
-    "semanticMatches": 3
+    "timestamp": "2024-01-15T10:30:00Z"
   }
 }
 ```
@@ -223,7 +225,7 @@ GET    /api-docs                # Swagger documentation
 - **Adaptive Controls**: Buttons that intelligently enable/disable based on context
 
 ### **Professional Polish**
-- **Zero Errors**: Complete TypeScript type safety
+- **ESLint Clean**: Professional code quality standards
 - **Smooth Animations**: CSS transitions with Tailwind
 - **Dark/Light Themes**: Seamless theme switching with optimized JSON viewer colors
 - **Loading States**: Visual feedback for all operations
@@ -239,7 +241,7 @@ GET    /api-docs                # Swagger documentation
 ### **DSL Language Reference**
 - [`docs/dsl-rules/`](../dsl-rules/) - Complete DSL syntax documentation
 - **10 Rule Files**: Arrays, Strings, Numbers, Dates, Objects, etc.
-- **113 Code Examples**: Validated against source documentation
+- **Example Library**: Comprehensive examples across all DSL categories
 
 ## 🔐 **Configuration**
 
@@ -273,7 +275,7 @@ curl http://localhost:3000/health
 pnpm run dev:full
 ```
 
-**TypeScript Errors**
+**Code Quality Issues**
 ```bash
 # Rebuild and check
 pnpm run build
@@ -317,4 +319,4 @@ MIT License - see [LICENSE](../../LICENSE) for details.
 **🎉 DSL AI Playground - Where AI meets intelligent code education!**
 
 *Last Updated: 2025-01-30*  
-*Version: 3.1.0 (Enhanced JSON Viewer)*
+*Version: 3.1.0 (Production-Ready 15-Service Architecture)*
