@@ -10,8 +10,9 @@
 - ✅ **Phase 2**: Conversation Continuity & Semantic Enhancement (Complete) 
 - ✅ **Phase 3**: Advanced AI Services & Multi-layer Architecture (Complete)
 - ✅ **Phase 4**: UX/UI Polish & Code Quality (Complete)
+- ✅ **Phase 5**: Parser → Chat Integration & ZEN DSL Compliance (Complete)
 
-**🆕 Latest Enhancement: Sophisticated 15-Service Architecture - Production Ready**
+**🆕 Latest Enhancement: Parser → Chat Transfer Feature & Comment-Free ZEN DSL - Production Ready**
 
 ## 🔗 **Quick Links**
 
@@ -39,6 +40,8 @@
 - **Production Engine**: Rust-powered Zen Engine with enterprise reliability
 - **424 Examples**: Validated examples across 19 categories
 - **Smart Editor**: Enhanced code editor with 42% more screen space
+- **Parser → Chat Integration**: "Ask About This" button for seamless AI analysis
+- **Comment-Free ZEN DSL**: Proper language compliance (comments not supported)
 - **Advanced JSON Viewer**: Professional data exploration with interactive features
   - **Smart View Modes**: Toggle between text editor and interactive JSON tree
   - **Path Copying**: Click any row to copy JSONPath (e.g., `$.user.profile.name`)
@@ -259,7 +262,7 @@ RATE_LIMIT_WINDOW=30000
 
 ### **Rate Limiting**
 - **Development**: 6 requests per 30 seconds
-- **File Upload**: 256KB maximum size
+- **File Upload**: 50KB maximum size
 - **JSON Validation**: Automatic format checking
 
 ## 🚧 **Troubleshooting**
@@ -284,7 +287,7 @@ pnpm run lint
 
 **File Upload Issues**
 - Ensure files are valid JSON format
-- Check file size (256KB limit)
+- Check file size (50KB limit)
 - Verify CORS settings
 
 ## 🎯 **Production Deployment**

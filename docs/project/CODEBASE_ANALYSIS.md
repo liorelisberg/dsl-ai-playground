@@ -159,7 +159,7 @@
 
 **Core Capabilities:**
 - **Drag-and-Drop Upload**: Global drag-and-drop zone for JSON files
-- **File Validation**: Size limits (256KB), format validation, error handling
+- **File Validation**: Size limits (50KB), format validation, error handling
 - **Session-based Storage**: Per-session JSON context with automatic cleanup
 - **AI Context Integration**: Uploaded JSON becomes available to AI for personalized examples
 - **Metadata Extraction**: Automatic analysis of JSON structure and top-level keys

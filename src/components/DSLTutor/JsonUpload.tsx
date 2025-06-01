@@ -48,7 +48,7 @@ export const JsonUpload: React.FC<JsonUploadProps> = ({
     if (fileRejections.length > 0) {
       const rejection = fileRejections[0];
       if (rejection.errors.some((e: FileRejectionError) => e.code === 'file-too-large')) {
-        const errorMsg = 'File size exceeds 256KB limit';
+        const errorMsg = 'File size exceeds 50KB limit';
         setError(errorMsg);
         onUploadError?.(errorMsg);
         toast({
@@ -150,7 +150,7 @@ export const JsonUpload: React.FC<JsonUploadProps> = ({
     onDrop,
     accept: { 'application/json': ['.json'] },
     maxFiles: 1,
-    maxSize: 256 * 1024, // 256KB
+    maxSize: 50 * 1024, // 50KB
     disabled: isUploading
   });
 
@@ -253,7 +253,7 @@ export const JsonUpload: React.FC<JsonUploadProps> = ({
               </div>
               
               <div className="text-xs text-gray-500 dark:text-gray-400 space-y-1">
-                <div>Maximum file size: 256KB</div>
+                <div>Maximum file size: 50KB</div>
                 <div>Supported format: .json files only</div>
               </div>
             </div>

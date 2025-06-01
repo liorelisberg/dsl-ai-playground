@@ -33,8 +33,8 @@ const DSLTutor = () => {
   // Handler for parser to send analysis request to chat
   const handleParserToChat = async (expression: string, input: string, result: string, isSuccess: boolean) => {
     const prompt = isSuccess 
-      ? `I have a working expression, explain it. Expression: ${expression}, Input: ${input}, Result: ${result}`
-      : `I have a failing expression, explain why it fails. Expression: ${expression}, Input: ${input}, Error: ${result}`;
+      ? `I have a working expression, explain it.\n\nExpression: ${expression}\n\nInput: ${input}\n\nResult: ${result}`
+      : `I have a failing expression, explain why it fails.\n\nExpression: ${expression}\n\nInput: ${input}\n\nError: ${result}`;
 
     const userMessage: ChatMessage = {
       role: 'user',
@@ -86,7 +86,7 @@ const DSLTutor = () => {
   const handleJsonUploadError = (error: string) => {
     const errorMessage: ChatMessage = {
       role: 'assistant',
-      content: `❌ **Upload Failed:** ${error}\n\nPlease try uploading a valid JSON file (max 256KB). I can help you better when I have context about your data structure.`,
+      content: `❌ **Upload Failed:** ${error}\n\nPlease try uploading a valid JSON file (max 50KB). I can help you better when I have context about your data structure.`,
       timestamp: new Date().toISOString()
     };
     

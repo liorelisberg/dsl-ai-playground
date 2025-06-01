@@ -124,9 +124,9 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
       return;
     }
 
-    // Validate file size (256KB for backend compatibility)
-    if (file.size > 256 * 1024) {
-      const errorMsg = "File size must be less than 256KB";
+    // Validate file size (50KB for backend compatibility)
+    if (file.size > 50 * 1024) {
+      const errorMsg = "File size must be less than 50KB";
       onJsonUploadError?.(errorMsg);
       toast({
         title: "File Too Large",
@@ -548,7 +548,7 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
                   <div className="space-y-1">
                     <p className="font-medium">Upload JSON Data</p>
                     <p className="text-xs">Click to browse files or drag & drop anywhere on the window</p>
-                    <p className="text-xs text-muted-foreground">Max 256KB • .json files only</p>
+                    <p className="text-xs text-muted-foreground">Max 50KB • .json files only</p>
                   </div>
                 </TooltipContent>
               </Tooltip>

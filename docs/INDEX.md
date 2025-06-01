@@ -70,7 +70,7 @@ Complete Domain Specific Language (DSL) rule definitions in Markdown format (.md
 3. **Code Quality**: Maintained ESLint standards with professional code quality
 4. **Visual Polish**: Animated indicators, smart retry logic, professional feedback
 5. **Global Drag & Drop**: Full-screen modal overlay with seamless JSON integration
-6. **Enhanced File Upload**: 256KB validation, progress tracking, context display
+6. **Enhanced File Upload**: 50KB validation, progress tracking, context display
 
 ## 🎯 System Architecture
 

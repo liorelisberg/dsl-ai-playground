@@ -33,7 +33,7 @@ export const GlobalDragDropZone: React.FC<GlobalDragDropZoneProps> = ({
     if (fileRejections.length > 0) {
       const rejection = fileRejections[0];
       if (rejection.errors.some((e: FileRejectionError) => e.code === 'file-too-large')) {
-        const errorMsg = 'File size exceeds 256KB limit';
+        const errorMsg = 'File size exceeds 50KB limit';
         onUploadError(errorMsg);
         return;
       }
@@ -104,7 +104,7 @@ export const GlobalDragDropZone: React.FC<GlobalDragDropZoneProps> = ({
     onDrop,
     accept: { 'application/json': ['.json'] },
     maxFiles: 1,
-    maxSize: 256 * 1024, // 256KB
+    maxSize: 50 * 1024, // 50KB
     noClick: true, // Disable click to open file dialog
     noKeyboard: true // Disable keyboard interaction
   });
@@ -153,7 +153,7 @@ export const GlobalDragDropZone: React.FC<GlobalDragDropZoneProps> = ({
               Upload data to get context-aware DSL suggestions
             </p>
             <p className="text-xs text-blue-600 dark:text-blue-400">
-              Maximum file size: 256KB • JSON format only
+              Maximum file size: 50KB • JSON format only
             </p>
           </div>
         </div>

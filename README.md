@@ -128,15 +128,16 @@ apps/server/src/services/
 ### **1. Expression Evaluation**
 ```javascript
 // Try these in the Expression Workbench:
+// Note: ZEN DSL does not support comments (// or /* */)
 
 // Basic property access
 user.name
 
 // String operations  
-user.name.toUpperCase()
+upper(user.name)
 
 // Array filtering (ZEN DSL focus)
-users.filter(user => user.age > 18)
+filter(users, age > 18)
 
 // Mathematical calculations
 price * quantity * (1 + taxRate)
@@ -152,6 +153,7 @@ age >= 18 ? "Adult" : "Minor"
 - **📚 Get Examples**: "Show me string transformation examples"
 - **🔧 Debug Help**: "Why isn't my expression working?"
 - **🛡️ Context Protection**: Maintains focus on ZEN DSL topics
+- **🔄 Parser → Chat Integration**: "Ask About This" button transfers expressions for AI analysis
 
 ### **3. Example Library**
 - **424 Validated Examples** across 19 categories
