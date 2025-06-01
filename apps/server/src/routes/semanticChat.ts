@@ -843,10 +843,10 @@ async function getSessionMetrics(req: Request, res: Response): Promise<void> {
     res.json({
       sessionId,
       metrics: {
+        queriesAsked: metrics.queriesAsked,
         topicsExplored: metrics.topicsExplored,
-        avgComplexity: metrics.avgComplexity,
-        satisfactionScore: metrics.satisfactionScore,
-        learningProgression: metrics.learningProgression
+        conceptsLearned: metrics.conceptsLearned,
+        sessionDuration: metrics.sessionDuration
       }
     });
   } catch (error) {
