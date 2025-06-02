@@ -6,7 +6,7 @@ import type {
 } from "@/components/ui/toast"
 
 const TOAST_LIMIT = 3
-const TOAST_REMOVE_DELAY = 3000
+const TOAST_REMOVE_DELAY = 100 // Short delay to allow animations to complete
 
 type ToasterToast = ToastProps & {
   id: string
