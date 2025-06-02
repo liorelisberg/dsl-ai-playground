@@ -607,28 +607,6 @@ const CodeEditor = forwardRef<CodeEditorRef, CodeEditorProps>(({ onParserToChat 
     },
   }));
 
-  // Show toast notification for initial random example
-  useEffect(() => {
-    if (allExamples.length > 0) {
-      // Find the loaded example based on current code and input
-      const loadedExample = allExamples.find(example => 
-        example.expression === code && example.sampleInput === sampleInput
-      );
-      
-      if (loadedExample) {
-        // Delay toast slightly to ensure UI is ready
-        const timer = setTimeout(() => {
-          toast({
-            title: "Random Example Loaded",
-            description: `${loadedExample.title} (${loadedExample.category})`,
-          });
-        }, 500);
-        
-        return () => clearTimeout(timer);
-      }
-    }
-  }, []); // Empty dependency array - only run on mount
-
   return (
     <div className="flex flex-col h-full">
       {/* Editor Header */}
