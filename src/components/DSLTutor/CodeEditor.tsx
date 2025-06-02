@@ -343,6 +343,22 @@ const CodeEditor = forwardRef<CodeEditorRef, CodeEditorProps>(({ onParserToChat 
     }
   };
 
+  const handleCopyExpression = async () => {
+    try {
+      await navigator.clipboard.writeText(code);
+      toast({
+        title: "Copied!",
+        description: "DSL expression copied to clipboard",
+      });
+    } catch (error) {
+      toast({
+        title: "Copy Failed",
+        description: "Unable to copy DSL expression to clipboard",
+        variant: "destructive"
+      });
+    }
+  };
+
   // Get display value for sample input (only format if valid JSON and not currently being edited)
   const getDisplayValue = () => {
     if (!sampleInput || sampleInput.trim() === '') {
@@ -562,10 +578,30 @@ const CodeEditor = forwardRef<CodeEditorRef, CodeEditorProps>(({ onParserToChat 
       <div className="flex-1 p-6 flex flex-col gap-6 overflow-hidden" ref={containerRef}>
         {/* DSL Expression - 1/5 of available height */}
         <div className="flex flex-col min-h-0 relative" style={{ height: `${dslHeight}px` }}>
-          <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-3 flex items-center">
-            <Sparkles className="h-4 w-4 mr-2 text-emerald-500" />
-            DSL Expression
-          </label>
+          <div className="flex items-center justify-between mb-3">
+            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center">
+              <Sparkles className="h-4 w-4 mr-2 text-emerald-500" />
+              DSL Expression
+            </label>
+            <div className="flex items-center space-x-2">
+              {/* Copy Button */}
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={handleCopyExpression}
+                    className="h-7 w-7 p-0 hover:bg-slate-200 dark:hover:bg-slate-700"
+                  >
+                    <Copy className="h-3.5 w-3.5" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Copy DSL expression to clipboard</p>
+                </TooltipContent>
+              </Tooltip>
+            </div>
+          </div>
           <Card className="border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 shadow-lg rounded-2xl flex-1 min-h-0 relative">
             <Textarea
               value={code}
@@ -596,7 +632,7 @@ const CodeEditor = forwardRef<CodeEditorRef, CodeEditorProps>(({ onParserToChat 
                         onClick={() => setSampleInputCollapsed(prev => Math.max(0, prev - 1))}
                         className="h-7 w-7 p-0 hover:bg-slate-200 dark:hover:bg-slate-700"
                       >
-                        <Maximize2 className="h-3.5 w-3.5" />
+                        <Minimize2 className="h-3.5 w-3.5" />
                       </Button>
                     </TooltipTrigger>
                     <TooltipContent>
@@ -611,7 +647,7 @@ const CodeEditor = forwardRef<CodeEditorRef, CodeEditorProps>(({ onParserToChat 
                         onClick={() => setSampleInputCollapsed(prev => prev + 1)}
                         className="h-7 w-7 p-0 hover:bg-slate-200 dark:hover:bg-slate-700"
                       >
-                        <Minimize2 className="h-3.5 w-3.5" />
+                        <Maximize2 className="h-3.5 w-3.5" />
                       </Button>
                     </TooltipTrigger>
                     <TooltipContent>
@@ -786,7 +822,7 @@ const CodeEditor = forwardRef<CodeEditorRef, CodeEditorProps>(({ onParserToChat 
                         onClick={() => setResultCollapsed(prev => Math.max(0, prev - 1))}
                         className="h-7 w-7 p-0 hover:bg-slate-200 dark:hover:bg-slate-700"
                       >
-                        <Maximize2 className="h-3.5 w-3.5" />
+                        <Minimize2 className="h-3.5 w-3.5" />
                       </Button>
                     </TooltipTrigger>
                     <TooltipContent>
@@ -801,7 +837,7 @@ const CodeEditor = forwardRef<CodeEditorRef, CodeEditorProps>(({ onParserToChat 
                         onClick={() => setResultCollapsed(prev => prev + 1)}
                         className="h-7 w-7 p-0 hover:bg-slate-200 dark:hover:bg-slate-700"
                       >
-                        <Minimize2 className="h-3.5 w-3.5" />
+                        <Maximize2 className="h-3.5 w-3.5" />
                       </Button>
                     </TooltipTrigger>
                     <TooltipContent>

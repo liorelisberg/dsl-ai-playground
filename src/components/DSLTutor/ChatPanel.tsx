@@ -417,8 +417,12 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
                   )}
                 </div>
                 
-                {/* Semantic Metadata for Assistant Messages */}
-                {message.role === 'assistant' && message.metadata && renderTimeDisplay(message.metadata.timestamp)}
+                {/* Timestamp for both User and Assistant Messages */}
+                {message.role === 'assistant' ? (
+                  message.metadata && renderTimeDisplay(message.metadata.timestamp)
+                ) : (
+                  renderTimeDisplay(message.timestamp)
+                )}
                 
                 {/* Copy Button */}
                 <Button
