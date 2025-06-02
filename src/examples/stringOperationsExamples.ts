@@ -252,77 +252,77 @@ export const stringOperationsExamples: Example[] = [
     category: 'string-operations'
   },
 
-  // String Slicing Operations
+  // String Slicing Operations (Using ZEN DSL slicing syntax - NOT slice() function)
   {
     id: 'slice-1',
-    title: 'Basic String Slice',
+    title: 'Basic String Slice (ZEN Syntax)',
     expression: 'text[0:5]',
     sampleInput: '{"text": "hello world"}',
-    expectedOutput: "hello ",
-    description: 'Extract substring using slice syntax',
+    expectedOutput: '"hello"',
+    description: 'Extract substring using ZEN slice syntax [start:end] - NOT slice() function',
     category: 'string-operations'
   },
   {
     id: 'slice-2',
-    title: 'String Slice from Middle',
+    title: 'String Slice from Middle (ZEN Syntax)',
     expression: 'text[6:]',
     sampleInput: '{"text": "hello world"}',
     expectedOutput: '"world"',
-    description: 'Extract substring from middle using slice syntax',
+    description: 'Extract substring from middle using ZEN slice syntax [start:] - NOT slice() function',
     category: 'string-operations'
   },
   {
     id: 'slice-3',
-    title: 'String Slice to End',
+    title: 'String Slice to End (ZEN Syntax)',
     expression: 'text[6:]',
     sampleInput: '{"text": "hello world"}',
     expectedOutput: '"world"',
-    description: 'Slice from index to end of string',
+    description: 'Slice from index to end of string using ZEN syntax - NOT slice() function',
     category: 'string-operations'
   },
   {
     id: 'slice-4',
-    title: 'String Slice from Start',
+    title: 'String Slice from Start (ZEN Syntax)',
     expression: 'text[:5]',
     sampleInput: '{"text": "hello world"}',
-    expectedOutput: "hello ",
-    description: 'Slice from start to specific index',
+    expectedOutput: '"hello"',
+    description: 'Slice from start to specific index using ZEN syntax - NOT slice() function',
     category: 'string-operations'
   },
   {
     id: 'slice-5',
-    title: 'Variable String Slice',
+    title: 'Variable String Slice (ZEN Syntax)',
     expression: 'text[start:end]',
     sampleInput: '{"text": "programming", "start": 0, "end": 7}',
-    expectedOutput: "programm",
-    description: 'Use variables for slice indices',
+    expectedOutput: '"program"',
+    description: 'Use variables for slice indices with ZEN syntax - NOT slice() function',
     category: 'string-operations'
   },
   {
     id: 'slice-6',
-    title: 'Single Character Access',
+    title: 'Single Character Access (ZEN Syntax)',
     expression: 'text[1:2]',
     sampleInput: '{"text": "hello"}',
-    expectedOutput: "el",
-    description: 'Access single character by index using slice syntax',
+    expectedOutput: '"e"',
+    description: 'Access single character by index using ZEN slice syntax - NOT slice() function',
     category: 'string-operations'
   },
   {
     id: 'slice-7',
-    title: 'Dynamic Slice with Length',
+    title: 'Dynamic Slice with Length (ZEN Syntax)',
     expression: 'name[0:len(name)-1]',
     sampleInput: '{"name": "Alice"}',
-    expectedOutput: "Alice",
-    description: 'Dynamic slice using string length calculation',
+    expectedOutput: '"Alic"',
+    description: 'Dynamic slice using string length calculation with ZEN syntax - NOT slice() function',
     category: 'string-operations'
   },
   {
     id: 'slice-8',
-    title: 'Conditional String Slicing',
+    title: 'Conditional String Slicing (ZEN Syntax)',
     expression: 'len(text) > 5 ? text[0:5] + "..." : text',
     sampleInput: '{"text": "This is a long string"}',
-    expectedOutput: "This i...",
-    description: 'Conditional string truncation with ellipsis',
+    expectedOutput: '"This ..."',
+    description: 'Conditional string truncation with ellipsis using ZEN syntax - NOT slice() function',
     category: 'string-operations'
   },
 

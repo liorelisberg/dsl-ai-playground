@@ -102,7 +102,8 @@
       "Added template string operator (backtick)",
       "Added nullish coalescing operator (??)",
       "Removed hallucinated keywords: undefined, else, if, case, default"
-    ]
+    ],
+    "slice_clarification": "ZEN supports slicing SYNTAX (text[0:5], array[1:3]) but NOT slice() FUNCTION. The slice() function does not exist and should never be suggested."
   },
   "validation_report": {
     "functions": {

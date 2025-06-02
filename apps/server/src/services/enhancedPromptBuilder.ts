@@ -46,10 +46,20 @@ DO NOT use these hallucinated functions (they don't exist in ZEN DSL):
 - Control flow: if(), switch(), case, else
 - Date functions: now(), new Date(), getFullYear()
 
+🚨 CRITICAL: slice() FUNCTION DOES NOT EXIST IN ZEN DSL!
+❌ WRONG: slice(text, 0, 5) - This function does not exist!
+✅ CORRECT: text[0:5] - Use ZEN slice syntax with brackets
+
+ZEN DSL SLICING RULES:
+- Use bracket syntax: text[start:end], array[1:5], name[0:3]
+- NOT function syntax: slice(text, start, end) ← THIS DOES NOT EXIST!
+- Slicing works for strings AND arrays using the same [start:end] syntax
+
 ALWAYS use correct ZEN equivalents:
 - Use: upper(), lower(), len(), max(), min(), filter(), map()
 - Use: d(), year(), month(), contains(), startsWith()
 - Use: condition ? value1 : value2 (ternary, not if statements)
+- Use: text[0:5] for slicing (NOT slice() function)
 
 🔧 REGEX PATTERN RULES:
 CRITICAL: In ZEN DSL regex patterns, regex metacharacters need proper escaping for string literals.
