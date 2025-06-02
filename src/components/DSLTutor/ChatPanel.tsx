@@ -61,7 +61,7 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
 
   const MAX_FILE_SIZE = 50 * 1024; // 50KB
   const MAX_CHARS = 500;
-  const charCount = inputMessage.length;
+  const charCount = (inputMessage || '').length;
 
   const getCharCounterColor = () => {
     if (charCount === 0) return 'text-slate-400';
@@ -71,7 +71,7 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
   };
 
   // Check if send button should be disabled
-  const isSendDisabled = !inputMessage.trim() || isLoading || charCount >= MAX_CHARS;
+  const isSendDisabled = !(inputMessage || '').trim() || isLoading || charCount >= MAX_CHARS;
 
   // Resize functionality
   const handleMouseDown = (e: React.MouseEvent) => {
@@ -201,9 +201,9 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
   };
 
   const handleSendMessage = async () => {
-    if (!inputMessage.trim() || isLoading) return;
+    if (!(inputMessage || '').trim() || isLoading) return;
 
-    let messageContent = inputMessage;
+    let messageContent = inputMessage || '';
     
     // Add full JSON flag if toggled
     if (uploadedFile && includeFullJson) {
