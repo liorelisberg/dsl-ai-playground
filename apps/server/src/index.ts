@@ -14,8 +14,20 @@ import semanticChatRoutes from './routes/semanticChat';
 // Validate configuration
 validateConfig();
 
-// Load Swagger documentation
-const swaggerDocument = YAML.load(path.join(__dirname, 'swagger.yaml'));
+// Load Swagger documentation with fallback
+let swaggerDocument: any = null;
+try {
+  // In production (compiled), swagger.yaml is in src folder, not dist
+  const swaggerPath = config.server.nodeEnv === 'production' 
+    ? path.join(__dirname, '../src/swagger.yaml')  // Go up from dist to src
+    : path.join(__dirname, 'swagger.yaml');        // Development path
+  
+  swaggerDocument = YAML.load(swaggerPath);
+  console.log('📚 Swagger documentation loaded successfully');
+} catch (error) {
+  console.warn('⚠️  Swagger documentation not available:', error instanceof Error ? error.message : 'Unknown error');
+  // Continue without Swagger - app will still work
+}
 
 const app = express();
 
@@ -30,11 +42,28 @@ app.use(cors({
 app.use(cookieParser());
 app.use(express.json({ limit: '10mb' }));
 
-// Swagger API documentation
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument, {
-  customCss: '.swagger-ui .topbar { display: none }',
-  customSiteTitle: 'DSL AI Playground API Documentation'
-}));
+// Swagger API documentation (only if available)
+if (swaggerDocument) {
+  app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument, {
+    customCss: '.swagger-ui .topbar { display: none }',
+    customSiteTitle: 'DSL AI Playground API Documentation'
+  }));
+  console.log('📚 Swagger UI available at /api-docs');
+} else {
+  // Fallback endpoint when Swagger not available
+  app.get('/api-docs', (req, res) => {
+    res.json({ 
+      message: 'API Documentation not available',
+      endpoints: [
+        'GET /health - Health check',
+        'POST /api/chat - Basic chat',
+        'POST /api/chat/semantic - Advanced semantic chat',
+        'POST /api/evaluate-dsl - DSL expression evaluation',
+        'POST /api/upload-json - JSON file upload'
+      ]
+    });
+  });
+}
 
 // Routes
 app.use('/api', chatRouter);

@@ -1,0 +1,37 @@
+services:
+  - type: web
+    name: dsl-ai-playground-backend
+    env: node
+    plan: free
+    buildCommand: |
+      cd apps/server && 
+      npm install -g pnpm && 
+      pnpm install --frozen-lockfile && 
+      pnpm run build
+    startCommand: cd apps/server && node dist/index.js
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: GEMINI_EMBED_KEY
+        sync: false
+      - key: SESSION_SECRET
+        generateValue: true
+      - key: CORS_ORIGIN
+        value: https://your-frontend-app.vercel.app
+      - key: CHROMA_PATH
+        value: ./chroma
+      - key: CHROMA_COLLECTION_NAME
+        value: dsl_knowledge
+      - key: RATE_LIMIT_WINDOW
+        value: 30
+      - key: RATE_LIMIT_MAX
+        value: 6
+      - key: MAX_MESSAGE_CHARS
+        value: 2000
+      - key: MAX_JSON_BYTES
+        value: 262144 
