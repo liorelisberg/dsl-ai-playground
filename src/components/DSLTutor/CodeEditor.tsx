@@ -632,7 +632,7 @@ const CodeEditor = forwardRef<CodeEditorRef, CodeEditorProps>(({ onParserToChat 
                         onClick={() => setSampleInputCollapsed(prev => Math.max(0, prev - 1))}
                         className="h-7 w-7 p-0 hover:bg-slate-200 dark:hover:bg-slate-700"
                       >
-                        <Minimize2 className="h-3.5 w-3.5" />
+                        <Maximize2 className="h-3.5 w-3.5" />
                       </Button>
                     </TooltipTrigger>
                     <TooltipContent>
@@ -647,7 +647,7 @@ const CodeEditor = forwardRef<CodeEditorRef, CodeEditorProps>(({ onParserToChat 
                         onClick={() => setSampleInputCollapsed(prev => prev + 1)}
                         className="h-7 w-7 p-0 hover:bg-slate-200 dark:hover:bg-slate-700"
                       >
-                        <Maximize2 className="h-3.5 w-3.5" />
+                        <Minimize2 className="h-3.5 w-3.5" />
                       </Button>
                     </TooltipTrigger>
                     <TooltipContent>
@@ -822,7 +822,7 @@ const CodeEditor = forwardRef<CodeEditorRef, CodeEditorProps>(({ onParserToChat 
                         onClick={() => setResultCollapsed(prev => Math.max(0, prev - 1))}
                         className="h-7 w-7 p-0 hover:bg-slate-200 dark:hover:bg-slate-700"
                       >
-                        <Minimize2 className="h-3.5 w-3.5" />
+                        <Maximize2 className="h-3.5 w-3.5" />
                       </Button>
                     </TooltipTrigger>
                     <TooltipContent>
@@ -837,7 +837,7 @@ const CodeEditor = forwardRef<CodeEditorRef, CodeEditorProps>(({ onParserToChat 
                         onClick={() => setResultCollapsed(prev => prev + 1)}
                         className="h-7 w-7 p-0 hover:bg-slate-200 dark:hover:bg-slate-700"
                       >
-                        <Maximize2 className="h-3.5 w-3.5" />
+                        <Minimize2 className="h-3.5 w-3.5" />
                       </Button>
                     </TooltipTrigger>
                     <TooltipContent>
