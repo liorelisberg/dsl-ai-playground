@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import ChatPanel from './ChatPanel';
 import CodeEditor from './CodeEditor';
 import { JsonMetadata } from './JsonUpload';
@@ -6,16 +6,19 @@ import { GlobalDragDropZone } from './GlobalDragDropZone';
 import { ThemeToggle } from '../ui/theme-toggle';
 import { ChatMessage } from '../../types/chat';
 import { useConnectionStatus } from '../../hooks/useConnectionStatus';
-import { sendChatMessage } from '../../services/chatService';
 import { useToast } from '../../hooks/use-toast';
 
-// Interface for CodeEditor ref methods
+// ============================================================================
+// TYPE DEFINITIONS
+// ============================================================================
+
+/** Interface for CodeEditor ref methods */
 interface CodeEditorRef {
   handleChatTransfer: (expression: string, input: string) => void;
 }
 
-// Add interface for queued parser communications
-interface QueuedParserMessage {
+/** Parser evaluation result data */
+interface ParserEvaluationData {
   expression: string;
   input: string;
   result: string;
@@ -23,222 +26,219 @@ interface QueuedParserMessage {
   isEmpty?: boolean;
 }
 
-const DSLTutor = () => {
-  const [chatHistory, setChatHistory] = useState<ChatMessage[]>([
-    {
-      role: 'assistant',
-      content: 'Welcome to the ZEN DSL AI Playground! 🚀\n\nI\'m your intelligent DSL assistant, here to help you master ZEN expressions and data processing.\n',
-      // **What I can help with:**\n- ZEN DSL syntax and functions\n- Data transformation with arrays, strings, numbers\n- Interactive examples with your JSON data\n- Best practices and optimization tips\n- Debugging expressions and learning concepts\n\n**Enhanced Features:**\n- Smart conversation that understands context\n- Personalized examples based on your data\n- Session continuity for seamless learning\n\nFeel free to ask questions or upload JSON data to get started!',
-      timestamp: new Date().toISOString()
-    }
-  ]);
+/** Custom event detail for parser-to-chat communication */
+interface ParserToChatEventDetail extends ParserEvaluationData {
+  prompt: string;
+}
 
+/** Custom event for parser-to-chat communication */
+type ParserToChatEvent = CustomEvent<ParserToChatEventDetail>;
+
+// ============================================================================
+// CONSTANTS
+// ============================================================================
+
+/** Event name for parser-to-chat communication */
+const PARSER_TO_CHAT_EVENT = 'dsl:parser-to-chat' as const;
+
+/** Maximum number of chat messages to keep in history */
+const MAX_CHAT_HISTORY = 8;
+
+/** Welcome message for new users */
+const WELCOME_MESSAGE: ChatMessage = {
+  role: 'assistant',
+  content: 'Welcome to the ZEN DSL AI Playground! 🚀\n\nI\'m your intelligent DSL assistant, here to help you master ZEN expressions and data processing.',
+  timestamp: new Date().toISOString()
+};
+
+// ============================================================================
+// UTILITY FUNCTIONS
+// ============================================================================
+
+/**
+ * Generate a contextual prompt based on expression evaluation results
+ */
+const generatePrompt = (data: ParserEvaluationData): string => {
+  const { expression, input, result, isSuccess, isEmpty } = data;
+  
+  if (!isSuccess) {
+    return `I have a failing expression, explain why it fails.\n\nExpression: ${expression}\n\nInput: ${input}\n\nError: ${result}`;
+  }
+  
+  if (isEmpty) {
+    return `I have an expression that runs successfully but returns an empty result. Please explain why the result is empty and how to fix it.\n\nExpression: ${expression}\n\nInput: ${input}\n\nResult: ${result}\n\nThe expression executed without errors but produced an empty/null result. What could be the reasons and how can I modify the expression to get the expected data?`;
+  }
+  
+  return `I have a working expression, explain it.\n\nExpression: ${expression}\n\nInput: ${input}\n\nResult: ${result}`;
+};
+
+/**
+ * Create a system message with consistent formatting
+ */
+const createSystemMessage = (content: string): ChatMessage => ({
+  role: 'assistant',
+  content,
+  timestamp: new Date().toISOString()
+});
+
+/**
+ * Format JSON file keys for display
+ */
+const formatJsonKeys = (keys: string[]): string => {
+  const displayKeys = keys.slice(0, 5);
+  const remaining = keys.length - 5;
+  return displayKeys.join(', ') + (remaining > 0 ? ` and ${remaining} more` : '');
+};
+
+// ============================================================================
+// MAIN COMPONENT
+// ============================================================================
+
+const DSLTutor: React.FC = () => {
+  // ========================================================================
+  // STATE & REFS
+  // ========================================================================
+  
+  const [chatHistory, setChatHistory] = useState<ChatMessage[]>([WELCOME_MESSAGE]);
   const [currentJsonFile, setCurrentJsonFile] = useState<JsonMetadata | null>(null);
   const [isDragging, setIsDragging] = useState(false);
+  
   const { isOnline, isApiHealthy } = useConnectionStatus();
   const { toast } = useToast();
   
-  // Store the chat input setter function
-  const [chatInputSetter, setChatInputSetter] = useState<React.Dispatch<React.SetStateAction<string>> | null>(null);
-
-  // Add queue for parser messages that arrive before chatInputSetter is ready
-  const [parserMessageQueue, setParserMessageQueue] = useState<QueuedParserMessage[]>([]);
-
-  // Store refs for accessing current state in async operations
   const chatInputSetterRef = useRef<React.Dispatch<React.SetStateAction<string>> | null>(null);
-  const parserMessageQueueRef = useRef<QueuedParserMessage[]>([]);
+  const codeEditorRef = useRef<CodeEditorRef | null>(null);
 
-  // Keep refs in sync with state
-  useEffect(() => {
-    chatInputSetterRef.current = chatInputSetter;
-  }, [chatInputSetter]);
+  // ========================================================================
+  // MEMOIZED VALUES
+  // ========================================================================
+  
+  const connectionStatus = useMemo(() => ({ isOnline, isApiHealthy }), [isOnline, isApiHealthy]);
 
-  useEffect(() => {
-    parserMessageQueueRef.current = parserMessageQueue;
-  }, [parserMessageQueue]);
-
-  const handleNewMessage = (message: ChatMessage) => {
+  // ========================================================================
+  // EVENT HANDLERS
+  // ========================================================================
+  
+  /**
+   * Add a new message to chat history with automatic pruning
+   */
+  const handleNewMessage = useCallback((message: ChatMessage) => {
     setChatHistory(prev => {
       const newHistory = [...prev, message];
-      // Keep only last 8 messages (4 conversation turns)
-      return newHistory.slice(-8);
+      return newHistory.slice(-MAX_CHAT_HISTORY);
     });
-  };
+  }, []);
 
-  // Handler for parser to populate chat input instead of sending directly
-  const handleParserToChat = async (expression: string, input: string, result: string, isSuccess: boolean, isEmpty?: boolean) => {
-    console.log('🔧→💬 Parser to Chat triggered:', { expression, input, result, isSuccess, isEmpty });
-    console.log('🔧→💬 chatInputSetter available:', !!chatInputSetter);
+  /**
+   * Handle parser-to-chat communication using event-driven architecture
+   */
+  const handleParserToChat = useCallback(async (
+    expression: string, 
+    input: string, 
+    result: string, 
+    isSuccess: boolean, 
+    isEmpty?: boolean
+  ) => {
+    const data: ParserEvaluationData = { expression, input, result, isSuccess, isEmpty };
+    const prompt = generatePrompt(data);
     
-    // If chatInputSetter is not ready, queue the message
-    if (!chatInputSetter) {
-      console.log('🔧→💬 Queueing message until chat input setter is ready');
-      setParserMessageQueue(prev => {
-        const newQueue = [...prev, { expression, input, result, isSuccess, isEmpty }];
-        console.log('🔧→💬 Queue updated, new length:', newQueue.length);
-        return newQueue;
-      });
-      return;
-    }
-
-    // Process the message immediately
-    await processParserMessage({ expression, input, result, isSuccess, isEmpty });
-  };
-
-  // Helper function to process a parser message - memoized with useCallback
-  const processParserMessage = useCallback(async ({ expression, input, result, isSuccess, isEmpty }: QueuedParserMessage) => {
-    let prompt: string;
+    // Dispatch custom event for loose coupling
+    const event = new CustomEvent(PARSER_TO_CHAT_EVENT, {
+      detail: { ...data, prompt }
+    }) as ParserToChatEvent;
     
-    if (!isSuccess) {
-      // Error case - ask AI to debug
-      prompt = `I have a failing expression, explain why it fails.\n\nExpression: ${expression}\n\nInput: ${input}\n\nError: ${result}`;
-    } else if (isEmpty) {
-      // Empty result case - ask AI to explain WHY it's empty
-      prompt = `I have an expression that runs successfully but returns an empty result. Please explain why the result is empty and how to fix it.\n\nExpression: ${expression}\n\nInput: ${input}\n\nResult: ${result}\n\nThe expression executed without errors but produced an empty/null result. What could be the reasons and how can I modify the expression to get the expected data?`;
-    } else {
-      // Success case - ask AI to explain how it works
-      prompt = `I have a working expression, explain it.\n\nExpression: ${expression}\n\nInput: ${input}\n\nResult: ${result}`;
-    }
-
-    console.log('🔧→💬 Generated prompt:', prompt.substring(0, 100) + '...');
-
-    // Set the chat input
-    if (chatInputSetter) {
-      console.log('🔧→💬 Setting chat input...');
-      chatInputSetter(prompt);
-      
-      // Show feedback toast
-      toast({
-        title: "Prompt Ready",
-        description: "Review and send the generated prompt in the chat input area",
-      });
-    } else {
-      console.error('🔧→💬 ERROR: chatInputSetter is null!');
-      toast({
-        title: "Connection Error",
-        description: "Chat input connection not ready. Please try again.",
-        variant: "destructive"
-      });
-    }
-  }, [chatInputSetter, toast]);
-
-  // Handler to capture the chat input setter
-  const handleSetInputMessage = (setter: React.Dispatch<React.SetStateAction<string>>) => {
-    console.log('💬→🔧 Chat input setter captured:', !!setter);
-    setChatInputSetter(setter);
+    window.dispatchEvent(event);
     
-    // Manually process any queued messages immediately when setter becomes available
-    setTimeout(() => {
-      const currentQueue = parserMessageQueueRef.current;
-      const currentSetter = chatInputSetterRef.current;
-      
-      console.log('🔧→💬 Manual queue check after setter capture:', currentQueue.length);
-      
-      if (currentQueue.length > 0 && currentSetter) {
-        const firstMessage = currentQueue[0];
-        console.log('🔧→💬 Manually processing queued message:', firstMessage.expression);
-        
-        // Process the message
-        processParserMessage(firstMessage);
-        
-        // Remove from queue
-        setParserMessageQueue(prev => prev.slice(1));
-      }
-    }, 0);
-  };
-
-  // Process queued parser messages when chatInputSetter becomes available
-  useEffect(() => {
-    console.log('🔧→💬 useEffect triggered:', { 
-      hasChatInputSetter: !!chatInputSetter, 
-      queueLength: parserMessageQueue.length,
-      queueContents: parserMessageQueue.map(m => ({ expr: m.expression, success: m.isSuccess }))
+    // Provide user feedback
+    toast({
+      title: "Prompt Ready",
+      description: "Review and send the generated prompt in the chat input area",
     });
-    
-    if (chatInputSetter && parserMessageQueue.length > 0) {
-      console.log('🔧→💬 Processing queued parser messages:', parserMessageQueue.length);
-      
-      // Process the first message in the queue
-      const firstMessage = parserMessageQueue[0];
-      console.log('🔧→💬 Processing message:', { expr: firstMessage.expression, success: firstMessage.isSuccess });
-      
-      processParserMessage(firstMessage);
-      
-      // Remove the processed message from the queue
-      setParserMessageQueue(prev => {
-        const newQueue = prev.slice(1);
-        console.log('🔧→💬 Queue after processing:', newQueue.length);
-        return newQueue;
-      });
-      
-      // Show toast for multiple queued messages
-      if (parserMessageQueue.length > 1) {
-        toast({
-          title: "Processing Queue",
-          description: `${parserMessageQueue.length - 1} more messages waiting to be processed`,
-        });
-      }
-    }
-  }, [chatInputSetter, parserMessageQueue, processParserMessage, toast]);
+  }, [toast]);
 
-  // Debug useEffect to track individual state changes
-  useEffect(() => {
-    console.log('🔧→💬 chatInputSetter changed:', !!chatInputSetter);
-  }, [chatInputSetter]);
+  /**
+   * Capture chat input setter for cross-component communication
+   */
+  const handleSetInputMessage = useCallback((setter: React.Dispatch<React.SetStateAction<string>>) => {
+    chatInputSetterRef.current = setter;
+  }, []);
 
-  useEffect(() => {
-    console.log('🔧→💬 parserMessageQueue changed:', parserMessageQueue.length, parserMessageQueue);
-  }, [parserMessageQueue]);
+  /**
+   * Handle chat-to-parser expression transfer
+   */
+  const handleChatToParser = useCallback((expression: string, input: string) => {
+    codeEditorRef.current?.handleChatTransfer(expression, input);
+  }, []);
 
-  // NEW: Handler for chat to transfer expressions to parser  
-  const handleChatToParser = (expression: string, input: string) => {
-    // This will be handled by CodeEditor to update its state
-    // We'll pass this callback to ChatPanel, and CodeEditor will receive the data via props
-    console.log('💬→🔧 Chat to Parser transfer:', { expression, input });
-    
-    // For now, we'll use a ref to directly update CodeEditor
-    // In a production app, we'd use a more sophisticated state management solution
-    if (codeEditorRef.current) {
-      codeEditorRef.current.handleChatTransfer(expression, input);
-    }
-  };
-
-  const handleJsonUploadSuccess = (metadata: JsonMetadata) => {
+  /**
+   * Handle successful JSON file upload
+   */
+  const handleJsonUploadSuccess = useCallback((metadata: JsonMetadata) => {
     setCurrentJsonFile(metadata);
     
-    // Add a system message about the upload
-    const systemMessage: ChatMessage = {
-      role: 'assistant',
-      content: `✅ **JSON Context Added!**\n\nI now have access to your **${metadata.filename}** file with ${metadata.topLevelKeys?.length || 0} top-level keys. This will help me provide more relevant DSL examples and suggestions tailored to your data structure.\n\n**Available keys:** ${(metadata.topLevelKeys || []).slice(0, 5).join(', ')}${(metadata.topLevelKeys?.length || 0) > 5 ? ` and ${(metadata.topLevelKeys?.length || 0) - 5} more` : ''}`,
-      timestamp: new Date().toISOString()
-    };
+    const message = createSystemMessage(
+      `✅ **JSON Context Added!**\n\nI now have access to your **${metadata.filename}** file with ${metadata.topLevelKeys?.length || 0} top-level keys. This will help me provide more relevant DSL examples and suggestions tailored to your data structure.\n\n**Available keys:** ${formatJsonKeys(metadata.topLevelKeys || [])}`
+    );
     
-    handleNewMessage(systemMessage);
-  };
+    handleNewMessage(message);
+  }, [handleNewMessage]);
 
-  const handleJsonUploadError = (error: string) => {
-    const errorMessage: ChatMessage = {
-      role: 'assistant',
-      content: `❌ **Upload Failed:** ${error}\n\nPlease try uploading a valid JSON file (max 50KB). I can help you better when I have context about your data structure.`,
-      timestamp: new Date().toISOString()
-    };
+  /**
+   * Handle JSON file upload errors
+   */
+  const handleJsonUploadError = useCallback((error: string) => {
+    const message = createSystemMessage(
+      `❌ **Upload Failed:** ${error}\n\nPlease try uploading a valid JSON file (max 50KB). I can help you better when I have context about your data structure.`
+    );
     
-    handleNewMessage(errorMessage);
-  };
+    handleNewMessage(message);
+  }, [handleNewMessage]);
 
-  const handleClearJsonFile = () => {
+  /**
+   * Handle JSON context clearing
+   */
+  const handleClearJsonFile = useCallback(() => {
     setCurrentJsonFile(null);
     
-    const clearMessage: ChatMessage = {
-      role: 'assistant',
-      content: '🔄 **Context Cleared** - Starting fresh without previous JSON context. Feel free to upload new data or continue with general DSL questions.',
-      timestamp: new Date().toISOString()
-    };
+    const message = createSystemMessage(
+      '🔄 **Context Cleared** - Starting fresh without previous JSON context. Feel free to upload new data or continue with general DSL questions.'
+    );
     
-    handleNewMessage(clearMessage);
-  };
+    handleNewMessage(message);
+  }, [handleNewMessage]);
 
-  // Global drag & drop handlers
+  // ========================================================================
+  // EFFECTS
+  // ========================================================================
+
+  /**
+   * Set up parser-to-chat event listener
+   */
+  useEffect(() => {
+    const handleParserToChatEvent = (event: Event) => {
+      const { detail } = event as ParserToChatEvent;
+      
+      if (chatInputSetterRef.current) {
+        chatInputSetterRef.current(detail.prompt);
+      } else {
+        toast({
+          title: "Connection Error",
+          description: "Chat input connection not ready. Please try again.",
+          variant: "destructive"
+        });
+      }
+    };
+
+    window.addEventListener(PARSER_TO_CHAT_EVENT, handleParserToChatEvent);
+    
+    return () => {
+      window.removeEventListener(PARSER_TO_CHAT_EVENT, handleParserToChatEvent);
+    };
+  }, [toast]);
+
+  /**
+   * Set up global drag & drop handlers
+   */
   useEffect(() => {
     const handleDragEnter = (e: DragEvent) => {
       e.preventDefault();
@@ -277,13 +277,14 @@ const DSLTutor = () => {
     };
   }, []);
 
-  // Ref to access CodeEditor methods
-  const codeEditorRef = useRef<CodeEditorRef | null>(null);
+  // ========================================================================
+  // RENDER
+  // ========================================================================
 
   return (
     <div className="h-screen flex flex-col bg-slate-100 dark:bg-slate-900">
       {/* Header */}
-      <div className="flex-shrink-0 border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">
+      <header className="flex-shrink-0 border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">
         <div className="flex items-center justify-between p-4">
           <div>
             <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100">
@@ -295,17 +296,16 @@ const DSLTutor = () => {
           </div>
           <ThemeToggle />
         </div>
-      </div>
+      </header>
 
       {/* Main Content - Balanced 2-Panel Layout */}
-      <div className="flex-1 flex overflow-hidden">
+      <main className="flex-1 flex overflow-hidden">
         {/* Chat Panel - 58% of space */}
-        <div className="flex flex-col bg-white dark:bg-slate-800 min-w-0" style={{ flex: '0 0 58%' }}>
+        <section className="flex flex-col bg-white dark:bg-slate-800 min-w-0" style={{ flex: '0 0 58%' }}>
           <ChatPanel
             chatHistory={chatHistory}
             onNewMessage={handleNewMessage}
-            isOnline={isOnline}
-            isApiHealthy={isApiHealthy}
+            {...connectionStatus}
             currentJsonFile={currentJsonFile}
             onJsonUploadSuccess={handleJsonUploadSuccess}
             onJsonUploadError={handleJsonUploadError}
@@ -313,18 +313,18 @@ const DSLTutor = () => {
             onChatToParser={handleChatToParser}
             onSetInputMessage={handleSetInputMessage}
           />
-        </div>
+        </section>
 
         {/* Expression Workbench - 42% of space */}
-        <div className="flex-shrink-0 bg-slate-50 dark:bg-slate-900 min-w-0 border-l border-slate-200 dark:border-slate-700" style={{ flex: '0 0 42%' }}>
+        <section className="flex-shrink-0 bg-slate-50 dark:bg-slate-900 min-w-0 border-l border-slate-200 dark:border-slate-700" style={{ flex: '0 0 42%' }}>
           <CodeEditor
             ref={codeEditorRef}
             onParserToChat={handleParserToChat}
           />
-        </div>
-      </div>
+        </section>
+      </main>
 
-      {/* Global Drag & Drop Modal - Only shows when dragging */}
+      {/* Global Drag & Drop Modal */}
       {isDragging && (
         <GlobalDragDropZone
           onUploadSuccess={handleJsonUploadSuccess}

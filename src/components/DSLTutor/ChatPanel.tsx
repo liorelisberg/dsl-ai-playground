@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
@@ -61,7 +61,10 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
 
   const MAX_FILE_SIZE = 50 * 1024; // 50KB
   const MAX_CHARS = 500;
-  const charCount = (inputMessage || '').length;
+  
+  // Ensure inputMessage is always a string, never null
+  const safeInputMessage = inputMessage || '';
+  const charCount = safeInputMessage.length;
 
   const getCharCounterColor = () => {
     if (charCount === 0) return 'text-slate-400';
@@ -71,7 +74,7 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
   };
 
   // Check if send button should be disabled
-  const isSendDisabled = !(inputMessage || '').trim() || isLoading || charCount >= MAX_CHARS;
+  const isSendDisabled = !safeInputMessage.trim() || isLoading || charCount >= MAX_CHARS;
 
   // Resize functionality
   const handleMouseDown = (e: React.MouseEvent) => {
@@ -79,14 +82,24 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
     setIsDragging(true);
   };
 
+  // Safe wrapper for setInputMessage that ensures never null
+  const safeSetInputMessage = useCallback((value: string | ((prev: string) => string)) => {
+    if (typeof value === 'function') {
+      setInputMessage(prev => {
+        const result = value(prev || '');
+        return result || '';
+      });
+    } else {
+      setInputMessage(value || '');
+    }
+  }, []);
+
   // Handle external input message updates - expose setInputMessage through callback
   useEffect(() => {
-    console.log('💬 ChatPanel: onSetInputMessage callback:', !!onSetInputMessage);
     if (onSetInputMessage) {
-      console.log('💬 ChatPanel: Exposing setInputMessage to parent');
-      onSetInputMessage(setInputMessage);
+      onSetInputMessage(safeSetInputMessage);
     }
-  }, [onSetInputMessage]);
+  }, [onSetInputMessage, safeSetInputMessage]);
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -203,9 +216,9 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
   };
 
   const handleSendMessage = async () => {
-    if (!(inputMessage || '').trim() || isLoading) return;
+    if (!safeInputMessage.trim() || isLoading) return;
 
-    let messageContent = inputMessage || '';
+    let messageContent = safeInputMessage;
     
     // Add full JSON flag if toggled
     if (uploadedFile && includeFullJson) {
@@ -219,7 +232,7 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
     };
 
     onNewMessage(userMessage);
-    setInputMessage('');
+    setInputMessage(''); // Explicitly set to empty string
     setIsLoading(true);
 
     try {
@@ -522,10 +535,10 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
           {/* Text Input */}
           <div className="flex-1 relative mx-2">
             <Textarea
-              value={inputMessage}
+              value={safeInputMessage}
               onChange={(e) => {
                 if (e.target.value.length <= MAX_CHARS) {
-                  setInputMessage(e.target.value);
+                  setInputMessage(e.target.value || ''); // Ensure never null
                 }
               }}
               onKeyPress={(e) => {
