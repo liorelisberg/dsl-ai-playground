@@ -17,19 +17,6 @@ interface DSLCodeBlockProps {
 }
 
 /**
- * Parse content using the new generic parser system
- * @deprecated Use ParserFactory.createDSLParser() directly for new implementations
- */
-function parseStructuredContent(content: string) {
-  // Use the new generic parser system
-  const parser = ParserFactory.createDSLParser();
-  const blocks = parser.parse(content);
-  
-  // Convert to legacy format for backward compatibility
-  return convertToLegacyFormat(blocks);
-}
-
-/**
  * Custom component that renders structured DSL examples with proper code blocks
  */
 const DSLCodeBlock: React.FC<DSLCodeBlockProps> = ({ 
@@ -44,8 +31,9 @@ const DSLCodeBlock: React.FC<DSLCodeBlockProps> = ({
   const pairs = extractExpressionPairs(content);
   const stats = getPairStatistics(content);
   
-  // Parse structured content
-  const blocks = parseStructuredContent(content);
+  // Parse structured content using the new generic parser system
+  const parser = ParserFactory.createDSLParser();
+  const blocks = convertToLegacyFormat(parser.parse(content));
   const hasStructuredExamples = blocks.some(block => block.type === 'dsl-example' || block.type === 'title');
   
   // Debug logging

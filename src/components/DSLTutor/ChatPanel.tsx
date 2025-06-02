@@ -4,13 +4,14 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "@/hooks/use-toast";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import { Bot, MessageCircle, Send, Paperclip, X, Loader2, Copy, Check, Brain, Target, Zap, FileJson } from 'lucide-react';
+import { Bot, MessageCircle, Send, Paperclip, X, Loader2, Copy, Check, Brain, Target, Zap, FileJson, Clock, RefreshCw } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
 import { ChatMessage, ChatResponse } from '@/types/chat';
 import { JsonMetadata } from './JsonUpload';
 import { sendChatMessage } from '@/services/chatService';
+import { useSession, useSessionControls } from '@/contexts/SessionContext';
 import DSLCodeBlock from './DSLCodeBlock';
 
 interface ChatPanelProps {
@@ -55,6 +56,10 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
   const [inputAreaHeight, setInputAreaHeight] = useState(120);
   const [isDragging, setIsDragging] = useState(false);
   
+  // Session management
+  const { sessionId, sessionMetrics, isSessionValid } = useSession();
+  const { clearSession, updateActivity } = useSessionControls();
+  
   const fileInputRef = useRef<HTMLInputElement>(null);
   const chatEndRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -74,7 +79,24 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
   };
 
   // Check if send button should be disabled
-  const isSendDisabled = !safeInputMessage.trim() || isLoading || charCount >= MAX_CHARS;
+  const isSendDisabled = !safeInputMessage.trim() || isLoading || charCount >= MAX_CHARS || !sessionId;
+
+  // Format session age for display
+  const formatSessionAge = useCallback((age: number) => {
+    const minutes = Math.floor(age / 60000);
+    const hours = Math.floor(minutes / 60);
+    if (hours > 0) return `${hours}h ${minutes % 60}m`;
+    return `${minutes}m`;
+  }, []);
+
+  // Handle session refresh
+  const handleSessionRefresh = useCallback(() => {
+    clearSession();
+    toast({
+      title: "Session Refreshed",
+      description: "Started a new conversation session",
+    });
+  }, [clearSession]);
 
   // Resize functionality
   const handleMouseDown = (e: React.MouseEvent) => {
@@ -216,7 +238,7 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
   };
 
   const handleSendMessage = async () => {
-    if (!safeInputMessage.trim() || isLoading) return;
+    if (!safeInputMessage.trim() || isLoading || !sessionId) return;
 
     let messageContent = safeInputMessage;
     
@@ -235,15 +257,25 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
     setInputMessage(''); // Explicitly set to empty string
     setIsLoading(true);
 
+    // Track activity
+    updateActivity();
+
     try {
-      const response: ChatResponse = await sendChatMessage(messageContent, chatHistory);
+      const response: ChatResponse = await sendChatMessage(messageContent, chatHistory, {
+        sessionId,
+        maxTokens: 8000,
+        jsonContext: uploadedFile?.content
+      });
       
       // Handle both successful responses and error responses
       const assistantMessage: ChatMessage = {
         role: 'assistant',
         content: response.text,
         timestamp: new Date().toISOString(),
-        metadata: response.metadata // Include semantic metadata
+        metadata: {
+          ...response.metadata,
+          sessionId: response.sessionId || sessionId
+        }
       };
 
       onNewMessage(assistantMessage);
@@ -359,6 +391,12 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
                     {currentJsonFile.filename}
                   </Badge>
                 )}
+                {sessionId && (
+                  <Badge variant={isSessionValid ? "default" : "destructive"} className="ml-2 text-xs flex items-center">
+                    <Clock className="h-3 w-3 mr-1" />
+                    {sessionMetrics.conversationCount} msgs
+                  </Badge>
+                )}
               </h2>
               <p className="text-sm text-slate-600 dark:text-slate-400">
                 AI that learns from your data and conversation patterns
@@ -367,35 +405,75 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
                     {' '}• Using {currentJsonFile.topLevelKeys.length} data keys for context
                   </span>
                 )}
+                {sessionId && (
+                  <span className="text-green-600 dark:text-green-400">
+                    {' '}• Session: {formatSessionAge(sessionMetrics.age)}
+                  </span>
+                )}
               </p>
             </div>
           </div>
           
-          {/* Connection Status */}
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <div className="flex items-center space-x-2">
-                <div className={`w-2 h-2 rounded-full transition-all duration-500 ${
-                  isOnline && isApiHealthy 
-                    ? 'bg-green-500 shadow-green-500/50 shadow-sm scale-110' 
-                    : 'bg-red-500 animate-pulse scale-90'
-                }`} />
-                <span className={`text-xs transition-colors duration-300 ${
-                  isOnline && isApiHealthy 
-                    ? 'text-green-600 dark:text-green-400' 
-                    : 'text-slate-500 dark:text-slate-400'
-                }`}>
-                  {isOnline && isApiHealthy ? 'Connected' : 'Connecting...'}
-                </span>
-              </div>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>{isOnline && isApiHealthy 
-                ? 'Intelligent AI service is online and ready' 
-                : 'Establishing connection to AI service...'
-              }</p>
-            </TooltipContent>
-          </Tooltip>
+          {/* Connection Status and Session Controls */}
+          <div className="flex items-center space-x-4">
+            {/* Session Controls */}
+            {sessionId && (
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={handleSessionRefresh}
+                    className="h-8 w-8 p-0 hover:bg-slate-200 dark:hover:bg-slate-700"
+                  >
+                    <RefreshCw className="h-4 w-4" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <div className="space-y-1">
+                    <p className="font-medium">Refresh Session</p>
+                    <p className="text-xs">Start a new conversation</p>
+                    <p className="text-xs text-muted-foreground">
+                      Current: {sessionMetrics.conversationCount} messages, {formatSessionAge(sessionMetrics.age)} old
+                    </p>
+                  </div>
+                </TooltipContent>
+              </Tooltip>
+            )}
+
+            {/* Connection Status */}
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <div className="flex items-center space-x-2">
+                  <div className={`w-2 h-2 rounded-full transition-all duration-500 ${
+                    isOnline && isApiHealthy 
+                      ? 'bg-green-500 shadow-green-500/50 shadow-sm scale-110' 
+                      : 'bg-red-500 animate-pulse scale-90'
+                  }`} />
+                  <span className={`text-xs transition-colors duration-300 ${
+                    isOnline && isApiHealthy 
+                      ? 'text-green-600 dark:text-green-400' 
+                      : 'text-slate-500 dark:text-slate-400'
+                  }`}>
+                    {isOnline && isApiHealthy ? 'Connected' : 'Connecting...'}
+                  </span>
+                </div>
+              </TooltipTrigger>
+              <TooltipContent>
+                <div className="space-y-1">
+                  <p>{isOnline && isApiHealthy 
+                    ? 'Intelligent AI service is online and ready' 
+                    : 'Establishing connection to AI service...'
+                  }</p>
+                  {sessionId && (
+                    <p className="text-xs text-muted-foreground">
+                      Session ID: {sessionId.split('_')[2]}...
+                    </p>
+                  )}
+                </div>
+              </TooltipContent>
+            </Tooltip>
+          </div>
         </div>
       </div>
 

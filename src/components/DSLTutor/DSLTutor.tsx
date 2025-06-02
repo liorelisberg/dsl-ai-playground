@@ -7,6 +7,7 @@ import { ThemeToggle } from '../ui/theme-toggle';
 import { ChatMessage } from '../../types/chat';
 import { useConnectionStatus } from '../../hooks/useConnectionStatus';
 import { useToast } from '../../hooks/use-toast';
+import { SessionProvider } from '../../contexts/SessionContext';
 
 // ============================================================================
 // TYPE DEFINITIONS
@@ -17,7 +18,7 @@ interface CodeEditorRef {
   handleChatTransfer: (expression: string, input: string) => void;
 }
 
-/** Parser evaluation result data */
+/** Parser evaluation data structure */
 interface ParserEvaluationData {
   expression: string;
   input: string;
@@ -82,19 +83,19 @@ const createSystemMessage = (content: string): ChatMessage => ({
 });
 
 /**
- * Format JSON file keys for display
+ * Format JSON keys for display
  */
 const formatJsonKeys = (keys: string[]): string => {
-  const displayKeys = keys.slice(0, 5);
-  const remaining = keys.length - 5;
-  return displayKeys.join(', ') + (remaining > 0 ? ` and ${remaining} more` : '');
+  if (keys.length === 0) return 'none';
+  if (keys.length <= 3) return keys.join(', ');
+  return `${keys.slice(0, 3).join(', ')} and ${keys.length - 3} more`;
 };
 
 // ============================================================================
-// MAIN COMPONENT
+// MAIN COMPONENT (without SessionProvider - will be wrapped)
 // ============================================================================
 
-const DSLTutor: React.FC = () => {
+const DSLTutorCore: React.FC = () => {
   // ========================================================================
   // STATE & REFS
   // ========================================================================
@@ -233,20 +234,17 @@ const DSLTutor: React.FC = () => {
   }, [toast]);
 
   /**
-   * Set up global drag & drop handlers
+   * Handle global drag & drop
    */
   useEffect(() => {
     const handleDragEnter = (e: DragEvent) => {
       e.preventDefault();
-      if (e.dataTransfer?.types.includes('Files')) {
-        setIsDragging(true);
-      }
+      setIsDragging(true);
     };
 
     const handleDragLeave = (e: DragEvent) => {
       e.preventDefault();
-      // Only hide if dragging out of the window entirely
-      if (e.clientX === 0 && e.clientY === 0) {
+      if (!e.relatedTarget) {
         setIsDragging(false);
       }
     };
@@ -329,6 +327,21 @@ const DSLTutor: React.FC = () => {
         />
       )}
     </div>
+  );
+};
+
+// ============================================================================
+// MAIN EXPORT WITH SESSION PROVIDER
+// ============================================================================
+
+/**
+ * DSLTutor component wrapped with SessionProvider
+ */
+const DSLTutor: React.FC = () => {
+  return (
+    <SessionProvider autoRefresh={true} refreshInterval={30000}>
+      <DSLTutorCore />
+    </SessionProvider>
   );
 };
 
