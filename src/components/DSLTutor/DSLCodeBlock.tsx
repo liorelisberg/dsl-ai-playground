@@ -9,6 +9,7 @@ import { vscDarkPlus, prism } from 'react-syntax-highlighter/dist/esm/styles/pri
 import { useTheme } from 'next-themes';
 import { Hash, Play, Database, Copy, Check, CheckCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { ParserFactory, convertToLegacyFormat } from '@/lib/contentParser';
 
 interface DSLCodeBlockProps {
   content: string;
@@ -16,72 +17,16 @@ interface DSLCodeBlockProps {
 }
 
 /**
- * Parse content to extract and render structured DSL examples
+ * Parse content using the new generic parser system
+ * @deprecated Use ParserFactory.createDSLParser() directly for new implementations
  */
 function parseStructuredContent(content: string) {
-  const blocks: Array<{
-    type: 'text' | 'dsl-example';
-    content: string;
-    title?: string;
-    input?: string;
-    expression?: string;
-    result?: string;
-  }> = [];
-
-  // Split content by title markers
-  const titlePattern = /\$\{title\}([\s\S]*?)\$\{title\}/g;
-  let lastIndex = 0;
-  let match;
-  let exampleIndex = 0;
-
-  while ((match = titlePattern.exec(content)) !== null) {
-    // Add text before this example
-    if (match.index > lastIndex) {
-      const precedingText = content.slice(lastIndex, match.index).trim();
-      if (precedingText) {
-        blocks.push({ type: 'text', content: precedingText });
-      }
-    }
-
-    // Find corresponding input, expression, and result blocks after this title
-    const afterTitleContent = content.slice(match.index + match[0].length);
-    
-    const inputMatch = afterTitleContent.match(/\$\{inputBlock\}([\s\S]*?)\$\{inputBlock\}/);
-    const expressionMatch = afterTitleContent.match(/\$\{expressionBlock\}([\s\S]*?)\$\{expressionBlock\}/);
-    const resultMatch = afterTitleContent.match(/\$\{resultBlock\}([\s\S]*?)\$\{resultBlock\}/);
-
-    if (inputMatch && expressionMatch) {
-      blocks.push({
-        type: 'dsl-example',
-        content: '',
-        title: match[1].trim(),
-        input: inputMatch[1].trim(),
-        expression: expressionMatch[1].trim(),
-        result: resultMatch ? resultMatch[1].trim() : undefined
-      });
-
-      // Update lastIndex to after the last block (result if present, otherwise expression)
-      const lastBlock = resultMatch || expressionMatch;
-      const lastBlockEnd = match.index + match[0].length + 
-        afterTitleContent.indexOf(lastBlock[0]) + lastBlock[0].length;
-      lastIndex = lastBlockEnd;
-    } else {
-      // If no matching blocks, treat as regular text
-      lastIndex = match.index + match[0].length;
-    }
-    
-    exampleIndex++;
-  }
-
-  // Add remaining text
-  if (lastIndex < content.length) {
-    const remainingText = content.slice(lastIndex).trim();
-    if (remainingText) {
-      blocks.push({ type: 'text', content: remainingText });
-    }
-  }
-
-  return blocks;
+  // Use the new generic parser system
+  const parser = ParserFactory.createDSLParser();
+  const blocks = parser.parse(content);
+  
+  // Convert to legacy format for backward compatibility
+  return convertToLegacyFormat(blocks);
 }
 
 /**
@@ -101,18 +46,31 @@ const DSLCodeBlock: React.FC<DSLCodeBlockProps> = ({
   
   // Parse structured content
   const blocks = parseStructuredContent(content);
-  const hasStructuredExamples = blocks.some(block => block.type === 'dsl-example');
+  const hasStructuredExamples = blocks.some(block => block.type === 'dsl-example' || block.type === 'title');
   
   // Debug logging
   if (stats.hasMarkers) {
-    console.log('🔍 DSL Detection:', {
-      pairs: pairs.length,
-      structuredBlocks: blocks.filter(b => b.type === 'dsl-example').length,
-      inputBlocks: stats.inputBlocks,
-      expressionBlocks: stats.expressionBlocks,
-      resultBlocks: stats.resultBlocks,
-      titleBlocks: stats.titleBlocks,
-      isBalanced: stats.isBalanced
+    if (process.env.NODE_ENV === 'development') {
+      console.log('🔍 DSL Detection:', {
+        pairs: pairs.length,
+        structuredBlocks: blocks.filter(b => b.type === 'dsl-example').length,
+        inputBlocks: stats.inputBlocks,
+        expressionBlocks: stats.expressionBlocks,
+        resultBlocks: stats.resultBlocks,
+        titleBlocks: stats.titleBlocks,
+        isBalanced: stats.isBalanced
+      });
+    }
+  }
+
+  // TEMPORARY DEBUG: Check why structured parsing might be failing
+  if (process.env.NODE_ENV === 'development') {
+    console.log('🚨 DEBUG - Parser Detection:', {
+      hasMarkers: stats.hasMarkers,
+      hasStructuredExamples,
+      blocksLength: blocks.length,
+      blockTypes: blocks.map(b => b.type),
+      contentPreview: content.substring(0, 100)
     });
   }
 
@@ -205,6 +163,19 @@ const DSLCodeBlock: React.FC<DSLCodeBlockProps> = ({
               <ReactMarkdown remarkPlugins={[remarkGfm]}>
                 {block.content}
               </ReactMarkdown>
+            </div>
+          );
+        }
+
+        if (block.type === 'title') {
+          return (
+            <div key={index} className="py-3">
+              <div className="flex items-center space-x-3">
+                <Hash className="h-5 w-5 text-indigo-600 dark:text-indigo-400" />
+                <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+                  {block.title}
+                </h3>
+              </div>
             </div>
           );
         }
