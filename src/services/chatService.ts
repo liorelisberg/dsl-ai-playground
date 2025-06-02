@@ -52,8 +52,10 @@ export class ChatService {
         return response;
 
       } catch (error) {
-        console.error(`Chat API attempt ${attempt} failed:`, error);
-
+        if (process.env.NODE_ENV === 'development') {
+          console.error(`Chat API attempt ${attempt} failed:`, error);
+        }
+        
         // If this is the last attempt, handle the error
         if (attempt === this.retryAttempts) {
           return this.handleError(error, sessionId);

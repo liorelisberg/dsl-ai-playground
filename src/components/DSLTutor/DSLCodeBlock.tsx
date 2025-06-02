@@ -37,28 +37,15 @@ const DSLCodeBlock: React.FC<DSLCodeBlockProps> = ({
   const hasStructuredExamples = blocks.some(block => block.type === 'dsl-example' || block.type === 'title');
   
   // Debug logging
-  if (stats.hasMarkers) {
-    if (process.env.NODE_ENV === 'development') {
-      console.log('🔍 DSL Detection:', {
-        pairs: pairs.length,
-        structuredBlocks: blocks.filter(b => b.type === 'dsl-example').length,
-        inputBlocks: stats.inputBlocks,
-        expressionBlocks: stats.expressionBlocks,
-        resultBlocks: stats.resultBlocks,
-        titleBlocks: stats.titleBlocks,
-        isBalanced: stats.isBalanced
-      });
-    }
-  }
-
-  // TEMPORARY DEBUG: Check why structured parsing might be failing
-  if (process.env.NODE_ENV === 'development') {
-    console.log('🚨 DEBUG - Parser Detection:', {
-      hasMarkers: stats.hasMarkers,
-      hasStructuredExamples,
-      blocksLength: blocks.length,
-      blockTypes: blocks.map(b => b.type),
-      contentPreview: content.substring(0, 100)
+  if (stats.hasMarkers && process.env.NODE_ENV === 'development') {
+    console.log('🔍 DSL Detection:', {
+      pairs: pairs.length,
+      structuredBlocks: blocks.filter(b => b.type === 'dsl-example').length,
+      inputBlocks: stats.inputBlocks,
+      expressionBlocks: stats.expressionBlocks,
+      resultBlocks: stats.resultBlocks,
+      titleBlocks: stats.titleBlocks,
+      isBalanced: stats.isBalanced
     });
   }
 

@@ -198,7 +198,9 @@ export class IntelligentRateLimitManager {
         const jitter = Math.random() * 500; // Add jitter to prevent thundering herd
         const totalWaitTime = backoffTime + jitter;
         
-        console.log(`🔄 Retrying in ${Math.round(totalWaitTime)}ms (attempt ${retryCount + 1}/${this.config.maxRetries}) for session ${sessionId}`);
+        if (process.env.NODE_ENV === 'development') {
+          console.log(`🔄 Retrying in ${Math.round(totalWaitTime)}ms (attempt ${retryCount + 1}/${this.config.maxRetries}) for session ${sessionId}`);
+        }
         
         await this.delay(totalWaitTime);
         return this.executeWithBackoff(operation, sessionId, context, retryCount + 1);
