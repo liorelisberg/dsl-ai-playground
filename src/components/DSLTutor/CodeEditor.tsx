@@ -299,7 +299,68 @@ const CodeEditor = forwardRef<CodeEditorRef, CodeEditorProps>(({ onParserToChat 
     }
   };
 
-  // Handler for "Ask About This" button
+  // Helper function to check if result is "empty" but valid
+  const isEmptyResult = (result: string): boolean => {
+    if (!result || result.trim() === '') return true;
+    
+    // Try to parse as JSON to check for empty structures
+    try {
+      const parsed = JSON.parse(result);
+      
+      // Check for various "empty" conditions
+      if (parsed === null || parsed === undefined) return true;
+      if (Array.isArray(parsed) && parsed.length === 0) return true;
+      if (typeof parsed === 'object' && Object.keys(parsed).length === 0) return true;
+      if (typeof parsed === 'string' && parsed.trim() === '') return true;
+      
+      return false;
+    } catch {
+      // Not JSON, check if it's an empty string
+      return result.trim() === '';
+    }
+  };
+
+  // Helper function to get AI query type and message
+  const getAIQueryInfo = () => {
+    if (!hasEvaluated) {
+      return {
+        type: 'disabled',
+        title: 'Run expression first',
+        description: 'Execute your expression to enable AI assistance',
+        buttonText: 'Ask AI',
+        variant: 'ghost' as const
+      };
+    }
+
+    if (!lastEvaluationSuccess) {
+      return {
+        type: 'error',
+        title: 'Debug Error',
+        description: 'Ask AI to help debug this failing expression',
+        buttonText: 'Debug',
+        variant: 'destructive' as const
+      };
+    }
+
+    if (isEmptyResult(result)) {
+      return {
+        type: 'empty',
+        title: 'Explain Empty Result',
+        description: 'Ask AI why this expression returned an empty result',
+        buttonText: 'Why Empty?',
+        variant: 'outline' as const
+      };
+    }
+
+    return {
+      type: 'success',
+      title: 'Explain Expression',
+      description: 'Ask AI to explain how this expression works',
+      buttonText: 'Explain',
+      variant: 'default' as const
+    };
+  };
+
   const handleAskAboutThis = async () => {
     if (!onParserToChat || !hasEvaluated) return;
 
@@ -307,12 +368,15 @@ const CodeEditor = forwardRef<CodeEditorRef, CodeEditorProps>(({ onParserToChat 
     try {
       await onParserToChat(code, sampleInput, result, lastEvaluationSuccess);
       
-      // Show feedback toast
+      const queryInfo = getAIQueryInfo();
+      // Show feedback toast with enhanced messaging
       toast({
         title: "Sent to Chat",
-        description: lastEvaluationSuccess 
-          ? "Asking AI to explain your working expression" 
-          : "Asking AI to debug your failing expression",
+        description: queryInfo.type === 'empty' 
+          ? "Asking AI to explain why the result is empty"
+          : queryInfo.type === 'error'
+            ? "Asking AI to debug your failing expression"
+            : "Asking AI to explain your working expression",
       });
     } catch (error) {
       console.error('Chat communication error:', error);
@@ -909,34 +973,52 @@ const CodeEditor = forwardRef<CodeEditorRef, CodeEditorProps>(({ onParserToChat 
                 </TooltipContent>
               </Tooltip>
               
-              {/* Ask About This Button */}
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={handleAskAboutThis}
-                    disabled={!hasEvaluated || !onParserToChat || isAskingAI}
-                    className="h-7 w-7 p-0 hover:bg-slate-200 dark:hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    <MessageCircle className="h-3.5 w-3.5" />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>
-                    {!onParserToChat 
-                      ? 'Chat communication not available'
-                      : !hasEvaluated 
-                        ? 'Run expression first to enable this feature'
-                        : isAskingAI 
-                          ? 'Asking AI...'
-                          : lastEvaluationSuccess 
-                            ? 'Ask AI to explain this working expression' 
-                            : 'Ask AI to debug this failing expression'
-                    }
-                  </p>
-                </TooltipContent>
-              </Tooltip>
+              {/* Ask About This Button - Enhanced with Smart Logic */}
+              {hasEvaluated && onParserToChat && (
+                <div className="flex items-center space-x-2">
+                  {/* Separator line */}
+                  <div className="w-px h-4 bg-slate-300 dark:bg-slate-600"></div>
+                  
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        onClick={handleAskAboutThis}
+                        disabled={isAskingAI}
+                        size="sm"
+                        variant={getAIQueryInfo().variant}
+                        className={`
+                          flex items-center space-x-1.5 px-3 py-1.5 h-8 rounded-lg transition-all duration-200
+                          ${getAIQueryInfo().type === 'error' 
+                            ? 'bg-red-50 hover:bg-red-100 text-red-700 border-red-200 dark:bg-red-900/20 dark:hover:bg-red-900/30 dark:text-red-300 dark:border-red-800' 
+                            : getAIQueryInfo().type === 'empty'
+                              ? 'bg-amber-50 hover:bg-amber-100 text-amber-700 border-amber-200 dark:bg-amber-900/20 dark:hover:bg-amber-900/30 dark:text-amber-300 dark:border-amber-800'
+                              : 'bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border-indigo-200 dark:bg-indigo-900/20 dark:hover:bg-indigo-900/30 dark:text-indigo-300 dark:border-indigo-800'
+                          }
+                          ${isAskingAI ? 'animate-pulse' : ''}
+                          font-medium shadow-sm
+                        `}
+                      >
+                        <MessageCircle className="h-3.5 w-3.5" />
+                        <span className="text-xs font-medium">
+                          {isAskingAI ? 'Asking...' : getAIQueryInfo().buttonText}
+                        </span>
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p className="font-medium">{getAIQueryInfo().title}</p>
+                      <p className="text-xs text-muted-foreground mt-0.5">{getAIQueryInfo().description}</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </div>
+              )}
+              
+              {/* Hint for unevaluated expressions */}
+              {!hasEvaluated && (
+                <div className="flex items-center text-xs text-slate-500 dark:text-slate-400">
+                  <MessageCircle className="h-3 w-3 mr-1 opacity-50" />
+                  <span>Run to enable AI help</span>
+                </div>
+              )}
             </div>
           </div>
           <Card className="border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-800 shadow-lg rounded-2xl ring-1 ring-slate-200 dark:ring-slate-700 flex-1 min-h-0 relative">
