@@ -51,6 +51,26 @@ ALWAYS use correct ZEN equivalents:
 - Use: d(), year(), month(), contains(), startsWith()
 - Use: condition ? value1 : value2 (ternary, not if statements)
 
+🔧 REGEX PATTERN RULES:
+CRITICAL: In ZEN DSL regex patterns, regex metacharacters need proper escaping for string literals.
+When writing ZEN expressions as strings, use double backslashes for regex metacharacters.
+
+❌ WRONG - Triple/quadruple backslashes (over-escaping):
+extract("2023-10-27", "(\\\\\\\\d{4})-(\\\\\\\\d{2})-(\\\\\\\\d{2})")
+
+❌ WRONG - Missing backslash (invalid regex):
+extract("2023-10-27", "(d{4})-(d{2})-(d{2})")
+
+❌ WRONG - Single backslash in string context:
+extract("2023-10-27", "(\d{4})-(\d{2})-(\d{2})")
+
+✅ CORRECT - Double backslash for metacharacters (ZEN DSL string literals):
+extract("2023-10-27", "(\\d{4})-(\\d{2})-(\\d{2})")
+extract("John Doe", "(\\w+) (\\w+)")
+extract("test@email.com", "([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,})")
+
+Reason: In string literals, \\d becomes \d when parsed, which is what ZEN regex engine expects.
+
 📦 DSL EXAMPLE FORMAT:
 When providing DSL examples, use this EXACT format with explicit markers:
 

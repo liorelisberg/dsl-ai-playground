@@ -55,7 +55,9 @@ export function extractExpressionPairs(content: string): ExpressionPair[] {
       pair.index = index;
     });
     
-    console.log(`🔍 Detected ${pairs.length} expression-input pairs from ${clusters.length} block clusters`);
+    if (process.env.NODE_ENV === 'development') {
+      console.log(`🔍 Detected ${pairs.length} expression-input pairs from ${clusters.length} block clusters`);
+    }
     
   } catch (error) {
     console.error('Error extracting expression pairs:', error);

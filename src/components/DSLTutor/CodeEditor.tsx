@@ -471,7 +471,8 @@ const CodeEditor = forwardRef<CodeEditorRef, CodeEditorProps>(({ onParserToChat 
   // Use useImperativeHandle to expose handleChatTransfer method
   useImperativeHandle(ref, () => ({
     handleChatTransfer: (expression: string, input: string) => {
-      // Transfer expression and input from chat to parser
+      // Transfer expression and input from chat to parser directly
+      // System prompt should ensure AI generates correct single backslashes for ZEN DSL
       setCode(expression);
       setSampleInput(input);
       
@@ -481,7 +482,12 @@ const CodeEditor = forwardRef<CodeEditorRef, CodeEditorProps>(({ onParserToChat 
       setResult('');
       
       // Log the transfer for debugging
-      console.log('🔄 Chat transfer received:', { expression, input });
+      if (process.env.NODE_ENV === 'development') {
+        console.log('🔄 Chat transfer received:', { 
+          expression, 
+          input 
+        });
+      }
     },
   }));
 

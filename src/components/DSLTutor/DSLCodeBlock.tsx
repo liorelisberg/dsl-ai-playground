@@ -111,7 +111,7 @@ const DSLCodeBlock: React.FC<DSLCodeBlockProps> = ({
     setIsTransferring(true);
     
     try {
-      // Transfer to parser (no validation - let parser handle errors)
+      // Transfer to parser directly - system prompt should ensure correct regex syntax
       onChatToParser(pair.expression, pair.input);
       
       toast({
