@@ -44,6 +44,19 @@ const DSLTutor = () => {
   // Add queue for parser messages that arrive before chatInputSetter is ready
   const [parserMessageQueue, setParserMessageQueue] = useState<QueuedParserMessage[]>([]);
 
+  // Store refs for accessing current state in async operations
+  const chatInputSetterRef = useRef<React.Dispatch<React.SetStateAction<string>> | null>(null);
+  const parserMessageQueueRef = useRef<QueuedParserMessage[]>([]);
+
+  // Keep refs in sync with state
+  useEffect(() => {
+    chatInputSetterRef.current = chatInputSetter;
+  }, [chatInputSetter]);
+
+  useEffect(() => {
+    parserMessageQueueRef.current = parserMessageQueue;
+  }, [parserMessageQueue]);
+
   const handleNewMessage = (message: ChatMessage) => {
     setChatHistory(prev => {
       const newHistory = [...prev, message];
@@ -60,7 +73,11 @@ const DSLTutor = () => {
     // If chatInputSetter is not ready, queue the message
     if (!chatInputSetter) {
       console.log('🔧→💬 Queueing message until chat input setter is ready');
-      setParserMessageQueue(prev => [...prev, { expression, input, result, isSuccess, isEmpty }]);
+      setParserMessageQueue(prev => {
+        const newQueue = [...prev, { expression, input, result, isSuccess, isEmpty }];
+        console.log('🔧→💬 Queue updated, new length:', newQueue.length);
+        return newQueue;
+      });
       return;
     }
 
@@ -109,19 +126,50 @@ const DSLTutor = () => {
   const handleSetInputMessage = (setter: React.Dispatch<React.SetStateAction<string>>) => {
     console.log('💬→🔧 Chat input setter captured:', !!setter);
     setChatInputSetter(setter);
+    
+    // Manually process any queued messages immediately when setter becomes available
+    setTimeout(() => {
+      const currentQueue = parserMessageQueueRef.current;
+      const currentSetter = chatInputSetterRef.current;
+      
+      console.log('🔧→💬 Manual queue check after setter capture:', currentQueue.length);
+      
+      if (currentQueue.length > 0 && currentSetter) {
+        const firstMessage = currentQueue[0];
+        console.log('🔧→💬 Manually processing queued message:', firstMessage.expression);
+        
+        // Process the message
+        processParserMessage(firstMessage);
+        
+        // Remove from queue
+        setParserMessageQueue(prev => prev.slice(1));
+      }
+    }, 0);
   };
 
   // Process queued parser messages when chatInputSetter becomes available
   useEffect(() => {
+    console.log('🔧→💬 useEffect triggered:', { 
+      hasChatInputSetter: !!chatInputSetter, 
+      queueLength: parserMessageQueue.length,
+      queueContents: parserMessageQueue.map(m => ({ expr: m.expression, success: m.isSuccess }))
+    });
+    
     if (chatInputSetter && parserMessageQueue.length > 0) {
       console.log('🔧→💬 Processing queued parser messages:', parserMessageQueue.length);
       
       // Process the first message in the queue
       const firstMessage = parserMessageQueue[0];
+      console.log('🔧→💬 Processing message:', { expr: firstMessage.expression, success: firstMessage.isSuccess });
+      
       processParserMessage(firstMessage);
       
       // Remove the processed message from the queue
-      setParserMessageQueue(prev => prev.slice(1));
+      setParserMessageQueue(prev => {
+        const newQueue = prev.slice(1);
+        console.log('🔧→💬 Queue after processing:', newQueue.length);
+        return newQueue;
+      });
       
       // Show toast for multiple queued messages
       if (parserMessageQueue.length > 1) {
@@ -132,6 +180,15 @@ const DSLTutor = () => {
       }
     }
   }, [chatInputSetter, parserMessageQueue, processParserMessage, toast]);
+
+  // Debug useEffect to track individual state changes
+  useEffect(() => {
+    console.log('🔧→💬 chatInputSetter changed:', !!chatInputSetter);
+  }, [chatInputSetter]);
+
+  useEffect(() => {
+    console.log('🔧→💬 parserMessageQueue changed:', parserMessageQueue.length, parserMessageQueue);
+  }, [parserMessageQueue]);
 
   // NEW: Handler for chat to transfer expressions to parser  
   const handleChatToParser = (expression: string, input: string) => {
