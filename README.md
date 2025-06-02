@@ -31,6 +31,11 @@
   - Real-time session metrics (age, message count, activity tracking)
   - Session refresh/clear controls with visual feedback
   - Cross-tab session isolation and consistency
+- **Load Older Messages**: Frontend-only message history with smart pagination
+  - View extended conversation history without affecting AI context
+  - Batch loading of older messages (5 at a time) for performance
+  - Visual indicators showing available older messages count
+  - Automatic synchronization with session management
 - **Semantic Understanding**: Vector-based knowledge retrieval with SemanticVectorStore integration
 - **Context Awareness**: Sophisticated conversation state management and user profiling
 - **JSON Integration**: Upload data for personalized DSL examples and suggestions

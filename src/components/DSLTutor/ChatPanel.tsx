@@ -4,7 +4,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "@/hooks/use-toast";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import { Bot, MessageCircle, Send, Paperclip, X, Loader2, Copy, Check, Brain, Target, Zap, FileJson, Clock, RefreshCw } from 'lucide-react';
+import { Bot, MessageCircle, Send, Paperclip, X, Loader2, Copy, Check, Brain, Target, Zap, FileJson, Clock, RefreshCw, ChevronUp, History } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
@@ -56,6 +56,11 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
   const [inputAreaHeight, setInputAreaHeight] = useState(120);
   const [isDragging, setIsDragging] = useState(false);
   
+  // Frontend-only message history (separate from AI context)
+  const [frontendMessageHistory, setFrontendMessageHistory] = useState<ChatMessage[]>([]);
+  const [visibleMessageCount, setVisibleMessageCount] = useState(10); // Show last 10 messages by default
+  const [isLoadingOlderMessages, setIsLoadingOlderMessages] = useState(false);
+  
   // Session management
   const { sessionId, sessionMetrics, isSessionValid } = useSession();
   const { clearSession, updateActivity } = useSessionControls();
@@ -66,10 +71,62 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
 
   const MAX_FILE_SIZE = 50 * 1024; // 50KB
   const MAX_CHARS = 500;
+  const LOAD_OLDER_BATCH_SIZE = 5; // Load 5 more messages at a time
   
   // Ensure inputMessage is always a string, never null
   const safeInputMessage = inputMessage || '';
   const charCount = safeInputMessage.length;
+
+  // Synchronize frontend message history with parent chatHistory
+  useEffect(() => {
+    // Add new messages from parent to frontend history
+    chatHistory.forEach(message => {
+      setFrontendMessageHistory(prev => {
+        // Check if this message already exists in frontend history
+        const exists = prev.some(existing => 
+          existing.content === message.content && 
+          existing.role === message.role && 
+          existing.timestamp === message.timestamp
+        );
+        
+        if (!exists) {
+          return [...prev, message];
+        }
+        return prev;
+      });
+    });
+  }, [chatHistory]);
+
+  // Calculate which messages to display
+  const displayMessages = frontendMessageHistory.slice(-visibleMessageCount);
+  const hasOlderMessages = frontendMessageHistory.length > visibleMessageCount;
+  const olderMessagesCount = frontendMessageHistory.length - visibleMessageCount;
+
+  // Load older messages function
+  const handleLoadOlderMessages = useCallback(() => {
+    setIsLoadingOlderMessages(true);
+    
+    // Simulate loading delay for better UX
+    setTimeout(() => {
+      setVisibleMessageCount(prev => Math.min(prev + LOAD_OLDER_BATCH_SIZE, frontendMessageHistory.length));
+      setIsLoadingOlderMessages(false);
+    }, 300);
+  }, [frontendMessageHistory.length]);
+
+  // Reset visible messages when session is cleared
+  useEffect(() => {
+    if (frontendMessageHistory.length === 0) {
+      setVisibleMessageCount(10);
+    }
+  }, [frontendMessageHistory.length]);
+
+  // Clear frontend history when session is cleared externally
+  useEffect(() => {
+    if (!sessionId && frontendMessageHistory.length > 0) {
+      setFrontendMessageHistory([]);
+      setVisibleMessageCount(10);
+    }
+  }, [sessionId, frontendMessageHistory.length]);
 
   const getCharCounterColor = () => {
     if (charCount === 0) return 'text-slate-400';
@@ -92,6 +149,9 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
   // Handle session refresh
   const handleSessionRefresh = useCallback(() => {
     clearSession();
+    // Clear frontend message history as well
+    setFrontendMessageHistory([]);
+    setVisibleMessageCount(10);
     toast({
       title: "Session Refreshed",
       description: "Started a new conversation session",
@@ -482,7 +542,37 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
         className="flex-1 overflow-y-auto p-6 space-y-6"
         style={{ height: `calc(100% - ${inputAreaHeight + 120}px)` }}
       >
-        {chatHistory.map((message, index) => (
+        {/* Load Older Messages Button */}
+        {hasOlderMessages && (
+          <div className="flex justify-center pb-2">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleLoadOlderMessages}
+              disabled={isLoadingOlderMessages}
+              className="group flex items-center space-x-2 px-4 py-2 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-full transition-all duration-200"
+            >
+              {isLoadingOlderMessages ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  <span className="text-sm">Loading...</span>
+                </>
+              ) : (
+                <>
+                  <ChevronUp className="h-4 w-4 group-hover:scale-110 transition-transform" />
+                  <span className="text-sm font-medium">
+                    Load {Math.min(LOAD_OLDER_BATCH_SIZE, olderMessagesCount)} older message{Math.min(LOAD_OLDER_BATCH_SIZE, olderMessagesCount) !== 1 ? 's' : ''}
+                  </span>
+                  <Badge variant="secondary" className="text-xs bg-slate-200 dark:bg-slate-600 text-slate-700 dark:text-slate-300">
+                    {olderMessagesCount}
+                  </Badge>
+                </>
+              )}
+            </Button>
+          </div>
+        )}
+        
+        {displayMessages.map((message, index) => (
           <div
             key={index}
             className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}

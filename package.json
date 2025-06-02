@@ -2,7 +2,7 @@
   "name": "dsl-ai-playground",
   "description": "Intelligent DSL learning platform with enhanced Chat → Parser integration, AI-powered assistance and real-time code execution",
   "private": true,
-  "version": "3.3.0",
+  "version": "3.4.0",
   "type": "module",
   "packageManager": "pnpm@10.11.0",
   "engines": {
