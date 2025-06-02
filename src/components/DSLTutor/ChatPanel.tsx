@@ -23,6 +23,7 @@ interface ChatPanelProps {
   onJsonUploadError?: (error: string) => void;
   onClearJsonFile?: () => void;
   onChatToParser?: (expression: string, input: string) => void;
+  onSetInputMessage?: (setter: React.Dispatch<React.SetStateAction<string>>) => void;
 }
 
 interface UploadedFile {
@@ -43,7 +44,8 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
   onJsonUploadSuccess,
   onJsonUploadError,
   onClearJsonFile,
-  onChatToParser
+  onChatToParser,
+  onSetInputMessage
 }) => {
   const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -76,6 +78,13 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
     e.preventDefault();
     setIsDragging(true);
   };
+
+  // Handle external input message updates - expose setInputMessage through callback
+  useEffect(() => {
+    if (onSetInputMessage) {
+      onSetInputMessage(setInputMessage);
+    }
+  }, [onSetInputMessage]);
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });

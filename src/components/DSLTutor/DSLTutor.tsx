@@ -7,6 +7,7 @@ import { ThemeToggle } from '../ui/theme-toggle';
 import { ChatMessage } from '../../types/chat';
 import { useConnectionStatus } from '../../hooks/useConnectionStatus';
 import { sendChatMessage } from '../../services/chatService';
+import { useToast } from '../../hooks/use-toast';
 
 // Interface for CodeEditor ref methods
 interface CodeEditorRef {
@@ -26,6 +27,10 @@ const DSLTutor = () => {
   const [currentJsonFile, setCurrentJsonFile] = useState<JsonMetadata | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const { isOnline, isApiHealthy } = useConnectionStatus();
+  const { toast } = useToast();
+  
+  // Store the chat input setter function
+  const [chatInputSetter, setChatInputSetter] = useState<React.Dispatch<React.SetStateAction<string>> | null>(null);
 
   const handleNewMessage = (message: ChatMessage) => {
     setChatHistory(prev => {
@@ -35,7 +40,7 @@ const DSLTutor = () => {
     });
   };
 
-  // Handler for parser to send analysis request to chat
+  // Handler for parser to populate chat input instead of sending directly
   const handleParserToChat = async (expression: string, input: string, result: string, isSuccess: boolean, isEmpty?: boolean) => {
     let prompt: string;
     
@@ -50,38 +55,21 @@ const DSLTutor = () => {
       prompt = `I have a working expression, explain it.\n\nExpression: ${expression}\n\nInput: ${input}\n\nResult: ${result}`;
     }
 
-    const userMessage: ChatMessage = {
-      role: 'user',
-      content: prompt,
-      timestamp: new Date().toISOString()
-    };
-
-    // Add user message to chat
-    handleNewMessage(userMessage);
-
-    // Get AI response (import and call the chat service)
-    try {
-      const response = await sendChatMessage(prompt, [...chatHistory, userMessage]);
+    // Populate the chat input field instead of sending directly
+    if (chatInputSetter) {
+      chatInputSetter(prompt);
       
-      const assistantMessage: ChatMessage = {
-        role: 'assistant',
-        content: response.text,
-        timestamp: new Date().toISOString(),
-        metadata: response.metadata
-      };
-
-      handleNewMessage(assistantMessage);
-    } catch (error) {
-      console.error('Parser to chat error:', error);
-      
-      const errorMessage: ChatMessage = {
-        role: 'assistant',
-        content: "I'm sorry, I'm having trouble analyzing your expression right now. Please try again in a moment.",
-        timestamp: new Date().toISOString()
-      };
-      
-      handleNewMessage(errorMessage);
+      // Show feedback toast
+      toast({
+        title: "Prompt Ready",
+        description: "Review and send the generated prompt in the chat input area",
+      });
     }
+  };
+
+  // Handler to capture the chat input setter
+  const handleSetInputMessage = (setter: React.Dispatch<React.SetStateAction<string>>) => {
+    setChatInputSetter(setter);
   };
 
   // NEW: Handler for chat to transfer expressions to parser  
@@ -205,6 +193,7 @@ const DSLTutor = () => {
             onJsonUploadError={handleJsonUploadError}
             onClearJsonFile={handleClearJsonFile}
             onChatToParser={handleChatToParser}
+            onSetInputMessage={handleSetInputMessage}
           />
         </div>
 
