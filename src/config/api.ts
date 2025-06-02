@@ -1,5 +1,5 @@
 export const API_CONFIG = {
-  BASE_URL: import.meta.env.VITE_API_URL || 'http://localhost:3000',
+  BASE_URL: '', // Use relative URLs - Vercel proxies to backend via vercel.json
   ENDPOINTS: {
     CHAT: '/api/chat/semantic',
     CHAT_STATUS: '/api/chat/semantic/status',
