@@ -5,6 +5,12 @@ export const useConnectionStatus = () => {
   const [isOnline, setIsOnline] = useState(navigator.onLine);
   const [isApiHealthy, setIsApiHealthy] = useState(false); // Start as false for better UX
   const wasHealthyRef = useRef(false);
+  const isApiHealthyRef = useRef(false); // Ref to track current API health status
+
+  // Keep ref in sync with state
+  useEffect(() => {
+    isApiHealthyRef.current = isApiHealthy;
+  }, [isApiHealthy]);
 
   useEffect(() => {
     let checkCount = 0;
@@ -34,7 +40,7 @@ export const useConnectionStatus = () => {
 
     // Fast checks for the first few attempts (every 2 seconds)
     const fastInterval = setInterval(() => {
-      if (checkCount < maxFastChecks && !isApiHealthy) {
+      if (checkCount < maxFastChecks && !isApiHealthyRef.current) {
         checkConnection();
       } else {
         clearInterval(fastInterval);
@@ -61,7 +67,7 @@ export const useConnectionStatus = () => {
       window.removeEventListener('online', handleOnline);
       window.removeEventListener('offline', handleOffline);
     };
-  }, [isApiHealthy]);
+  }, []); // Empty dependency array - effect only runs once
 
   return { isOnline, isApiHealthy };
 }; 

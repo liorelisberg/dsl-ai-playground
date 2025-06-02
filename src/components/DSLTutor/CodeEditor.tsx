@@ -1,10 +1,11 @@
-import React, { useState, useEffect, useRef, useCallback, useImperativeHandle, forwardRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback, useImperativeHandle, forwardRef, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
 import { Play, Book, Code2, Sparkles, Shuffle, Minimize2, Maximize2, Copy, GripVertical, Eye, FileText, MessageCircle } from 'lucide-react';
 import { evaluateExpression } from '../../services/dslService';
 import { useToast } from '@/hooks/use-toast';
+import { useErrorToast } from '../../hooks/useErrorToast';
 import ExamplesDrawer from './ExamplesDrawer';
 import { allExamples, Example } from '../../examples';
 import {
@@ -151,12 +152,17 @@ const CodeEditor = forwardRef<CodeEditorRef, CodeEditorProps>(({ onParserToChat 
   }, [explainCooldown]);
   
   const { toast } = useToast();
+  const errorToast = useErrorToast();
 
   // Theme detection
   const { theme } = useTheme();
   
-  // Helper function to get JSON viewer theme based on current theme
-  const getJsonViewerTheme = (): React.CSSProperties => {
+  // ========================================================================
+  // MEMOIZED VALUES & CALLBACKS - Performance Optimization
+  // ========================================================================
+
+  // Memoize theme-dependent JSON viewer styles
+  const jsonViewerTheme = useMemo((): React.CSSProperties => {
     const isDark = theme === 'dark';
     
     if (isDark) {
@@ -195,19 +201,18 @@ const CodeEditor = forwardRef<CodeEditorRef, CodeEditorProps>(({ onParserToChat 
         '--w-rjv-type-null-color': '#6b7280', // Gray for null
       } as React.CSSProperties;
     }
-  };
+  }, [theme]);
 
-  // Helper function to safely parse JSON
-  const safeParseJSON = (jsonString: string) => {
+  // Memoize JSON parsing utility functions
+  const safeParseJSON = useCallback((jsonString: string) => {
     try {
       return JSON.parse(jsonString);
     } catch {
       return null;
     }
-  };
+  }, []);
 
-  // Helper function to check if content is valid JSON
-  const isValidJSON = (content: string): boolean => {
+  const isValidJSON = useCallback((content: string): boolean => {
     if (!content || content.trim() === '') return false;
     try {
       JSON.parse(content);
@@ -215,10 +220,10 @@ const CodeEditor = forwardRef<CodeEditorRef, CodeEditorProps>(({ onParserToChat 
     } catch {
       return false;
     }
-  };
+  }, []);
 
-  // Helper function to format result based on prettify toggle
-  const formatResult = (rawResult: string): string => {
+  // Memoize result formatting function
+  const formatResult = useCallback((rawResult: string): string => {
     if (!rawResult || rawResult.trim() === '') {
       return 'Click "Run" to execute your expression';
     }
@@ -238,7 +243,86 @@ const CodeEditor = forwardRef<CodeEditorRef, CodeEditorProps>(({ onParserToChat 
       // Not valid JSON, return as-is
       return rawResult;
     }
-  };
+  }, [isPrettyFormat]);
+
+  // Memoize empty result checker
+  const isEmptyResult = useCallback((result: string): boolean => {
+    if (!result || result.trim() === '') return true;
+    
+    // Try to parse as JSON to check for empty structures
+    try {
+      const parsed = JSON.parse(result);
+      
+      // Check for various "empty" conditions
+      if (parsed === null || parsed === undefined) return true;
+      if (Array.isArray(parsed) && parsed.length === 0) return true;
+      if (typeof parsed === 'object' && Object.keys(parsed).length === 0) return true;
+      if (typeof parsed === 'string' && parsed.trim() === '') return true;
+      
+      return false;
+    } catch {
+      // Not JSON, check if it's an empty string
+      return result.trim() === '';
+    }
+  }, []);
+
+  // Memoize AI query information  
+  const aiQueryInfo = useMemo(() => {
+    if (!hasEvaluated) {
+      return {
+        type: 'disabled',
+        title: 'Run expression first',
+        description: 'Execute your expression to enable AI assistance',
+        buttonText: 'Ask AI',
+        variant: 'ghost' as const,
+        message: `Explain this DSL expression: ${code}`
+      };
+    }
+
+    const isEmpty = isEmptyResult(result);
+    
+    if (!lastEvaluationSuccess) {
+      return {
+        type: 'error',
+        title: 'Debug Error',
+        description: 'Ask AI to help debug this failing expression',
+        buttonText: 'Debug',
+        variant: 'destructive' as const,
+        message: `Debug this failing DSL expression: ${code}`
+      };
+    }
+
+    if (isEmpty) {
+      return {
+        type: 'empty',
+        title: 'Explain Empty Result',
+        description: 'Ask AI why this expression returned an empty result',
+        buttonText: 'Why Empty?',
+        variant: 'outline' as const,
+        message: `This DSL expression returns empty results: ${code}`
+      };
+    }
+
+    return {
+      type: 'success',
+      title: 'Explain Expression',
+      description: 'Ask AI to explain how this expression works',
+      buttonText: 'Explain',
+      variant: 'default' as const,
+      message: `Explain this working DSL expression: ${code}`
+    };
+  }, [hasEvaluated, lastEvaluationSuccess, result, code, isEmptyResult]);
+
+  // ========================================================================
+  // EXISTING FUNCTIONS (Remove duplicates)
+  // ========================================================================
+
+  // Remove the old getJsonViewerTheme function since it's now memoized above
+  // Remove the old safeParseJSON function since it's now memoized above  
+  // Remove the old isValidJSON function since it's now memoized above
+  // Remove the old formatResult function since it's now memoized above
+  // Remove the old isEmptyResult function since it's now memoized above
+  // Remove the old getAIQueryInfo function since it's now memoized above
 
   const handleExecute = async () => {
     setIsLoading(true);
@@ -254,11 +338,7 @@ const CodeEditor = forwardRef<CodeEditorRef, CodeEditorProps>(({ onParserToChat 
       setResult('Error: Failed to execute expression');
       setHasEvaluated(true);
       setLastEvaluationSuccess(false);
-      toast({
-        title: "Execution Error",
-        description: "Failed to execute the expression. Please check your syntax.",
-        variant: "destructive"
-      });
+      errorToast.showExecutionError();
     } finally {
       setIsLoading(false);
     }
@@ -276,11 +356,7 @@ const CodeEditor = forwardRef<CodeEditorRef, CodeEditorProps>(({ onParserToChat 
 
   const handleRandomExample = () => {
     if (allExamples.length === 0) {
-      toast({
-        title: "No Examples Available",
-        description: "No examples are currently loaded.",
-        variant: "destructive"
-      });
+      errorToast.showError("No Examples Available", "No examples are currently loaded.");
       return;
     }
 
@@ -324,74 +400,8 @@ const CodeEditor = forwardRef<CodeEditorRef, CodeEditorProps>(({ onParserToChat 
         description: "Result copied to clipboard",
       });
     } catch (error) {
-      toast({
-        title: "Copy Failed",
-        description: "Unable to copy result to clipboard",
-        variant: "destructive"
-      });
+      errorToast.showCopyError();
     }
-  };
-
-  // Helper function to check if result is "empty" but valid
-  const isEmptyResult = (result: string): boolean => {
-    if (!result || result.trim() === '') return true;
-    
-    // Try to parse as JSON to check for empty structures
-    try {
-      const parsed = JSON.parse(result);
-      
-      // Check for various "empty" conditions
-      if (parsed === null || parsed === undefined) return true;
-      if (Array.isArray(parsed) && parsed.length === 0) return true;
-      if (typeof parsed === 'object' && Object.keys(parsed).length === 0) return true;
-      if (typeof parsed === 'string' && parsed.trim() === '') return true;
-      
-      return false;
-    } catch {
-      // Not JSON, check if it's an empty string
-      return result.trim() === '';
-    }
-  };
-
-  // Helper function to get AI query type and message
-  const getAIQueryInfo = () => {
-    if (!hasEvaluated) {
-      return {
-        type: 'disabled',
-        title: 'Run expression first',
-        description: 'Execute your expression to enable AI assistance',
-        buttonText: 'Ask AI',
-        variant: 'ghost' as const
-      };
-    }
-
-    if (!lastEvaluationSuccess) {
-      return {
-        type: 'error',
-        title: 'Debug Error',
-        description: 'Ask AI to help debug this failing expression',
-        buttonText: 'Debug',
-        variant: 'destructive' as const
-      };
-    }
-
-    if (isEmptyResult(result)) {
-      return {
-        type: 'empty',
-        title: 'Explain Empty Result',
-        description: 'Ask AI why this expression returned an empty result',
-        buttonText: 'Why Empty?',
-        variant: 'outline' as const
-      };
-    }
-
-    return {
-      type: 'success',
-      title: 'Explain Expression',
-      description: 'Ask AI to explain how this expression works',
-      buttonText: 'Explain',
-      variant: 'default' as const
-    };
   };
 
   const handleAskAboutThis = async () => {
@@ -401,7 +411,7 @@ const CodeEditor = forwardRef<CodeEditorRef, CodeEditorProps>(({ onParserToChat 
     try {
       await onParserToChat(code, sampleInput, result, lastEvaluationSuccess, isEmptyResult(result));
       
-      const queryInfo = getAIQueryInfo();
+      const queryInfo = aiQueryInfo;
       // Show feedback toast with enhanced messaging
       toast({
         title: "Sent to Chat",
@@ -435,11 +445,7 @@ const CodeEditor = forwardRef<CodeEditorRef, CodeEditorProps>(({ onParserToChat 
         description: "Sample input copied to clipboard",
       });
     } catch (error) {
-      toast({
-        title: "Copy Failed",
-        description: "Unable to copy sample input to clipboard",
-        variant: "destructive"
-      });
+      errorToast.showCopyError();
     }
   };
 
@@ -451,11 +457,7 @@ const CodeEditor = forwardRef<CodeEditorRef, CodeEditorProps>(({ onParserToChat 
         description: "DSL expression copied to clipboard",
       });
     } catch (error) {
-      toast({
-        title: "Copy Failed",
-        description: "Unable to copy DSL expression to clipboard",
-        variant: "destructive"
-      });
+      errorToast.showCopyError();
     }
   };
 
@@ -568,11 +570,7 @@ const CodeEditor = forwardRef<CodeEditorRef, CodeEditorProps>(({ onParserToChat 
         description: `JSON path: ${path}`,
       });
     } catch (error) {
-      toast({
-        title: "Copy Failed",
-        description: "Unable to copy path to clipboard",
-        variant: "destructive"
-      });
+      errorToast.showCopyError();
     }
   };
 
@@ -825,7 +823,7 @@ const CodeEditor = forwardRef<CodeEditorRef, CodeEditorProps>(({ onParserToChat 
               <div className="p-4 h-full overflow-auto pb-8">
                 <JsonView 
                   value={safeParseJSON(sampleInput)} 
-                  style={getJsonViewerTheme()}
+                  style={jsonViewerTheme}
                   collapsed={sampleInputCollapsed}
                   enableClipboard={false}
                   displayDataTypes={false}
@@ -1021,18 +1019,16 @@ const CodeEditor = forwardRef<CodeEditorRef, CodeEditorProps>(({ onParserToChat 
                         onClick={handleAskAboutThis}
                         disabled={isAskingAI || explainCooldown > 0}
                         size="sm"
-                        variant={getAIQueryInfo().variant}
+                        variant={aiQueryInfo.variant}
                         className={`
                           flex items-center space-x-1.5 px-3 py-1.5 h-8 rounded-lg transition-all duration-200
-                          ${getAIQueryInfo().type === 'error' 
+                          ${aiQueryInfo.type === 'error' 
                             ? 'bg-red-50 hover:bg-red-100 text-red-700 border-red-200 dark:bg-red-900/20 dark:hover:bg-red-900/30 dark:text-red-300 dark:border-red-800' 
-                            : getAIQueryInfo().type === 'empty'
+                            : aiQueryInfo.type === 'empty'
                               ? 'bg-amber-50 hover:bg-amber-100 text-amber-700 border-amber-200 dark:bg-amber-900/20 dark:hover:bg-amber-900/30 dark:text-amber-300 dark:border-amber-800'
-                              : 'bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border-indigo-200 dark:bg-indigo-900/20 dark:hover:bg-indigo-900/30 dark:text-indigo-300 dark:border-indigo-800'
-                          }
+                              : 'bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border-indigo-200 dark:bg-indigo-900/20 dark:hover:bg-indigo-900/30 dark:text-indigo-300 dark:border-indigo-800'}
                           ${isAskingAI ? 'animate-pulse' : ''}
                           ${explainCooldown > 0 ? 'opacity-60 cursor-not-allowed' : ''}
-                          font-medium shadow-sm
                         `}
                       >
                         <MessageCircle className="h-3.5 w-3.5" />
@@ -1041,7 +1037,7 @@ const CodeEditor = forwardRef<CodeEditorRef, CodeEditorProps>(({ onParserToChat 
                             ? 'Asking...' 
                             : explainCooldown > 0 
                               ? `Wait ${explainCooldown}s`
-                              : getAIQueryInfo().buttonText
+                              : aiQueryInfo.buttonText
                           }
                         </span>
                       </Button>
@@ -1050,13 +1046,13 @@ const CodeEditor = forwardRef<CodeEditorRef, CodeEditorProps>(({ onParserToChat 
                       <p className="font-medium">
                         {explainCooldown > 0 
                           ? `Please wait ${explainCooldown} seconds` 
-                          : getAIQueryInfo().title
+                          : aiQueryInfo.title
                         }
                       </p>
                       <p className="text-xs text-muted-foreground mt-0.5">
                         {explainCooldown > 0 
                           ? 'Cooldown prevents rapid requests to protect the AI service'
-                          : getAIQueryInfo().description
+                          : aiQueryInfo.description
                         }
                       </p>
                     </TooltipContent>
@@ -1078,7 +1074,7 @@ const CodeEditor = forwardRef<CodeEditorRef, CodeEditorProps>(({ onParserToChat 
               <div className="p-4 h-full overflow-auto pb-8">
                 <JsonView 
                   value={safeParseJSON(result)} 
-                  style={getJsonViewerTheme()}
+                  style={jsonViewerTheme}
                   collapsed={resultCollapsed}
                   enableClipboard={false}
                   displayDataTypes={false}
