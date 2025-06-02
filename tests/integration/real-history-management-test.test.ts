@@ -1,5 +1,5 @@
 import { describe, test, expect, beforeAll, afterAll } from '@jest/globals';
-import * as request from 'supertest';
+import request from 'supertest';
 
 // Test the actual semantic chat API to identify history management issues
 describe('Real History Management Issues - Semantic Chat API', () => {

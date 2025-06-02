@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: dsl-ai-playground-backend
+    name: zaip-zen-ai-playground-backend
     env: node
     plan: free
     buildCommand: |

@@ -1,6 +1,6 @@
 import { describe, test, expect, beforeEach, afterEach } from '@jest/globals';
-import * as request from 'supertest';
-import * as express from 'express';
+import request from 'supertest';
+import express from 'express';
 import { chatService } from '../../apps/server/src/services/chat';
 
 // We'll test the actual API endpoints to validate real behavior
@@ -24,18 +24,18 @@ describe('History Management Validation - API Integration', () => {
         // Add user message to history
         chatService.addTurn(sessionId, 'user', message);
         
-        // Get current history
-        const history = chatService.getHistory(sessionId);
-        
         // Mock AI response for testing
-        const mockResponse = `Mock response to: ${message}. History length: ${history.length}`;
+        const mockResponse = `Mock response to: ${message}`;
         
         // Add assistant response to history
         chatService.addTurn(sessionId, 'assistant', mockResponse);
         
+        // Get current history after both messages are added
+        const history = chatService.getHistory(sessionId);
+        
         res.json({
           response: mockResponse,
-          historyLength: history.length + 1, // +1 for the assistant response we just added
+          historyLength: history.length, // Current history length after both messages
           sessionId: sessionId
         });
       } catch (error) {

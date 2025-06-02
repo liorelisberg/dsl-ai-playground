@@ -1,8 +1,26 @@
-# 🚀 DSL AI Playground - Advanced AI-Powered Learning Platform
+# 🚀 ZEN DSL AI Playground - Advanced AI-Powered Learning Platform
 
-**An intelligent Domain-Specific Language (DSL) learning platform with sophisticated AI assistance, semantic search, and real-time code execution.**
+**An intelligent ZEN Domain-Specific Language (DSL) learning platform with sophisticated AI assistance, semantic search, and real-time code execution.**
 
-## 🎯 **Current Status: PRODUCTION READY v3.3.0**
+---
+
+## 🎯 **What is ZEN DSL AI Playground?**
+
+ZEN DSL AI Playground is a **production-ready, comprehensive educational platform** that combines modern web technologies with advanced AI capabilities to create an intuitive learning environment for ZEN DSL expressions.
+
+### **🌟 Key Features**
+
+- **🤖 AI-Powered Learning**: Interactive chat assistant powered by Google Gemini 2.5 Flash
+- **⚡ Real-Time Execution**: Sub-millisecond ZEN expression evaluation using Rust-powered GoRules Zen Engine  
+- **🧠 Semantic Knowledge Retrieval**: Vector-based knowledge system for contextual learning
+- **📁 Intelligent Context Management**: JSON file uploads for personalized learning experiences
+- **🎨 Modern UI/UX**: Responsive design with dark/light themes and advanced JSON visualization
+- **🔒 Enterprise Security**: Production-grade rate limiting, session management, and input validation
+- **📚 Comprehensive Examples**: 424+ validated ZEN expressions across 19 categories
+
+---
+
+## 🎯 **Current Status: PRODUCTION READY v3.4.0**
 
 - ✅ **Phase 1**: Core DSL Engine & Advanced Token Management (Complete)
 - ✅ **Phase 2**: Conversation Continuity & Semantic Enhancement (Complete) 
@@ -10,8 +28,9 @@
 - ✅ **Phase 4**: UX/UI Polish & TypeScript Excellence (Complete)
 - ✅ **Phase 5**: Enhanced Chat → Parser Integration with Smart Titles (Complete)
 - ✅ **Phase 6**: Advanced Session Management & Frontend Persistence (Complete)
+- ✅ **Phase 7**: Load Older Messages Feature & Message Pagination (Complete)
 
-**🆕 Latest v3.3.0: Advanced session management with localStorage persistence, conversation continuity across page reloads, and real-time session metrics**
+**🆕 Latest v3.4.0: Load Older Messages feature with frontend-only message history, smart pagination, and seamless session integration**
 
 ## ✨ **Key Features**
 

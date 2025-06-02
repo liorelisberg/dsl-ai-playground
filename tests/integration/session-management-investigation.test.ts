@@ -1,5 +1,5 @@
 import { describe, test, expect, beforeAll } from '@jest/globals';
-import * as request from 'supertest';
+import request from 'supertest';
 
 // Investigate session management between frontend and backend
 describe('Session Management Investigation', () => {

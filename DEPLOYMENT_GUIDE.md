@@ -1,8 +1,8 @@
-# 🚀 DSL AI Playground - Deployment Guide
+# 🚀 ZEN DSL AI Playground - Deployment Guide
 
-## 📋 **Quick Overview**
+## 🌟 **Overview**
 
-Your DSL AI Playground is a **monorepo** with:
+Your ZEN DSL AI Playground is a **monorepo** with:
 - **Frontend**: React + Vite (SPA)
 - **Backend**: Node.js + Express API
 - **Database**: ChromaDB (file-based vector storage)

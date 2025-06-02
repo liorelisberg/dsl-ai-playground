@@ -1,8 +1,8 @@
-# DSL AI Playground - Comprehensive Codebase Analysis
+# ZEN DSL AI Playground - Comprehensive Codebase Analysis
 
 ## Project Overview
 
-**DSL AI Playground** is an intelligent learning platform for mastering ZEN DSL (Domain Specific Language) expressions with AI-powered assistance and real-time code execution. The system combines a React-based frontend with a Node.js backend, featuring advanced AI chat capabilities, semantic search, interactive DSL expression evaluation, and sophisticated session management.
+**ZEN DSL AI Playground** is an intelligent learning platform for mastering ZEN DSL (Domain Specific Language) expressions with AI-powered assistance and real-time code execution. The system combines a React-based frontend with a Node.js backend, featuring advanced AI chat capabilities, semantic search, interactive DSL expression evaluation, and sophisticated session management.
 
 **Version**: 3.4.0  
 **Architecture**: Full-stack TypeScript application with monorepo structure  

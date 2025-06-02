@@ -15,7 +15,7 @@ import semanticChatRoutes from './routes/semanticChat';
 validateConfig();
 
 // Load Swagger documentation with fallback
-let swaggerDocument: any = null;
+let swaggerDocument: Record<string, unknown> | null = null;
 try {
   // In production (compiled), swagger.yaml is in src folder, not dist
   const swaggerPath = config.server.nodeEnv === 'production' 
@@ -46,7 +46,7 @@ app.use(express.json({ limit: '10mb' }));
 if (swaggerDocument) {
   app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument, {
     customCss: '.swagger-ui .topbar { display: none }',
-    customSiteTitle: 'DSL AI Playground API Documentation'
+    customSiteTitle: 'ZAIP - ZEN AI Playground API Documentation'
   }));
   console.log('📚 Swagger UI available at /api-docs');
 } else {

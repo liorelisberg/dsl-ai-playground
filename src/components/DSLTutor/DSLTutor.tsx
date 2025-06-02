@@ -282,10 +282,10 @@ const DSLTutorCore: React.FC = () => {
         <div className="flex items-center justify-between p-4">
           <div>
             <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100">
-              DSL AI Playground
+              <span className="text-3xl text-emerald-600 dark:text-emerald-400 font-extrabold">ZAIP</span> - ZEN AI Playground
             </h1>
             <p className="text-sm text-slate-600 dark:text-slate-400">
-              Intelligent language learning with context awareness
+              Intelligent ZEN language learning with context awareness
             </p>
           </div>
           <ThemeToggle />

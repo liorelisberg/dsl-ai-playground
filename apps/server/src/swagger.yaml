@@ -1,11 +1,11 @@
 openapi: 3.0.3
 info:
-  title: DSL AI Playground API
+  title: ZAIP - ZEN AI Playground API
   description: |
-    A production-grade API for the DSL AI Playground - an educational platform for learning JavaScript-like domain-specific language (DSL) with AI-powered assistance.
+    A production-grade API for ZAIP (ZEN AI Playground) - an educational platform for learning ZEN language with AI-powered assistance.
     
     ## Features
-    - **Enterprise DSL Engine**: Powered by GoRules Zen Engine (Rust-based, sub-millisecond evaluation)
+    - **Enterprise Engine**: Powered by GoRules Zen Engine (Rust-based, sub-millisecond evaluation)
     - **AI Chat Assistant**: Real-time assistance with Google Gemini 2.5 Flash Preview
     - **Advanced Expression Support**: Mathematical operations, array indexing, conditional expressions, string operations
     - **Rate Limiting**: Built-in protection for free-tier usage
@@ -16,7 +16,7 @@ info:
     - Comprehensive error handling and logging
   version: 1.0.0
   contact:
-    name: DSL AI Playground
+    name: ZAIP - ZEN AI Playground
     url: https://github.com/liorelisberg/dsl-ai-playground
   license:
     name: MIT
@@ -65,7 +65,7 @@ paths:
         - DSL Evaluation
       summary: Evaluate DSL expression
       description: |
-        Evaluate a JavaScript-like DSL expression using the enterprise-grade GoRules Zen Engine.
+        Evaluate a ZEN DSL expression using the enterprise-grade GoRules Zen Engine.
         
         Supports:
         - **Mathematical operations**: `price * quantity`, `age >= 18`

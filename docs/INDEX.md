@@ -1,6 +1,6 @@
-# DSL AI Playground - Documentation Index
+# ZEN DSL AI Playground - Documentation Index
 
-This folder contains all documentation, DSL rules, and datasets for the DSL AI Playground project, organized in a logical structure.
+This folder contains all documentation, DSL rules, and datasets for the ZEN DSL AI Playground project, organized in a logical structure.
 
 ## 📂 Folder Structure
 

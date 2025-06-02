@@ -213,7 +213,7 @@ Transform from production-ready to industry-leading DSL education platform with 
   - ✅ **Backend Upload API**: /api/upload-json endpoint available
   - ❌ **Parser Input Upload**: No upload functionality for Sample Input (JSON) textarea
 - **Acceptance Criteria**:
-  - ✅ Drag & drop JSON files directly into parser input
+  - ✅ Drag & drop JSON files directly into parser Sample Input textarea
   - ✅ File size validation with user-friendly errors
   - ✅ JSON syntax validation before loading
   - ✅ Visual feedback during upload process

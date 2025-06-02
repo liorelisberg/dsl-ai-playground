@@ -1,13 +1,13 @@
 # AI Model Message Construction & Conversation History Management Analysis
 
-**Deep Code Analysis of DSL AI Playground**  
+**Deep Code Analysis of ZEN DSL AI Playground**  
 *Based on comprehensive codebase exploration*
 
 ---
 
 ## Executive Summary
 
-The DSL AI Playground implements a sophisticated multi-layered AI conversation system with advanced message construction, intelligent context management, and robust conversation history handling. The system utilizes Google's Gemini models with extensive optimization and resilience features.
+The ZEN DSL AI Playground implements a sophisticated multi-layered AI conversation system with advanced message construction, intelligent context management, and robust conversation history handling. The system utilizes Google's Gemini models with extensive optimization and resilience features.
 
 ---
 

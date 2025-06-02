@@ -1,4 +1,4 @@
-# DSL AI Playground – Implementation Status Report  
+# ZEN DSL AI Playground – Implementation Status Report  
 **Current Implementation Analysis**  
 Version 3.1.0 · January 2025  
 

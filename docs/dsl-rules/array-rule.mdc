@@ -317,4 +317,48 @@ Defines what is and isn't allowed in DSL array expressions, and provides a quick
 | Feature/Operator         | Allowed | Example (DSL)                                 |
 |-------------------------|---------|-----------------------------------------------|
 | Array creation          | Yes     | `[1, 2, 3]`, `[0..3]`                         |
-| Indexing/Slicing        | Yes     | `arr[0]`, `arr[1:3]`, `arr[:2]`, `
+| Indexing/Slicing        | Yes     | `arr[0]`, `arr[1:3]`, `arr[:2]`, `arr[2:]`    |
+| Mapping/Filtering       | Yes     | `map(arr, #)`, `filter(arr, #)`               |
+| Quantifiers             | Yes     | `some(arr, #)`, `all(arr, #)`, `none(arr, #)`, `one(arr, #)` |
+| Aggregation/Math        | Yes     | `sum(arr)`, `avg(arr)`, `min(arr)`, `max(arr)`, `len(arr)`, `count(arr, #)`, `median(arr)`, `mode(arr)` |
+| Flattening              | Yes     | `flatMap(arr, #)`                             |
+| Keys                    | Yes     | `keys(arr)`                                   |
+| Contains/Membership     | Yes     | `contains(arr, v)`, `v in arr`                |
+| Object operations       | Yes     | `map(arr, #.prop)`, `filter(arr, #.prop > 1)` |
+| Split/Map               | Yes     | `split(str, ',')`, `map(split(str, ','), #)`  |
+| Step slicing            | **NO**  | `arr[::2]`, `arr[1::2]`, `arr[::-1]` ❌       |
+| Extended slicing        | **NO**  | `arr[1:5:2]`, `arr[:2:1]`, `arr[::3]` ❌      |
+| values() on arrays      | **NO**  | (not supported)                               |
+| Non-DSL ops             | **NO**  | (any not listed above)                        |
+
+---
+
+## ❌ **UNSUPPORTED SLICING SYNTAX**
+
+**ZEN DSL does NOT support Python-style step slicing or extended slicing syntax:**
+
+### **❌ Step Slicing (NOT Supported)**
+```
+arr[::2]     ❌ Every 2nd element (step slicing)
+arr[1::2]    ❌ From index 1, every 2nd element  
+arr[::-1]    ❌ Reverse order with step
+arr[::3]     ❌ Every 3rd element
+```
+
+### **❌ Extended Slicing (NOT Supported)**
+```  
+arr[1:5:2]   ❌ From index 1 to 5, step 2
+arr[:2:1]    ❌ From start to index 2, step 1
+arr[2::3]    ❌ From index 2, every 3rd element
+arr[1:8:2]   ❌ Range with step parameter
+```
+
+### **✅ SUPPORTED Slicing (ZEN DSL)**
+```
+arr[0]       ✅ Single element access
+arr[1:3]     ✅ Range slicing (start:end)
+arr[:2]      ✅ From start to index
+arr[2:]      ✅ From index to end
+```
+
+**Remember**: ZEN DSL uses simple bracket notation `[start:end]` only. No step parameters or extended Python-style slicing syntax.

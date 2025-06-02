@@ -1,5 +1,5 @@
 import { describe, test, expect, beforeAll } from '@jest/globals';
-import * as request from 'supertest';
+import request from 'supertest';
 
 // Test realistic conversation flows to validate API message construction
 describe('Conversation Flows - Real User Interactions', () => {
