@@ -38,7 +38,7 @@ const sampleDocuments: Document[] = [
   },
   {
     id: 'string_ops_1',
-    content: 'String operations in DSL include substring extraction, case conversion, and splitting. Use .substring(), .toUpperCase(), .toLowerCase() functions.',
+    content: 'String operations in DSL include string extraction, case conversion, and splitting. Use extract(), upper(), lower() functions.',
     metadata: {
       source: 'strings-rule.mdc',
       category: 'strings',

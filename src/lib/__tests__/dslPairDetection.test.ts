@@ -542,10 +542,10 @@ Splits string into array using delimiter.
 
 ## String Extraction Functions
 
-### substring(string, start, end?)
-Extracts portion of string between start and end positions.
-- Returns: Substring
-- Example: substring("hello", 1, 4) → "ell"
+### extract(string, pattern)
+Extracts content from string using pattern matching.
+- Returns: Extracted content
+- Example: extract("hello world", "[a-z]+") → "hello"
 
 ## Usage Notes
 
@@ -589,6 +589,591 @@ For real examples, ask me to "show me string operations" instead.
       // Should not extract pairs from documentation about markers
       expect(pairs).toHaveLength(0);
       expect(stats.hasMarkers).toBe(false);
+    });
+  });
+
+  describe('Proximity-Based Pairing Algorithm', () => {
+    test('should handle extract method scenario with mixed educational and example titles', () => {
+      const content = `
+\${title}
+Explanation of the extract Method in ZEN DSL
+\${title}
+
+The extract method is used to extract parts of strings using regular expressions.
+
+\${title}
+Example 1: Extracting a Number from a String
+\${title}
+
+\${inputBlock}
+{"text": "Order ID: 12345"}
+\${inputBlock}
+
+\${expressionBlock}
+extract(text, "[0-9]+")
+\${expressionBlock}
+
+\${resultBlock}
+"12345"
+\${resultBlock}
+
+\${title}
+Example 2: Extracting a Word from a String
+\${title}
+
+\${inputBlock}
+{"text": "Hello World!"}
+\${inputBlock}
+
+\${expressionBlock}
+extract(text, "[A-Za-z]+")
+\${expressionBlock}
+
+\${resultBlock}
+"Hello"
+\${resultBlock}
+      `;
+
+      const pairs = extractExpressionPairs(content);
+      
+      expect(pairs).toHaveLength(2);
+      
+      // First example should get the correct title (not the educational one)
+      expect(pairs[0]).toEqual({
+        input: '{"text": "Order ID: 12345"}',
+        expression: 'extract(text, "[0-9]+")',
+        result: '"12345"',
+        title: 'Example 1: Extracting a Number from a String',
+        index: 0
+      });
+      
+      // Second example should get its correct title
+      expect(pairs[1]).toEqual({
+        input: '{"text": "Hello World!"}',
+        expression: 'extract(text, "[A-Za-z]+")',
+        result: '"Hello"',
+        title: 'Example 2: Extracting a Word from a String',
+        index: 1
+      });
+    });
+
+    test('should handle titles very far from examples', () => {
+      const content = `
+\${title}
+Educational Title
+\${title}
+
+This is a lot of educational content that goes on for many lines and creates
+distance between the title and the actual examples. This should be treated
+as educational content and not paired with the examples below.
+
+\${title}
+Close Example Title
+\${title}
+
+\${inputBlock}
+{"test": "data"}
+\${inputBlock}
+
+\${expressionBlock}
+test
+\${expressionBlock}
+      `;
+
+      const pairs = extractExpressionPairs(content);
+      
+      expect(pairs).toHaveLength(1);
+      expect(pairs[0].title).toBe('Close Example Title');
+    });
+
+    test('should handle examples without preceding titles', () => {
+      const content = `
+Some educational content without title markers.
+
+\${inputBlock}
+{"name": "John"}
+\${inputBlock}
+
+\${expressionBlock}
+upper(name)
+\${expressionBlock}
+
+\${inputBlock}
+{"age": 30}
+\${inputBlock}
+
+\${expressionBlock}
+age + 1
+\${expressionBlock}
+      `;
+
+      const pairs = extractExpressionPairs(content);
+      
+      expect(pairs).toHaveLength(2);
+      expect(pairs[0].title).toBe('Try Example 1');
+      expect(pairs[1].title).toBe('Try Example 2');
+    });
+
+    test('should handle malformed pairs with large distances', () => {
+      const content = `
+\${inputBlock}
+{"test": "data"}
+\${inputBlock}
+
+${'x'.repeat(3000)} // Large gap
+
+\${expressionBlock}
+test
+\${expressionBlock}
+      `;
+
+      const pairs = extractExpressionPairs(content);
+      
+      // Should skip this pair due to large distance
+      expect(pairs).toHaveLength(0);
+    });
+
+    test('should match results to closest expressions', () => {
+      const content = `
+\${title}
+Example 1
+\${title}
+
+\${inputBlock}
+{"a": 1}
+\${inputBlock}
+
+\${expressionBlock}
+a + 1
+\${expressionBlock}
+
+\${resultBlock}
+2
+\${resultBlock}
+
+\${title}
+Example 2  
+\${title}
+
+\${inputBlock}
+{"b": 2}
+\${inputBlock}
+
+\${expressionBlock}
+b * 2
+\${expressionBlock}
+
+\${resultBlock}
+4
+\${resultBlock}
+      `;
+
+      const pairs = extractExpressionPairs(content);
+      
+      expect(pairs).toHaveLength(2);
+      expect(pairs[0].result).toBe('2');
+      expect(pairs[1].result).toBe('4');
+    });
+
+    test('should handle mixed order with proper proximity detection', () => {
+      const content = `
+\${title}
+First Title
+\${title}
+
+\${expressionBlock}
+upper(name)
+\${expressionBlock}
+
+\${inputBlock}
+{"name": "john"}
+\${inputBlock}
+
+\${resultBlock}
+"JOHN"
+\${resultBlock}
+      `;
+
+      const pairs = extractExpressionPairs(content);
+      
+      expect(pairs).toHaveLength(1);
+      expect(pairs[0]).toEqual({
+        input: '{"name": "john"}',
+        expression: 'upper(name)',
+        result: '"JOHN"',
+        title: 'First Title',
+        index: 0
+      });
+    });
+
+    test('should handle comprehensive string functions response with mixed educational and example content', () => {
+      const stringFunctionsResponse = `
+\${title}
+String Functions in ZEN DSL
+\${title}
+
+ZEN DSL provides several built-in functions for manipulating strings. Here are some of the most common ones, along with examples:
+
+1.  **\`len(string)\`:** Returns the length of a string.
+
+\${title}
+Example: Getting the length of a string
+\${title}
+
+\${inputBlock}
+{}
+\${inputBlock}
+
+\${expressionBlock}
+len("Hello, World!")
+\${expressionBlock}
+
+\${resultBlock}
+13
+\${resultBlock}
+
+2.  **\`contains(string, substring)\`:** Checks if a string contains a specific substring.
+
+\${title}
+Example: Checking if a string contains a substring
+\${title}
+
+\${inputBlock}
+{}
+\${inputBlock}
+
+\${expressionBlock}
+contains("Hello World", "World")
+\${expressionBlock}
+
+\${resultBlock}
+true
+\${resultBlock}
+
+3.  **\`trim(string)\`:** Removes leading and trailing whitespace from a string.
+
+\${title}
+Example: Trimming whitespace from a string
+\${title}
+
+\${inputBlock}
+{}
+\${inputBlock}
+
+\${expressionBlock}
+trim("  hello world  ")
+\${expressionBlock}
+
+\${resultBlock}
+"hello world"
+\${resultBlock}
+
+4.  **\`upper(string)\`:** Converts a string to uppercase.
+
+\${title}
+Example: Converting a string to uppercase
+\${title}
+
+\${inputBlock}
+{}
+\${inputBlock}
+
+\${expressionBlock}
+upper("hello")
+\${expressionBlock}
+
+\${resultBlock}
+"HELLO"
+\${resultBlock}
+
+5.  **\`lower(string)\`:** Converts a string to lowercase.
+
+\${title}
+Example: Converting a string to lowercase
+\${title}
+
+\${inputBlock}
+{}
+\${inputBlock}
+
+\${expressionBlock}
+lower("WORLD")
+\${expressionBlock}
+
+\${resultBlock}
+"world"
+\${resultBlock}
+
+6. **\`startsWith(string, prefix)\`:** Checks if a string starts with a specific prefix.
+
+\${title}
+Example: Checking if a string starts with a prefix
+\${title}
+
+\${inputBlock}
+{}
+\${inputBlock}
+
+\${expressionBlock}
+startsWith("hello", "he")
+\${expressionBlock}
+
+\${resultBlock}
+true
+\${resultBlock}
+
+7. **\`endsWith(string, suffix)\`:** Checks if a string ends with a specific suffix.
+
+\${title}
+Example: Checking if a string ends with a suffix
+\${title}
+
+\${inputBlock}
+{}
+\${inputBlock}
+
+\${expressionBlock}
+endsWith("world", "ld")
+\${expressionBlock}
+
+\${resultBlock}
+true
+\${resultBlock}
+
+8. **\`string(value)\`:** Converts a value to a string. This is useful when you need to concatenate a number or boolean with a string.
+
+\${title}
+Example: Converting a number to a string
+\${title}
+
+\${inputBlock}
+{}
+\${inputBlock}
+
+\${expressionBlock}
+"The answer is: " + string(42)
+\${expressionBlock}
+
+\${resultBlock}
+"The answer is: 42"
+\${resultBlock}
+
+These functions are essential for string manipulation within ZEN DSL and can be combined to perform more complex operations. Remember to always use the ZEN DSL functions directly, and avoid using JavaScript string methods.
+      `;
+
+      const pairs = extractExpressionPairs(stringFunctionsResponse);
+      const stats = getPairStatistics(stringFunctionsResponse);
+      
+      // Should extract 8 functional examples, educational title should create separate cluster
+      expect(pairs).toHaveLength(8);
+      
+      // Verify first example (educational title should NOT be paired)
+      expect(pairs[0]).toEqual({
+        input: '{}',
+        expression: 'len("Hello, World!")',
+        result: '13',
+        title: 'Example: Getting the length of a string',
+        index: 0
+      });
+      
+      // Verify second example
+      expect(pairs[1]).toEqual({
+        input: '{}',
+        expression: 'contains("Hello World", "World")',
+        result: 'true',
+        title: 'Example: Checking if a string contains a substring',
+        index: 1
+      });
+      
+      // Verify all examples have proper titles (none should use the educational title)
+      pairs.forEach((pair, index) => {
+        expect(pair.title).not.toBe('String Functions in ZEN DSL');
+        expect(pair.title).toContain('Example:');
+        expect(pair.result).not.toBeNull();
+      });
+    });
+
+    test('should handle user raw response with sequential clustering correctly', () => {
+      const userRawResponse = `
+\${title}
+ZEN String Functions Overview
+\${title}
+
+Here's an overview of common string functions available in ZEN DSL, along with examples:
+
+1.  \`len(string)\`: Returns the length of a string.
+
+\${title}
+Example 1: Getting the length of a string
+\${title}
+
+\${inputBlock}
+{}
+\${inputBlock}
+
+\${expressionBlock}
+len("Hello, World!")
+\${expressionBlock}
+
+\${resultBlock}
+13
+\${resultBlock}
+
+2.  \`contains(string, substring)\`: Checks if a string contains a specific substring.
+
+\${title}
+Example 2: Checking if a string contains a substring
+\${title}
+
+\${inputBlock}
+{}
+\${inputBlock}
+
+\${expressionBlock}
+contains("Hello World", "World")
+\${expressionBlock}
+
+\${resultBlock}
+true
+\${resultBlock}
+
+3.  \`trim(string)\`: Removes leading and trailing whitespace from a string.
+
+\${title}
+Example 3: Trimming whitespace from a string
+\${title}
+
+\${inputBlock}
+{}
+\${inputBlock}
+
+\${expressionBlock}
+trim("  hello world  ")
+\${expressionBlock}
+
+\${resultBlock}
+"hello world"
+\${resultBlock}
+
+4.  \`upper(string)\`: Converts a string to uppercase.
+
+\${title}
+Example 4: Converting a string to uppercase
+\${title}
+
+\${inputBlock}
+{}
+\${inputBlock}
+
+\${expressionBlock}
+upper("hello")
+\${expressionBlock}
+
+\${resultBlock}
+"HELLO"
+\${resultBlock}
+
+5.  \`lower(string)\`: Converts a string to lowercase.
+
+\${title}
+Example 5: Converting a string to lowercase
+\${title}
+
+\${inputBlock}
+{}
+\${inputBlock}
+
+\${expressionBlock}
+lower("WORLD")
+\${expressionBlock}
+
+\${resultBlock}
+"world"
+\${resultBlock}
+
+6.  \`split(string, delimiter)\`: Splits a string into an array of substrings based on a delimiter.
+
+\${title}
+Example 6: Splitting a string into an array
+\${title}
+
+\${inputBlock}
+{}
+\${inputBlock}
+
+\${expressionBlock}
+split("apple,banana,cherry", ",")
+\${expressionBlock}
+
+\${resultBlock}
+["apple", "banana", "cherry"]
+\${resultBlock}
+
+7.  \`matches(string, regex)\`: Checks if a string matches a regular expression.
+
+\${title}
+Example 7: Matching a string against a regular expression
+\${title}
+
+\${inputBlock}
+{}
+\${inputBlock}
+
+\${expressionBlock}
+matches("test123", "[a-z]+[0-9]+")
+\${expressionBlock}
+
+\${resultBlock}
+true
+\${resultBlock}
+
+8. \`startsWith(string, prefix)\`: Checks if a string starts with a specific prefix.
+
+\${title}
+Example 8: Checking if a string starts with a prefix
+\${title}
+
+\${inputBlock}
+{}
+\${inputBlock}
+
+\${expressionBlock}
+startsWith("Hello World", "Hello")
+\${expressionBlock}
+
+\${resultBlock}
+true
+\${resultBlock}
+
+These functions enable you to perform a variety of string manipulations and checks within ZEN DSL expressions. Remember to always use the ZEN DSL function names (e.g., \`len\`, \`upper\`, \`filter\`) and not their JavaScript equivalents.
+      `;
+
+      const pairs = extractExpressionPairs(userRawResponse);
+      
+      // Should extract 8 examples, NOT pairing educational title with first example
+      expect(pairs).toHaveLength(8);
+      
+      // Critical test: First example should NOT have educational title
+      expect(pairs[0].title).toBe('Example 1: Getting the length of a string');
+      expect(pairs[0].title).not.toBe('ZEN String Functions Overview');
+      
+      // Verify each example has its own proper title
+      expect(pairs[0].title).toBe('Example 1: Getting the length of a string');
+      expect(pairs[1].title).toBe('Example 2: Checking if a string contains a substring');
+      expect(pairs[2].title).toBe('Example 3: Trimming whitespace from a string');
+      expect(pairs[3].title).toBe('Example 4: Converting a string to uppercase');
+      expect(pairs[4].title).toBe('Example 5: Converting a string to lowercase');
+      expect(pairs[5].title).toBe('Example 6: Splitting a string into an array');
+      expect(pairs[6].title).toBe('Example 7: Matching a string against a regular expression');
+      expect(pairs[7].title).toBe('Example 8: Checking if a string starts with a prefix');
+      
+      // Verify input/expression/result consistency
+      pairs.forEach((pair, index) => {
+        expect(pair.input).toBe('{}');
+        expect(pair.expression).toBeTruthy();
+        expect(pair.result).toBeTruthy();
+        expect(pair.index).toBe(index);
+      });
     });
   });
 }); 

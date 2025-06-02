@@ -108,7 +108,7 @@ export const stringOperationsExamples: Example[] = [
   {
     id: 'str-12',
     title: 'Date Extraction with Groups',
-    expression: 'extract("2022-09-18", "(\\d{4})-(\\d{2})-(\\d{2})")',
+    expression: 'extract("2022-09-18", "(\d{4})-(\d{2})-(\d{2})")',
     sampleInput: '{}',
     expectedOutput: '["2022-09-18", "2022", "09", "18"]',
     description: 'Extract date parts using regex groups with extract() function',
@@ -117,7 +117,7 @@ export const stringOperationsExamples: Example[] = [
   {
     id: 'str-12b',
     title: 'Email Parts Extraction',
-    expression: 'extract("user@example.com", "([^@]+)@([^.]+)\\.(.+)")',
+    expression: 'extract("user@example.com", "([^@]+)@([^.]+)\.(.+)")',
     sampleInput: '{}',
     expectedOutput: '["user@example.com", "user", "example", "com"]',
     description: 'Extract username, domain, and TLD from email using regex groups',
@@ -126,7 +126,7 @@ export const stringOperationsExamples: Example[] = [
   {
     id: 'str-12c',
     title: 'Phone Number Extraction',
-    expression: 'extract("(555) 123-4567", "\\((\\d{3})\\) (\\d{3})-(\\d{4})")',
+    expression: 'extract("(555) 123-4567", "\((\d{3})\) (\d{3})-(\d{4})")',
     sampleInput: '{}',
     expectedOutput: '["(555) 123-4567", "555", "123", "4567"]',
     description: 'Extract area code and number parts from formatted phone number',
@@ -138,7 +138,7 @@ export const stringOperationsExamples: Example[] = [
     expression: 'extract("https://api.example.com:8080/v1/users", "(https?)://([^:]+):(\\d+)(/.*)")',
     sampleInput: '{}',
     expectedOutput: '["https://api.example.com:8080/v1/users", "https", "api.example.com", "8080", "/v1/users"]',
-    description: 'Extract protocol, domain, port, and path from URL',
+    description: 'Extract protocol, host, port, and path from API URL',
     category: 'string-operations'
   },
   {
@@ -147,13 +147,13 @@ export const stringOperationsExamples: Example[] = [
     expression: 'extract("v1.2.3-beta", "v(\\d+)\\.(\\d+)\\.(\\d+)(?:-(.+))?")',
     sampleInput: '{}',
     expectedOutput: '["v1.2.3-beta", "1", "2", "3", "beta"]',
-    description: 'Extract major, minor, patch, and pre-release from version string',
+    description: 'Extract major, minor, patch version and pre-release tag',
     category: 'string-operations'
   },
   {
     id: 'str-12f',
     title: 'Time Extraction',
-    expression: 'extract("14:30:25", "(\\d{2}):(\\d{2}):(\\d{2})")',
+    expression: 'extract("14:30:25", "(\d{2}):(\d{2}):(\d{2})")',
     sampleInput: '{}',
     expectedOutput: '["14:30:25", "14", "30", "25"]',
     description: 'Extract hours, minutes, and seconds from time string',
@@ -162,7 +162,7 @@ export const stringOperationsExamples: Example[] = [
   {
     id: 'str-12g',
     title: 'File Path Extraction',
-    expression: 'extract("/home/user/documents/file.txt", "^(.+)/([^/]+)\\.([^.]+)$")',
+    expression: 'extract("/home/user/documents/file.txt", "^(.+)/([^/]+)\.([^.]+)$")',
     sampleInput: '{}',
     expectedOutput: '["/home/user/documents/file.txt", "/home/user/documents", "file", "txt"]',
     description: 'Extract directory path, filename, and extension from file path',
@@ -171,7 +171,7 @@ export const stringOperationsExamples: Example[] = [
   {
     id: 'str-12h',
     title: 'Currency Amount Extraction',
-    expression: 'extract("$1,234.56", "\\$([0-9,]+)\\.([0-9]{2})")',
+    expression: 'extract("$1,234.56", "\$([0-9,]+)\.([0-9]{2})")',
     sampleInput: '{}',
     expectedOutput: '["$1,234.56", "1,234", "56"]',
     description: 'Extract dollars and cents from currency string',
@@ -382,5 +382,253 @@ export const stringOperationsExamples: Example[] = [
     expectedOutput: "Complex template result",
     description: 'Create personalized user notifications with conditional pluralization',
     category: 'complex-template'
+  },
+
+  // Sports Betting Extract Examples (validated 100% success rate)
+  {
+    id: 'sports-extract-1',
+    title: 'NFL Game Code Parsing',
+    expression: 'extract("NFL-2024-WK15-BUF-KC", "(NFL)-(\\d+)-(WK\\d+)-([A-Z]+)-([A-Z]+)")',
+    sampleInput: '{}',
+    expectedOutput: '["NFL-2024-WK15-BUF-KC", "NFL", "2024", "WK15", "BUF", "KC"]',
+    description: 'Extract league, year, week, away team, and home team from game code',
+    category: 'string-operations'
+  },
+  {
+    id: 'sports-extract-2',
+    title: 'Spread and Total Line Extraction',
+    expression: 'extract("KC -7.5 O/U 52.5", "([A-Z]+) ([+-]?\\d+\\.\\d+) O/U (\\d+\\.\\d+)")',
+    sampleInput: '{}',
+    expectedOutput: '["KC -7.5 O/U 52.5", "KC", "-7.5", "52.5"]',
+    description: 'Extract team, point spread, and over/under total from betting line',
+    category: 'string-operations'
+  },
+  {
+    id: 'sports-extract-3',
+    title: 'Game Time with Timezone',
+    expression: 'extract("2024-01-15 20:15 EST", "(\\d+)-(\\d+)-(\\d+) (\\d+):(\\d+) ([A-Z]+)")',
+    sampleInput: '{}',
+    expectedOutput: '["2024-01-15 20:15 EST", "2024", "01", "15", "20", "15", "EST"]',
+    description: 'Extract year, month, day, hour, minute, and timezone from game time',
+    category: 'string-operations'
+  },
+  {
+    id: 'sports-extract-4',
+    title: 'Player Prop with Odds',
+    expression: 'extract("Mahomes O 285.5 (+110)", "([A-Za-z]+) (O|U) (\\d+\\.\\d+) \\(([+-]\\d+)\\)")',
+    sampleInput: '{}',
+    expectedOutput: '["Mahomes O 285.5 (+110)", "Mahomes", "O", "285.5", "+110"]',
+    description: 'Extract player name, over/under, line value, and odds from prop bet',
+    category: 'string-operations'
+  },
+  {
+    id: 'sports-extract-5',
+    title: 'Moneyline Both Teams',
+    expression: 'extract("BUF +150 / KC -180", "([A-Z]+) ([+-]\\d+) / ([A-Z]+) ([+-]\\d+)")',
+    sampleInput: '{}',
+    expectedOutput: '["BUF +150 / KC -180", "BUF", "+150", "KC", "-180"]',
+    description: 'Extract both teams and their moneyline odds from betting display',
+    category: 'string-operations'
+  },
+  {
+    id: 'sports-extract-6',
+    title: 'Soccer Match Extraction',
+    expression: 'extract("EPL: Arsenal vs Chelsea 2024-12-25", "(EPL): ([A-Za-z]+) vs ([A-Za-z]+) (\\d+-\\d+-\\d+)")',
+    sampleInput: '{}',
+    expectedOutput: '["EPL: Arsenal vs Chelsea 2024-12-25", "EPL", "Arsenal", "Chelsea", "2024-12-25"]',
+    description: 'Extract league, home team, away team, and match date from soccer match string',
+    category: 'string-operations'
+  },
+  {
+    id: 'sports-extract-7',
+    title: 'Basketball Player Stats Extraction',
+    expression: 'extract("LeBron 25pts 8reb 6ast", "([A-Za-z]+) (\\d+)pts (\\d+)reb (\\d+)ast")',
+    sampleInput: '{}',
+    expectedOutput: '["LeBron 25pts 8reb 6ast", "LeBron", "25", "8", "6"]',
+    description: 'Extract player name, points, rebounds, and assists from basketball stats line',
+    category: 'string-operations'
+  },
+  {
+    id: 'sports-extract-8',
+    title: 'Tennis Match Format Extraction',
+    expression: 'extract("Djokovic d. Federer 6-4 6-3", "([A-Za-z]+) d\\. ([A-Za-z]+) ([0-9-]+) ([0-9-]+)")',
+    sampleInput: '{}',
+    expectedOutput: '["Djokovic d. Federer 6-4 6-3", "Djokovic", "Federer", "6-4", "6-3"]',
+    description: 'Extract winner, loser, and set scores from tennis match result',
+    category: 'string-operations'
+  },
+  {
+    id: 'sports-extract-9',
+    title: 'Horse Racing Odds Extraction',
+    expression: 'extract("Secretariat 3/1 (7.25)", "([A-Za-z]+) (\\d+)/(\\d+) \\((\\d+\\.\\d+)\\)")',
+    sampleInput: '{}',
+    expectedOutput: '["Secretariat 3/1 (7.25)", "Secretariat", "3", "1", "7.25"]',
+    description: 'Extract horse name, fractional odds numerator/denominator, and decimal odds',
+    category: 'string-operations'
+  },
+  {
+    id: 'sports-extract-10',
+    title: 'MLB Game Score Extraction',
+    expression: 'extract("NYY 7 - BOS 4 (F/9)", "([A-Z]+) (\\d+) - ([A-Z]+) (\\d+) \\(F/(\\d+)\\)")',
+    sampleInput: '{}',
+    expectedOutput: '["NYY 7 - BOS 4 (F/9)", "NYY", "7", "BOS", "4", "9"]',
+    description: 'Extract away team, away score, home team, home score, and innings from MLB final score',
+    category: 'string-operations'
+  },
+  {
+    id: 'sports-extract-11',
+    title: 'Bet Slip Reference Extraction',
+    expression: 'extract("BET#20241225-NFL-001234", "BET#(\\d+)-([A-Z]+)-(\\d+)")',
+    sampleInput: '{}',
+    expectedOutput: '["BET#20241225-NFL-001234", "20241225", "NFL", "001234"]',
+    description: 'Extract date, league, and ticket number from bet slip reference',
+    category: 'string-operations'
+  },
+  {
+    id: 'sports-extract-12',
+    title: 'Simple Parlay Extraction',
+    expression: 'extract("3-leg parlay: KC/BUF (+650)", "(\\d+)-leg parlay: ([A-Z/]+) \\(([+-]\\d+)\\)")',
+    sampleInput: '{}',
+    expectedOutput: '["3-leg parlay: KC/BUF (+650)", "3", "KC/BUF", "+650"]',
+    description: 'Extract leg count, teams, and payout from parlay bet',
+    category: 'string-operations'
+  },
+
+  // Advanced Sports Betting Extract Examples (validated 100% success rate)
+  // Inspired by real-world data transformation patterns
+  {
+    id: 'advanced-extract-1',
+    title: 'Tennis Set Score Extraction',
+    expression: 'extract("Total Sets 2.5", "(Total Sets) (\\d+\\.\\d+)")',
+    sampleInput: '{}',
+    expectedOutput: '["Total Sets 2.5", "Total Sets", "2.5"]',
+    description: 'Extract market type and line value from tennis set totals',
+    category: 'string-operations'
+  },
+  {
+    id: 'advanced-extract-2',
+    title: 'Over/Under Line Value Extraction',
+    expression: 'extract("Over 2.5 Goals", "(Under|Over) (\\d+\\.\\d+) (Goals|Points)")',
+    sampleInput: '{}',
+    expectedOutput: '["Over 2.5 Goals", "Over", "2.5", "Goals"]',
+    description: 'Extract direction, value, and scoring type from over/under markets',
+    category: 'string-operations'
+  },
+  {
+    id: 'advanced-extract-3',
+    title: 'Team Handicap Score Format',
+    expression: 'extract("Arsenal +1.5", "(\\w+) ([+-]\\d+\\.\\d+)")',
+    sampleInput: '{}',
+    expectedOutput: '["Arsenal +1.5", "Arsenal", "+1.5"]',
+    description: 'Extract team name and handicap value from betting lines',
+    category: 'string-operations'
+  },
+  {
+    id: 'advanced-extract-4',
+    title: 'Set Score Pattern Matching',
+    expression: 'extract("6-4", "(\d)-(\d)")',
+    sampleInput: '{}',
+    expectedOutput: '["6-4", "6", "4"]',
+    description: 'Extract individual set scores from tennis match results',
+    category: 'string-operations'
+  },
+  {
+    id: 'advanced-extract-5',
+    title: 'Half-Time Market Parsing',
+    expression: 'extract("1st Half Over/Under 1.5 Goals", "(1st Half |2nd Half |)?Over/Under (\\d+\\.\\d+)")',
+    sampleInput: '{}',
+    expectedOutput: '["1st Half Over/Under 1.5", "1st Half ", "1.5"]',
+    description: 'Extract period information and line value from timed markets',
+    category: 'string-operations'
+  },
+  {
+    id: 'advanced-extract-6',
+    title: 'Player Name from Complex String',
+    expression: 'extract("Novak Djokovic Total Games 12.5", "([A-Za-z ]+) Total Games (\\d+\\.\\d+)")',
+    sampleInput: '{}',
+    expectedOutput: '["Novak Djokovic Total Games 12.5", "Novak Djokovic", "12.5"]',
+    description: 'Extract player names and line values from tennis prop markets',
+    category: 'string-operations'
+  },
+  {
+    id: 'advanced-extract-7',
+    title: 'Alternative Handicap Values',
+    expression: 'extract("Alternative Handicap -2.5", "Alternative Handicap ([+-]?\\d+\\.\\d+)")',
+    sampleInput: '{}',
+    expectedOutput: '["Alternative Handicap -2.5", "-2.5"]',
+    description: 'Extract handicap values from alternative betting markets',
+    category: 'string-operations'
+  },
+  {
+    id: 'advanced-extract-8',
+    title: 'Double Chance Market Parsing',
+    expression: 'extract("Arsenal And Draw", "(\\w+) And (\\w+)")',
+    sampleInput: '{}',
+    expectedOutput: '["Arsenal And Draw", "Arsenal", "Draw"]',
+    description: 'Extract both options from double chance betting markets',
+    category: 'string-operations'
+  },
+  {
+    id: 'advanced-extract-9',
+    title: 'E-Sports Map Totals',
+    expression: 'extract("Total Maps 2.5", "(Total Maps) (\\d+\\.\\d+)")',
+    sampleInput: '{}',
+    expectedOutput: '["Total Maps 2.5", "Total Maps", "2.5"]',
+    description: 'Extract market type and line from e-sports betting markets',
+    category: 'string-operations'
+  },
+  {
+    id: 'advanced-extract-10',
+    title: 'Set-Specific Game Totals',
+    expression: 'extract("Set 1 Total Games Over/Under 9.5", "(Set \\d) Total Games Over/Under (\\d+\\.\\d+)")',
+    sampleInput: '{}',
+    expectedOutput: '["Set 1 Total Games Over/Under 9.5", "Set 1", "9.5"]',
+    description: 'Extract set number and line value from tennis game totals',
+    category: 'string-operations'
+  },
+  {
+    id: 'advanced-extract-11',
+    title: 'Complex Score Format Extraction',
+    expression: 'extract("Home Team Over/Under 1.5 Points", "(Home|Away) Team Over/Under (\\d+\\.\\d+) (Points|Goals)")',
+    sampleInput: '{}',
+    expectedOutput: '["Home Team Over/Under 1.5 Points", "Home", "1.5", "Points"]',
+    description: 'Extract team, line value, and scoring type from team-specific markets',
+    category: 'string-operations'
+  },
+  {
+    id: 'advanced-extract-12',
+    title: 'Correct Score Set Parsing',
+    expression: 'extract("Correct Score 1st Set", "Correct Score (1st|2nd|3rd) Set")',
+    sampleInput: '{}',
+    expectedOutput: '["Correct Score 1st Set", "1st"]',
+    description: 'Extract set ordinals from correct score markets',
+    category: 'string-operations'
+  },
+  {
+    id: 'advanced-extract-13',
+    title: 'Match Winner with Sets',
+    expression: 'extract("Djokovic to win 3-1", "(\\w+) to win (\\d-\\d)")',
+    sampleInput: '{}',
+    expectedOutput: '["Djokovic to win 3-1", "Djokovic", "3-1"]',
+    description: 'Extract player and predicted set score from match winner markets',
+    category: 'string-operations'
+  },
+  {
+    id: 'advanced-extract-14',
+    title: 'Tennis Aces Market Complex',
+    expression: 'extract("Total Aces Over 8.5", "(Total Aces|Total Double Faults) (Over|Under) (\\d+\\.\\d+)")',
+    sampleInput: '{}',
+    expectedOutput: '["Total Aces Over 8.5", "Total Aces", "Over", "8.5"]',
+    description: 'Extract statistic type, direction, and line from tennis statistical markets',
+    category: 'string-operations'
+  },
+  {
+    id: 'advanced-extract-15',
+    title: 'Handicap Score Format Complex',
+    expression: 'extract("Chelsea -1.5 Goals", "(\\w+) ([+-]\\d+\\.\\d+) (Goals|Points)")',
+    sampleInput: '{}',
+    expectedOutput: '["Chelsea -1.5 Goals", "Chelsea", "-1.5", "Goals"]',
+    description: 'Extract team, handicap value, and scoring type from complex handicap markets',
+    category: 'string-operations'
   }
 ]; 

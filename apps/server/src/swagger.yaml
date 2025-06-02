@@ -70,7 +70,7 @@ paths:
         Supports:
         - **Mathematical operations**: `price * quantity`, `age >= 18`
         - **Array indexing**: `users[0].name`, `items[1].price`
-        - **String operations**: `firstName + " " + lastName`, `user.name.toUpperCase()`
+        - **String operations**: `firstName + " " + lastName`, `upper(user.name)`
         - **Conditional expressions**: `age >= 18 ? "Adult" : "Minor"`
         - **Property access**: `user.profile.city`, `data.settings.theme`
         
@@ -322,7 +322,7 @@ components:
         expression:
           type: string
           description: DSL expression to evaluate
-          example: "user.name.toUpperCase()"
+          example: "upper(user.name)"
         data:
           type: object
           description: Input data context

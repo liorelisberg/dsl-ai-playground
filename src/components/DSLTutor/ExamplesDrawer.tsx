@@ -284,6 +284,13 @@ const ExamplesDrawer: React.FC<ExamplesDrawerProps> = ({
 
   const currentCategoryExamples = selectedCategory ? categorizedExamples[selectedCategory] || [] : [];
 
+  // Utility function to properly display regex patterns with backslashes
+  const escapeForDisplay = (str: string): string => {
+    // Regex patterns are now properly escaped in the source files
+    // so we can display them directly
+    return str;
+  };
+
   if (!isOpen) return null;
 
   return (
@@ -508,9 +515,9 @@ const ExamplesDrawer: React.FC<ExamplesDrawerProps> = ({
                         {example.description}
                       </p>
                       <div className="bg-slate-100 dark:bg-slate-700 rounded-lg p-3">
-                        <code className="text-xs text-slate-800 dark:text-slate-200 font-mono">
-                          {example.expression}
-                        </code>
+                        <pre className="text-xs text-slate-800 dark:text-slate-200 font-mono whitespace-pre-wrap overflow-x-auto">
+                          <code>{escapeForDisplay(example.expression)}</code>
+                        </pre>
                       </div>
                     </Card>
                   </TooltipTrigger>

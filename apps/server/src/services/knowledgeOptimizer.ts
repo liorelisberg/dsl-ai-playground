@@ -231,7 +231,7 @@ export class KnowledgeOptimizer {
   private extractDSLConcepts(text: string): string[] {
     const dslConcepts = [
       'array', 'filter', 'map', 'reduce', 'sort',
-      'string', 'substring', 'uppercase', 'lowercase', 'split',
+      'string', 'upper', 'lower', 'trim', 'contains', 'split', 'extract', 'matches', 'startsWith', 'endsWith',
       'number', 'math', 'calculation', 'operation',
       'date', 'time', 'format', 'parse',
       'boolean', 'condition', 'logic', 'if',

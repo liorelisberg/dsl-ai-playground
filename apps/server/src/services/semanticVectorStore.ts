@@ -317,7 +317,7 @@ export class SemanticVectorStore {
     // DSL operation patterns
     const operationPatterns = {
       'array-operations': ['filter', 'map', 'reduce', 'sort', 'array'],
-      'string-operations': ['substring', 'uppercase', 'lowercase', 'split', 'string'],
+      'string-operations': ['upper', 'lower', 'trim', 'contains', 'split', 'extract', 'matches', 'startsWith', 'endsWith', 'fuzzyMatch'],
       'math-operations': ['math', 'calculation', 'number', 'arithmetic'],
       'date-operations': ['date', 'time', 'format', 'parse'],
       'boolean-logic': ['boolean', 'condition', 'if', 'logic'],

@@ -504,6 +504,33 @@ async function loadCategoryExamples(category: string): Promise<Example[]> {
           expectedOutput: 'true',
           description: 'ZEN uses matches() for regex (NOT .match() or .test())',
           category: 'string-operations'
+        },
+        {
+          id: 'str-extract-basic',
+          title: 'String Extract with Regex Groups (ZEN)',
+          expression: 'extract("2022-09-18", "(\\d{4})-(\\d{2})-(\\d{2})")',
+          sampleInput: '{}',
+          expectedOutput: '["2022-09-18", "2022", "09", "18"]',
+          description: 'ZEN extract() function returns array: [full_match, group1, group2, ...] using regex capture groups',
+          category: 'string-operations'
+        },
+        {
+          id: 'str-extract-email',
+          title: 'Email Parts Extraction (ZEN)',
+          expression: 'extract("user@example.com", "([^@]+)@([^.]+)\\.(.+)")',
+          sampleInput: '{}',
+          expectedOutput: '["user@example.com", "user", "example", "com"]',
+          description: 'ZEN extract() extracts email parts: full match, username, domain, TLD',
+          category: 'string-operations'
+        },
+        {
+          id: 'str-extract-phone',
+          title: 'Phone Number Extraction (ZEN)',
+          expression: 'extract("(555) 123-4567", "\\((\\d{3})\\) (\\d{3})-(\\d{4})")',
+          sampleInput: '{}',
+          expectedOutput: '["(555) 123-4567", "555", "123", "4567"]',
+          description: 'ZEN extract() with regex groups to parse phone number parts',
+          category: 'string-operations'
         }
       ];
       

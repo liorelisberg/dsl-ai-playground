@@ -45,10 +45,10 @@ const examples: Example[] = [
   {
     id: 'string-uppercase',
     title: 'String Transformation',
-    expression: 'user.name.toUpperCase()',
+    expression: 'upper(user.name)',
     input: { user: { name: 'john doe' } },
     output: 'JOHN DOE',
-    description: 'Transform strings using built-in methods',
+    description: 'Transform strings using ZEN DSL functions',
     category: 'String Operations'
   },
   {

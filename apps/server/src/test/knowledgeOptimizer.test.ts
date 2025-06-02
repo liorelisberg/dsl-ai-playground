@@ -25,7 +25,7 @@ const sampleKnowledgeCards: KnowledgeCard[] = [
   },
   {
     id: 'string_1',
-    content: 'String manipulation includes .substring(), .toUpperCase(), .toLowerCase() functions for text processing.',
+    content: 'String manipulation includes extract(), upper(), lower() functions for text processing.',
     source: 'strings-rule.mdc',
     category: 'strings',
     relevanceScore: 0.6

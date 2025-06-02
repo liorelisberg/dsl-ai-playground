@@ -71,7 +71,7 @@ const extendedHistory: ChatTurn[] = [
   },
   {
     role: 'assistant',
-    content: 'String manipulation in DSL includes functions like .substring(), .toUpperCase(), .split(), and more.',
+    content: 'String manipulation in DSL includes functions like extract(), upper(), split(), and more.',
     timestamp: new Date(Date.now() - 10000)
   }
 ];

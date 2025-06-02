@@ -427,7 +427,7 @@ function analyzeZenRelevance(responseData, expectedScenario) {
     
     // Extract detected functions (basic)
     detectedFunctions = [];
-    const functionRegex = /\b(filter|map|len|contains|sum|avg|max|min|substring|trim|upper|lower)\b/gi;
+    const functionRegex = /\b(filter|map|len|contains|sum|avg|max|min|trim|upper|lower|extract)\b/gi;
     const matches = responseText.match(functionRegex);
     if (matches) {
       detectedFunctions.push(...new Set(matches.map(m => m.toLowerCase())));
