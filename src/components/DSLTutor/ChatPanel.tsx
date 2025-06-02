@@ -81,7 +81,9 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
 
   // Handle external input message updates - expose setInputMessage through callback
   useEffect(() => {
+    console.log('💬 ChatPanel: onSetInputMessage callback:', !!onSetInputMessage);
     if (onSetInputMessage) {
+      console.log('💬 ChatPanel: Exposing setInputMessage to parent');
       onSetInputMessage(setInputMessage);
     }
   }, [onSetInputMessage]);

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import ChatPanel from './ChatPanel';
 import CodeEditor from './CodeEditor';
 import { JsonMetadata } from './JsonUpload';
@@ -12,6 +12,15 @@ import { useToast } from '../../hooks/use-toast';
 // Interface for CodeEditor ref methods
 interface CodeEditorRef {
   handleChatTransfer: (expression: string, input: string) => void;
+}
+
+// Add interface for queued parser communications
+interface QueuedParserMessage {
+  expression: string;
+  input: string;
+  result: string;
+  isSuccess: boolean;
+  isEmpty?: boolean;
 }
 
 const DSLTutor = () => {
@@ -32,6 +41,9 @@ const DSLTutor = () => {
   // Store the chat input setter function
   const [chatInputSetter, setChatInputSetter] = useState<React.Dispatch<React.SetStateAction<string>> | null>(null);
 
+  // Add queue for parser messages that arrive before chatInputSetter is ready
+  const [parserMessageQueue, setParserMessageQueue] = useState<QueuedParserMessage[]>([]);
+
   const handleNewMessage = (message: ChatMessage) => {
     setChatHistory(prev => {
       const newHistory = [...prev, message];
@@ -42,6 +54,22 @@ const DSLTutor = () => {
 
   // Handler for parser to populate chat input instead of sending directly
   const handleParserToChat = async (expression: string, input: string, result: string, isSuccess: boolean, isEmpty?: boolean) => {
+    console.log('🔧→💬 Parser to Chat triggered:', { expression, input, result, isSuccess, isEmpty });
+    console.log('🔧→💬 chatInputSetter available:', !!chatInputSetter);
+    
+    // If chatInputSetter is not ready, queue the message
+    if (!chatInputSetter) {
+      console.log('🔧→💬 Queueing message until chat input setter is ready');
+      setParserMessageQueue(prev => [...prev, { expression, input, result, isSuccess, isEmpty }]);
+      return;
+    }
+
+    // Process the message immediately
+    await processParserMessage({ expression, input, result, isSuccess, isEmpty });
+  };
+
+  // Helper function to process a parser message - memoized with useCallback
+  const processParserMessage = useCallback(async ({ expression, input, result, isSuccess, isEmpty }: QueuedParserMessage) => {
     let prompt: string;
     
     if (!isSuccess) {
@@ -55,8 +83,11 @@ const DSLTutor = () => {
       prompt = `I have a working expression, explain it.\n\nExpression: ${expression}\n\nInput: ${input}\n\nResult: ${result}`;
     }
 
-    // Populate the chat input field instead of sending directly
+    console.log('🔧→💬 Generated prompt:', prompt.substring(0, 100) + '...');
+
+    // Set the chat input
     if (chatInputSetter) {
+      console.log('🔧→💬 Setting chat input...');
       chatInputSetter(prompt);
       
       // Show feedback toast
@@ -64,13 +95,43 @@ const DSLTutor = () => {
         title: "Prompt Ready",
         description: "Review and send the generated prompt in the chat input area",
       });
+    } else {
+      console.error('🔧→💬 ERROR: chatInputSetter is null!');
+      toast({
+        title: "Connection Error",
+        description: "Chat input connection not ready. Please try again.",
+        variant: "destructive"
+      });
     }
-  };
+  }, [chatInputSetter, toast]);
 
   // Handler to capture the chat input setter
   const handleSetInputMessage = (setter: React.Dispatch<React.SetStateAction<string>>) => {
+    console.log('💬→🔧 Chat input setter captured:', !!setter);
     setChatInputSetter(setter);
   };
+
+  // Process queued parser messages when chatInputSetter becomes available
+  useEffect(() => {
+    if (chatInputSetter && parserMessageQueue.length > 0) {
+      console.log('🔧→💬 Processing queued parser messages:', parserMessageQueue.length);
+      
+      // Process the first message in the queue
+      const firstMessage = parserMessageQueue[0];
+      processParserMessage(firstMessage);
+      
+      // Remove the processed message from the queue
+      setParserMessageQueue(prev => prev.slice(1));
+      
+      // Show toast for multiple queued messages
+      if (parserMessageQueue.length > 1) {
+        toast({
+          title: "Processing Queue",
+          description: `${parserMessageQueue.length - 1} more messages waiting to be processed`,
+        });
+      }
+    }
+  }, [chatInputSetter, parserMessageQueue, processParserMessage, toast]);
 
   // NEW: Handler for chat to transfer expressions to parser  
   const handleChatToParser = (expression: string, input: string) => {
