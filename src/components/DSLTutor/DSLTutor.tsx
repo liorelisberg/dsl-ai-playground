@@ -149,12 +149,8 @@ const DSLTutor: React.FC = () => {
     
     window.dispatchEvent(event);
     
-    // Provide user feedback
-    toast({
-      title: "Prompt Ready",
-      description: "Review and send the generated prompt in the chat input area",
-    });
-  }, [toast]);
+    // Note: Toast feedback is handled by CodeEditor for better UX messaging
+  }, []);
 
   /**
    * Capture chat input setter for cross-component communication

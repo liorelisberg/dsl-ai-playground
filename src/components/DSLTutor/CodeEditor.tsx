@@ -37,6 +37,7 @@ const CodeEditor = forwardRef<CodeEditorRef, CodeEditorProps>(({ onParserToChat 
   const [hasEvaluated, setHasEvaluated] = useState(false);
   const [lastEvaluationSuccess, setLastEvaluationSuccess] = useState(false);
   const [isAskingAI, setIsAskingAI] = useState(false); // New state for AI request loading
+  const [explainCooldown, setExplainCooldown] = useState(0); // Cooldown timer in seconds
   
   // JSON Viewer modes
   const [sampleInputJsonMode, setSampleInputJsonMode] = useState(false); // false = text, true = JSON viewer
@@ -116,6 +117,17 @@ const CodeEditor = forwardRef<CodeEditorRef, CodeEditorProps>(({ onParserToChat 
       }
     };
   }, []);
+  
+  // Handle explain button cooldown timer
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (explainCooldown > 0) {
+      timer = setTimeout(() => {
+        setExplainCooldown(prev => prev - 1);
+      }, 1000);
+    }
+    return () => clearTimeout(timer);
+  }, [explainCooldown]);
   
   const { toast } = useToast();
 
@@ -362,7 +374,7 @@ const CodeEditor = forwardRef<CodeEditorRef, CodeEditorProps>(({ onParserToChat 
   };
 
   const handleAskAboutThis = async () => {
-    if (!onParserToChat || !hasEvaluated) return;
+    if (!onParserToChat || !hasEvaluated || explainCooldown > 0) return;
 
     setIsAskingAI(true);
     try {
@@ -378,6 +390,9 @@ const CodeEditor = forwardRef<CodeEditorRef, CodeEditorProps>(({ onParserToChat 
             ? "Asking AI to debug your failing expression"
             : "Asking AI to explain your working expression",
       });
+
+      // Start 5-second cooldown to prevent abuse
+      setExplainCooldown(5);
     } catch (error) {
       console.error('Chat communication error:', error);
       toast({
@@ -983,7 +998,7 @@ const CodeEditor = forwardRef<CodeEditorRef, CodeEditorProps>(({ onParserToChat 
                     <TooltipTrigger asChild>
                       <Button
                         onClick={handleAskAboutThis}
-                        disabled={isAskingAI}
+                        disabled={isAskingAI || explainCooldown > 0}
                         size="sm"
                         variant={getAIQueryInfo().variant}
                         className={`
@@ -995,18 +1010,34 @@ const CodeEditor = forwardRef<CodeEditorRef, CodeEditorProps>(({ onParserToChat 
                               : 'bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border-indigo-200 dark:bg-indigo-900/20 dark:hover:bg-indigo-900/30 dark:text-indigo-300 dark:border-indigo-800'
                           }
                           ${isAskingAI ? 'animate-pulse' : ''}
+                          ${explainCooldown > 0 ? 'opacity-60 cursor-not-allowed' : ''}
                           font-medium shadow-sm
                         `}
                       >
                         <MessageCircle className="h-3.5 w-3.5" />
                         <span className="text-xs font-medium">
-                          {isAskingAI ? 'Asking...' : getAIQueryInfo().buttonText}
+                          {isAskingAI 
+                            ? 'Asking...' 
+                            : explainCooldown > 0 
+                              ? `Wait ${explainCooldown}s`
+                              : getAIQueryInfo().buttonText
+                          }
                         </span>
                       </Button>
                     </TooltipTrigger>
                     <TooltipContent>
-                      <p className="font-medium">{getAIQueryInfo().title}</p>
-                      <p className="text-xs text-muted-foreground mt-0.5">{getAIQueryInfo().description}</p>
+                      <p className="font-medium">
+                        {explainCooldown > 0 
+                          ? `Please wait ${explainCooldown} seconds` 
+                          : getAIQueryInfo().title
+                        }
+                      </p>
+                      <p className="text-xs text-muted-foreground mt-0.5">
+                        {explainCooldown > 0 
+                          ? 'Cooldown prevents rapid requests to protect the AI service'
+                          : getAIQueryInfo().description
+                        }
+                      </p>
                     </TooltipContent>
                   </Tooltip>
                 </div>
