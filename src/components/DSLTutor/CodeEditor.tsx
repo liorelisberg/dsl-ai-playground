@@ -16,7 +16,7 @@ import JsonView from '@uiw/react-json-view';
 import { useTheme } from 'next-themes';
 
 interface CodeEditorProps {
-  onParserToChat?: (expression: string, input: string, result: string, isSuccess: boolean) => Promise<void>;
+  onParserToChat?: (expression: string, input: string, result: string, isSuccess: boolean, isEmpty?: boolean) => Promise<void>;
 }
 
 export interface CodeEditorRef {
@@ -366,7 +366,7 @@ const CodeEditor = forwardRef<CodeEditorRef, CodeEditorProps>(({ onParserToChat 
 
     setIsAskingAI(true);
     try {
-      await onParserToChat(code, sampleInput, result, lastEvaluationSuccess);
+      await onParserToChat(code, sampleInput, result, lastEvaluationSuccess, isEmptyResult(result));
       
       const queryInfo = getAIQueryInfo();
       // Show feedback toast with enhanced messaging

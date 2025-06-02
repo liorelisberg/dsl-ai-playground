@@ -36,10 +36,19 @@ const DSLTutor = () => {
   };
 
   // Handler for parser to send analysis request to chat
-  const handleParserToChat = async (expression: string, input: string, result: string, isSuccess: boolean) => {
-    const prompt = isSuccess 
-      ? `I have a working expression, explain it.\n\nExpression: ${expression}\n\nInput: ${input}\n\nResult: ${result}`
-      : `I have a failing expression, explain why it fails.\n\nExpression: ${expression}\n\nInput: ${input}\n\nError: ${result}`;
+  const handleParserToChat = async (expression: string, input: string, result: string, isSuccess: boolean, isEmpty?: boolean) => {
+    let prompt: string;
+    
+    if (!isSuccess) {
+      // Error case - ask AI to debug
+      prompt = `I have a failing expression, explain why it fails.\n\nExpression: ${expression}\n\nInput: ${input}\n\nError: ${result}`;
+    } else if (isEmpty) {
+      // Empty result case - ask AI to explain WHY it's empty
+      prompt = `I have an expression that runs successfully but returns an empty result. Please explain why the result is empty and how to fix it.\n\nExpression: ${expression}\n\nInput: ${input}\n\nResult: ${result}\n\nThe expression executed without errors but produced an empty/null result. What could be the reasons and how can I modify the expression to get the expected data?`;
+    } else {
+      // Success case - ask AI to explain how it works
+      prompt = `I have a working expression, explain it.\n\nExpression: ${expression}\n\nInput: ${input}\n\nResult: ${result}`;
+    }
 
     const userMessage: ChatMessage = {
       role: 'user',
