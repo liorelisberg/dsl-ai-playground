@@ -76,10 +76,10 @@
   "removed_hallucinations": {
     "never_found_in_source": [
       "sqrt", "pow", "sin", "cos", "tan", "log", "ln", "random",
-      "entries", "merge", "pick", "omit", "has", "range", "if", 
+      "entries", "merge", "pick", "omit", "has", "range",
       "switch", "case", "default", "coalesce", "sort", "reverse", 
       "first", "last", "unique", "join", "now", "subtract", "defined", 
-      "array", "object", "undefined", "else", "if", "case", "default"
+      "array", "object", "undefined", "else", "if", "case", "default","slice"
     ],
     "explanation": "These functions/keywords were in our original vocabulary but are NOT found in any source-of-truth examples or datasets"
   },
@@ -119,7 +119,7 @@
     "keywords": {
       "valid_count": 7,
       "invalid_count": 5,
-      "removed": ["undefined", "else", "if", "case", "default"]
+      "removed": ["undefined", "else", "if", "case", "default","slice"]
     },
     "total_validated_entries": 117,
     "total_hallucinations_removed": 5,

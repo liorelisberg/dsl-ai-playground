@@ -24,8 +24,29 @@ export interface CodeEditorRef {
 }
 
 const CodeEditor = forwardRef<CodeEditorRef, CodeEditorProps>(({ onParserToChat }, ref) => {
-  const [code, setCode] = useState('upper(user.name)');
-  const [sampleInput, setSampleInput] = useState('{"user": {"name": "john doe", "age": 30}}');
+  // Helper function to get a random example for initial load
+  const getRandomInitialExample = () => {
+    if (allExamples.length === 0) {
+      return {
+        expression: 'upper(user.name)',
+        sampleInput: '{"user": {"name": "john doe", "age": 30}}'
+      };
+    }
+    
+    const randomIndex = Math.floor(Math.random() * allExamples.length);
+    const randomExample = allExamples[randomIndex];
+    
+    return {
+      expression: randomExample.expression,
+      sampleInput: randomExample.sampleInput
+    };
+  };
+
+  // Get random initial example
+  const initialExample = getRandomInitialExample();
+  
+  const [code, setCode] = useState(initialExample.expression);
+  const [sampleInput, setSampleInput] = useState(initialExample.sampleInput);
   const [result, setResult] = useState<string>('');
   const [isLoading, setIsLoading] = useState(false);
   const [showExamples, setShowExamples] = useState(false);
@@ -585,6 +606,28 @@ const CodeEditor = forwardRef<CodeEditorRef, CodeEditorProps>(({ onParserToChat 
       }
     },
   }));
+
+  // Show toast notification for initial random example
+  useEffect(() => {
+    if (allExamples.length > 0) {
+      // Find the loaded example based on current code and input
+      const loadedExample = allExamples.find(example => 
+        example.expression === code && example.sampleInput === sampleInput
+      );
+      
+      if (loadedExample) {
+        // Delay toast slightly to ensure UI is ready
+        const timer = setTimeout(() => {
+          toast({
+            title: "Random Example Loaded",
+            description: `${loadedExample.title} (${loadedExample.category})`,
+          });
+        }, 500);
+        
+        return () => clearTimeout(timer);
+      }
+    }
+  }, []); // Empty dependency array - only run on mount
 
   return (
     <div className="flex flex-col h-full">
