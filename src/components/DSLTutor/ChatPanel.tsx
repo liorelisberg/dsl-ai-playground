@@ -347,7 +347,7 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
               </h2>
               <p className="text-sm text-slate-600 dark:text-slate-400">
                 AI that learns from your data and conversation patterns
-                {currentJsonFile && (
+                {currentJsonFile && currentJsonFile.topLevelKeys && (
                   <span className="text-blue-600 dark:text-blue-400">
                     {' '}• Using {currentJsonFile.topLevelKeys.length} data keys for context
                   </span>

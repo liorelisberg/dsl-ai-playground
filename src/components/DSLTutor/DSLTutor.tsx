@@ -91,7 +91,7 @@ const DSLTutor = () => {
     // Add a system message about the upload
     const systemMessage: ChatMessage = {
       role: 'assistant',
-      content: `✅ **JSON Context Added!**\n\nI now have access to your **${metadata.filename}** file with ${metadata.topLevelKeys.length} top-level keys. This will help me provide more relevant DSL examples and suggestions tailored to your data structure.\n\n**Available keys:** ${metadata.topLevelKeys.slice(0, 5).join(', ')}${metadata.topLevelKeys.length > 5 ? ` and ${metadata.topLevelKeys.length - 5} more` : ''}`,
+      content: `✅ **JSON Context Added!**\n\nI now have access to your **${metadata.filename}** file with ${metadata.topLevelKeys?.length || 0} top-level keys. This will help me provide more relevant DSL examples and suggestions tailored to your data structure.\n\n**Available keys:** ${(metadata.topLevelKeys || []).slice(0, 5).join(', ')}${(metadata.topLevelKeys?.length || 0) > 5 ? ` and ${(metadata.topLevelKeys?.length || 0) - 5} more` : ''}`,
       timestamp: new Date().toISOString()
     };
     

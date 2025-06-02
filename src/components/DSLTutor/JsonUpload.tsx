@@ -185,7 +185,7 @@ export const JsonUpload: React.FC<JsonUploadProps> = ({
                   {currentFile.filename}
                 </div>
                 <div className="text-sm text-green-700 dark:text-green-300">
-                  {(currentFile.sizeBytes / 1024).toFixed(1)}KB • {currentFile.topLevelKeys.length} keys
+                  {(currentFile.sizeBytes / 1024).toFixed(1)}KB • {currentFile.topLevelKeys?.length || 0} keys
                 </div>
               </div>
             </div>
@@ -197,14 +197,14 @@ export const JsonUpload: React.FC<JsonUploadProps> = ({
           <div className="text-sm text-gray-600 dark:text-gray-400">
             <div className="font-medium mb-1">Available Keys:</div>
             <div className="flex flex-wrap gap-1">
-              {currentFile.topLevelKeys.slice(0, 10).map((key, index) => (
+              {(currentFile.topLevelKeys || []).slice(0, 10).map((key, index) => (
                 <Badge key={index} variant="outline" className="text-xs">
                   {key}
                 </Badge>
               ))}
-              {currentFile.topLevelKeys.length > 10 && (
+              {(currentFile.topLevelKeys?.length || 0) > 10 && (
                 <Badge variant="outline" className="text-xs">
-                  +{currentFile.topLevelKeys.length - 10} more
+                  +{(currentFile.topLevelKeys?.length || 0) - 10} more
                 </Badge>
               )}
             </div>
