@@ -11,7 +11,10 @@ declare global {
 }
 
 export const attachSession = (req: Request, res: Response, next: NextFunction) => {
-  let sessionId = req.cookies.sessionId;
+  // Check for sessionId in multiple places: cookies, headers, and body
+  let sessionId = req.cookies.sessionId || 
+                  req.headers['sessionid'] as string ||
+                  req.body?.sessionId;
   
   if (!sessionId) {
     sessionId = uuidv4();

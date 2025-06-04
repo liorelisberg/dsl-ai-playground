@@ -257,11 +257,12 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
       // Upload to backend
       const formData = new FormData();
       formData.append('file', file);
+      formData.append('sessionId', sessionId); // Include the frontend session ID
 
       const response = await fetch('/api/upload-json', {
         method: 'POST',
         body: formData,
-        credentials: 'include', // For session cookies
+        // Remove credentials: 'include' since we're explicitly sending sessionId
       });
 
       if (!response.ok) {

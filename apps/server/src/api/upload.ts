@@ -36,6 +36,12 @@ const uploadHandler = async (req: ExtendedRequest, res: Response): Promise<void>
       return;
     }
 
+    // If sessionId was provided in form data, use it to override the middleware session
+    if (req.body?.sessionId) {
+      req.sessionId = req.body.sessionId;
+      console.log(`📁 Using explicit session ID from form data: ${req.sessionId}`);
+    }
+
     // Parse JSON
     const jsonContent = req.file.buffer.toString('utf8');
     let parsedJson: unknown;
