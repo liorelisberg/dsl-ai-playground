@@ -95,7 +95,7 @@ async function handleSemanticChat(req: Request, res: Response): Promise<void> {
   let modelUsed = 'gemini-2.0-flash';
   
   try {
-    const { message, sessionId = generateSessionId(), jsonContext, maxTokens = 8000 } = req.body as SemanticChatRequest;
+    const { message, sessionId = generateSessionId(), jsonContext, maxTokens = 16000 } = req.body as SemanticChatRequest;
 
     if (!message?.trim()) {
       res.status(400).json({ error: 'Message is required' });
@@ -131,10 +131,13 @@ async function handleSemanticChat(req: Request, res: Response): Promise<void> {
     console.log(`   Concepts discussed: ${conversationContext.conceptsDiscussed.size}`);
 
     // 4. Phase 1: Calculate optimal token budget with enhanced allocation
+    const hasUploadedJson = !!jsonStore.get(sessionId);
+    const hasJsonContext = message.toLowerCase().includes('@fulljson') || !!jsonContext || hasUploadedJson;
+    
     const tokenBudget = contextManager.calculateOptimalBudget(
       message,
       recentHistory, // Use recent history for budget calculation
-      !!jsonContext,
+      hasJsonContext,
       contextManager.assessQueryComplexity(message)
     );
 
@@ -157,7 +160,9 @@ async function handleSemanticChat(req: Request, res: Response): Promise<void> {
 
     // Handle JSON context optimization
     let optimizedJsonContext: string | undefined;
-    if (jsonContext) {
+    const hasJsonRequest = message.toLowerCase().includes('@fulljson') || !!jsonContext;
+    
+    if (hasJsonRequest) {
       const uploadedData = jsonStore.get(sessionId);
       
       if (uploadedData) {
@@ -171,7 +176,7 @@ async function handleSemanticChat(req: Request, res: Response): Promise<void> {
         optimizedJsonContext = jsonResult.content;
         console.log(`📄 JSON optimization: ${jsonResult.optimizationType} (${jsonResult.tokensUsed} tokens)`);
       } else {
-        console.log('⚠️  JSON context requested but no data uploaded');
+        console.log('⚠️  JSON context requested but no data uploaded for session:', sessionId);
       }
     }
 
