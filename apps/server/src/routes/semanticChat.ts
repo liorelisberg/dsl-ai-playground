@@ -18,6 +18,10 @@ import { UserFeedbackManager } from '../services/userFeedbackManager';
 import { Document } from '../services/vectorStore';
 import * as fs from 'fs';
 import * as path from 'path';
+import { rateLimiter, lengthGuard, tpmGuard } from '../middleware/rate-limiter';
+import { attachSession } from '../middleware/session';
+import { jsonStore } from '../api/upload';
+// loadDSLExamples function defined locally in this file
 
 // Define Example type locally since we can't import from frontend
 interface Example {
@@ -344,8 +348,7 @@ This demonstrates correct ZEN DSL syntax. Always use ZEN functions and operators
     await semanticStore.upsertDocuments(documents);
     
     // Also ensure .mdc rules are loaded for comprehensive coverage
-    // DISABLED: .mdc files should not be loaded into knowledge base  
-    // await ensureMdcRulesLoaded();
+    await ensureMdcRulesLoaded();
     
     console.log(`✅ Enhanced knowledge base loaded:`);
     console.log(`   📄 ZEN Examples: ${examples.length}`);
@@ -364,19 +367,53 @@ This demonstrates correct ZEN DSL syntax. Always use ZEN functions and operators
  */
 async function ensureMdcRulesLoaded(): Promise<void> {
   try {
-    // Check if .mdc rules are already loaded
-    const vectorStoreInfo = semanticStore.getCollectionInfo();
+    console.log('🔄 Loading DSL rules from .mdc files...');
     
-    // If we have fewer than expected documents, trigger .mdc loading
-    if (vectorStoreInfo.count < 50) {
-      console.log('🔄 Loading DSL rules from .mdc files to complement examples...');
-      // The auto-loading mechanism in vectorStore should handle this
-    } else {
-      console.log('✅ DSL rules already loaded from .mdc files');
+    // Import fileProcessor to load .mdc files
+    const { fileProcessor } = await import('../utils/fileProcessor');
+    
+    // Load .mdc files from the correct path
+    const rulesDirectory = './docs/dsl-rules';
+    const processedFiles = await fileProcessor.readRuleFiles(rulesDirectory);
+    
+    if (processedFiles.length === 0) {
+      console.log('⚠️  No .mdc rule files found');
+      return;
     }
+
+    // Convert to documents
+    const documents = fileProcessor.processedFilesToDocuments(processedFiles);
+    
+    // Convert to semantic documents for the semantic store
+    const semanticDocuments: Document[] = documents.map((doc, index) => ({
+      id: `mdc_${doc.id}`,
+      content: `ZEN DSL Rule - ${doc.metadata.category}
+
+${doc.content}
+
+This defines official ZEN DSL syntax and functions. Always follow these rules exactly.`,
+      metadata: {
+        source: doc.metadata.source,
+        category: doc.metadata.category,
+        type: 'rule' as const,
+        tokens: doc.metadata.tokens || Math.ceil(doc.content.length / 4),
+        zenSyntax: true,
+        priority: 'high',
+        ruleType: 'official'
+      }
+    }));
+    
+    // Upsert into semantic store
+    await semanticStore.upsertDocuments(semanticDocuments);
+    
+    const stats = fileProcessor.getProcessingStats(processedFiles);
+    console.log(`✅ Loaded .mdc rules:`);
+    console.log(`   📄 Files: ${stats.totalFiles}`);
+    console.log(`   🧩 Chunks: ${stats.totalChunks}`);
+    console.log(`   🔢 Tokens: ${stats.totalTokens}`);
     
   } catch (error) {
-    console.warn('⚠️  Could not verify .mdc rules loading:', error);
+    console.error('⚠️  Could not load .mdc rules:', error);
   }
 }
 
