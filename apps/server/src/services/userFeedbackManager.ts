@@ -196,6 +196,7 @@ export class UserFeedbackManager {
   /**
    * Generate system status summary for monitoring/debugging
    */
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   generateSystemStatusSummary(metrics: ApiStressMetrics, context: ResilienceContext): string {
     const status = this.detectApiStressLevel(metrics);
     

@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import { config } from '../config/environment';
 
 // Rate limiting for FREE tier Gemini 2.5 Flash Preview
-const MAX_REQUESTS_PER_MINUTE = 10; // Free tier limit
+// const MAX_REQUESTS_PER_MINUTE = 10; // Free tier limit - currently unused
 const MAX_REQUESTS_PER_DAY = 500;   // Free tier limit
 const WINDOW_MS = config.rateLimit.window * 1000; // Convert to milliseconds
 const DAY_MS = 24 * 60 * 60 * 1000; // 24 hours

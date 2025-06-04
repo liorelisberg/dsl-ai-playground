@@ -956,7 +956,6 @@ These functions are essential for string manipulation within ZEN DSL and can be 
       `;
 
       const pairs = extractExpressionPairs(stringFunctionsResponse);
-      const stats = getPairStatistics(stringFunctionsResponse);
       
       // Should extract 8 functional examples, educational title should create separate cluster
       expect(pairs).toHaveLength(8);
@@ -980,7 +979,7 @@ These functions are essential for string manipulation within ZEN DSL and can be 
       });
       
       // Verify all examples have proper titles (none should use the educational title)
-      pairs.forEach((pair, index) => {
+      pairs.forEach((pair) => {
         expect(pair.title).not.toBe('String Functions in ZEN DSL');
         expect(pair.title).toContain('Example:');
         expect(pair.result).not.toBeNull();

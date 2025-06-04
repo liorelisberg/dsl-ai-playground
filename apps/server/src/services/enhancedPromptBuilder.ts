@@ -302,11 +302,8 @@ RULES:
     const selectedCards = sortedCards.slice(0, 12);
     adaptations.push(`selected ${selectedCards.length} most relevant cards`);
 
-    selectedCards.forEach((card, index) => {
-      const isZenExample = card.source.includes('example') || card.content.includes('ZEN');
-      const zenFlag = isZenExample ? '🔧 ZEN SYNTAX' : '📋 DSL RULE';
-      
-      content += `${index + 1}. **${zenFlag}: ${this.capitalizeCategory(card.category)}** (${card.source}):\n`;
+    selectedCards.forEach((card) => {
+      content += `${card.source}:\n`;
       content += `   ${card.content}\n\n`;
     });
 
@@ -326,7 +323,7 @@ RULES:
     const recentHistory = history.slice(-6);
     adaptations.push(`limited to ${recentHistory.length} recent turns`);
 
-    recentHistory.forEach((turn, index) => {
+    recentHistory.forEach((turn) => {
       const roleEmoji = turn.role === 'user' ? '🗣️' : '🤖';
       content += `${roleEmoji} **${turn.role.toUpperCase()}:**\n`;
       content += `${turn.content}\n\n`;

@@ -1,4 +1,4 @@
-import { describe, test, expect, beforeEach, afterEach } from '@jest/globals';
+import { describe, test, expect, beforeEach } from '@jest/globals';
 import request from 'supertest';
 import express from 'express';
 import { chatService } from '../../apps/server/src/services/chat';
@@ -135,7 +135,7 @@ describe('History Management Validation - API Integration', () => {
         });
 
       // Now ask about previous questions
-      const response = await request(app)
+      await request(app)
         .post('/api/chat')
         .send({
           message: 'What did I previously ask about?',
@@ -179,7 +179,7 @@ describe('History Management Validation - API Integration', () => {
         });
 
       // Ask about current topic
-      const response = await request(app)
+      await request(app)
         .post('/api/chat')
         .send({
           message: 'What topic are we discussing?',
@@ -278,7 +278,7 @@ describe('History Management Validation - API Integration', () => {
         });
 
       // Ask about conversation history
-      const response = await request(app)
+      await request(app)
         .post('/api/chat')
         .send({
           message: 'What topics have we covered in this conversation?',
@@ -394,7 +394,7 @@ describe('History Management Validation - API Integration', () => {
           console.log('✅ Real API endpoint is available');
           expect(response.body).toHaveProperty('response');
         }
-      } catch (error) {
+      } catch {
         console.log('⚠️ Real API endpoint not available, skipping integration test');
         // This is expected in test environment
       }

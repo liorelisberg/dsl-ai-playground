@@ -1,4 +1,4 @@
-import { ChatMessage, ChatResponse, ChatRequest, ApiError } from '../types/chat';
+import { ChatMessage, ChatResponse, ChatRequest } from '@/types/chat';
 import { httpClient } from './httpClient';
 import { API_CONFIG } from '../config/api';
 import { sessionManager, updateSessionActivity } from './sessionManager';

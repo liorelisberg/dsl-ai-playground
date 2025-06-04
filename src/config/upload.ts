@@ -74,7 +74,7 @@ export const formatFileSize = (bytes: number): string => {
 };
 
 // Get appropriate limit based on file content (future expansion)
-export const getJsonLimit = (content?: string): number => {
+export const getJsonLimit = (_content?: string): number => { // eslint-disable-line @typescript-eslint/no-unused-vars
   // For now, return standard limit
   // Future: Could analyze content to determine if it's a schema vs data
   return UPLOAD_CONFIG.json.limits.standard;

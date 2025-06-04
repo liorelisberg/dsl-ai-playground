@@ -1,7 +1,8 @@
 // Test file for Dynamic Context Manager
 // Phase 1.1 Implementation Test
 
-import { DynamicContextManager, ChatTurn, ContextBudget } from '../services/contextManager';
+import { describe, it, expect, beforeEach } from '@jest/globals';
+import { DynamicContextManager, ChatTurn } from '../services/contextManager';
 
 const contextManager = new DynamicContextManager();
 
@@ -108,4 +109,28 @@ testTexts.forEach(text => {
   console.log(`Text: "${text}" → Estimated tokens: ${tokens} (chars: ${text.length})`);
 });
 
-console.log('\n✅ Dynamic Context Manager tests completed!'); 
+console.log('\n✅ Dynamic Context Manager tests completed!');
+
+describe('DynamicContextManager', () => {
+  beforeEach(() => {
+    // Reset state before each test
+  });
+
+  it('should create instance', () => {
+    expect(contextManager).toBeDefined();
+  });
+
+  it('should estimate tokens', () => {
+    const text = 'Hello world';
+    const tokens = contextManager.estimateTokens(text);
+    expect(tokens).toBeGreaterThan(0);
+  });
+
+  it('should calculate optimal budget', () => {
+    const message = 'Test message';
+    const history: ChatTurn[] = [];
+    const budget = contextManager.calculateOptimalBudget(message, history, false, 'simple');
+    expect(budget).toBeDefined();
+    expect(budget.staticHeader).toBeGreaterThan(0);
+  });
+}); 

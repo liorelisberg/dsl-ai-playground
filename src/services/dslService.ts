@@ -16,7 +16,7 @@ export const evaluateExpression = async (
     let data;
     try {
       data = JSON.parse(sampleInput);
-    } catch (e) {
+    } catch (_e) { // eslint-disable-line @typescript-eslint/no-unused-vars
       return { error: 'Invalid JSON input' };
     }
 
@@ -37,7 +37,7 @@ export const evaluateExpression = async (
     try {
       const result = evaluateBasicExpression(expression, JSON.parse(sampleInput));
       return { result: JSON.stringify(result, null, 2) };
-    } catch (fallbackError) {
+    } catch (_fallbackError) { // eslint-disable-line @typescript-eslint/no-unused-vars
       return { error: `Evaluation error: ${error instanceof Error ? error.message : 'Unknown error'}` };
     }
   }

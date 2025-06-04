@@ -2,10 +2,9 @@ import { Router, Request, Response } from 'express';
 import { geminiService } from '../services/gemini';
 import { vectorStore } from '../services/vectorStore';
 import { chatService } from '../services/chat';
-import { config } from '../config/environment';
 import { rateLimiter, lengthGuard, tpmGuard } from '../middleware/rate-limiter';
 import { attachSession } from '../middleware/session';
-import { DynamicContextManager, ChatTurn, ContextBudget } from '../services/contextManager';
+import { DynamicContextManager, ChatTurn } from '../services/contextManager';
 import { KnowledgeOptimizer } from '../services/knowledgeOptimizer';
 import { JSONContextOptimizer } from '../services/jsonOptimizer';
 import { jsonStore } from '../api/upload';
@@ -102,8 +101,7 @@ const chatHandler = async (req: Request, res: Response): Promise<void> => {
       message,
       optimizedHistory,
       optimizedKnowledgeCards,
-      jsonContext,
-      budget
+      jsonContext
     );
 
     // Generate response using the original Gemini service
@@ -180,8 +178,7 @@ function buildOptimizedPrompt(
   userMessage: string,
   history: ChatTurn[],
   knowledgeCards: Array<{ category: string; source: string; content: string }>,
-  jsonContext: string,
-  budget: ContextBudget
+  jsonContext: string
 ): string {
   const sections: string[] = [];
 

@@ -18,7 +18,7 @@ describe('Real History Management Issues - Semantic Chat API', () => {
         serverAvailable = true;
         console.log('✅ Server is available for testing');
       }
-    } catch (error) {
+    } catch {
       console.log('⚠️ Server not available, tests will be skipped');
       serverAvailable = false;
     }
@@ -33,7 +33,7 @@ describe('Real History Management Issues - Semantic Chat API', () => {
         await request(baseUrl)
           .delete(`/api/chat/session/${testSessionId}`)
           .timeout(2000);
-      } catch (error) {
+      } catch {
         // Ignore cleanup errors
       }
     }
@@ -111,7 +111,7 @@ describe('Real History Management Issues - Semantic Chat API', () => {
       const newSessionId = `${testSessionId}-continuity`;
 
       // Start with array topic
-      const arrayQuestion1 = await request(baseUrl)
+      await request(baseUrl)
         .post('/api/chat/semantic')
         .send({
           message: 'What is array filtering in ZEN DSL?',
@@ -138,7 +138,7 @@ describe('Real History Management Issues - Semantic Chat API', () => {
       const response2 = arrayQuestion2.body.text.toLowerCase();
       const isArrayExample = response2.includes('array') || response2.includes('filter');
 
-      const arrayQuestion3 = await request(baseUrl)
+      await request(baseUrl)
         .post('/api/chat/semantic')
         .send({
           message: 'How do I filter by multiple conditions?',
@@ -147,9 +147,7 @@ describe('Real History Management Issues - Semantic Chat API', () => {
         .timeout(10000)
         .expect(200);
 
-      console.log('✅ Array question 3 sent');
-
-      const arrayQuestion4 = await request(baseUrl)
+      await request(baseUrl)
         .post('/api/chat/semantic')
         .send({
           message: 'What if I want to filter by age > 25?',
@@ -196,7 +194,7 @@ describe('Real History Management Issues - Semantic Chat API', () => {
       const flowSessionId = `${testSessionId}-flow`;
 
       // Start with string operations
-      const stringQ1 = await request(baseUrl)
+      await request(baseUrl)
         .post('/api/chat/semantic')
         .send({
           message: 'How do I manipulate strings in ZEN DSL?',
@@ -207,7 +205,7 @@ describe('Real History Management Issues - Semantic Chat API', () => {
 
       console.log('✅ String question 1 sent');
 
-      const stringQ2 = await request(baseUrl)
+      await request(baseUrl)
         .post('/api/chat/semantic')
         .send({
           message: 'Show me string slicing examples',
@@ -215,8 +213,6 @@ describe('Real History Management Issues - Semantic Chat API', () => {
         })
         .timeout(10000)
         .expect(200);
-
-      console.log('✅ String question 2 sent');
 
       // Switch to arrays without clear transition
       const arrayQ1 = await request(baseUrl)
@@ -289,7 +285,7 @@ describe('Real History Management Issues - Semantic Chat API', () => {
       console.log('🔍 Sending multiple messages to investigate history storage...');
 
       for (let i = 0; i < messages.length; i++) {
-        const response = await request(baseUrl)
+        await request(baseUrl)
           .post('/api/chat/semantic')
           .send({
             message: messages[i],
@@ -350,8 +346,9 @@ describe('Real History Management Issues - Semantic Chat API', () => {
         } else {
           console.log('⚠️ Session metrics endpoint not available or not implemented');
         }
-      } catch (error) {
-        console.log('⚠️ Session metrics endpoint not available');
+      } catch {
+        console.log('⚠️ Real API endpoint not available, skipping integration test');
+        // This is expected in test environment
       }
     });
   });

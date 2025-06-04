@@ -3,7 +3,7 @@
  * Comprehensive validation of token budget system and performance
  */
 
-import { describe, test, expect, beforeEach } from '@jest/globals';
+import { describe, test, expect } from '@jest/globals';
 
 interface TestJsonData {
   version: string;

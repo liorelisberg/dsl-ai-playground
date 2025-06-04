@@ -149,7 +149,7 @@ export class IntelligentRateLimitManager {
       );
 
       if (this.globalRequestHistory.length < this.config.globalRateLimit) {
-        const { resolve, sessionId } = this.globalRequestQueue.shift()!;
+        const { resolve, sessionId: _sessionId } = this.globalRequestQueue.shift()!;
         
         this.globalRequestHistory.push({
           timestamp: now,
@@ -157,7 +157,7 @@ export class IntelligentRateLimitManager {
           success: true
         });
 
-        console.log(`✅ Processing queued request for session ${sessionId}`);
+        console.log(`✅ Processing queued request for session ${_sessionId}`);
         resolve();
       } else {
         // Wait before checking again
@@ -257,7 +257,8 @@ export class IntelligentRateLimitManager {
     let totalRequests = 0;
     let successfulRequests = 0;
 
-    for (const [sessionId, history] of this.requestHistory.entries()) {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    for (const [_sessionId, history] of this.requestHistory.entries()) {
       const recentHistory = history.filter(entry => now - entry.timestamp < 300000); // 5 minutes
       totalRequests += recentHistory.length;
       successfulRequests += recentHistory.filter(entry => entry.success).length;
@@ -285,12 +286,12 @@ export class IntelligentRateLimitManager {
     const now = Date.now();
     const maxAge = 3600000; // 1 hour
     
-    for (const [sessionId, history] of this.requestHistory.entries()) {
+    for (const [_sessionId, history] of this.requestHistory.entries()) {
       const recentHistory = history.filter(entry => now - entry.timestamp < maxAge);
       if (recentHistory.length === 0) {
-        this.requestHistory.delete(sessionId);
+        this.requestHistory.delete(_sessionId);
       } else {
-        this.requestHistory.set(sessionId, recentHistory);
+        this.requestHistory.set(_sessionId, recentHistory);
       }
     }
   }

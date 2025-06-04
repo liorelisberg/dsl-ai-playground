@@ -27,7 +27,6 @@
   "dependencies": {
     "@gorules/zen-engine": "^0.44.0",
     "@radix-ui/react-dropdown-menu": "^2.1.15",
-    "@radix-ui/react-label": "^2.1.7",
     "@radix-ui/react-progress": "^1.1.7",
     "@radix-ui/react-slot": "^1.2.3",
     "@radix-ui/react-toast": "^1.2.14",
@@ -54,7 +53,6 @@
     "@eslint/js": "^9.28.0",
     "@google/generative-ai": "^0.24.1",
     "@jest/globals": "30.0.0-beta.3",
-    "@tailwindcss/typography": "^0.5.16",
     "@types/express": "^5.0.2",
     "@types/jest": "^29.5.14",
     "@types/node": "^22.15.29",

@@ -162,7 +162,7 @@ export class SemanticVectorStore {
     try {
       queryEmbedding = await this.embedText(query);
     } catch (error) {
-      console.warn('⚠️  Embedding failed, falling back to text search');
+      console.warn('⚠️  Embedding failed, falling back to text search:', error);
       return this.fallbackTextSearch(query, limit);
     }
 

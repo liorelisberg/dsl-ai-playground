@@ -1,4 +1,4 @@
-import { EnhancedPromptBuilder, PromptSection, EnhancedPromptResult } from '../../apps/server/src/services/enhancedPromptBuilder';
+import { EnhancedPromptBuilder, EnhancedPromptResult } from '../../apps/server/src/services/enhancedPromptBuilder';
 import { SimpleResponse, UserProfile, ConversationContext } from '../../apps/server/src/services/conversationStateManager';
 import { ChatTurn } from '../../apps/server/src/services/contextManager';
 import { KnowledgeCard } from '../../apps/server/src/services/vectorStore';

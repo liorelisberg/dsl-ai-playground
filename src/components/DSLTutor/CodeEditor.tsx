@@ -400,6 +400,7 @@ const CodeEditor = forwardRef<CodeEditorRef, CodeEditorProps>(({ onParserToChat 
         description: "Result copied to clipboard",
       });
     } catch (error) {
+      console.error('Copy result error:', error);
       errorToast.showCopyError();
     }
   };
@@ -445,6 +446,7 @@ const CodeEditor = forwardRef<CodeEditorRef, CodeEditorProps>(({ onParserToChat 
         description: "Sample input copied to clipboard",
       });
     } catch (error) {
+      console.error('Copy sample input error:', error);
       errorToast.showCopyError();
     }
   };
@@ -457,6 +459,7 @@ const CodeEditor = forwardRef<CodeEditorRef, CodeEditorProps>(({ onParserToChat 
         description: "DSL expression copied to clipboard",
       });
     } catch (error) {
+      console.error('Copy expression error:', error);
       errorToast.showCopyError();
     }
   };
@@ -570,6 +573,7 @@ const CodeEditor = forwardRef<CodeEditorRef, CodeEditorProps>(({ onParserToChat 
         description: `JSON path: ${path}`,
       });
     } catch (error) {
+      console.error('Copy path error:', error);
       errorToast.showCopyError();
     }
   };
@@ -830,6 +834,7 @@ const CodeEditor = forwardRef<CodeEditorRef, CodeEditorProps>(({ onParserToChat 
                 >
                   {/* Enhanced String Rendering for URLs and Images */}
                   <JsonView.String
+                    // eslint-disable-next-line @typescript-eslint/no-unused-vars
                     render={({ children, ...props }, { type, value, keyName }) => {
                       if (type === 'value') {
                         // Check if it's a URL
@@ -872,6 +877,7 @@ const CodeEditor = forwardRef<CodeEditorRef, CodeEditorProps>(({ onParserToChat 
                   
                   {/* Row Click for Path Copying */}
                   <JsonView.Row
+                    // eslint-disable-next-line @typescript-eslint/no-unused-vars
                     render={(props, { keyName, value, keys = [] }) => {
                       return (
                         <div
@@ -1081,6 +1087,7 @@ const CodeEditor = forwardRef<CodeEditorRef, CodeEditorProps>(({ onParserToChat 
                 >
                   {/* Enhanced String Rendering for URLs and Images */}
                   <JsonView.String
+                    // eslint-disable-next-line @typescript-eslint/no-unused-vars
                     render={({ children, ...props }, { type, value, keyName }) => {
                       if (type === 'value') {
                         // Check if it's a URL
@@ -1123,6 +1130,7 @@ const CodeEditor = forwardRef<CodeEditorRef, CodeEditorProps>(({ onParserToChat 
                   
                   {/* Row Click for Path Copying */}
                   <JsonView.Row
+                    // eslint-disable-next-line @typescript-eslint/no-unused-vars
                     render={(props, { keyName, value, keys = [] }) => {
                       return (
                         <div

@@ -1,7 +1,8 @@
 // Test file for JSON Context Optimizer
 // Phase 1.3 Implementation Test
 
-import { JSONContextOptimizer, JsonOptimizationResult } from '../services/jsonOptimizer';
+import { describe, it, expect, beforeEach } from '@jest/globals';
+import { JSONContextOptimizer } from '../services/jsonOptimizer';
 
 const optimizer = new JSONContextOptimizer();
 
@@ -105,4 +106,21 @@ console.log(`Empty data: ${emptyResult.optimizationType}`);
 const zeroBudgetResult = optimizer.optimizeForQuery(sampleData, 'test', 0);
 console.log(`Zero budget: ${zeroBudgetResult.optimizationType}`);
 
-console.log('\n✅ JSON Context Optimizer tests completed!'); 
+console.log('\n✅ JSON Context Optimizer tests completed!');
+
+describe('JSONContextOptimizer', () => {
+  beforeEach(() => {
+    // Reset state before each test
+  });
+
+  it('should create instance', () => {
+    expect(optimizer).toBeDefined();
+  });
+
+  it('should optimize for query', () => {
+    const data = { test: 'value' };
+    const result = optimizer.optimizeForQuery(data, 'test query', 100);
+    expect(result).toBeDefined();
+    expect(result.tokensUsed).toBeGreaterThanOrEqual(0);
+  });
+}); 

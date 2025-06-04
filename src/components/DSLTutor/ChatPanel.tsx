@@ -1,39 +1,23 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
-import { Separator } from "@/components/ui/separator";
 import { 
   Send, 
   Paperclip, 
   Clock,
   Copy,
-  CheckCircle2,
-  AlertCircle,
-  Wifi,
-  WifiOff,
+  Check,
   RefreshCw,
   X,
   ChevronUp,
-  ChevronDown,
   MessageCircle,
-  Hash,
-  Activity,
-  Calendar,
   Loader2,
   Brain,
-  Target,
-  Zap,
-  FileJson,
-  History
+  FileJson
 } from 'lucide-react';
 import { toast } from "@/hooks/use-toast";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
 
 import { ChatMessage, ChatResponse } from '@/types/chat';
 import { JsonMetadata } from './JsonUpload';
@@ -58,10 +42,6 @@ interface ChatPanelProps {
 interface UploadedFile {
   name: string;
   content: unknown;
-}
-
-interface MessageMetadata {
-  timestamp?: string;
 }
 
 const ChatPanel: React.FC<ChatPanelProps> = ({ 
@@ -326,91 +306,70 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
   };
 
   const handleSendMessage = async () => {
-    if (!safeInputMessage.trim() || isLoading || !sessionId) return;
-
-    let messageContent = safeInputMessage;
-    
-    // Add full JSON flag if toggled
-    if (uploadedFile && includeFullJson) {
-      messageContent += ' @fulljson';
+    if (!sessionId) {
+      toast({
+        title: "Session Required",
+        description: "Please start a new session to send messages",
+        variant: "destructive"
+      });
+      return;
     }
 
-    const userMessage: ChatMessage = {
-      role: 'user',
-      content: messageContent,
-      timestamp: new Date().toISOString()
-    };
+    if (safeInputMessage.trim() === '') return;
 
-    onNewMessage(userMessage);
-    setInputMessage(''); // Explicitly set to empty string
     setIsLoading(true);
-
-    // Track activity
-    updateActivity();
-
+    
     try {
-      const response: ChatResponse = await sendChatMessage(messageContent, chatHistory, {
+      updateActivity(); // Track user activity
+      
+      const messageContent = safeInputMessage.trim();
+      
+      // Create user message
+      const userMessage: ChatMessage = {
+        role: 'user',
+        content: messageContent,
+        timestamp: new Date().toISOString()
+      };
+      
+      // Add user message immediately
+      onNewMessage(userMessage);
+      setInputMessage('');
+      
+      // Prepare context for AI
+      let messageWithContext = messageContent;
+      
+      // Add JSON context if available
+      if (uploadedFile && includeFullJson) {
+        messageWithContext = `${messageContent}\n\n[JSON Context: ${JSON.stringify(uploadedFile.content, null, 2)}]`;
+      }
+      
+      // Send to AI
+      const response: ChatResponse = await sendChatMessage(messageWithContext, chatHistory, {
         sessionId,
-        maxTokens: 8000,
         jsonContext: uploadedFile?.content
       });
       
-      // Handle both successful responses and error responses
-      const assistantMessage: ChatMessage = {
+      // Add AI response
+      const aiMessage: ChatMessage = {
         role: 'assistant',
         content: response.text,
         timestamp: new Date().toISOString(),
         metadata: {
-          ...response.metadata,
-          sessionId: response.sessionId || sessionId
+          timestamp: new Date().toISOString()
         }
       };
-
-      onNewMessage(assistantMessage);
-
-      // Show specific warnings for TPM guard
-      if (response.error) {
-        if (response.error.includes('TPM guard') || response.error.includes('token rate limit')) {
-          toast({
-            title: "Rate Limited",
-            description: "Large JSON requests are limited. Please wait before sending another.",
-            variant: "default"
-          });
-        } else {
-          toast({
-            title: "Warning",
-            description: "There was an issue with the AI service, but I provided a fallback response.",
-            variant: "default"
-          });
-        }
-      }
-
+      
+      onNewMessage(aiMessage);
+      
     } catch (error) {
-      console.error('Chat error:', error);
-      
-      // Add error message to chat
-      const errorMessage: ChatMessage = {
-        role: 'assistant',
-        content: "I'm sorry, I'm having trouble responding right now. Please try again in a moment.",
-        timestamp: new Date().toISOString()
-      };
-      
-      onNewMessage(errorMessage);
-      
+      console.error('Error sending message:', error);
       toast({
-        title: "Connection Error",
-        description: "Failed to connect to the AI service. Please check your connection and try again.",
+        title: "Message Failed",
+        description: `Failed to connect to the AI service: ${error instanceof Error ? error.message : 'Unknown error'}`,
         variant: "destructive"
       });
     } finally {
       setIsLoading(false);
-    }
-  };
-
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      handleSendMessage();
     }
   };
 
@@ -432,6 +391,7 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
       // Reset copy state after 2 seconds
       setTimeout(() => setCopiedMessageIndex(null), 2000);
     } catch (error) {
+      console.error('Copy to clipboard error:', error);
       toast({
         title: "Copy Failed",
         description: "Unable to copy message to clipboard",

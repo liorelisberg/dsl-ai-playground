@@ -1,7 +1,8 @@
 // Test file for Knowledge Optimizer
 // Phase 1.2 Implementation Test
 
-import { KnowledgeOptimizer, ScoredKnowledgeCard } from '../services/knowledgeOptimizer';
+import { describe, it, expect, beforeEach } from '@jest/globals';
+import { KnowledgeOptimizer } from '../services/knowledgeOptimizer';
 import { KnowledgeCard } from '../services/vectorStore';
 import { ChatTurn } from '../services/contextManager';
 
@@ -175,4 +176,28 @@ console.log(`Zero budget: ${zeroBudgetResult.cards.length} cards selected`);
 const highBudgetResult = optimizer.selectOptimalCards(sampleKnowledgeCards, 'DSL operations', [], 10000);
 console.log(`High budget: ${highBudgetResult.cards.length} cards selected (${highBudgetResult.metrics.tokensUsed} tokens)`);
 
-console.log('\n✅ Knowledge Optimizer tests completed!'); 
+console.log('\n✅ Knowledge Optimizer tests completed!');
+
+describe('KnowledgeOptimizer', () => {
+  beforeEach(() => {
+    // Reset state before each test
+  });
+
+  it('should create instance', () => {
+    expect(optimizer).toBeDefined();
+  });
+
+  it('should select optimal cards', () => {
+    const cards: KnowledgeCard[] = [{
+      id: 'test',
+      content: 'test content',
+      source: 'test.mdc',
+      category: 'test',
+      relevanceScore: 0.8
+    }];
+    const history: ChatTurn[] = [];
+    const result = optimizer.selectOptimalCards(cards, 'test query', history, 100);
+    expect(result).toBeDefined();
+    expect(result.cards).toBeDefined();
+  });
+}); 

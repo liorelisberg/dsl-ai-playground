@@ -321,7 +321,7 @@ export class DSLExampleProcessor implements BlockProcessor {
     return this.patterns.some(pattern => pattern.test(content));
   }
 
-  extract(content: string, context: ParseContext): BlockMatch[] {
+  extract(content: string): BlockMatch[] {
     const matches: BlockMatch[] = [];
     
     // Debug: Log what we're looking for

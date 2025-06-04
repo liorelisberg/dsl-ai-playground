@@ -1,4 +1,4 @@
-import { describe, test, expect, beforeEach } from '@jest/globals';
+import { describe, test, expect } from '@jest/globals';
 
 // Simple basic functionality tests without mocking Gemini
 describe('ResilientGeminiService', () => {

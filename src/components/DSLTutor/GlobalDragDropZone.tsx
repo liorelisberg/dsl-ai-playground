@@ -63,7 +63,11 @@ export const GlobalDragDropZone: React.FC<GlobalDragDropZoneProps> = ({
       
       try {
         parsedJson = JSON.parse(text);
-      } catch (parseError) {
+        // Validate that we successfully parsed the JSON
+        if (parsedJson === null || parsedJson === undefined) {
+          throw new Error(UPLOAD_CONFIG.json.errorMessages.invalidFormat);
+        }
+      } catch (parseError) { // eslint-disable-line @typescript-eslint/no-unused-vars
         throw new Error(UPLOAD_CONFIG.json.errorMessages.invalidFormat);
       }
 

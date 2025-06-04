@@ -2,7 +2,6 @@
 
 import { vectorStore, Document } from '../services/vectorStore';
 import { fileProcessor, ProcessedFile } from '../utils/fileProcessor';
-import { config } from '../config/environment';
 
 interface EmbeddingProgress {
   totalFiles: number;
@@ -141,7 +140,8 @@ class EmbeddingScript {
     }
   }
 
-  private async embedDocuments(documents: Document[], options: ScriptOptions): Promise<void> {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  private async embedDocuments(documents: Document[], _options: ScriptOptions): Promise<void> {
     console.log('🧠 Embedding documents...');
 
     const batchSize = 10; // Process in batches to avoid overwhelming the API

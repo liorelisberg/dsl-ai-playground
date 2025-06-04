@@ -5,22 +5,17 @@
 // Adds semantic topic similarity detection and ZEN relevance validation
 
 import { Router, Request, Response } from 'express';
-import { GoogleGenerativeAI } from '@google/generative-ai';
 import { config } from '../config/environment';
 import { SemanticVectorStore } from '../services/semanticVectorStore';
 import { ConversationStateManager } from '../services/conversationStateManager';
 import { EnhancedPromptBuilder } from '../services/enhancedPromptBuilder';
 import { DynamicContextManager, ChatTurn } from '../services/contextManager';
-import { JSONContextOptimizer } from '../services/jsonOptimizer';
 import { ResilientGeminiService } from '../services/resilientGeminiService';
 import { IntelligentRateLimitManager } from '../services/rateLimitManager';
 import { UserFeedbackManager } from '../services/userFeedbackManager';
 import { Document } from '../services/vectorStore';
 import * as fs from 'fs';
 import * as path from 'path';
-import { rateLimiter, lengthGuard, tpmGuard } from '../middleware/rate-limiter';
-import { attachSession } from '../middleware/session';
-import { jsonStore } from '../api/upload';
 // loadDSLExamples function defined locally in this file
 
 // Define Example type locally since we can't import from frontend
@@ -41,7 +36,6 @@ const semanticStore = new SemanticVectorStore();
 const stateManager = new ConversationStateManager();
 const promptBuilder = new EnhancedPromptBuilder();
 const contextManager = new DynamicContextManager();
-const jsonOptimizer = new JSONContextOptimizer();
 
 // Phase 2.5: Initialize resilience services
 let resilientGeminiService: ResilientGeminiService | null = null;
@@ -60,12 +54,6 @@ if (config.gemini.apiKey) {
 
 // Session storage for conversation history
 const sessionHistories = new Map<string, ChatTurn[]>();
-
-// Legacy Gemini for backward compatibility (remove after testing)
-let genAI: GoogleGenerativeAI | null = null;
-if (config.gemini.apiKey) {
-  genAI = new GoogleGenerativeAI(config.gemini.apiKey);
-}
 
 interface SemanticChatRequest {
   message: string;
@@ -94,18 +82,10 @@ interface SemanticChatResponse {
   };
 }
 
-interface ConversationContinuityContext {
-  recentHistory: ChatTurn[];
-  olderSummary: string | null;
-  conversationFlow: string;
-  conceptsDiscussed: number;
-}
-
 /**
  * Semantic Chat Handler with Phase 2.5 API Resilience
  */
 async function handleSemanticChat(req: Request, res: Response): Promise<void> {
-  const startTime = Date.now();
   const retryCount = 0;
   let delayTime = 0;
   let wasFallback = false;
@@ -318,8 +298,8 @@ async function loadExamplesIntoSemanticStore(): Promise<void> {
     console.log(`🔄 Processing ${examples.length} comprehensive ZEN DSL examples for semantic embeddings...`);
     
     // Convert examples to semantic documents with enhanced metadata
-    const documents: Document[] = examples.map((example: Example, index: number) => ({
-      id: example.id || `example_${index}`,
+    const documents: Document[] = examples.map((example: Example) => ({
+      id: example.id || `example_${example.id}`,
       content: `ZEN DSL Example - ${example.title}
 
 Description: ${example.description}
@@ -385,7 +365,7 @@ async function ensureMdcRulesLoaded(): Promise<void> {
     const documents = fileProcessor.processedFilesToDocuments(processedFiles);
     
     // Convert to semantic documents for the semantic store
-    const semanticDocuments: Document[] = documents.map((doc, index) => ({
+    const semanticDocuments: Document[] = documents.map((doc) => ({
       id: `mdc_${doc.id}`,
       content: `ZEN DSL Rule - ${doc.metadata.category}
 

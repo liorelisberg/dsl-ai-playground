@@ -42,6 +42,7 @@ const uploadHandler = async (req: ExtendedRequest, res: Response): Promise<void>
     
     try {
       parsedJson = JSON.parse(jsonContent);
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (parseError) {
       res.status(400).json({ error: 'Invalid JSON format' });
       return;

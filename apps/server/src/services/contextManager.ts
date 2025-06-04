@@ -232,14 +232,14 @@ export class DynamicContextManager {
   generateOptimizationMetrics(
     originalEstimate: number,
     budget: ContextBudget,
-    actualUsage: number
+    actualTokens: number
   ): OptimizationMetrics {
-    const totalBudget = Object.values(budget).reduce((sum, val) => sum + val, 0);
+    // const totalBudget = Object.values(budget).reduce((sum, val) => sum + val, 0);
     
     return {
       originalTokenEstimate: originalEstimate,
-      optimizedTokenUsage: actualUsage,
-      efficiency: actualUsage / originalEstimate,
+      optimizedTokenUsage: actualTokens,
+      efficiency: actualTokens / originalEstimate,
       knowledgeCardCount: Math.floor(budget.knowledgeCards / 80), // Estimate cards
       historyTurnCount: Math.floor(budget.chatHistory / 100) // Estimate turns
     };

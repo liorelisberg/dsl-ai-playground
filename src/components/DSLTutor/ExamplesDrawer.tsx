@@ -444,11 +444,6 @@ const ExamplesDrawer: React.FC<ExamplesDrawerProps> = ({
                     example.expression.toLowerCase().includes(searchTerm.toLowerCase())
                   ).length : categoryExamples.length;
 
-                const categoryMatches = searchTerm ? 
-                  category.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                  config.label.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                  config.description.toLowerCase().includes(searchTerm.toLowerCase()) : true;
-
                 return (
                   <Tooltip key={category}>
                     <TooltipTrigger asChild>

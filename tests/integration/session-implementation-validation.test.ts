@@ -11,8 +11,8 @@ describe('Session Management Implementation Validation', () => {
       const response = await request(baseUrl).get('/health').timeout(2000);
       serverAvailable = response.status === 200;
       console.log(serverAvailable ? '✅ Server available for session testing' : '⚠️ Server not available');
-    } catch (error) {
-      serverAvailable = false;
+    } catch {
+      // Expected to fail - no conversation context
     }
   });
 

@@ -278,16 +278,6 @@ function extractPairsFromCluster(cluster: BlockCluster): ExpressionPair[] {
 }
 
 /**
- * Generate a fallback title when none is provided
- */
-const generateFallbackTitle = (index: number, total: number): string => {
-  if (total === 1) {
-    return "Try This Example";
-  }
-  return `Try Example ${index}`;
-};
-
-/**
  * Generate a display title for an expression pair (now uses extracted titles)
  */
 export const generatePairTitle = (pair: ExpressionPair, allPairs: ExpressionPair[]): string => {

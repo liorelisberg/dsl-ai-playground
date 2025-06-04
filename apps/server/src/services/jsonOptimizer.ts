@@ -274,9 +274,9 @@ export class JSONContextOptimizer {
       pathParts.forEach((part, index) => {
         // Handle array notation
         if (part.includes('[')) {
-          const [key, arrayIndex] = part.split('[');
+          const key = part.split('[')[0];
           if (!current[key]) current[key] = [];
-          if (arrayIndex === '0]') {
+          if (part.includes('[0]')) {
             current[key] = [{}];
             current = (current[key] as Record<string, unknown>[])[0];
           }
@@ -349,7 +349,7 @@ export class JSONContextOptimizer {
     try {
       for (const part of pathParts) {
         if (part.includes('[')) {
-          const [key, index] = part.split('[');
+          const key = part.split('[')[0];
           current = (current as Record<string, unknown>)[key];
           if (Array.isArray(current) && current.length > 0) {
             current = current[0]; // Take first element

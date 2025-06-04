@@ -1,11 +1,11 @@
 import React, { useState, useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
-import { Upload, File, X, Check, FileJson, AlertCircle, CheckCircle2, Trash2 } from 'lucide-react';
+import { Upload, File, X, Check, FileJson, AlertCircle } from 'lucide-react';
 import { toast } from "@/hooks/use-toast";
 import { UPLOAD_CONFIG, validateJsonFile, formatFileSize } from '@/config/upload';
 
@@ -100,7 +100,7 @@ export const JsonUpload: React.FC<JsonUploadProps> = ({
       
       try {
         parsedJson = JSON.parse(text);
-      } catch (parseError) {
+      } catch (parseError) { // eslint-disable-line @typescript-eslint/no-unused-vars
         throw new Error(UPLOAD_CONFIG.json.errorMessages.invalidFormat);
       }
 

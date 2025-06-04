@@ -144,7 +144,7 @@ describe('AI Message Construction Flow Integration', () => {
       const message = 'Performance test message';
 
       chatService.addTurn(sessionId, 'user', message);
-      const budget = contextManager.calculateOptimalBudget(message, [], false);
+      contextManager.calculateOptimalBudget(message, [], false);
       const userProfile = stateManager.updateUserProfile(sessionId, message);
       const simpleResponse = stateManager.generateSimpleResponse(sessionId, message);
       const promptResult = promptBuilder.buildSimplePrompt(message, [], [], simpleResponse, userProfile);
@@ -173,6 +173,22 @@ describe('AI Message Construction Flow Integration', () => {
       expect(() => {
         promptBuilder.buildSimplePrompt('', [], [], { estimatedUserNeed: '', suggestedFollowUps: [] });
       }).not.toThrow();
+    });
+
+    test('should validate service integration without external dependencies', () => {
+      const contextManager = new DynamicContextManager();
+      const promptBuilder = new EnhancedPromptBuilder();
+      const stateManager = new ConversationStateManager();
+
+      // Test budget calculation
+      const budget = contextManager.calculateOptimalBudget('What are string functions?', [], false);
+      expect(budget.knowledgeCards).toBeGreaterThan(0);
+      expect(budget.userMessage).toBeGreaterThan(0);
+      
+      // Test prompt building
+      const simpleResponse = stateManager.generateSimpleResponse('test', 'What are string functions?');
+      const prompt = promptBuilder.buildSimplePrompt('What are string functions?', [], [], simpleResponse);
+      expect(prompt.totalTokens).toBeGreaterThan(0);
     });
   });
 }); 

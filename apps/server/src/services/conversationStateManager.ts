@@ -54,7 +54,8 @@ export class ConversationStateManager {
   /**
    * Update conversation context with essential tracking only
    */
-  updateConversationContext(sessionId: string, message: string, history: ChatTurn[]): ConversationContext {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  updateConversationContext(sessionId: string, message: string, _history: ChatTurn[]): ConversationContext {
     const context = this.conversationContexts.get(sessionId) || this.createNewContext(sessionId);
     
     // Update basic context

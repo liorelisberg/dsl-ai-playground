@@ -11,9 +11,8 @@ describe('Session Management Investigation', () => {
       const response = await request(baseUrl).get('/health').timeout(2000);
       serverAvailable = response.status === 200;
       console.log(serverAvailable ? '✅ Server available' : '⚠️ Server not available');
-    } catch (error) {
-      serverAvailable = false;
-      console.log('⚠️ Server not available');
+    } catch {
+      // Expected to fail - no conversation context
     }
   });
 

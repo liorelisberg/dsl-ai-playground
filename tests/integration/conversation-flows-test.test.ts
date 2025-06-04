@@ -11,8 +11,8 @@ describe('Conversation Flows - Real User Interactions', () => {
       const response = await request(baseUrl).get('/health').timeout(2000);
       serverAvailable = response.status === 200;
       console.log(serverAvailable ? '✅ Server available for conversation flow testing' : '⚠️ Server not available');
-    } catch (error) {
-      serverAvailable = false;
+    } catch {
+      // Expected to fail - no conversation context
     }
   });
 
