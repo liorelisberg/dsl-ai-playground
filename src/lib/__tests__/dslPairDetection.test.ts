@@ -413,7 +413,6 @@ ZEN provides several built-in string functions for text manipulation:
 
 **trim(string)** - Removes whitespace from both ends
 **split(string, delimiter)** - Splits string into array
-**replace(string, old, new)** - Replaces occurrences
 
 These functions can be combined for complex text processing operations.
       `;
@@ -529,11 +528,6 @@ Tests if string ends with specified suffix.
 Removes whitespace from both ends of string.
 - Returns: Trimmed string
 - Example: trim("  hello  ") → "hello"
-
-### replace(string, oldValue, newValue)
-Replaces all occurrences of oldValue with newValue.
-- Returns: Modified string
-- Example: replace("hello world", "world", "ZEN") → "hello ZEN"
 
 ### split(string, delimiter)
 Splits string into array using delimiter.

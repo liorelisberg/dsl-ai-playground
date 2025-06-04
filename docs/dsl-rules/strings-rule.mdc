@@ -5,15 +5,12 @@ alwaysApply: true
 ---
 # DSL String Expressions Rule
 
-This DSL supports a rich set of string operations including concatenation, case conversion, trimming, pattern matching, and functional transformations on strings or arrays of strings. Follow the conventions below to represent string logic accurately.
+This DSL supports string operations including concatenation, case conversion, trimming, pattern matching, and functional transformations. Follow the conventions below.
 
 ⚠️ Important:
-- Only use DSL methods and operators that are explicitly listed in the examples below.
-- Do NOT attempt to convert unsupported JavaScript methods or expressions into DSL.
-- If the input JavaScript expression contains unsupported features, clearly respond with a message such as:
-  "This JavaScript expression cannot be fully converted to DSL due to unsupported syntax or methods."
-- If the input is not a valid JavaScript expression, respond with:
-  "The input is not a valid JavaScript expression."
+- Only use DSL methods explicitly listed below
+- If unsupported features exist, respond: "This JavaScript expression cannot be fully converted to DSL due to unsupported syntax or methods."
+- If invalid input, respond: "The input is not a valid JavaScript expression."
 
 ---
 
@@ -47,8 +44,7 @@ Examples:
 
 - JavaScript: upper("Hello, World!")  
   DSL: upper("Hello, World!")  
-  Result: "HELLO, WORLD!"  
-  Explanation: DSL supports uppercase conversion via `upper()`.
+  Result: "HELLO, WORLD!"
 
 ---
 
@@ -67,13 +63,11 @@ Examples:
 Examples:
 - JavaScript: startsWith("Hello, World!", "Hello")  
   DSL: startsWith("Hello, World!", "Hello")  
-  Result: true  
-  Explanation: Use `startsWith()` to check string prefix.
+  Result: true
 
 - JavaScript: endsWith("Hello, World!", "World!")  
   DSL: endsWith("Hello, World!", "World!")  
-  Result: true  
-  Explanation: Use `endsWith()` to check suffix.
+  Result: true
 
 ---
 
@@ -82,8 +76,7 @@ Examples:
 Examples:
 - JavaScript: contains("Hello, World!", "lo")  
   DSL: contains("Hello, World!", "lo")  
-  Result: true  
-  Explanation: Use `contains()` to check substring presence.
+  Result: true
 
 - JavaScript: matches("Hello, World!", "H[a-z]+, W[a-z]+!")  
   DSL: matches("Hello, World!", "H[a-z]+, W[a-z]+!")  
@@ -107,13 +100,12 @@ Examples:
 Examples:
 - JavaScript: fuzzyMatch("hello", "hello")  
   DSL: fuzzyMatch("hello", "hello")  
-  Result: 1  
-  Explanation: Use `fuzzyMatch()` to get similarity scores (0–1).
+  Result: 1
 
 - JavaScript: fuzzyMatch(["hello", "world"], "hello")  
   DSL: fuzzyMatch(["hello", "world"], "hello")  
   Result: [1, 0.2]  
-  Explanation: Supports arrays as first argument.
+  Explanation: `fuzzyMatch()` returns similarity scores (0–1). Supports arrays as first argument.
 
 ---
 
@@ -122,25 +114,15 @@ Examples:
 Examples:
 - JavaScript: split("hello1,hello2,hello3", ",")  
   DSL: split("hello1,hello2,hello3", ",")  
-  Result: ['hello1', 'hello2', 'hello3']  
-  Explanation: `split()` divides a string into an array by a delimiter.
+  Result: ['hello1', 'hello2', 'hello3']
 
 - JavaScript: map(split("123,456,789", ","), number(#))  
   DSL: map(split("123,456,789", ","), number(#))  
   Result: [123, 456, 789]  
-  Explanation: Chain `split()` with `map()` and use `#` to reference each item in the array.
+  Explanation: Chain `split()` with `map()` and use `#` to reference each array item.
 
 ---
 
 ## 10. Summary
 
-- Use `+` for string concatenation.
-- Use `len()`, `lower()`, `upper()`, `trim()` for transformations.
-- Use `startsWith()`, `endsWith()`, `contains()`, `matches()` for checks.
-- Use `extract()` for regex grouping.
-- Use `fuzzyMatch()` for approximate string comparison.
-- Use `split()` to convert delimited strings to arrays.
-- Combine with `map()` to transform string parts.
-- Strings can be wrapped in either `'` or `"`.
-- Only use the methods shown in these examples — no implicit support for unlisted JavaScript functions.
-- If the expression cannot be converted or is not valid JavaScript, explain why instead of producing output.
+Core functions: `len()`, `lower()`, `upper()`, `trim()`, `startsWith()`, `endsWith()`, `contains()`, `matches()`, `extract()`, `fuzzyMatch()`, `split()`. Use `+` for concatenation, `#` for array mapping. Strings support both `'` and `"` quotes. Only use listed methods.

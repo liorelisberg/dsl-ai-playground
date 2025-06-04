@@ -41,8 +41,9 @@ For data processing tasks, show the ZEN way exclusively.
 🚫 COMMON MISTAKES TO AVOID:
 DO NOT use these hallucinated functions (they don't exist in ZEN DSL):
 - JavaScript functions: uppercase(), toLowerCase(), push(), pop(), slice(), length
-- Math functions: sqrt(), pow(), sin(), cos(), Math.max(), Math.min()
+- Math functions: sqrt(), pow(), sin(), cos(), Math.max(), Math.min(), product()
 - Array functions: sort(), reverse(), join(), indexOf(), includes()
+- String functions: replace(), substring(), charAt(), indexOf(), lastIndexOf()
 - Control flow: if(), switch(), case, else
 - Date functions: now(), new Date(), getFullYear()
 
@@ -50,14 +51,25 @@ DO NOT use these hallucinated functions (they don't exist in ZEN DSL):
 ❌ WRONG: slice(text, 0, 5) - This function does not exist!
 ✅ CORRECT: text[0:5] - Use ZEN slice syntax with brackets
 
+🚨 CRITICAL: replace() FUNCTION DOES NOT EXIST IN ZEN DSL!
+❌ WRONG: replace(text, "old", "new") - This function does not exist!
+For text replacement needs, use ZEN functions like extract(), split(), and string concatenation.
+
+🚨 CRITICAL: product() FUNCTION DOES NOT EXIST IN ZEN DSL!
+❌ WRONG: product(numbers) - This function does not exist!
+✅ CORRECT: For multiplying array elements, use manual multiplication for small arrays like: a * b * c * d, or calculate programmatically using map() with individual operations. ZEN DSL doesn't have built-in array multiplication functions.
+
 ZEN DSL SLICING RULES:
 - Use bracket syntax: text[start:end], array[1:5], name[0:3]
 - NOT function syntax: slice(text, start, end) ← THIS DOES NOT EXIST!
 - Slicing works for strings AND arrays using the same [start:end] syntax
 
 ALWAYS use correct ZEN equivalents:
-- Use: upper(), lower(), len(), max(), min(), filter(), map()
-- Use: d(), year(), month(), contains(), startsWith()
+- String functions: upper(), lower(), len(), trim(), contains(), startsWith(), endsWith()
+- String processing: extract(), split(), matches() (NO replace() function!)
+- Array functions: filter(), map(), some(), all(), count(), flatMap()
+- Math functions: max(), min(), abs(), round(), floor(), ceil()
+- Date functions: d(), year(), month(), day(), format(), diff()
 - Use: condition ? value1 : value2 (ternary, not if statements)
 - Use: text[0:5] for slicing (NOT slice() function)
 
@@ -286,8 +298,8 @@ RULES:
         return b.relevanceScore - a.relevanceScore;
       });
 
-    // Use top 6 cards to keep prompt manageable
-    const selectedCards = sortedCards.slice(0, 6);
+    // Use top 12 cards to keep prompt manageable
+    const selectedCards = sortedCards.slice(0, 12);
     adaptations.push(`selected ${selectedCards.length} most relevant cards`);
 
     selectedCards.forEach((card, index) => {

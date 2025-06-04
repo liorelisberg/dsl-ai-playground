@@ -124,7 +124,7 @@ export class ConversationStateManager {
   private extractTopic(message: string): string {
     const topicKeywords = {
       'arrays': ['array', 'filter', 'map', 'forEach', 'find', 'reduce'],
-      'strings': ['string', 'text', 'replace', 'split', 'join', 'length'],
+      'strings': ['string', 'text', 'split', 'join', 'length'],
       'objects': ['object', 'property', 'key', 'value', 'nested'],
       'math': ['math', 'number', 'calculate', 'sum', 'average'],
       'dates': ['date', 'time', 'format', 'parse'],
@@ -151,7 +151,7 @@ export class ConversationStateManager {
     const zenConcepts = [
       'filter', 'map', 'find', 'reduce', 'forEach', 'some', 'every',
       'len', 'contains', 'startsWith', 'endsWith', 'split', 'join',
-      'upper', 'lower', 'trim', 'replace', 'matches',
+      'upper', 'lower', 'trim', 'matches',
       'keys', 'values', 'has', 'type', 'string', 'number'
     ];
 

@@ -121,9 +121,9 @@ app.listen(config.server.port, async () => {
     console.log(`🧠 Initializing knowledge base...`);
     await vectorStore.initialize();
     
-    // Auto-load DSL knowledge base
-    // DISABLED: .mdc files should not be loaded into knowledge base
-    // await vectorStore.autoLoadKnowledgeBase();
+    // Auto-load DSL knowledge base - ENABLED for enhanced ZEN DSL documentation
+    console.log(`📚 Loading .mdc files for comprehensive ZEN DSL knowledge...`);
+    await vectorStore.autoLoadKnowledgeBase();
     
     const info = await vectorStore.getCollectionInfo();
     console.log(`✅ Knowledge base ready: ${info.count} documents loaded`);

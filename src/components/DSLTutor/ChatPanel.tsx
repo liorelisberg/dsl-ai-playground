@@ -70,7 +70,7 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
   const containerRef = useRef<HTMLDivElement>(null);
 
   const MAX_FILE_SIZE = 50 * 1024; // 50KB
-  const MAX_CHARS = 500;
+  const MAX_CHARS = 2000;
   const LOAD_OLDER_BATCH_SIZE = 5; // Load 5 more messages at a time
   
   // Ensure inputMessage is always a string, never null
