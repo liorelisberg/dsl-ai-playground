@@ -14,6 +14,8 @@ import { ResilientGeminiService } from '../services/resilientGeminiService';
 import { IntelligentRateLimitManager } from '../services/rateLimitManager';
 import { UserFeedbackManager } from '../services/userFeedbackManager';
 import { Document } from '../services/vectorStore';
+import { JSONContextOptimizer } from '../services/jsonOptimizer';
+import { jsonStore } from '../api/upload';
 import * as fs from 'fs';
 import * as path from 'path';
 // loadDSLExamples function defined locally in this file
@@ -41,6 +43,7 @@ const contextManager = new DynamicContextManager();
 let resilientGeminiService: ResilientGeminiService | null = null;
 const rateLimitManager = new IntelligentRateLimitManager();
 const feedbackManager = new UserFeedbackManager();
+const jsonOptimizer = new JSONContextOptimizer();
 
 // Initialize resilient Gemini service
 if (config.gemini.apiKey) {
@@ -139,7 +142,7 @@ async function handleSemanticChat(req: Request, res: Response): Promise<void> {
     console.log(`🔍 Retrieving semantic knowledge cards with budget: ${tokenBudget.knowledgeCards} tokens`);
     const semanticResults = await semanticStore.search(
       message,
-      Math.floor(tokenBudget.knowledgeCards / 60) // Estimate 60 tokens per card
+      8 // Limit to 8 knowledge cards to prevent token overflow
     );
     
     const knowledgeCards = semanticStore.searchResultsToKnowledgeCards(semanticResults);
@@ -152,6 +155,26 @@ async function handleSemanticChat(req: Request, res: Response): Promise<void> {
     // 7. Build simplified prompt
     const chatHistoryForPrompt = recentHistory;
 
+    // Handle JSON context optimization
+    let optimizedJsonContext: string | undefined;
+    if (jsonContext) {
+      const uploadedData = jsonStore.get(sessionId);
+      
+      if (uploadedData) {
+        const jsonResult = jsonOptimizer.optimizeForQuery(
+          uploadedData,
+          message,
+          tokenBudget.jsonContext,
+          message.toLowerCase().includes('@fulljson')
+        );
+        
+        optimizedJsonContext = jsonResult.content;
+        console.log(`📄 JSON optimization: ${jsonResult.optimizationType} (${jsonResult.tokensUsed} tokens)`);
+      } else {
+        console.log('⚠️  JSON context requested but no data uploaded');
+      }
+    }
+
     const promptResult = promptBuilder.buildSimplePrompt(
       message,
       knowledgeCards, // Use converted knowledge cards
@@ -159,7 +182,7 @@ async function handleSemanticChat(req: Request, res: Response): Promise<void> {
       simpleResponse, // Use simplified response interface
       userProfile,
       conversationContext,
-      jsonContext ? JSON.stringify(jsonContext, null, 2) : undefined
+      optimizedJsonContext
     );
 
     // 📝 LOG: Prompt being sent to model
@@ -353,7 +376,7 @@ async function ensureMdcRulesLoaded(): Promise<void> {
     const { fileProcessor } = await import('../utils/fileProcessor');
     
     // Load .mdc files from the correct path
-    const rulesDirectory = './docs/dsl-rules';
+    const rulesDirectory = '../../docs/dsl-rules';
     const processedFiles = await fileProcessor.readRuleFiles(rulesDirectory);
     
     if (processedFiles.length === 0) {
