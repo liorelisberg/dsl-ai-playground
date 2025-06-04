@@ -55,6 +55,11 @@ ZEN DSL AI Playground is a **production-ready, comprehensive educational platfor
   - Batch loading of older messages (5 at a time) for performance
   - Visual indicators showing available older messages count
   - Automatic synchronization with session management
+- **Enhanced JSON File Processing**: Advanced file upload with intelligent context handling
+  - Support for large JSON files (up to 256KB) with automatic optimization
+  - `@fulljson` command for accessing complete uploaded data
+  - Smart token management prevents context overflow
+  - Session-based file persistence across conversations
 - **Semantic Understanding**: Vector-based knowledge retrieval with SemanticVectorStore integration
 - **Context Awareness**: Sophisticated conversation state management and user profiling
 - **JSON Integration**: Upload data for personalized DSL examples and suggestions
@@ -188,6 +193,11 @@ age >= 18 ? "Adult" : "Minor"
   - Critical validation ensures arrays are properly wrapped in objects
 - **🎯 Semantic Understanding**: Vector-based knowledge retrieval for relevant responses
 - **📁 Upload JSON**: Drag & drop files for context-aware suggestions
+- **🔥 Enhanced JSON Processing**: Advanced file handling with `@fulljson` command
+  - Upload large JSON files (up to 256KB) for AI analysis
+  - Use `@fulljson` in your messages to access complete uploaded data
+  - Example: "Generate Markets from this data @fulljson"
+  - Smart token optimization prevents context overflow
 - **❓ Ask Questions**: "How do I use the filter function in ZEN?"
 - **📚 Get Examples**: "Show me string transformation examples"
 - **🔧 Debug Help**: "Why isn't my expression working?"

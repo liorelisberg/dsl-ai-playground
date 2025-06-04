@@ -29,7 +29,7 @@ describe('Session Management Implementation Validation', () => {
         .send({
           message: 'Hello, I want to learn about arrays in ZEN DSL',
           sessionId: testSessionId,
-          maxTokens: 8000
+          maxTokens: 16000
         })
         .timeout(15000)
         .expect(200);
@@ -45,7 +45,7 @@ describe('Session Management Implementation Validation', () => {
         .send({
           message: 'What did I just ask about?',
           sessionId: testSessionId,
-          maxTokens: 8000
+          maxTokens: 16000
         })
         .timeout(15000)
         .expect(200);
@@ -86,7 +86,7 @@ describe('Session Management Implementation Validation', () => {
           .send({
             message: messages[i],
             sessionId,
-            maxTokens: 8000
+            maxTokens: 16000
           })
           .timeout(15000)
           .expect(200);

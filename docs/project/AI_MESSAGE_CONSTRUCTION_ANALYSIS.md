@@ -56,7 +56,7 @@ The ZEN DSL AI Playground implements a sophisticated multi-layered AI conversati
 - **Automatic Fallback**: Switches to Gemini 1.5 Flash when 2.0 Flash is unavailable
 - **Error Detection**: Handles 503, 429, 500 status codes and capacity/quota errors
 - **Fallback Tracking**: Monitors fallback usage and provides user feedback
-- **Model Configuration**: Temperature 0.7, topK 40, topP 0.95, maxTokens 8192
+- **Model Configuration**: Temperature 0.7, topK 40, topP 0.95, maxTokens 16384
 
 #### **Implementation Details**
 ```typescript
