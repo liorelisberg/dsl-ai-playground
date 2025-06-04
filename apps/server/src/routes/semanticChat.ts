@@ -14,7 +14,6 @@ import { ResilientGeminiService } from '../services/resilientGeminiService';
 import { IntelligentRateLimitManager } from '../services/rateLimitManager';
 import { UserFeedbackManager } from '../services/userFeedbackManager';
 import { Document } from '../services/vectorStore';
-import { JSONContextOptimizer } from '../services/jsonOptimizer';
 import { jsonStore } from '../api/upload';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -43,7 +42,6 @@ const contextManager = new DynamicContextManager();
 let resilientGeminiService: ResilientGeminiService | null = null;
 const rateLimitManager = new IntelligentRateLimitManager();
 const feedbackManager = new UserFeedbackManager();
-const jsonOptimizer = new JSONContextOptimizer();
 
 // Initialize resilient Gemini service
 if (config.gemini.apiKey) {
@@ -158,33 +156,19 @@ async function handleSemanticChat(req: Request, res: Response): Promise<void> {
     // 7. Build simplified prompt
     const chatHistoryForPrompt = recentHistory;
 
-    // Handle JSON context optimization
+    // Handle JSON context with simple processing
     let optimizedJsonContext: string | undefined;
     if (hasJsonRequest) {
       // First, try to get uploaded file data (priority)
       const uploadedData = jsonStore.get(sessionId);
       
       if (uploadedData) {
-        const jsonResult = jsonOptimizer.optimizeForQuery(
-          uploadedData,
-          message,
-          tokenBudget.jsonContext,
-          message.toLowerCase().includes('@fulljson')
-        );
-        
-        optimizedJsonContext = jsonResult.content;
-        console.log(`📄 JSON optimization (uploaded file): ${jsonResult.optimizationType} (${jsonResult.tokensUsed} tokens)`);
+        optimizedJsonContext = JSON.stringify(uploadedData, null, 2);
+        console.log(`📄 JSON context: Using full uploaded data`);
       } else if (jsonContext) {
         // Fall back to request body jsonContext if no uploaded file
-        const jsonResult = jsonOptimizer.optimizeForQuery(
-          jsonContext,
-          message,
-          tokenBudget.jsonContext,
-          message.toLowerCase().includes('@fulljson')
-        );
-        
-        optimizedJsonContext = jsonResult.content;
-        console.log(`📄 JSON optimization (request body): ${jsonResult.optimizationType} (${jsonResult.tokensUsed} tokens)`);
+        optimizedJsonContext = JSON.stringify(jsonContext, null, 2);
+        console.log(`📄 JSON context: Using request body data`);
       } else {
         console.log('⚠️  JSON context requested but no data available for session:', sessionId);
       }

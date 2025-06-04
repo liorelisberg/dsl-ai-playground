@@ -248,50 +248,14 @@ Always provide clear explanations and practical examples.`);
     if (jsonContext) {
       sections.push('\n**Available JSON Data Context:**');
       
-      // Provide a schema snippet instead of full JSON to save tokens
-      const jsonSchema = this.generateJsonSchema(jsonContext);
-      sections.push(`Data structure available for expressions:\n\`\`\`json\n${jsonSchema}\n\`\`\``);
-      
-      // Check if user wants full JSON (this would trigger TPM guard)
-      if (message.includes('@fulljson') || message.includes('Include full JSON')) {
-        sections.push('\n**Full JSON Data:**');
-        sections.push(`\`\`\`json\n${JSON.stringify(jsonContext, null, 2)}\n\`\`\``);
-      }
+      // Use full JSON data directly
+      sections.push(`\`\`\`json\n${JSON.stringify(jsonContext, null, 2)}\n\`\`\``);
     }
 
     // 4. Current User Message
     sections.push(`\n**Current Question:**\n${message}`);
 
     return sections.join('\n');
-  }
-
-  /**
-   * Generate a compact JSON schema representation
-   */
-  private generateJsonSchema(obj: unknown, maxDepth: number = 2, currentDepth: number = 0): string {
-    if (currentDepth >= maxDepth) return '...';
-    
-    if (Array.isArray(obj)) {
-      if (obj.length === 0) return '[]';
-      return `[${this.generateJsonSchema(obj[0], maxDepth, currentDepth + 1)}, ...]`;
-    }
-    
-    if (obj && typeof obj === 'object') {
-      const keys = Object.keys(obj).slice(0, 5); // Limit to first 5 keys
-      const schemaObj: Record<string, unknown> = {};
-      
-      for (const key of keys) {
-        schemaObj[key] = this.generateJsonSchema((obj as Record<string, unknown>)[key], maxDepth, currentDepth + 1);
-      }
-      
-      if (Object.keys(obj).length > 5) {
-        schemaObj['...'] = 'more properties';
-      }
-      
-      return JSON.stringify(schemaObj, null, 2);
-    }
-    
-    return typeof obj;
   }
 }
 

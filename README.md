@@ -14,7 +14,7 @@ ZEN DSL AI Playground is a **production-ready, comprehensive educational platfor
 - **⚡ Real-Time Execution**: Sub-millisecond ZEN expression evaluation using Rust-powered GoRules Zen Engine  
 - **🧠 Semantic Knowledge Retrieval**: Vector-based knowledge system for contextual learning
 - **📁 Intelligent Context Management**: JSON file uploads for personalized learning experiences
-- **🎨 Modern UI/UX**: Responsive design with dark/light themes and advanced JSON visualization
+- **🎨 Modern UI/UX**: with dark/light themes and advanced JSON visualization
 - **🔒 Enterprise Security**: Production-grade rate limiting, session management, and input validation
 - **📚 Comprehensive Examples**: 424+ validated ZEN expressions across 19 categories
 

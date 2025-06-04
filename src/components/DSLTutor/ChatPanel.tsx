@@ -25,6 +25,14 @@ import { sendChatMessage } from '@/services/chatService';
 import { useSession, useSessionControls } from '@/contexts/SessionContext';
 import DSLCodeBlock from './DSLCodeBlock';
 import { UPLOAD_CONFIG } from '@/config/upload';
+import { 
+  validateMessageAttachment, 
+  compressJson,
+  validateJsonContent,
+  registerAttachment,
+  consumeAttachment,
+  estimateTokenization
+} from '@/config/upload';
 
 interface ChatPanelProps {
   chatHistory: ChatMessage[];
@@ -56,18 +64,22 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
   onChatToParser,
   onSetInputMessage
 }) => {
-  const [inputMessage, setInputMessage] = useState('');
+  const [inputMessage, setInputMessage] = useState<string>('');
   const [isLoading, setIsLoading] = useState(false);
   const [uploadedFile, setUploadedFile] = useState<UploadedFile | null>(null);
-  const [attachmentMode, setAttachmentMode] = useState<'schema' | 'fulljson'>('schema');
+  const [jsonProcessingMode, setJsonProcessingMode] = useState<'full' | 'compressed'>('compressed');
   const [copiedMessageIndex, setCopiedMessageIndex] = useState<number | null>(null);
   const [inputAreaHeight, setInputAreaHeight] = useState(120);
   const [isDragging, setIsDragging] = useState(false);
   
+  // Calculate JSON component height dynamically
+  const jsonComponentHeight = uploadedFile ? 60 : 0; // JSON component adds ~60px when visible
+  
   // Frontend-only message history (separate from AI context)
   const [frontendMessageHistory, setFrontendMessageHistory] = useState<ChatMessage[]>([]);
   const [visibleMessageCount, setVisibleMessageCount] = useState(10); // Show last 10 messages by default
-  const [isLoadingOlderMessages, setIsLoadingOlderMessages] = useState(false);
+  const [loadingOlderMessages, setLoadingOlderMessages] = useState(false);
+  const [currentMessageId] = useState(() => `msg_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`);
   
   // Session management
   const { sessionId, sessionMetrics, isSessionValid } = useSession();
@@ -112,12 +124,12 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
 
   // Load older messages function
   const handleLoadOlderMessages = useCallback(() => {
-    setIsLoadingOlderMessages(true);
+    setLoadingOlderMessages(true);
     
     // Simulate loading delay for better UX
     setTimeout(() => {
       setVisibleMessageCount(prev => Math.min(prev + LOAD_OLDER_BATCH_SIZE, frontendMessageHistory.length));
-      setIsLoadingOlderMessages(false);
+      setLoadingOlderMessages(false);
     }, 300);
   }, [frontendMessageHistory.length]);
 
@@ -254,6 +266,30 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
     }
 
     try {
+      // Read and validate JSON content BEFORE uploading
+      const fileContent = await file.text();
+      const contentValidation = await validateJsonContent(fileContent);
+      
+      if (!contentValidation.isValid) {
+        const errorMsg = contentValidation.errors[0] || "Invalid JSON format";
+        onJsonUploadError?.(errorMsg);
+        toast({
+          title: "Invalid JSON Format",
+          description: errorMsg,
+          variant: "destructive"
+        });
+        return;
+      }
+
+      // Show warnings if any
+      if (contentValidation.warnings.length > 0) {
+        toast({
+          title: "JSON Validation Warnings",
+          description: contentValidation.warnings[0],
+          variant: "default"
+        });
+      }
+
       // Upload to backend
       const formData = new FormData();
       formData.append('file', file);
@@ -271,30 +307,41 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
 
       const result = await response.json();
       
-      // Parse locally for display
-      const content = JSON.parse(await file.text());
+      // Use validated parsed JSON instead of re-parsing
+      const content = contentValidation.parsedJson!;
       setUploadedFile({ name: file.name, content });
 
-      // Create metadata
+      // Create enhanced metadata with validation info
       const metadata: JsonMetadata = {
         filename: file.name,
         sizeBytes: result.sizeBytes,
-        topLevelKeys: result.topLevelKeys || [],
-        uploadTime: new Date().toISOString()
+        topLevelKeys: result.topLevelKeys || contentValidation.metadata.topLevelKeys,
+        uploadTime: new Date().toISOString(),
+        complexity: contentValidation.metadata.complexity,
+        estimatedTokens: contentValidation.metadata.estimatedTokens,
+        depth: contentValidation.metadata.depth
       };
 
       onJsonUploadSuccess?.(metadata);
       
+      // Register attachment for message-specific validation
+      registerAttachment(file.name, currentMessageId);
+      
       toast({
-        title: "File Uploaded",
-        description: `${file.name} uploaded successfully - AI now has context about your data`,
+        title: "File Uploaded Successfully",
+        description: `${file.name} uploaded and validated - AI now has context about your data`,
       });
     } catch (error) {
       console.error('Upload error:', error);
       const errorMsg = error instanceof Error ? error.message : "Failed to upload file";
+      
+      // Clear any uploaded file state on error
+      setUploadedFile(null);
+      onClearJsonFile?.();
+      
       onJsonUploadError?.(errorMsg);
       toast({
-        title: "Upload Failed",
+        title: "Upload Failed", 
         description: errorMsg,
         variant: "destructive"
       });
@@ -324,8 +371,48 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
       updateActivity(); // Track user activity
       
       const messageContent = safeInputMessage.trim();
+
+      // Validate JSON attachment for current message
+      if (uploadedFile && currentJsonFile) {
+        const validation = validateMessageAttachment(currentJsonFile.filename, currentMessageId);
+        if (!validation.isValid) {
+          toast({
+            title: "Attachment Error",
+            description: validation.error || "JSON file is not properly attached to this message",
+            variant: "destructive"
+          });
+          return;
+        }
+
+        // Check if estimated tokens exceed limits with dynamic calculation based on processing mode
+        if (uploadedFile && currentJsonFile) {
+          // Calculate dynamic token estimate based on current processing mode
+          const originalContent = JSON.stringify(uploadedFile.content);
+          const tokenEstimate = estimateTokenization(originalContent, jsonProcessingMode);
+          const estimatedTokens = tokenEstimate.tokens + tokenEstimate.overhead;
+          
+          if (estimatedTokens > 15000) {
+            const modeDescription = jsonProcessingMode === 'compressed' ? 'Compressed' : 'Full JSON';
+            const proceed = window.confirm(
+              `This JSON file in ${modeDescription} mode may use ~${estimatedTokens} tokens, which could exceed limits. Continue anyway?`
+            );
+            if (!proceed) {
+              setIsLoading(false);
+              return;
+            }
+          }
+        }
+      }
       
-      // Create user message with attachment metadata
+      // Calculate dynamic token estimate for user message metadata
+      let userMessageTokens = undefined;
+      if (uploadedFile) {
+        const originalContent = JSON.stringify(uploadedFile.content);
+        const tokenEstimate = estimateTokenization(originalContent, jsonProcessingMode);
+        userMessageTokens = tokenEstimate.tokens + tokenEstimate.overhead;
+      }
+      
+      // Create user message with enhanced attachment metadata
       const userMessage: ChatMessage = {
         role: 'user',
         content: messageContent,
@@ -334,9 +421,12 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
           attachedFile: {
             filename: uploadedFile.name,
             type: 'json',
-            mode: attachmentMode,
+            mode: jsonProcessingMode,
             sizeBytes: currentJsonFile?.sizeBytes,
-            topLevelKeys: currentJsonFile?.topLevelKeys
+            topLevelKeys: currentJsonFile?.topLevelKeys,
+            complexity: currentJsonFile?.complexity,
+            estimatedTokens: userMessageTokens,
+            messageId: currentMessageId
           }
         } : undefined
       };
@@ -345,36 +435,108 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
       onNewMessage(userMessage);
       setInputMessage('');
       
-      // Prepare context for AI
-      let messageWithContext = messageContent;
+      // Capture uploaded file content before clearing UI state
+      const capturedUploadedFile = uploadedFile;
       
-      // Add JSON context if available (use fulljson mode for AI context)
-      if (uploadedFile && attachmentMode === 'fulljson') {
-        messageWithContext = `${messageContent}\n\n[JSON Context: ${JSON.stringify(uploadedFile.content, null, 2)}]`;
+      // Clear uploaded file immediately after sending user message (JSON is now "consumed")
+      if (uploadedFile) {
+        // Mark attachment as consumed to prevent reuse
+        consumeAttachment(uploadedFile.name);
+        setUploadedFile(null);
+        onClearJsonFile?.();
       }
       
-      // Send to AI
+      // Prepare context for AI based on processing mode
+      let messageWithContext = messageContent;
+      let jsonContextData = capturedUploadedFile?.content;
+
+      if (capturedUploadedFile && jsonProcessingMode !== 'full') {
+        try {
+          if (jsonProcessingMode === 'compressed') {
+            // Use compressed JSON with validation
+            const compressionResult = compressJson(capturedUploadedFile.content, 'structured');
+            
+            // Validate compression effectiveness
+            if (compressionResult.compressionRatio >= 0.95) {
+              console.warn('Minimal compression achieved:', compressionResult);
+              toast({
+                title: "Compression Notice",
+                description: `Compression only reduced size by ${((1 - compressionResult.compressionRatio) * 100).toFixed(1)}%`,
+                variant: "default"
+              });
+            }
+            
+            jsonContextData = JSON.parse(compressionResult.compressed);
+            messageWithContext = `${messageContent}\n\n[Compressed JSON Context: ${compressionResult.compressed}]`;
+            
+            console.log(`✅ Compression successful: ${compressionResult.originalSize}B → ${compressionResult.compressedSize}B (${(compressionResult.compressionRatio * 100).toFixed(1)}% of original)`);
+          }
+        } catch (error) {
+          console.error('JSON processing failed:', error);
+          toast({
+            title: "Processing Error",
+            description: "Failed to process JSON file. Using original format.",
+            variant: "default"
+          });
+          // Fall back to original content
+          jsonContextData = capturedUploadedFile.content;
+          messageWithContext = `${messageContent}\n\n[JSON Context: ${JSON.stringify(capturedUploadedFile.content, null, 2)}]`;
+        }
+      } else if (capturedUploadedFile && jsonProcessingMode === 'full') {
+        // Use full JSON content with size validation
+        const fullJsonString = JSON.stringify(capturedUploadedFile.content, null, 2);
+        const fullJsonSize = fullJsonString.length;
+        
+        if (fullJsonSize > 50000) { // 50KB warning threshold
+          console.warn(`Large JSON size: ${fullJsonSize} bytes`);
+          toast({
+            title: "Large JSON Warning",
+            description: `Full JSON is ${Math.round(fullJsonSize / 1024)}KB. This may consume significant tokens.`,
+            variant: "default"
+          });
+        }
+        
+        messageWithContext = `${messageContent}\n\n[JSON Context: ${fullJsonString}]`;
+        console.log(`✅ Full JSON mode: ${fullJsonSize}B`);
+      }
+      
+      // Calculate dynamic token estimate for API call
+      let contextTokens = 0;
+      if (capturedUploadedFile) {
+        const originalContent = JSON.stringify(capturedUploadedFile.content);
+        const tokenEstimate = estimateTokenization(originalContent, jsonProcessingMode);
+        contextTokens = tokenEstimate.tokens + tokenEstimate.overhead;
+      }
+      
+      // Send to AI with processed context
       const response: ChatResponse = await sendChatMessage(messageWithContext, chatHistory, {
         sessionId,
-        jsonContext: uploadedFile?.content
+        jsonContext: jsonContextData,
+        maxTokens: contextTokens > 10000 ? 16000 : undefined
       });
       
-      // Add AI response
+      // Add AI response with processing metadata
       const aiMessage: ChatMessage = {
         role: 'assistant',
         content: response.text,
         timestamp: new Date().toISOString(),
         metadata: {
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
+          processingMode: capturedUploadedFile ? jsonProcessingMode : undefined,
+          contextTokens: contextTokens || undefined,
+          sessionId: response.sessionId
         }
       };
       
       onNewMessage(aiMessage);
       
-      // Clear uploaded file after sending
-      if (uploadedFile) {
-        setUploadedFile(null);
-        setAttachmentMode('schema');
+      // Validate that JSON context was properly processed
+      if (capturedUploadedFile && !response.text.toLowerCase().includes('json')) {
+        toast({
+          title: "Context Warning",
+          description: "AI response may not have used JSON context. Please verify the response.",
+          variant: "default"
+        });
       }
       
     } catch (error) {
@@ -391,7 +553,6 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
 
   const removeUploadedFile = () => {
     setUploadedFile(null);
-    setAttachmentMode('schema');
     onClearJsonFile?.();
   };
 
@@ -434,6 +595,55 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
     );
   };
 
+  // Calculate file size based on processing mode
+  const calculateProcessedFileSize = (attachedFile: { sizeBytes?: number; mode?: string }) => {
+    if (!attachedFile) return '';
+    
+    const originalSizeKB = attachedFile.sizeBytes ? Math.round(attachedFile.sizeBytes / 1024) : 0;
+    
+    // Estimate sizes for different processing modes
+    switch (attachedFile.mode) {
+      case 'full':
+        return `${originalSizeKB}KB`;
+      case 'compressed':
+        // Compressed is typically 30-50% of original
+        return `${Math.max(1, Math.round(originalSizeKB * 0.4))}KB`;
+      default:
+        return `${originalSizeKB}KB`;
+    }
+  };
+
+  // Render enhanced time and attachment display for user messages
+  const renderUserMessageMetadata = (message: ChatMessage) => {
+    if (!message.timestamp) return null;
+
+    const time = new Date(message.timestamp);
+    const timeString = time.toLocaleTimeString('en-US', { 
+      hour: '2-digit', 
+      minute: '2-digit',
+      hour12: false 
+    });
+
+    return (
+      <div className="text-xs text-slate-400 dark:text-slate-500 mt-2 flex items-center space-x-2">
+        <div className="flex items-center space-x-1">
+          <Clock className="h-3 w-3" />
+          <span>{timeString}</span>
+        </div>
+        {message.metadata?.attachedFile && (
+          <>
+            <div className="flex items-center space-x-1">
+              <FileJson className="h-3 w-3" />
+              <span>{message.metadata.attachedFile.filename}</span>
+            </div>
+            <span className="font-semibold">{message.metadata.attachedFile.mode}</span>
+            <span>{calculateProcessedFileSize(message.metadata.attachedFile)}</span>
+          </>
+        )}
+      </div>
+    );
+  };
+
   return (
     <div ref={containerRef} className="flex flex-col h-full">
       {/* Chat Header - Updated with Context Indicator */}
@@ -446,9 +656,6 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
             <div>
               <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100 flex items-center">
                 Intelligent AI Assistant
-                <Badge variant="secondary" className="ml-2 text-xs">
-                  Context-Aware
-                </Badge>
                 {currentJsonFile && (
                   <Badge variant="outline" className="ml-2 text-xs flex items-center">
                     <FileJson className="h-3 w-3 mr-1" />
@@ -543,8 +750,8 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
 
       {/* Chat Messages - Dynamic Height */}
       <div 
-        className="flex-1 overflow-y-auto p-6 space-y-6"
-        style={{ height: `calc(100% - ${inputAreaHeight + 120}px)` }}
+        className="flex-1 overflow-y-auto overflow-x-hidden p-6 space-y-6"
+        style={{ height: `calc(100% - ${inputAreaHeight + jsonComponentHeight + 120}px)` }}
       >
         {/* Load Older Messages Button */}
         {hasOlderMessages && (
@@ -553,10 +760,10 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
               variant="ghost"
               size="sm"
               onClick={handleLoadOlderMessages}
-              disabled={isLoadingOlderMessages}
+              disabled={loadingOlderMessages}
               className="group flex items-center space-x-2 px-4 py-2 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-full transition-all duration-200"
             >
-              {isLoadingOlderMessages ? (
+              {loadingOlderMessages ? (
                 <>
                   <Loader2 className="h-4 w-4 animate-spin" />
                   <span className="text-sm">Loading...</span>
@@ -581,31 +788,31 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
             key={index}
             className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
           >
-            <div className="flex items-start space-x-3 max-w-[85%]">
+            <div className="flex items-start space-x-3 max-w-[85%] min-w-0">
               {message.role === 'assistant' && (
                 <div className="w-8 h-8 bg-gradient-to-r from-indigo-600 to-emerald-500 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
                   <Brain className="h-4 w-4 text-white" />
                 </div>
               )}
-              <div className="relative group">
+              <div className="relative group min-w-0 flex-1">
                 <div
-                  className={`rounded-2xl px-4 py-3 shadow-sm ${
+                  className={`rounded-2xl px-4 py-3 shadow-sm overflow-hidden ${
                     message.role === 'user'
                       ? 'bg-indigo-600 text-white ml-auto'
                       : 'bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-900 dark:text-slate-100'
                   }`}
                 >
                   {message.role === 'assistant' ? (
-                    <div className="prose prose-sm max-w-none dark:prose-invert">
+                    <div className="prose prose-sm max-w-full dark:prose-invert prose-pre:max-w-full prose-pre:overflow-x-auto prose-pre:text-xs prose-code:text-xs prose-code:break-words">
                       <DSLCodeBlock 
                         content={message.content}
                         onChatToParser={onChatToParser}
                       />
                     </div>
                   ) : (
-                    <div className="prose prose-sm max-w-none">
+                    <div className="prose prose-sm max-w-full break-words">
                       {message.content.split('\n').map((line, lineIndex) => (
-                        <p key={lineIndex} className={`mb-2 last:mb-0 ${message.role === 'user' ? 'text-white' : ''}`}>
+                        <p key={lineIndex} className={`mb-2 last:mb-0 break-words ${message.role === 'user' ? 'text-white' : ''}`}>
                           {line}
                         </p>
                       ))}
@@ -618,17 +825,7 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
                   message.metadata && renderTimeDisplay(message.metadata.timestamp)
                 ) : (
                   <>
-                    {renderTimeDisplay(message.timestamp)}
-                    {/* Attachment indicator for user messages */}
-                    {message.metadata?.attachedFile && (
-                      <div className="text-xs text-slate-400 dark:text-slate-500 mt-1 flex items-center space-x-1">
-                        <FileJson className="h-3 w-3" />
-                        <span>{message.metadata.attachedFile.filename}</span>
-                        <Badge variant="outline" className="text-xs px-1 py-0 h-4">
-                          {message.metadata.attachedFile.mode}
-                        </Badge>
-                      </div>
-                    )}
+                    {renderUserMessageMetadata(message)}
                   </>
                 )}
                 
@@ -673,22 +870,10 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
         <div ref={chatEndRef} />
       </div>
 
-      {/* Resize Handle */}
-      <div 
-        className={`flex items-center justify-center h-1 bg-slate-200 dark:bg-slate-600 border-slate-300 dark:border-slate-500 cursor-row-resize hover:bg-slate-300 dark:hover:bg-slate-500 transition-all duration-150 group ${isDragging ? 'bg-slate-300 dark:bg-slate-500' : ''}`}
-        onMouseDown={handleMouseDown}
-      >
-        <div className="w-8 h-0.5 bg-slate-400 dark:bg-slate-400 rounded-full opacity-60 group-hover:opacity-100 transition-opacity" />
-      </div>
-
-      {/* Message Input - Dynamic Height */}
-      <div 
-        className="border-t border-slate-200 dark:border-slate-700 p-2 bg-slate-50 dark:bg-slate-800 flex-shrink-0 mb-3"
-        style={{ height: `${inputAreaHeight}px` }}
-      >
-        {/* Uploaded File Indicator - Show new attachment UI */}
-        {uploadedFile && (
-          <div className="mb-2 flex items-center justify-between bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg px-3 py-2">
+      {/* Uploaded File Indicator - Positioned ABOVE drag bar */}
+      {uploadedFile && (
+        <div className="px-2 py-2 bg-slate-50 dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700">
+          <div className="flex items-center justify-between bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg px-3 py-2">
             <div className="flex items-center space-x-2">
               <FileJson className="h-4 w-4 text-blue-600 dark:text-blue-400" />
               <span className="text-sm font-medium text-blue-700 dark:text-blue-300">{uploadedFile.name}</span>
@@ -696,29 +881,30 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
                 {currentJsonFile?.sizeBytes ? `${Math.round(currentJsonFile.sizeBytes / 1024)}KB` : 'JSON'}
               </Badge>
               
-              {/* Schema vs FullJSON Toggle */}
+              {/* JSON Processing Mode Toggle */}
               <div className="flex items-center space-x-2 ml-4">
+                <span className="text-xs text-blue-600 dark:text-blue-400 font-medium">Mode:</span>
                 <label className="flex items-center space-x-1">
                   <input
                     type="radio"
-                    name="attachmentMode"
-                    value="schema"
-                    checked={attachmentMode === 'schema'}
-                    onChange={(e) => setAttachmentMode(e.target.value as 'schema')}
+                    name="jsonProcessingMode"
+                    value="compressed"
+                    checked={jsonProcessingMode === 'compressed'}
+                    onChange={(e) => setJsonProcessingMode(e.target.value as 'compressed')}
                     className="text-blue-600 focus:ring-blue-500"
                   />
-                  <span className="text-xs text-blue-700 dark:text-blue-300">Schema</span>
+                  <span className="text-xs text-blue-700 dark:text-blue-300">Compressed</span>
                 </label>
                 <label className="flex items-center space-x-1">
                   <input
                     type="radio"
-                    name="attachmentMode"
-                    value="fulljson"
-                    checked={attachmentMode === 'fulljson'}
-                    onChange={(e) => setAttachmentMode(e.target.value as 'fulljson')}
+                    name="jsonProcessingMode"
+                    value="full"
+                    checked={jsonProcessingMode === 'full'}
+                    onChange={(e) => setJsonProcessingMode(e.target.value as 'full')}
                     className="text-blue-600 focus:ring-blue-500"
                   />
-                  <span className="text-xs text-blue-700 dark:text-blue-300">Full JSON</span>
+                  <span className="text-xs text-blue-700 dark:text-blue-300">Full</span>
                 </label>
               </div>
             </div>
@@ -731,8 +917,22 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
               <X className="h-3 w-3" />
             </Button>
           </div>
-        )}
-        
+        </div>
+      )}
+
+      {/* Resize Handle */}
+      <div 
+        className={`flex items-center justify-center h-1 bg-slate-200 dark:bg-slate-600 border-slate-300 dark:border-slate-500 cursor-row-resize hover:bg-slate-300 dark:hover:bg-slate-500 transition-all duration-150 group ${isDragging ? 'bg-slate-300 dark:bg-slate-500' : ''}`}
+        onMouseDown={handleMouseDown}
+      >
+        <div className="w-8 h-0.5 bg-slate-400 dark:bg-slate-400 rounded-full opacity-60 group-hover:opacity-100 transition-opacity" />
+      </div>
+
+      {/* Message Input - Fixed Height */}
+      <div 
+        className="border-t border-slate-200 dark:border-slate-700 p-2 bg-slate-50 dark:bg-slate-800 flex-shrink-0 mb-3"
+        style={{ height: `${inputAreaHeight}px` }}
+      >        
         <div className="flex space-x-2 items-start mt-3 mb-3">
           {/* Text Input */}
           <div className="flex-1 relative mx-2">

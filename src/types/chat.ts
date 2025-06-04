@@ -10,12 +10,17 @@ export interface ChatMetadata {
   sessionId?: string;
   processingTime?: number;
   tokensUsed?: number;
+  processingMode?: 'full' | 'compressed';
+  contextTokens?: number;
   attachedFile?: {
     filename: string;
     type: 'json';
-    mode: 'schema' | 'fulljson';
+    mode: 'full' | 'compressed';
     sizeBytes?: number;
     topLevelKeys?: string[];
+    complexity?: 'simple' | 'moderate' | 'complex';
+    estimatedTokens?: number;
+    messageId?: string;
   };
 }
 

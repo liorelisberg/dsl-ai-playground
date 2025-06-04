@@ -1,19 +1,30 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
-import { Upload, File, X, Check, FileJson, AlertCircle } from 'lucide-react';
+import { Upload, File, X, Check, FileJson, AlertCircle, Settings, Zap } from 'lucide-react';
 import { toast } from "@/hooks/use-toast";
-import { UPLOAD_CONFIG, validateJsonFile, formatFileSize } from '@/config/upload';
+import { 
+  UPLOAD_CONFIG, 
+  validateJsonFile, 
+  validateJsonContent,
+  compressJson,
+  formatFileSize,
+  estimateTokenization
+} from '@/config/upload';
 
 export interface JsonMetadata {
   filename: string;
   sizeBytes: number;
   topLevelKeys: string[];
   uploadTime: string;
+  complexity?: 'simple' | 'moderate' | 'complex';
+  estimatedTokens?: number;
+  depth?: number;
+  compressionRatio?: number;
 }
 
 interface JsonUploadProps {
@@ -21,6 +32,8 @@ interface JsonUploadProps {
   onUploadError?: (error: string) => void;
   onClearFile?: () => void;
   currentFile?: JsonMetadata | null;
+  mode?: 'full' | 'compressed'; // Processing mode
+  onModeChange?: (mode: 'full' | 'compressed') => void;
 }
 
 interface FileRejectionError {
@@ -37,12 +50,51 @@ export const JsonUpload: React.FC<JsonUploadProps> = ({
   onUploadSuccess, 
   onUploadError,
   onClearFile,
-  currentFile
+  currentFile,
+  mode = 'compressed',
+  onModeChange
 }) => {
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [preview, setPreview] = useState<string>('');
   const [error, setError] = useState<string>('');
+  const [warnings, setWarnings] = useState<string[]>([]);
+  const [processingMode, setProcessingMode] = useState<'full' | 'compressed'>(mode);
+  const [jsonAnalysis, setJsonAnalysis] = useState<{
+    original: unknown;
+    compressed?: string;
+    tokenEstimates: Record<string, { tokens: number; overhead: number; description: string }>;
+  } | null>(null);
+
+  // Update internal mode when prop changes
+  useEffect(() => {
+    setProcessingMode(mode);
+  }, [mode]);
+
+  const handleModeChange = (newMode: 'full' | 'compressed') => {
+    setProcessingMode(newMode);
+    onModeChange?.(newMode);
+    
+    // Show different preview based on mode
+    if (jsonAnalysis) {
+      updatePreviewForMode(newMode);
+    }
+  };
+
+  const updatePreviewForMode = useCallback((mode: 'full' | 'compressed') => {
+    if (!jsonAnalysis) return;
+
+    let content: string;
+    switch (mode) {
+      case 'compressed':
+        content = jsonAnalysis.compressed || '';
+        break;
+      default:
+        content = JSON.stringify(jsonAnalysis.original, null, 2);
+    }
+
+    setPreview(content.length > 500 ? content.substring(0, 500) + '...' : content);
+  }, [jsonAnalysis]);
 
   const onDrop = useCallback(async (acceptedFiles: File[], fileRejections: FileRejection[]) => {
     // Handle rejections
@@ -75,7 +127,7 @@ export const JsonUpload: React.FC<JsonUploadProps> = ({
     const file = acceptedFiles[0];
     if (!file) return;
 
-    // Additional validation using centralized function
+    // Basic file validation
     const validation = validateJsonFile(file);
     if (!validation.isValid) {
       const errorMsg = validation.errors[0];
@@ -92,86 +144,114 @@ export const JsonUpload: React.FC<JsonUploadProps> = ({
     setIsUploading(true);
     setUploadProgress(0);
     setError('');
+    setWarnings([]);
 
     try {
-      // Read file for preview and validation
+      // Read and validate JSON content
       const text = await file.text();
-      let parsedJson;
-      
-      try {
-        parsedJson = JSON.parse(text);
-      } catch (parseError) { // eslint-disable-line @typescript-eslint/no-unused-vars
-        throw new Error(UPLOAD_CONFIG.json.errorMessages.invalidFormat);
+      const contentValidation = await validateJsonContent(text);
+
+      if (!contentValidation.isValid) {
+        throw new Error(contentValidation.errors[0]);
       }
 
-      // Generate preview
-      const previewText = JSON.stringify(parsedJson, null, 2);
-      setPreview(previewText.length > 300 ? previewText.substring(0, 300) + '...' : previewText);
-
-      // Simulate upload progress
-      for (let i = 0; i <= 90; i += 10) {
-        setUploadProgress(i);
-        await new Promise(resolve => setTimeout(resolve, 50));
+      // Show warnings if any
+      if (contentValidation.warnings.length > 0) {
+        setWarnings(contentValidation.warnings);
+        toast({
+          title: "Validation Warnings",
+          description: contentValidation.warnings[0],
+          variant: "default"
+        });
       }
 
-      // Upload file to backend
-      const formData = new FormData();
-      formData.append('file', file);
+      setUploadProgress(30);
 
-      const response = await fetch('/api/upload-json', {
-        method: 'POST',
-        body: formData,
-        credentials: 'include'
-      });
+      // Generate different representations
+      const parsedJson = contentValidation.parsedJson!;
 
-      if (!response.ok) {
-        throw new Error(`Upload failed: ${response.statusText}`);
-      }
+      setUploadProgress(50);
 
-      const result = await response.json();
-      setUploadProgress(100);
+      // Generate compressed version
+      const compressionResult = compressJson(parsedJson, 'structured');
+
+      setUploadProgress(70);
+
+      // Calculate token estimates for all modes
+      const tokenEstimates = {
+        full: estimateTokenization(text, 'full'),
+        compressed: estimateTokenization(compressionResult.compressed, 'compressed')
+      };
+
+      // Store analysis for preview switching
+      const analysis = {
+        original: parsedJson,
+        compressed: compressionResult.compressed,
+        tokenEstimates
+      };
+      setJsonAnalysis(analysis);
+
+      setUploadProgress(90);
 
       // Create metadata object
       const metadata: JsonMetadata = {
         filename: file.name,
-        sizeBytes: result.sizeBytes,
-        topLevelKeys: result.topLevelKeys || [],
-        uploadTime: new Date().toISOString()
+        sizeBytes: file.size,
+        topLevelKeys: contentValidation.metadata.topLevelKeys,
+        uploadTime: new Date().toISOString(),
+        complexity: contentValidation.metadata.complexity,
+        estimatedTokens: tokenEstimates[processingMode].tokens,
+        depth: contentValidation.metadata.depth,
+        compressionRatio: compressionResult.compressionRatio
       };
 
-      onUploadSuccess?.(metadata);
-      
-      toast({
-        title: "File Uploaded Successfully",
-        description: `${file.name} (${formatFileSize(result.sizeBytes)}) with ${result.topLevelKeys?.length || 0} top-level keys`,
-      });
+      // Update preview for current mode
+      updatePreviewForMode(processingMode);
+
+      setUploadProgress(100);
+
+      // Complete upload
+      setTimeout(() => {
+        setIsUploading(false);
+        setUploadProgress(0);
+        onUploadSuccess?.(metadata);
+        
+        toast({
+          title: "Upload Successful",
+          description: `${file.name} (${formatFileSize(file.size)}) processed successfully`,
+          variant: "default"
+        });
+      }, 500);
 
     } catch (error) {
-      const errorMsg = error instanceof Error ? error.message : UPLOAD_CONFIG.json.errorMessages.uploadFailed;
-      setError(errorMsg);
-      onUploadError?.(errorMsg);
+      setIsUploading(false);
+      setUploadProgress(0);
+      const errorMessage = error instanceof Error ? error.message : 'Upload failed';
+      setError(errorMessage);
+      onUploadError?.(errorMessage);
+      
       toast({
         title: "Upload Failed",
-        description: errorMsg,
+        description: errorMessage,
         variant: "destructive"
       });
-    } finally {
-      setIsUploading(false);
-      setTimeout(() => setUploadProgress(0), 1000);
     }
-  }, [onUploadSuccess, onUploadError]);
+  }, [onUploadSuccess, onUploadError, processingMode, updatePreviewForMode]);
 
-  const { getRootProps, getInputProps, isDragActive, isDragReject } = useDropzone({
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
-    accept: { 'application/json': ['.json'] },
-    maxFiles: 1,
-    maxSize: UPLOAD_CONFIG.json.maxSizeBytes, // Now 256KB instead of 50KB
-    disabled: isUploading
+    accept: {
+      'application/json': ['.json']
+    },
+    maxSize: UPLOAD_CONFIG.json.maxSizeBytes,
+    multiple: false
   });
 
   const clearFile = () => {
     setPreview('');
     setError('');
+    setWarnings([]);
+    setJsonAnalysis(null);
     onClearFile?.();
   };
 
@@ -182,15 +262,50 @@ export const JsonUpload: React.FC<JsonUploadProps> = ({
           <FileJson className="h-5 w-5 mr-2 text-blue-500" />
           JSON Data Context
         </h3>
-        {currentFile && (
-          <Badge variant="secondary" className="text-xs">
-            Context Active
-          </Badge>
-        )}
+        <div className="flex items-center space-x-2">
+          {currentFile && (
+            <Badge variant="secondary" className="text-xs">
+              Context Active
+            </Badge>
+          )}
+          {jsonAnalysis && (
+            <Badge variant="outline" className="text-xs">
+              {processingMode} mode
+            </Badge>
+          )}
+        </div>
       </div>
+
+      {/* Processing Mode Selector */}
+      {(currentFile || jsonAnalysis) && (
+        <div className="flex items-center space-x-2 p-3 bg-slate-50 dark:bg-slate-800 rounded-lg">
+          <Settings className="h-4 w-4 text-slate-600" />
+          <span className="text-sm font-medium text-slate-700 dark:text-slate-300">Processing Mode:</span>
+          <div className="flex space-x-1">
+            {(['full', 'compressed'] as const).map((modeOption) => (
+              <Button
+                key={modeOption}
+                variant={processingMode === modeOption ? "default" : "ghost"}
+                size="sm"
+                onClick={() => handleModeChange(modeOption)}
+                className="text-xs h-7"
+              >
+                {modeOption === 'full' && <File className="h-3 w-3 mr-1" />}
+                {modeOption === 'compressed' && <Zap className="h-3 w-3 mr-1" />}
+                {modeOption}
+                {jsonAnalysis && (
+                  <Badge variant="secondary" className="ml-1 text-xs">
+                    ~{jsonAnalysis.tokenEstimates[modeOption]?.tokens || 0}
+                  </Badge>
+                )}
+              </Button>
+            ))}
+          </div>
+        </div>
+      )}
       
       {currentFile ? (
-        // File uploaded state
+        // File uploaded state with enhanced info
         <div className="space-y-3">
           <div className="flex items-center justify-between p-4 bg-green-50 dark:bg-green-950 rounded-lg border border-green-200 dark:border-green-800">
             <div className="flex items-center space-x-3">
@@ -199,8 +314,24 @@ export const JsonUpload: React.FC<JsonUploadProps> = ({
                 <div className="font-medium text-green-900 dark:text-green-100">
                   {currentFile.filename}
                 </div>
-                <div className="text-sm text-green-700 dark:text-green-300">
-                  {(currentFile.sizeBytes / 1024).toFixed(1)}KB • {currentFile.topLevelKeys?.length || 0} keys
+                <div className="text-sm text-green-700 dark:text-green-300 flex items-center space-x-2">
+                  <span>{formatFileSize(currentFile.sizeBytes)}</span>
+                  <span>•</span>
+                  <span>{currentFile.topLevelKeys?.length || 0} keys</span>
+                  {currentFile.complexity && (
+                    <>
+                      <span>•</span>
+                      <Badge variant="outline" className="text-xs">
+                        {currentFile.complexity}
+                      </Badge>
+                    </>
+                  )}
+                  {currentFile.estimatedTokens && (
+                    <>
+                      <span>•</span>
+                      <span>~{currentFile.estimatedTokens} tokens</span>
+                    </>
+                  )}
                 </div>
               </div>
             </div>
@@ -209,7 +340,8 @@ export const JsonUpload: React.FC<JsonUploadProps> = ({
             </Button>
           </div>
           
-          <div className="text-sm text-gray-600 dark:text-gray-400">
+          {/* Enhanced metadata display */}
+          <div className="text-sm text-gray-600 dark:text-gray-400 space-y-2">
             <div className="font-medium mb-1">Available Keys:</div>
             <div className="flex flex-wrap gap-1">
               {(currentFile.topLevelKeys || []).slice(0, 10).map((key, index) => (
@@ -223,6 +355,18 @@ export const JsonUpload: React.FC<JsonUploadProps> = ({
                 </Badge>
               )}
             </div>
+
+            {/* Processing stats */}
+            {(currentFile.depth || currentFile.compressionRatio) && (
+              <div className="mt-2 p-2 bg-slate-50 dark:bg-slate-800 rounded text-xs space-y-1">
+                {currentFile.depth && (
+                  <div>Nesting depth: {currentFile.depth} levels</div>
+                )}
+                {currentFile.compressionRatio && (
+                  <div>Compression ratio: {(currentFile.compressionRatio * 100).toFixed(1)}%</div>
+                )}
+              </div>
+            )}
           </div>
         </div>
       ) : (
@@ -233,9 +377,7 @@ export const JsonUpload: React.FC<JsonUploadProps> = ({
             className={`border-2 border-dashed rounded-lg p-8 text-center transition-all cursor-pointer ${
               isDragActive 
                 ? 'border-blue-400 bg-blue-50 dark:bg-blue-950' 
-                : isDragReject
-                  ? 'border-red-400 bg-red-50 dark:bg-red-950'
-                  : 'border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500'
+                : 'border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500'
             } ${isUploading ? 'opacity-50 pointer-events-none' : ''}`}
           >
             <input {...getInputProps()} />
@@ -254,7 +396,7 @@ export const JsonUpload: React.FC<JsonUploadProps> = ({
               <div>
                 <p className="text-base font-medium text-gray-900 dark:text-gray-100 mb-2">
                   {isUploading 
-                    ? 'Uploading...' 
+                    ? 'Processing & Validating...' 
                     : isDragActive 
                       ? 'Drop your JSON file here!' 
                       : 'Drag & drop a JSON file here'
@@ -269,7 +411,7 @@ export const JsonUpload: React.FC<JsonUploadProps> = ({
               
               <div className="text-xs text-gray-500 dark:text-gray-400 space-y-1">
                 <div>{UPLOAD_CONFIG.json.helpText.detailed}</div>
-                <div>Supported format: .json files only</div>
+                <div>Comprehensive validation • Compression analysis</div>
               </div>
             </div>
           </div>
@@ -277,13 +419,31 @@ export const JsonUpload: React.FC<JsonUploadProps> = ({
           {isUploading && (
             <div className="space-y-2">
               <div className="flex items-center justify-between text-sm">
-                <span className="text-gray-600 dark:text-gray-400">Upload Progress</span>
+                <span className="text-gray-600 dark:text-gray-400">Processing Progress</span>
                 <span className="font-medium">{uploadProgress}%</span>
               </div>
               <Progress value={uploadProgress} className="h-2" />
+              <div className="text-xs text-gray-500 text-center">
+                Validating → Compression Analysis → Complete
+              </div>
             </div>
           )}
 
+          {/* Warnings */}
+          {warnings.length > 0 && (
+            <Alert>
+              <AlertCircle className="h-4 w-4" />
+              <AlertDescription>
+                <div className="space-y-1">
+                  {warnings.map((warning, index) => (
+                    <div key={index}>{warning}</div>
+                  ))}
+                </div>
+              </AlertDescription>
+            </Alert>
+          )}
+
+          {/* Errors */}
           {error && (
             <Alert variant="destructive">
               <AlertCircle className="h-4 w-4" />
@@ -291,12 +451,20 @@ export const JsonUpload: React.FC<JsonUploadProps> = ({
             </Alert>
           )}
 
+          {/* Preview */}
           {preview && !error && (
             <div className="space-y-2">
-              <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                Preview:
+              <div className="flex items-center justify-between">
+                <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                  Preview ({processingMode} mode):
+                </div>
+                {jsonAnalysis && (
+                  <Badge variant="outline" className="text-xs">
+                    ~{jsonAnalysis.tokenEstimates[processingMode]?.tokens} tokens
+                  </Badge>
+                )}
               </div>
-              <pre className="text-xs bg-gray-50 dark:bg-gray-800 p-3 rounded-md overflow-x-auto border">
+              <pre className="text-xs bg-gray-50 dark:bg-gray-800 p-3 rounded-md overflow-x-auto border max-h-40">
                 {preview}
               </pre>
             </div>

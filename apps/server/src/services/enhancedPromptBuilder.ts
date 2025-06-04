@@ -47,6 +47,12 @@ DO NOT use these hallucinated functions (they don't exist in ZEN DSL):
 - Control flow: if(), switch(), case, else
 - Date functions: now(), new Date(), getFullYear()
 
+🚨 CRITICAL: "this" OPERATOR DOES NOT EXIST IN ZEN DSL!
+❌ WRONG: this.markets, this.users, this.data - The "this" keyword does not exist!
+❌ WRONG: map(this.markets, #.name) - Use direct property access instead!
+✅ CORRECT: markets, users, data - Access properties directly from input data
+✅ CORRECT: map(markets, #.name) - Direct property access in functions
+
 🚨 CRITICAL: slice() FUNCTION DOES NOT EXIST IN ZEN DSL!
 ❌ WRONG: slice(text, 0, 5) - This function does not exist!
 ✅ CORRECT: text[0:5] - Use ZEN slice syntax with brackets

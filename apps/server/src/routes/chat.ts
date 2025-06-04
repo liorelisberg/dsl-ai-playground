@@ -6,7 +6,6 @@ import { rateLimiter, lengthGuard, tpmGuard } from '../middleware/rate-limiter';
 import { attachSession } from '../middleware/session';
 import { DynamicContextManager, ChatTurn } from '../services/contextManager';
 import { KnowledgeOptimizer } from '../services/knowledgeOptimizer';
-import { JSONContextOptimizer } from '../services/jsonOptimizer';
 import { jsonStore } from '../api/upload';
 
 const router: Router = Router();
@@ -14,7 +13,6 @@ const router: Router = Router();
 // Initialize optimization services
 const contextManager = new DynamicContextManager();
 const knowledgeOptimizer = new KnowledgeOptimizer();
-const jsonOptimizer = new JSONContextOptimizer();
 
 /**
  * Enhanced chat endpoint with dynamic token optimization
@@ -76,48 +74,46 @@ const chatHandler = async (req: Request, res: Response): Promise<void> => {
     // Optimize conversation history
     const optimizedHistory = contextManager.optimizeHistory(chatHistory, budget.chatHistory);
 
-    // Handle JSON context optimization
-    let jsonContext = '';
+    // Handle JSON context with simple processing
+    let jsonContext: unknown = null;
     if (hasJsonContext && budget.jsonContext > 0) {
       const uploadedData = jsonStore.get(req.sessionId);
       
       if (uploadedData) {
-        const jsonResult = jsonOptimizer.optimizeForQuery(
-          uploadedData,
-          message,
-          budget.jsonContext,
-          message.toLowerCase().includes('@fulljson')
-        );
-        
-        jsonContext = jsonResult.content;
-        console.log(`📄 JSON optimization: ${jsonResult.optimizationType} (${jsonResult.tokensUsed} tokens)`);
+        jsonContext = uploadedData;
+        console.log(`📄 JSON context: Using full uploaded data`);
       } else {
         console.log('⚠️  JSON context requested but no data uploaded');
       }
     }
 
-    // Build enhanced prompt
-    const enhancedPrompt = buildOptimizedPrompt(
-      message,
-      optimizedHistory,
-      optimizedKnowledgeCards,
-      jsonContext
-    );
+    // Convert history for Gemini service (timestamp as number)
+    const geminiHistory = optimizedHistory.map(turn => ({
+      role: turn.role,
+      content: turn.content,
+      timestamp: turn.timestamp.getTime()
+    }));
 
-    // Generate response using the original Gemini service
+    // Generate response using Gemini service with JSON context
     const generationStart = Date.now();
     const geminiResponse = await geminiService.generateContextualResponse(
-      enhancedPrompt,
-      [], // Empty history since we included it in the prompt
-      [], // Empty knowledge cards since we included them in the prompt
-      null // No JSON context since we included it in the prompt
+      message,
+      geminiHistory,
+      optimizedKnowledgeCards,
+      jsonContext
     );
     const generationTime = Date.now() - generationStart;
 
     // Extract response text
     const responseText = geminiResponse.text || geminiResponse.toString();
 
-    // Calculate actual token usage
+    // Calculate actual token usage estimate
+    const enhancedPrompt = buildOptimizedPrompt(
+      message,
+      optimizedHistory,
+      optimizedKnowledgeCards,
+      jsonContext ? JSON.stringify(jsonContext, null, 2) : ''
+    );
     const actualTokens = contextManager.estimateTokens(enhancedPrompt);
     const totalTime = Date.now() - startTime;
 

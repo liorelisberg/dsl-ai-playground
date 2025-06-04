@@ -15,6 +15,8 @@ export const useConnectionStatus = () => {
   useEffect(() => {
     let checkCount = 0;
     const maxFastChecks = 3;
+    let fastInterval: NodeJS.Timeout;
+    let regularInterval: NodeJS.Timeout;
 
     const checkConnection = async () => {
       try {
@@ -35,21 +37,6 @@ export const useConnectionStatus = () => {
       }
     };
 
-    // Check immediately
-    checkConnection();
-
-    // Fast checks for the first few attempts (every 2 seconds)
-    const fastInterval = setInterval(() => {
-      if (checkCount < maxFastChecks && !isApiHealthyRef.current) {
-        checkConnection();
-      } else {
-        clearInterval(fastInterval);
-      }
-    }, 2000);
-
-    // Regular checks every 30 seconds
-    const regularInterval = setInterval(checkConnection, 30000);
-
     // Listen for online/offline events
     const handleOnline = () => {
       setIsOnline(true);
@@ -58,10 +45,29 @@ export const useConnectionStatus = () => {
     };
     const handleOffline = () => setIsOnline(false);
 
+    // Add initial delay to let backend start up (prevent startup proxy errors)
+    const initialDelayTimeout = setTimeout(() => {
+      // Check immediately after delay
+      checkConnection();
+
+      // Fast checks for the first few attempts (every 2 seconds)
+      fastInterval = setInterval(() => {
+        if (checkCount < maxFastChecks && !isApiHealthyRef.current) {
+          checkConnection();
+        } else {
+          clearInterval(fastInterval);
+        }
+      }, 2000);
+
+      // Regular checks every 30 seconds
+      regularInterval = setInterval(checkConnection, 30000);
+    }, 3000); // Wait 3 seconds for backend to start
+
     window.addEventListener('online', handleOnline);
     window.addEventListener('offline', handleOffline);
 
     return () => {
+      clearTimeout(initialDelayTimeout);
       clearInterval(fastInterval);
       clearInterval(regularInterval);
       window.removeEventListener('online', handleOnline);
