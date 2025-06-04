@@ -301,7 +301,6 @@ RATE_LIMIT_MAX=6
 RATE_LIMIT_WINDOW=30000
 
 # Advanced features
-CHROMA_PATH=./chroma
 GEMINI_EMBED_KEY=your_embedding_api_key_here
 ```
 

@@ -1,5 +1,5 @@
-// Simple in-memory vector store implementation for MVP
-// This can be replaced with ChromaDB later when server setup is available
+// Simple in-memory vector store implementation
+// Provides text-based similarity matching for knowledge retrieval
 
 export interface Document {
   id: string;
