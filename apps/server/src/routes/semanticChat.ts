@@ -131,13 +131,13 @@ async function handleSemanticChat(req: Request, res: Response): Promise<void> {
     console.log(`   Concepts discussed: ${conversationContext.conceptsDiscussed.size}`);
 
     // 4. Phase 1: Calculate optimal token budget with enhanced allocation
-    const hasUploadedJson = !!jsonStore.get(sessionId);
-    const hasJsonContext = message.toLowerCase().includes('@fulljson') || !!jsonContext || hasUploadedJson;
+    const hasUploadedFile = !!jsonStore.get(sessionId);
+    const hasJsonRequest = message.toLowerCase().includes('@fulljson') || !!jsonContext || hasUploadedFile;
     
     const tokenBudget = contextManager.calculateOptimalBudget(
       message,
       recentHistory, // Use recent history for budget calculation
-      hasJsonContext,
+      hasJsonRequest,
       contextManager.assessQueryComplexity(message)
     );
 
@@ -160,9 +160,8 @@ async function handleSemanticChat(req: Request, res: Response): Promise<void> {
 
     // Handle JSON context optimization
     let optimizedJsonContext: string | undefined;
-    const hasJsonRequest = message.toLowerCase().includes('@fulljson') || !!jsonContext;
-    
     if (hasJsonRequest) {
+      // First, try to get uploaded file data (priority)
       const uploadedData = jsonStore.get(sessionId);
       
       if (uploadedData) {
@@ -174,9 +173,20 @@ async function handleSemanticChat(req: Request, res: Response): Promise<void> {
         );
         
         optimizedJsonContext = jsonResult.content;
-        console.log(`📄 JSON optimization: ${jsonResult.optimizationType} (${jsonResult.tokensUsed} tokens)`);
+        console.log(`📄 JSON optimization (uploaded file): ${jsonResult.optimizationType} (${jsonResult.tokensUsed} tokens)`);
+      } else if (jsonContext) {
+        // Fall back to request body jsonContext if no uploaded file
+        const jsonResult = jsonOptimizer.optimizeForQuery(
+          jsonContext,
+          message,
+          tokenBudget.jsonContext,
+          message.toLowerCase().includes('@fulljson')
+        );
+        
+        optimizedJsonContext = jsonResult.content;
+        console.log(`📄 JSON optimization (request body): ${jsonResult.optimizationType} (${jsonResult.tokensUsed} tokens)`);
       } else {
-        console.log('⚠️  JSON context requested but no data uploaded for session:', sessionId);
+        console.log('⚠️  JSON context requested but no data available for session:', sessionId);
       }
     }
 
