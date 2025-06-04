@@ -10,6 +10,13 @@ export interface ChatMetadata {
   sessionId?: string;
   processingTime?: number;
   tokensUsed?: number;
+  attachedFile?: {
+    filename: string;
+    type: 'json';
+    mode: 'schema' | 'fulljson';
+    sizeBytes?: number;
+    topLevelKeys?: string[];
+  };
 }
 
 export interface ChatResponse {

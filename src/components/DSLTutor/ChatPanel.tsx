@@ -59,7 +59,7 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
   const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [uploadedFile, setUploadedFile] = useState<UploadedFile | null>(null);
-  const [includeFullJson, setIncludeFullJson] = useState(false);
+  const [attachmentMode, setAttachmentMode] = useState<'schema' | 'fulljson'>('schema');
   const [copiedMessageIndex, setCopiedMessageIndex] = useState<number | null>(null);
   const [inputAreaHeight, setInputAreaHeight] = useState(120);
   const [isDragging, setIsDragging] = useState(false);
@@ -324,11 +324,20 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
       
       const messageContent = safeInputMessage.trim();
       
-      // Create user message
+      // Create user message with attachment metadata
       const userMessage: ChatMessage = {
         role: 'user',
         content: messageContent,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
+        metadata: uploadedFile ? {
+          attachedFile: {
+            filename: uploadedFile.name,
+            type: 'json',
+            mode: attachmentMode,
+            sizeBytes: currentJsonFile?.sizeBytes,
+            topLevelKeys: currentJsonFile?.topLevelKeys
+          }
+        } : undefined
       };
       
       // Add user message immediately
@@ -338,8 +347,8 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
       // Prepare context for AI
       let messageWithContext = messageContent;
       
-      // Add JSON context if available
-      if (uploadedFile && includeFullJson) {
+      // Add JSON context if available (use fulljson mode for AI context)
+      if (uploadedFile && attachmentMode === 'fulljson') {
         messageWithContext = `${messageContent}\n\n[JSON Context: ${JSON.stringify(uploadedFile.content, null, 2)}]`;
       }
       
@@ -361,6 +370,12 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
       
       onNewMessage(aiMessage);
       
+      // Clear uploaded file after sending
+      if (uploadedFile) {
+        setUploadedFile(null);
+        setAttachmentMode('schema');
+      }
+      
     } catch (error) {
       console.error('Error sending message:', error);
       toast({
@@ -375,7 +390,7 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
 
   const removeUploadedFile = () => {
     setUploadedFile(null);
-    setIncludeFullJson(false);
+    setAttachmentMode('schema');
     onClearJsonFile?.();
   };
 
@@ -601,7 +616,19 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
                 {message.role === 'assistant' ? (
                   message.metadata && renderTimeDisplay(message.metadata.timestamp)
                 ) : (
-                  renderTimeDisplay(message.timestamp)
+                  <>
+                    {renderTimeDisplay(message.timestamp)}
+                    {/* Attachment indicator for user messages */}
+                    {message.metadata?.attachedFile && (
+                      <div className="text-xs text-slate-400 dark:text-slate-500 mt-1 flex items-center space-x-1">
+                        <FileJson className="h-3 w-3" />
+                        <span>{message.metadata.attachedFile.filename}</span>
+                        <Badge variant="outline" className="text-xs px-1 py-0 h-4">
+                          {message.metadata.attachedFile.mode}
+                        </Badge>
+                      </div>
+                    )}
+                  </>
                 )}
                 
                 {/* Copy Button */}
@@ -658,29 +685,47 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
         className="border-t border-slate-200 dark:border-slate-700 p-2 bg-slate-50 dark:bg-slate-800 flex-shrink-0 mb-3"
         style={{ height: `${inputAreaHeight}px` }}
       >
-        {/* Uploaded File Indicator - Only show legacy upload indicator if using old file system */}
-        {uploadedFile && !currentJsonFile && (
-          <div className="mb-2 flex items-center justify-between bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 rounded-lg px-3 py-2">
+        {/* Uploaded File Indicator - Show new attachment UI */}
+        {uploadedFile && (
+          <div className="mb-2 flex items-center justify-between bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg px-3 py-2">
             <div className="flex items-center space-x-2">
-              <Paperclip className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
-              <span className="text-sm text-emerald-700 dark:text-emerald-300">{uploadedFile.name}</span>
+              <FileJson className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+              <span className="text-sm font-medium text-blue-700 dark:text-blue-300">{uploadedFile.name}</span>
+              <Badge variant="outline" className="text-xs">
+                {currentJsonFile?.sizeBytes ? `${Math.round(currentJsonFile.sizeBytes / 1024)}KB` : 'JSON'}
+              </Badge>
               
-              {/* Full JSON Toggle */}
-              <label className="flex items-center space-x-1 ml-4">
-                <input
-                  type="checkbox"
-                  checked={includeFullJson}
-                  onChange={(e) => setIncludeFullJson(e.target.checked)}
-                  className="rounded border-emerald-300 text-emerald-600 focus:ring-emerald-500"
-                />
-                <span className="text-xs text-emerald-700 dark:text-emerald-300">Include full JSON</span>
-              </label>
+              {/* Schema vs FullJSON Toggle */}
+              <div className="flex items-center space-x-2 ml-4">
+                <label className="flex items-center space-x-1">
+                  <input
+                    type="radio"
+                    name="attachmentMode"
+                    value="schema"
+                    checked={attachmentMode === 'schema'}
+                    onChange={(e) => setAttachmentMode(e.target.value as 'schema')}
+                    className="text-blue-600 focus:ring-blue-500"
+                  />
+                  <span className="text-xs text-blue-700 dark:text-blue-300">Schema</span>
+                </label>
+                <label className="flex items-center space-x-1">
+                  <input
+                    type="radio"
+                    name="attachmentMode"
+                    value="fulljson"
+                    checked={attachmentMode === 'fulljson'}
+                    onChange={(e) => setAttachmentMode(e.target.value as 'fulljson')}
+                    className="text-blue-600 focus:ring-blue-500"
+                  />
+                  <span className="text-xs text-blue-700 dark:text-blue-300">Full JSON</span>
+                </label>
+              </div>
             </div>
             <Button
               variant="ghost"
               size="sm"
               onClick={removeUploadedFile}
-              className="h-6 w-6 p-0 hover:bg-emerald-100 dark:hover:bg-emerald-800"
+              className="h-6 w-6 p-0 hover:bg-blue-100 dark:hover:bg-blue-800"
             >
               <X className="h-3 w-3" />
             </Button>

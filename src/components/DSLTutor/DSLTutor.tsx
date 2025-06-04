@@ -82,15 +82,6 @@ const createSystemMessage = (content: string): ChatMessage => ({
   timestamp: new Date().toISOString()
 });
 
-/**
- * Format JSON keys for display
- */
-const formatJsonKeys = (keys: string[]): string => {
-  if (keys.length === 0) return 'none';
-  if (keys.length <= 3) return keys.join(', ');
-  return `${keys.slice(0, 3).join(', ')} and ${keys.length - 3} more`;
-};
-
 // ============================================================================
 // MAIN COMPONENT (without SessionProvider - will be wrapped)
 // ============================================================================
@@ -172,13 +163,8 @@ const DSLTutorCore: React.FC = () => {
    */
   const handleJsonUploadSuccess = useCallback((metadata: JsonMetadata) => {
     setCurrentJsonFile(metadata);
-    
-    const message = createSystemMessage(
-      `✅ **JSON Context Added!**\n\nI now have access to your **${metadata.filename}** file with ${metadata.topLevelKeys?.length || 0} top-level keys. This will help me provide more relevant DSL examples and suggestions tailored to your data structure.\n\n**Available keys:** ${formatJsonKeys(metadata.topLevelKeys || [])}`
-    );
-    
-    handleNewMessage(message);
-  }, [handleNewMessage]);
+    // Note: No automatic system message - attachment will be shown in UI instead
+  }, []);
 
   /**
    * Handle JSON file upload errors
@@ -196,13 +182,8 @@ const DSLTutorCore: React.FC = () => {
    */
   const handleClearJsonFile = useCallback(() => {
     setCurrentJsonFile(null);
-    
-    const message = createSystemMessage(
-      '🔄 **Context Cleared** - Starting fresh without previous JSON context. Feel free to upload new data or continue with general DSL questions.'
-    );
-    
-    handleNewMessage(message);
-  }, [handleNewMessage]);
+    // Note: No system message for clearing - just update state
+  }, []);
 
   // ========================================================================
   // EFFECTS
