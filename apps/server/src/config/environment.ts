@@ -15,13 +15,6 @@ export const config = {
     secret: process.env.SESSION_SECRET || 'changeme',
   },
 
-  // ChromaDB Configuration
-  chroma: {
-    path: process.env.CHROMA_PATH || './chroma',
-    collectionName: process.env.CHROMA_COLLECTION_NAME || 'dsl_knowledge',
-    embeddingFunction: process.env.CHROMA_EMBEDDING_FUNCTION || 'default',
-  },
-
   // Rate Limiting Configuration
   rateLimit: {
     window: parseInt(process.env.RATE_LIMIT_WINDOW || '30'),

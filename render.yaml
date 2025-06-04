@@ -23,14 +23,10 @@ services:
         generateValue: true
       - key: CORS_ORIGIN
         value: https://your-frontend-app.vercel.app
-      - key: CHROMA_PATH
-        value: ./chroma
-      - key: CHROMA_COLLECTION_NAME
-        value: dsl_knowledge
       - key: RATE_LIMIT_WINDOW
-        value: 30
+        value: "30"
       - key: RATE_LIMIT_MAX
-        value: 6
+        value: "6"
       - key: MAX_MESSAGE_CHARS
         value: 2000
       - key: MAX_JSON_BYTES

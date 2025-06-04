@@ -27,7 +27,7 @@
 ├─────────────────────────────────────────────────────────────────┤
 │                    External Dependencies                        │
 │  ├─ Google Gemini AI (2.0-flash)  │  ├─ ZEN Engine (@gorules)    │
-│  ├─ ChromaDB (Vector Storage)     │  ├─ React Query (State Mgmt) │
+│  ├─ In-Memory Vector Store       │  ├─ React Query (State Mgmt) │
 │  └─ Tailwind CSS + Radix UI       │  └─ Multer (File Uploads)    │
 └─────────────────────────────────────────────────────────────────┘
 ```
@@ -47,7 +47,7 @@
 - **Language**: TypeScript 5.5.3
 - **AI Integration**: Google Generative AI 0.24.1 (Gemini 2.0-flash)
 - **DSL Engine**: @gorules/zen-engine 0.44.0
-- **Vector Database**: ChromaDB 2.4.6
+- **Vector Database**: In-Memory Store with text matching
 - **File Handling**: Multer 2.0.0
 - **API Documentation**: Swagger UI Express
 
@@ -194,16 +194,18 @@
 
 **Core Capabilities:**
 - **Semantic Knowledge Retrieval**: Vector-based search for relevant DSL documentation
-- **Dual Vector Store Implementation**: Both in-memory and ChromaDB-based solutions
+- **Single Vector Store Implementation**: In-memory storage with text-based similarity matching
 - **Knowledge Card System**: Structured knowledge representation with relevance scoring
 - **Auto-loading Knowledge Base**: Automatic initialization with DSL rules and examples
 - **Embedding Service**: Text embedding generation for semantic similarity
 - **Collection Management**: Document upsert, search, and metadata handling
 
 **Technical Implementation:**
-- **ChromaDB Integration**: Production-ready vector database with persistence
-- **In-memory Fallback**: MVP implementation for development and testing
-- **Embedding Generation**: Google Generative AI embedding service
+- **Vector Store Integration**: In-memory document storage with text matching
+- **Vector Store Client**: Vector-based search for relevant DSL documentation
+- **Search Process**:
+  1. Query input → Embedding generation → Vector representation
+  2. Vector → In-Memory search → Text similarity calculation
 - **Similarity Scoring**: Cosine similarity with relevance thresholds
 - **Document Chunking**: Intelligent text segmentation for optimal retrieval
 - **Metadata Enrichment**: Category tagging, source tracking, token estimation
@@ -400,7 +402,7 @@ Example Data Structure
 **Components:**
 ```typescript
 SemanticVectorStore (Service)
-├─ ChromaDB Client
+├─ Vector Store Client
 ├─ Embedding Generation
 ├─ Document Management
 ├─ Search Operations
@@ -415,7 +417,7 @@ VectorStore (Fallback Service)
 
 **Search Process:**
 1. Query input → Embedding generation → Vector representation
-2. Vector → ChromaDB search → Similarity calculation
+2. Vector → In-Memory search → Text similarity calculation
 3. Results → Relevance filtering → Score ranking
 4. Ranked results → Knowledge cards → Context integration
 5. Context → Prompt enhancement → AI response
@@ -503,7 +505,7 @@ pnpm run start:server  # Production server start
 - **Development**: Local development with hot reload
 - **Production**: Optimized builds with environment variables
 - **API Keys**: Google Gemini API key required
-- **Database**: ChromaDB path configuration
+- **Database**: In-Memory Store path configuration
 - **CORS**: Configurable origin policies
 
 ---

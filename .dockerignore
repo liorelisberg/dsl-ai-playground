@@ -80,9 +80,6 @@ docs/
 # CI/CD
 .github/
 
-# ChromaDB data (will be created in container)
-chroma/
-
 # Frontend specific
 src/
 public/
@@ -96,4 +93,88 @@ tsconfig.node.json
 # Testing and scripts
 tests/
 scripts/
-config/ 
+config/
+
+# Ignore development files
+*.log
+*.tmp
+*.swp
+.DS_Store
+Thumbs.db
+
+# Ignore IDE files
+.vscode/
+.idea/
+*.sublime-*
+
+# Ignore OS files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Ignore temporary files
+tmp/
+temp/
+*.tmp
+*.temp
+
+# Ignore backup files
+*.bak
+*.backup
+*.old
+
+# Ignore log files
+*.log
+logs/
+
+# Ignore cache directories
+.cache/
+.npm/
+.yarn/
+.pnpm/
+
+# nyc test coverage
+.nyc_output
+
+# Grunt intermediate storage
+.grunt
+
+# Bower dependency directory
+bower_components
+
+# node-waf configuration
+.lock-wscript
+
+# Compiled binary addons
+build/Release
+
+# TypeScript cache
+*.tsbuildinfo
+
+# parcel-bundler cache
+.cache
+.parcel-cache
+
+# Next.js build output
+.next
+out
+
+# Nuxt.js build / generate output
+.nuxt
+dist
+
+# Gatsby files
+.cache/
+public
+
+# Storybook build outputs
+.out
+.storybook-out
+
+# Temporary folders
+tmp/
+temp/ 

@@ -128,7 +128,6 @@ RATE_LIMIT_MAX=6                   # Requests per window
 RATE_LIMIT_WINDOW=30000            # Time window (ms)
 
 # Advanced Features
-CHROMA_PATH=./chroma               # Vector database path
 SESSION_SECRET=changeme            # Session security
 ```
 

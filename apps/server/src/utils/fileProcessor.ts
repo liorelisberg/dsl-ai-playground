@@ -308,7 +308,7 @@ class FileProcessor {
   }
 
   /**
-   * Convert processed files to documents for ChromaDB
+   * Convert processed files to documents for vector store
    */
   processedFilesToDocuments(processedFiles: ProcessedFile[]): Document[] {
     const documents: Document[] = [];

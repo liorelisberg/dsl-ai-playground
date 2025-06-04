@@ -27,20 +27,13 @@ RUN cd apps/server && pnpm run build
 FROM node:18-alpine AS production
 WORKDIR /app
 
-# Create app user for security
-RUN addgroup --system --gid 1001 nodejs
-RUN adduser --system --uid 1001 dsl-user
+# Set up user and permissions
+RUN addgroup --system nodejs && adduser --system --ingroup nodejs dsl-user
 
 # Copy built application
 COPY --from=build --chown=dsl-user:nodejs /app/apps/server/dist ./dist
 COPY --from=build --chown=dsl-user:nodejs /app/apps/server/package.json ./
 COPY --from=deps --chown=dsl-user:nodejs /app/apps/server/node_modules ./node_modules
-
-# Create chroma directory for vector database
-RUN mkdir -p /app/chroma && chown dsl-user:nodejs /app/chroma
-
-# Switch to non-root user
-USER dsl-user
 
 # Expose port
 EXPOSE 3000

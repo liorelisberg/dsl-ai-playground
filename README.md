@@ -124,7 +124,6 @@ dsl-ai-playground/
 │       ├── knowledgeOptimizer.ts  # Knowledge optimization (316 lines)
 │       ├── jsonOptimizer.ts      # JSON context optimization (476 lines)
 │       ├── embeddingService.ts   # Text embedding generation (223 lines)
-│       ├── chromaService.ts      # ChromaDB integration (239 lines)
 │       ├── gemini.ts             # AI chat service (298 lines)
 │       ├── dslService.ts         # ZEN Engine integration (102 lines)
 │       └── chat.ts               # Chat endpoint management (58 lines)
@@ -152,7 +151,6 @@ apps/server/src/services/
 ├── knowledgeOptimizer.ts     # Knowledge base optimization
 ├── jsonOptimizer.ts          # JSON context optimization
 ├── embeddingService.ts       # Vector embedding generation
-├── chromaService.ts          # ChromaDB integration
 ├── vectorStore.ts            # Knowledge document management
 ├── gemini.ts                 # AI integration service
 ├── dslService.ts             # ZEN Engine integration
