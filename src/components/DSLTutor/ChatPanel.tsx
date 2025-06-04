@@ -1,10 +1,37 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
+import { Separator } from "@/components/ui/separator";
+import { 
+  Send, 
+  Paperclip, 
+  Clock,
+  Copy,
+  CheckCircle2,
+  AlertCircle,
+  Wifi,
+  WifiOff,
+  RefreshCw,
+  X,
+  ChevronUp,
+  ChevronDown,
+  MessageCircle,
+  Hash,
+  Activity,
+  Calendar,
+  Loader2,
+  Brain,
+  Target,
+  Zap,
+  FileJson,
+  History
+} from 'lucide-react';
 import { toast } from "@/hooks/use-toast";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import { Bot, MessageCircle, Send, Paperclip, X, Loader2, Copy, Check, Brain, Target, Zap, FileJson, Clock, RefreshCw, ChevronUp, History } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
@@ -13,6 +40,7 @@ import { JsonMetadata } from './JsonUpload';
 import { sendChatMessage } from '@/services/chatService';
 import { useSession, useSessionControls } from '@/contexts/SessionContext';
 import DSLCodeBlock from './DSLCodeBlock';
+import { UPLOAD_CONFIG } from '@/config/upload';
 
 interface ChatPanelProps {
   chatHistory: ChatMessage[];
@@ -69,7 +97,7 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
   const chatEndRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const MAX_FILE_SIZE = 50 * 1024; // 50KB
+  const MAX_FILE_SIZE = UPLOAD_CONFIG.json.maxSizeBytes; // 256KB (from centralized config)
   const MAX_CHARS = 2000;
   const LOAD_OLDER_BATCH_SIZE = 5; // Load 5 more messages at a time
   
@@ -233,9 +261,9 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
       return;
     }
 
-    // Validate file size (50KB for backend compatibility)
-    if (file.size > 50 * 1024) {
-      const errorMsg = "File size must be less than 50KB";
+    // Validate file size (256KB for backend compatibility)
+    if (file.size > MAX_FILE_SIZE) {
+      const errorMsg = "File size must be less than 256KB";
       onJsonUploadError?.(errorMsg);
       toast({
         title: "File Too Large",
@@ -748,7 +776,7 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
                   <div className="space-y-1">
                     <p className="font-medium">Upload JSON Data</p>
                     <p className="text-xs">Click to browse files or drag & drop anywhere on the window</p>
-                    <p className="text-xs text-muted-foreground">Max 50KB • .json files only</p>
+                    <p className="text-xs text-muted-foreground">Max 256KB • .json files only</p>
                   </div>
                 </TooltipContent>
               </Tooltip>

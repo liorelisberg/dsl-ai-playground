@@ -185,7 +185,7 @@ const DSLTutorCore: React.FC = () => {
    */
   const handleJsonUploadError = useCallback((error: string) => {
     const message = createSystemMessage(
-      `❌ **Upload Failed:** ${error}\n\nPlease try uploading a valid JSON file (max 50KB). I can help you better when I have context about your data structure.`
+      `❌ **Upload Failed:** ${error}\n\nPlease try uploading a valid JSON file (max 256KB). I can help you better when I have context about your data structure.`
     );
     
     handleNewMessage(message);

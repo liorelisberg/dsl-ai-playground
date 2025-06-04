@@ -244,6 +244,66 @@ pnpm run lint:server     # Server-specific linting
 - **Service Architecture**: 15 specialized backend services
 - **Code Quality**: Professional-grade error handling and resilience
 
+---
+
+## 🔒 **System Limitations**
+
+### **📊 DSL AI Playground Rate Limits**
+| **Limit Type** | **Value** | **Window** | **Description** |
+|----------------|-----------|------------|-----------------|
+| **Session Rate Limit** | 6 requests | 30 seconds | Per-session throttling |
+| **Daily Limit (Free)** | 500 requests | 24 hours | Free tier daily quota |
+| **JSON Upload Size** | 256 KB | Per file | Maximum JSON file size |
+| **TPM Protection** | 5 second delay | `@fulljson` | Prevents token rate violations |
+
+### **🤖 AI Model Specifications**
+
+#### **Main Model: Google Gemini 2.0 Flash**
+- **Input Tokens**: 1,048,576 (1M tokens)
+- **Output Tokens**: 8,192 tokens
+- **System Budget**: 16,000 tokens (enhanced 2x capacity)
+- **Available Budget**: 15,000 tokens (93.75% efficiency)
+- **Google API Rate Limits**:
+  - **Free Tier**: 15 RPM, 1,000,000 TPM, 1,500 RPD
+  - **Tier 1**: 2,000 RPM, 4,000,000 TPM, Unlimited RPD
+  - **Tier 2**: 10,000 RPM, 10,000,000 TPM, Unlimited RPD
+  - **Tier 3**: 30,000 RPM, 30,000,000 TPM, Unlimited RPD
+
+#### **Fallback Model: Google Gemini 1.5 Flash**
+- **Input Tokens**: 1,048,576 (1M tokens)
+- **Output Tokens**: 8,192 tokens
+- **Google API Rate Limits**:
+  - **Free Tier**: 15 RPM, 250,000 TPM, 1,500 RPD
+  - **Tier 1+**: Similar scaling to 2.0 Flash
+
+### **⚡ Enhanced Token Budget Allocation (16K)**
+```
+Total Budget: 16,000 tokens (100%)
+├── System Prompt: 400 tokens (2.5%)
+├── Reserve Buffer: 600 tokens (3.75%)
+└── Available Content: 15,000 tokens (93.75%)
+    ├── Knowledge Cards: 3,000-6,000 tokens (20-40%)
+    ├── Chat History: 3,500-6,000 tokens (25-45%)
+    └── JSON Context: 2,250-5,250 tokens (15-35%)
+```
+
+### **🚀 Token Budget Benefits (16K vs 8K)**
+- **Knowledge Cards**: 2x-3x increase (2,000 → 4,500-6,000 tokens)
+- **Chat History**: 2x-3x increase (1,600 → 3,500-6,000 tokens)  
+- **JSON Context**: 3x-5x increase (730 → 2,250-5,250 tokens)
+- **Complex Queries**: 50% more reserve allocation (800 → 1,200 tokens)
+- **Overall Efficiency**: 93.75% (vs previous 91.25%)
+- **Free Tier Usage**: 19.2% TPM utilization (192K/1M limit)
+
+### **🛡️ Smart Protection Features**
+- **Intelligent Rate Limiting**: Session-aware throttling with queue management
+- **Token Optimization**: Dynamic budget allocation based on conversation flow
+- **TPM Guard**: 5-second delay for large JSON requests (`@fulljson`)
+- **Graceful Degradation**: Automatic fallback to Gemini 1.5 Flash
+- **Error Recovery**: Multi-layer retry mechanisms with exponential backoff
+
+---
+
 ## 🔧 **API Endpoints**
 
 ### **Core Endpoints**

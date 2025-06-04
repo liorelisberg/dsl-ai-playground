@@ -4,6 +4,7 @@ import { Card } from "@/components/ui/card";
 import { Upload, FileJson, X } from 'lucide-react';
 import { JsonMetadata } from './JsonUpload';
 import { toast } from "@/hooks/use-toast";
+import { UPLOAD_CONFIG, validateJsonFile, formatFileSize } from '@/config/upload';
 
 interface GlobalDragDropZoneProps {
   onUploadSuccess: (metadata: JsonMetadata) => void;
@@ -33,12 +34,12 @@ export const GlobalDragDropZone: React.FC<GlobalDragDropZoneProps> = ({
     if (fileRejections.length > 0) {
       const rejection = fileRejections[0];
       if (rejection.errors.some((e: FileRejectionError) => e.code === 'file-too-large')) {
-        const errorMsg = 'File size exceeds 50KB limit';
+        const errorMsg = UPLOAD_CONFIG.json.errorMessages.sizeExceeded;
         onUploadError(errorMsg);
         return;
       }
       if (rejection.errors.some((e: FileRejectionError) => e.code === 'file-invalid-type')) {
-        const errorMsg = 'Please upload a valid JSON file';
+        const errorMsg = UPLOAD_CONFIG.json.errorMessages.invalidType;
         onUploadError(errorMsg);
         return;
       }
@@ -46,6 +47,14 @@ export const GlobalDragDropZone: React.FC<GlobalDragDropZoneProps> = ({
 
     const file = acceptedFiles[0];
     if (!file) return;
+
+    // Additional validation using centralized function
+    const validation = validateJsonFile(file);
+    if (!validation.isValid) {
+      const errorMsg = validation.errors[0];
+      onUploadError(errorMsg);
+      return;
+    }
 
     try {
       // Validate JSON format
@@ -55,7 +64,7 @@ export const GlobalDragDropZone: React.FC<GlobalDragDropZoneProps> = ({
       try {
         parsedJson = JSON.parse(text);
       } catch (parseError) {
-        throw new Error('Invalid JSON format');
+        throw new Error(UPLOAD_CONFIG.json.errorMessages.invalidFormat);
       }
 
       // Upload file to backend
@@ -86,11 +95,11 @@ export const GlobalDragDropZone: React.FC<GlobalDragDropZoneProps> = ({
       
       toast({
         title: "File Uploaded Successfully",
-        description: `${file.name} (${(result.sizeBytes / 1024).toFixed(1)}KB) with ${result.topLevelKeys?.length || 0} top-level keys`,
+        description: `${file.name} (${formatFileSize(result.sizeBytes)}) with ${result.topLevelKeys?.length || 0} top-level keys`,
       });
 
     } catch (error) {
-      const errorMsg = error instanceof Error ? error.message : 'Upload failed';
+      const errorMsg = error instanceof Error ? error.message : UPLOAD_CONFIG.json.errorMessages.uploadFailed;
       onUploadError(errorMsg);
       toast({
         title: "Upload Failed",
@@ -104,7 +113,7 @@ export const GlobalDragDropZone: React.FC<GlobalDragDropZoneProps> = ({
     onDrop,
     accept: { 'application/json': ['.json'] },
     maxFiles: 1,
-    maxSize: 50 * 1024, // 50KB
+    maxSize: UPLOAD_CONFIG.json.maxSizeBytes, // Now 256KB instead of 50KB
     noClick: true, // Disable click to open file dialog
     noKeyboard: true // Disable keyboard interaction
   });
@@ -153,7 +162,7 @@ export const GlobalDragDropZone: React.FC<GlobalDragDropZoneProps> = ({
               Upload data to get context-aware DSL suggestions
             </p>
             <p className="text-xs text-blue-600 dark:text-blue-400">
-              Maximum file size: 50KB • JSON format only
+              {UPLOAD_CONFIG.json.helpText.detailed}
             </p>
           </div>
         </div>

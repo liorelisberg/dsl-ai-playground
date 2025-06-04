@@ -7,6 +7,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Upload, File, X, Check, FileJson, AlertCircle, CheckCircle2, Trash2 } from 'lucide-react';
 import { toast } from "@/hooks/use-toast";
+import { UPLOAD_CONFIG, validateJsonFile, formatFileSize } from '@/config/upload';
 
 export interface JsonMetadata {
   filename: string;
@@ -48,7 +49,7 @@ export const JsonUpload: React.FC<JsonUploadProps> = ({
     if (fileRejections.length > 0) {
       const rejection = fileRejections[0];
       if (rejection.errors.some((e: FileRejectionError) => e.code === 'file-too-large')) {
-        const errorMsg = 'File size exceeds 50KB limit';
+        const errorMsg = UPLOAD_CONFIG.json.errorMessages.sizeExceeded;
         setError(errorMsg);
         onUploadError?.(errorMsg);
         toast({
@@ -59,7 +60,7 @@ export const JsonUpload: React.FC<JsonUploadProps> = ({
         return;
       }
       if (rejection.errors.some((e: FileRejectionError) => e.code === 'file-invalid-type')) {
-        const errorMsg = 'Please upload a valid JSON file';
+        const errorMsg = UPLOAD_CONFIG.json.errorMessages.invalidType;
         setError(errorMsg);
         onUploadError?.(errorMsg);
         toast({
@@ -74,6 +75,20 @@ export const JsonUpload: React.FC<JsonUploadProps> = ({
     const file = acceptedFiles[0];
     if (!file) return;
 
+    // Additional validation using centralized function
+    const validation = validateJsonFile(file);
+    if (!validation.isValid) {
+      const errorMsg = validation.errors[0];
+      setError(errorMsg);
+      onUploadError?.(errorMsg);
+      toast({
+        title: "Upload Error",
+        description: errorMsg,
+        variant: "destructive"
+      });
+      return;
+    }
+
     setIsUploading(true);
     setUploadProgress(0);
     setError('');
@@ -86,7 +101,7 @@ export const JsonUpload: React.FC<JsonUploadProps> = ({
       try {
         parsedJson = JSON.parse(text);
       } catch (parseError) {
-        throw new Error('Invalid JSON format');
+        throw new Error(UPLOAD_CONFIG.json.errorMessages.invalidFormat);
       }
 
       // Generate preview
@@ -128,11 +143,11 @@ export const JsonUpload: React.FC<JsonUploadProps> = ({
       
       toast({
         title: "File Uploaded Successfully",
-        description: `${file.name} (${(result.sizeBytes / 1024).toFixed(1)}KB) with ${result.topLevelKeys?.length || 0} top-level keys`,
+        description: `${file.name} (${formatFileSize(result.sizeBytes)}) with ${result.topLevelKeys?.length || 0} top-level keys`,
       });
 
     } catch (error) {
-      const errorMsg = error instanceof Error ? error.message : 'Upload failed';
+      const errorMsg = error instanceof Error ? error.message : UPLOAD_CONFIG.json.errorMessages.uploadFailed;
       setError(errorMsg);
       onUploadError?.(errorMsg);
       toast({
@@ -150,7 +165,7 @@ export const JsonUpload: React.FC<JsonUploadProps> = ({
     onDrop,
     accept: { 'application/json': ['.json'] },
     maxFiles: 1,
-    maxSize: 50 * 1024, // 50KB
+    maxSize: UPLOAD_CONFIG.json.maxSizeBytes, // Now 256KB instead of 50KB
     disabled: isUploading
   });
 
@@ -253,7 +268,7 @@ export const JsonUpload: React.FC<JsonUploadProps> = ({
               </div>
               
               <div className="text-xs text-gray-500 dark:text-gray-400 space-y-1">
-                <div>Maximum file size: 50KB</div>
+                <div>{UPLOAD_CONFIG.json.helpText.detailed}</div>
                 <div>Supported format: .json files only</div>
               </div>
             </div>

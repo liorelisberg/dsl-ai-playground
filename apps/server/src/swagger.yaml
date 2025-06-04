@@ -192,12 +192,12 @@ paths:
         - AI Chat
       summary: Send message to AI assistant
       description: |
-        Send a message to the AI assistant powered by Google Gemini 2.5 Flash Preview.
+        Send a message to the AI assistant powered by Google Gemini 2.0 Flash Preview.
         
         Features:
         - Context-aware responses based on chat history
         - Educational focus on DSL concepts and syntax
-        - Rate limiting protection (10 requests/minute, 500/day)
+        - Rate limiting protection (6 requests/30 seconds per session, 500/day)
         - Automatic retry with exponential backoff
         - Comprehensive error handling
       operationId: sendChatMessage
@@ -379,18 +379,23 @@ components:
 # Rate limiting information
 x-rate-limit:
   chat:
-    requests: 10
-    window: "1 minute"
+    requests: 6
+    window: "30 seconds"
     daily_limit: 500
+    session_based: true
+    description: "Per-session rate limiting with intelligent throttling"
   dsl_evaluation:
     requests: 50
     window: "1 minute"
     daily_limit: 2000
+  json_upload:
+    max_file_size: "256 KB"
+    tpm_protection: "5 second delay for @fulljson requests"
 
 # Additional metadata
 x-technical-info:
   dsl_engine: "GoRules Zen Engine (Rust-powered)"
-  ai_model: "Google Gemini 2.5 Flash Preview"
+  ai_model: "Google Gemini 2.0 Flash (Main), Gemini 1.5 Flash (Fallback)"
   performance: "30-330µs DSL evaluation time"
-  architecture: "Frontend HTTP → Backend API → Zen Engine"
-  fallback: "Graceful degradation to basic evaluation" 
+  token_budget: "16,000 tokens (15,000 available, 93.75% efficiency)"
+  system_overhead: "700 tokens (300 system prompt + 400 reserve)" 

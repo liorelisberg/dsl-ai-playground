@@ -31,13 +31,13 @@ export interface OptimizationMetrics {
 }
 
 export class DynamicContextManager {
-  // Phase 1.1: Expanded Token Budget (4x increase from 2,000 to 8,000)
-  private readonly MAX_TOKENS = 8000; // Increased from 2,000 to utilize Gemini 2.0 Flash capacity
-  private readonly STATIC_HEADER_TOKENS = 300; // Increased from 150 to support richer prompts
-  private readonly RESERVE_TOKENS = 400; // Increased from 200 for better safety margin
+  // Phase 2.0: Enhanced Token Budget (2x increase from 8,000 to 16,000)
+  private readonly MAX_TOKENS = 16000; // Increased from 8,000 to better utilize Gemini 2.0 Flash capacity
+  private readonly STATIC_HEADER_TOKENS = 400; // Increased from 300 to support richer prompts
+  private readonly RESERVE_TOKENS = 600; // Increased from 400 for better safety margin
 
   /**
-   * Phase 1.2: Enhanced conversation-flow-aware budget allocation
+   * Phase 2.0: Enhanced conversation-flow-aware budget allocation for 16K tokens
    */
   calculateOptimalBudget(
     message: string,
@@ -62,31 +62,31 @@ export class DynamicContextManager {
       return budget;
     }
 
-    // Phase 1.2: Flow-aware allocation strategy
+    // Phase 2.0: Enhanced flow-aware allocation strategy for 16K budget
     const conversationFlow = this.detectConversationFlow(message, history);
     
     switch (conversationFlow) {
       case 'learning':
         // Learning flow: prioritize knowledge cards for educational content
-        budget.knowledgeCards = Math.min(3200, Math.floor(availableTokens * 0.65)); // 65% for knowledge
-        budget.chatHistory = Math.min(1600, Math.floor(availableTokens * 0.25)); // 25% for history
-        budget.jsonContext = hasJsonContext ? Math.floor(availableTokens * 0.10) : 0; // 10% for JSON
+        budget.knowledgeCards = Math.min(6000, Math.floor(availableTokens * 0.60)); // 60% for knowledge (was 65%)
+        budget.chatHistory = Math.min(3500, Math.floor(availableTokens * 0.25)); // 25% for history
+        budget.jsonContext = hasJsonContext ? Math.floor(availableTokens * 0.15) : 0; // 15% for JSON
         console.log(`📚 Learning flow: Knowledge-prioritized allocation (${budget.knowledgeCards} tokens for knowledge)`);
         break;
         
       case 'problem-solving':
         // Problem-solving: prioritize history for solution continuity
-        budget.chatHistory = Math.min(2800, Math.floor(availableTokens * 0.45)); // 45% for solution context
-        budget.knowledgeCards = Math.min(2000, Math.floor(availableTokens * 0.35)); // 35% for knowledge
-        budget.jsonContext = hasJsonContext ? Math.floor(availableTokens * 0.20) : 0; // 20% for data context
+        budget.chatHistory = Math.min(6000, Math.floor(availableTokens * 0.45)); // 45% for solution context
+        budget.knowledgeCards = Math.min(4500, Math.floor(availableTokens * 0.30)); // 30% for knowledge
+        budget.jsonContext = hasJsonContext ? Math.floor(availableTokens * 0.25) : 0; // 25% for data context
         console.log(`🔧 Problem-solving flow: History-prioritized allocation (${budget.chatHistory} tokens for context)`);
         break;
         
       case 'exploration':
         // Exploration: balanced allocation for discovery
-        budget.knowledgeCards = Math.min(2400, Math.floor(availableTokens * 0.40)); // 40% for knowledge
-        budget.chatHistory = Math.min(2000, Math.floor(availableTokens * 0.35)); // 35% for history
-        budget.jsonContext = hasJsonContext ? Math.floor(availableTokens * 0.25) : 0; // 25% for data exploration
+        budget.knowledgeCards = Math.min(5000, Math.floor(availableTokens * 0.35)); // 35% for knowledge
+        budget.chatHistory = Math.min(5000, Math.floor(availableTokens * 0.35)); // 35% for history
+        budget.jsonContext = hasJsonContext ? Math.floor(availableTokens * 0.30) : 0; // 30% for data exploration
         console.log(`🔍 Exploration flow: Balanced allocation (Knowledge: ${budget.knowledgeCards}, History: ${budget.chatHistory})`);
         break;
         
@@ -94,33 +94,33 @@ export class DynamicContextManager {
         // Default: smart allocation based on conversation state
         if (history.length === 0) {
           // New conversation: prioritize knowledge discovery
-          budget.knowledgeCards = Math.min(2400, Math.floor(availableTokens * 0.70));
-          budget.jsonContext = hasJsonContext ? Math.floor(availableTokens * 0.30) : 0;
+          budget.knowledgeCards = Math.min(5000, Math.floor(availableTokens * 0.65));
+          budget.jsonContext = hasJsonContext ? Math.floor(availableTokens * 0.35) : 0;
           console.log(`🆕 New conversation: Knowledge-focused allocation (${budget.knowledgeCards} tokens for knowledge)`);
         } else {
           // Ongoing conversation: enhanced balanced allocation
-          budget.chatHistory = Math.min(2000, Math.floor(availableTokens * 0.35));
-          budget.knowledgeCards = Math.min(2000, Math.floor(availableTokens * 0.40));
+          budget.chatHistory = Math.min(4500, Math.floor(availableTokens * 0.35));
+          budget.knowledgeCards = Math.min(4500, Math.floor(availableTokens * 0.40));
           budget.jsonContext = hasJsonContext ? Math.floor(availableTokens * 0.25) : 0;
           console.log(`🔄 Ongoing conversation: Enhanced allocation (History: ${budget.chatHistory}, Knowledge: ${budget.knowledgeCards})`);
         }
     }
 
-    // Complexity adjustments with larger budget
+    // Enhanced complexity adjustments with larger budget
     if (queryComplexity === 'complex') {
       // Complex queries get additional knowledge tokens from reserve
-      const extraKnowledge = Math.min(800, budget.reserve); // Can allocate up to 800 extra tokens
+      const extraKnowledge = Math.min(1200, budget.reserve); // Can allocate up to 1200 extra tokens (was 800)
       budget.knowledgeCards += extraKnowledge;
       budget.reserve -= extraKnowledge;
       console.log(`🧠 Complex query boost: +${extraKnowledge} tokens for knowledge`);
     } else if (queryComplexity === 'simple') {
       // Simple queries can use fewer tokens, optimize for speed
-      budget.knowledgeCards = Math.min(budget.knowledgeCards, 1200);
-      budget.chatHistory = Math.min(budget.chatHistory, 800);
+      budget.knowledgeCards = Math.min(budget.knowledgeCards, 2000); // Increased from 1200
+      budget.chatHistory = Math.min(budget.chatHistory, 1500); // Increased from 800
       console.log(`⚡ Simple query optimization: Reduced allocation for speed`);
     }
 
-    console.log(`💰 Enhanced Token Budget: Total=${this.MAX_TOKENS}, Available=${availableTokens}, Flow=${conversationFlow}`);
+    console.log(`💰 Enhanced Token Budget 2.0: Total=${this.MAX_TOKENS}, Available=${availableTokens}, Flow=${conversationFlow}`);
     console.log(`📊 Allocation: Knowledge=${budget.knowledgeCards}, History=${budget.chatHistory}, JSON=${budget.jsonContext}, Reserve=${budget.reserve}`);
     return budget;
   }
