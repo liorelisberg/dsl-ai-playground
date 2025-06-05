@@ -1,0 +1,128 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# DSL String Expressions Rule
+
+This DSL supports string operations including concatenation, case conversion, trimming, pattern matching, and functional transformations. Follow the conventions below.
+
+⚠️ Important:
+- Only use DSL methods explicitly listed below
+- If unsupported features exist, respond: "This JavaScript expression cannot be fully converted to DSL due to unsupported syntax or methods."
+- If invalid input, respond: "The input is not a valid JavaScript expression."
+
+---
+
+## 1. String Literals and Concatenation
+
+Examples:
+- JavaScript: 'hello' + " " + "world"  
+  DSL: 'hello' + " " + "world"  
+  Result: 'hello world'  
+  Explanation: DSL supports both single and double quotes and `+` for concatenation.
+
+---
+
+## 2. String Length
+
+Examples:
+- JavaScript: len("Hello, World!")  
+  DSL: len("Hello, World!")  
+  Result: 13  
+  Explanation: Use `len()` to get the character count of a string.
+
+---
+
+## 3. Case Conversion
+
+Examples:
+- JavaScript: lower("Hello, World!")  
+  DSL: lower("Hello, World!")  
+  Result: "hello, world!"  
+  Explanation: Use `lower()` and `upper()` for case conversion.
+
+- JavaScript: upper("Hello, World!")  
+  DSL: upper("Hello, World!")  
+  Result: "HELLO, WORLD!"
+
+---
+
+## 4. Whitespace Trimming
+
+Examples:
+- JavaScript: trim("  HELLO, WORLD!  ")  
+  DSL: trim("  HELLO, WORLD!  ")  
+  Result: "HELLO, WORLD!"  
+  Explanation: `trim()` removes leading and trailing whitespace.
+
+---
+
+## 5. Prefix & Suffix Checks
+
+Examples:
+- JavaScript: startsWith("Hello, World!", "Hello")  
+  DSL: startsWith("Hello, World!", "Hello")  
+  Result: true
+
+- JavaScript: endsWith("Hello, World!", "World!")  
+  DSL: endsWith("Hello, World!", "World!")  
+  Result: true
+
+---
+
+## 6. Substring & Pattern Matching
+
+Examples:
+- JavaScript: contains("Hello, World!", "lo")  
+  DSL: contains("Hello, World!", "lo")  
+  Result: true
+
+- JavaScript: matches("Hello, World!", "H[a-z]+, W[a-z]+!")  
+  DSL: matches("Hello, World!", "H[a-z]+, W[a-z]+!")  
+  Result: true  
+  Explanation: Use `matches()` for regex pattern checks.
+
+---
+
+## 7. String Extraction (Regex Groups)
+
+Examples:
+- JavaScript: extract("2022-09-18", "(\\d{4})-(\\d{2})-(\\d{2})")  
+  DSL: extract("2022-09-18", "(\\d{4})-(\\d{2})-(\\d{2})")  
+  Result: ["2022-09-18", "2022", "09", "18"]  
+  Explanation: `extract()` returns an array of matches and capture groups.
+
+---
+
+## 8. Fuzzy Matching
+
+Examples:
+- JavaScript: fuzzyMatch("hello", "hello")  
+  DSL: fuzzyMatch("hello", "hello")  
+  Result: 1
+
+- JavaScript: fuzzyMatch(["hello", "world"], "hello")  
+  DSL: fuzzyMatch(["hello", "world"], "hello")  
+  Result: [1, 0.2]  
+  Explanation: `fuzzyMatch()` returns similarity scores (0–1). Supports arrays as first argument.
+
+---
+
+## 9. Splitting and Mapping
+
+Examples:
+- JavaScript: split("hello1,hello2,hello3", ",")  
+  DSL: split("hello1,hello2,hello3", ",")  
+  Result: ['hello1', 'hello2', 'hello3']
+
+- JavaScript: map(split("123,456,789", ","), number(#))  
+  DSL: map(split("123,456,789", ","), number(#))  
+  Result: [123, 456, 789]  
+  Explanation: Chain `split()` with `map()` and use `#` to reference each array item.
+
+---
+
+## 10. Summary
+
+Core functions: `len()`, `lower()`, `upper()`, `trim()`, `startsWith()`, `endsWith()`, `contains()`, `matches()`, `extract()`, `fuzzyMatch()`, `split()`. Use `+` for concatenation, `#` for array mapping. Strings support both `'` and `"` quotes. Only use listed methods.
