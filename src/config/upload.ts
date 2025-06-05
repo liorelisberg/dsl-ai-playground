@@ -65,104 +65,43 @@ export const validateJsonFile = (file: File) => {
   };
 };
 
-// Comprehensive JSON content validation
-export const validateJsonContent = async (content: string): Promise<{
+/**
+ * Validates and prepares JSON content for upload
+ */
+export const validateJsonContent = (content: string): {
   isValid: boolean;
-  errors: string[];
-  warnings: string[];
-  parsedJson?: unknown;
-  metadata: {
-    size: number;
-    topLevelKeys: string[];
-    depth: number;
-    complexity: 'simple' | 'moderate' | 'complex';
-    estimatedTokens: number;
-  };
-}> => {
-  const errors: string[] = [];
-  const warnings: string[] = [];
-  let parsedJson: unknown;
-
-  try {
-    // Parse JSON
-    parsedJson = JSON.parse(content);
-  } catch {
-    errors.push(UPLOAD_CONFIG.json.errorMessages.invalidFormat);
+  error?: string;
+  parsed?: unknown;
+  sizeBytes: number;
+} => {
+  const sizeBytes = new TextEncoder().encode(content).length;
+  
+  // Check size limit
+  if (sizeBytes > UPLOAD_CONFIG.json.maxSizeBytes) {
     return {
       isValid: false,
-      errors,
-      warnings,
-      metadata: {
-        size: content.length,
-        topLevelKeys: [],
-        depth: 0,
-        complexity: 'simple',
-        estimatedTokens: Math.ceil(content.length / 4)
-      }
+      error: `File size (${formatFileSize(sizeBytes)}) exceeds maximum allowed size of ${formatFileSize(UPLOAD_CONFIG.json.maxSizeBytes)}`,
+      sizeBytes
     };
   }
-
-  // Analyze JSON structure
-  const metadata = analyzeJsonStructure(parsedJson, content.length);
-
-  // Validation checks
-  if (metadata.depth > 10) {
-    warnings.push('JSON has deep nesting (>10 levels) - may impact processing');
+  
+  // Validate JSON syntax
+  try {
+    const parsed = JSON.parse(content);
+    return {
+      isValid: true,
+      parsed,
+      sizeBytes
+    };
+  } catch (error) {
+    return {
+      isValid: false,
+      error: error instanceof Error ? error.message : 'Invalid JSON format',
+      sizeBytes
+    };
   }
-
-  if (metadata.estimatedTokens > 15000) {
-    warnings.push('Large JSON may exceed token limits in some contexts');
-  }
-
-  if (metadata.complexity === 'complex' && metadata.size > 100 * 1024) {
-    warnings.push('Complex structure + large size may impact performance');
-  }
-
-  return {
-    isValid: errors.length === 0,
-    errors,
-    warnings,
-    parsedJson,
-    metadata
-  };
 };
 
-// Analyze JSON structure for metadata
-const analyzeJsonStructure = (json: unknown, contentSize: number) => {
-  const getDepth = (obj: unknown, currentDepth = 0): number => {
-    if (typeof obj !== 'object' || obj === null) return currentDepth;
-    
-    if (Array.isArray(obj)) {
-      return Math.max(...obj.map(item => getDepth(item, currentDepth + 1)));
-    }
-    
-    const values = Object.values(obj as Record<string, unknown>);
-    if (values.length === 0) return currentDepth + 1;
-    
-    return Math.max(...values.map(value => getDepth(value, currentDepth + 1)));
-  };
-
-  const getComplexity = (obj: unknown): 'simple' | 'moderate' | 'complex' => {
-    const depth = getDepth(obj);
-    const size = contentSize;
-    
-    if (depth <= 3 && size < 10 * 1024) return 'simple';
-    if (depth <= 6 && size < 100 * 1024) return 'moderate';
-    return 'complex';
-  };
-
-  const topLevelKeys = typeof json === 'object' && json !== null && !Array.isArray(json)
-    ? Object.keys(json as Record<string, unknown>)
-    : [];
-
-  return {
-    size: contentSize,
-    topLevelKeys,
-    depth: getDepth(json),
-    complexity: getComplexity(json),
-    estimatedTokens: Math.ceil(contentSize / 4) // Rough estimate: 4 chars = 1 token
-  };
-};
 
 // Standard JSON compression with structured optimization
 export const compressJson = (json: unknown, mode: 'minimal' | 'structured' = 'structured'): {
@@ -317,16 +256,12 @@ export const estimateTokenization = (content: string, mode: 'full' | 'compressed
 
 // Format file size for display
 export const formatFileSize = (bytes: number): string => {
-  if (bytes === 0) return '0 B';
+  if (bytes === 0) return '0 Bytes';
+  
   const k = 1024;
-  const sizes = ['B', 'KB', 'MB'];
+  const sizes = ['Bytes', 'KB', 'MB', 'GB'];
   const i = Math.floor(Math.log(bytes) / Math.log(k));
-  return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+  
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
 };
 
-// Get appropriate limit based on file content (future expansion)
-export const getJsonLimit = (_content?: string): number => { // eslint-disable-line @typescript-eslint/no-unused-vars
-  // For now, return standard limit
-  // Future: Could analyze content to determine file type and appropriate limits
-  return UPLOAD_CONFIG.json.limits.standard;
-}; 

@@ -80,23 +80,46 @@ You must use reasoning, field name association, and value matching to map the in
 
 ## Output Schema
 
+\${ResultBlock}
 ```json
 {
-  "Markets": [
+  Markets: [
     {
-      "Condition": "[string]", // DSL expression to identify/select this market (must reference input JSON fields)
-      "Name": "[string]",      // DSL expression for the market's name
-      "Bets": map([array], {    // Use map and # for bets/selections
-        "Name": "#.name",      // DSL expression for the bet's name
-        "Line": "#.line ?? \"\"", // DSL expression for the bet's line/sub-name, with fallback
-        "Price": "#.price",    // DSL expression for the bet's price
-        "Status": "#.status == 'OPEN' ? 1 : 2" // DSL expression for the bet's status (1=Open, 2=Close)
+      Condition: [ZEN EXPRESSION HERE], // DSL expression to identify/select this market (must reference input JSON fields)
+      Name: [ZEN EXPRESSION HERE],      // DSL expression for the market's name
+      Bets: map([ARRAY OF BETS], {    // Use map and # for bets/selections
+        Name: [ZEN EXPRESSION HERE],      // DSL expression for to identify the bet's name
+        Line: [ZEN EXPRESSION HERE], // DSL expression for the bet's line/sub-name, with coelesing for default
+        Price: [ZEN EXPRESSION HERE],    // DSL expression for the bet's price, in decimal format.
+        Status: [ZEN EXPRESSION HERE] // DSL expression for the bet's status, converting from the input data, to the desired format (input-to-desire-output for example: Input:"Open",output:1 ; Input:"Close",output:2  )
       })
     }
   ]
 }
 ```
+\${ResultBlock}
 
+---
+
+## Expression Example
+
+\${expressionBlock}
+```json
+{
+  Markets: map(markets,
+    {
+      Condition: contains(#.name, "Asian Handicap") , // DSL expression to identify/select this market (must reference input JSON fields)
+      "Name": #.name,      // DSL expression for the market's name
+      "Bets": map(#.selections, {    // Use map and # for bets/selections
+        "Name": #.optionName,      // DSL expression for the bet's name
+        "Line": #.line ?? "", // DSL expression for the bet's line/sub-name, with fallback
+        "Price": number(#.price),    // DSL expression for the bet's price
+        "Status": #.status == 'OPEN' ? 1 : 2 // DSL expression for the bet's status (1=Open, 2=Close)
+      })
+    }
+}
+```
+\${expressionBlock}
 ---
 
 ## Best Practices for DSL Output

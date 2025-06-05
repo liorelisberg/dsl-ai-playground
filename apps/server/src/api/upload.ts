@@ -17,7 +17,7 @@ const jsonStore = new Map<string, unknown>();
 const upload = multer({
   storage: multer.memoryStorage(),
   limits: {
-    fileSize: config.limits.maxJsonBytes, // 50KB limit
+    fileSize: config.limits.maxJsonBytes, // 256KB limit (configurable via MAX_JSON_BYTES env var)
   },
   fileFilter: (req: ExtendedRequest, file: Express.Multer.File, cb: multer.FileFilterCallback) => {
     // Accept if MIME type is application/json OR if filename ends with .json
@@ -73,8 +73,9 @@ const uploadHandler = async (req: ExtendedRequest, res: Response): Promise<void>
     console.error('Upload error:', error);
     if (error instanceof multer.MulterError) {
       if (error.code === 'LIMIT_FILE_SIZE') {
+        const limitKB = Math.round(config.limits.maxJsonBytes / 1024);
         res.status(413).json({ 
-          error: `File too large. Maximum size is ${config.limits.maxJsonBytes} bytes (50KB)` 
+          error: `File too large. Maximum size is ${config.limits.maxJsonBytes} bytes (${limitKB}KB)` 
         });
         return;
       }

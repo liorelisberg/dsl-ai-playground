@@ -8,6 +8,55 @@ alwaysApply: false
 ## Overview
 This document defines what syntax is **NOT supported** in ZEN DSL to prevent confusion and ensure correct usage.
 
+## ❌ CRITICAL: "this" Operator Is NOT Supported
+
+**❌ CRITICAL: "this" operator does NOT exist in ZEN DSL**
+
+ZEN DSL does not support the "this" keyword or operator for accessing data:
+
+### Examples of Invalid "this" Syntax
+
+**❌ Invalid - this.property access:**
+```zen
+this.markets
+this.users
+this.data
+```
+**Error:** `Failed to evaluate expression - "this" is not defined`
+
+**❌ Invalid - this in array operations:**
+```zen
+map(this.markets, #.name)
+filter(this.users, #.age > 18)
+```
+**Error:** `Failed to evaluate expression - "this" is not defined`
+
+### Correct Approach - Direct Property Access
+
+**✅ Valid - Direct property access:**
+```zen
+markets
+users
+data
+```
+**Input:** `{"markets": [{"name": "Market 1"}], "users": [{"age": 25}]}`
+**Output:** Direct access to the properties
+
+**✅ Valid - Correct array operations:**
+```zen
+map(markets, #.name)
+filter(users, #.age > 18)
+```
+**Input:** `{"markets": [{"name": "Market 1"}], "users": [{"age": 25}]}`
+**Output:** `["Market 1"]` and `[{"age": 25}]` respectively
+
+### Why "this" Is Not Supported
+
+1. **Language Design**: ZEN DSL uses direct property access, not object-oriented "this" references
+2. **Simplicity**: No context switching - properties are accessed directly from input data
+3. **Performance**: Direct access is faster than context resolution
+4. **Clarity**: Expressions are more readable without "this" indirection
+
 ## Comments Are Not Supported
 
 **❌ CRITICAL: Comments are NOT supported in ZEN DSL**
