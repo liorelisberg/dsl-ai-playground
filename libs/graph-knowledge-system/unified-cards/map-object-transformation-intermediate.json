@@ -1,0 +1,87 @@
+{
+  "id": "map-object-transformation-intermediate",
+  "function": "map",
+  "function_format": "map(object_array, {new_structure})",
+  "capability": "object_restructuring",
+  "complexity": "intermediate",
+  "primary_example": {
+    "expression": "map(items, {id: #.id, fullName: #.firstName + ' ' + #.lastName})",
+    "sample_input": {
+      "items": [
+        {
+          "id": 1,
+          "firstName": "John",
+          "lastName": "Doe"
+        },
+        {
+          "id": 2,
+          "firstName": "Jane",
+          "lastName": "Smith"
+        }
+      ]
+    },
+    "expected_output": [
+      {
+        "id": 1,
+        "fullName": "John Doe"
+      },
+      {
+        "id": 2,
+        "fullName": "Jane Smith"
+      }
+    ],
+    "explanation": "Transform objects into new structure with computed properties"
+  },
+  "related_examples": [
+    {
+      "variation": "status_transformation",
+      "expression": "map(customers, {name: #.name, tier: #.orders > 100 ? 'platinum' : #.orders > 50 ? 'gold' : 'silver'})",
+      "context": "Transform with conditional logic"
+    },
+    {
+      "variation": "data_enrichment",
+      "expression": "map(products, {product: #.name, status: #.quantity <= 0 ? 'out_of_stock' : 'available'})",
+      "context": "Enrich data with calculated status"
+    },
+    {
+      "variation": "complex_calculation",
+      "expression": "map(orders, {order_id: #.id, total: sum(map(#.items, #.price * #.quantity))})",
+      "context": "Nested calculations within transformation"
+    }
+  ],
+  "relationships": {
+    "commonly_used_with": [
+      "filter",
+      "conditional_operators"
+    ],
+    "input_preparation": [
+      "API response objects",
+      "Database records"
+    ],
+    "output_usage": [
+      "UI display data",
+      "Report formatting"
+    ],
+    "builds_on": [
+      "property_extraction",
+      "conditional_logic"
+    ],
+    "leads_to": [
+      "complex_business_logic",
+      "advanced_transformations"
+    ]
+  },
+  "retrieval_metadata": {
+    "tags": [
+      "object_transformation",
+      "data_restructuring",
+      "business_logic"
+    ],
+    "use_cases": [
+      "data_normalization",
+      "ui_data_preparation",
+      "business_reporting"
+    ],
+    "difficulty_progression": "builds_on: object_creation | leads_to: complex_chaining"
+  }
+}

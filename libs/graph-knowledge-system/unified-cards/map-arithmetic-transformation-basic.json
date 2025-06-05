@@ -1,0 +1,72 @@
+{
+  "id": "map-arithmetic-transformation-basic",
+  "function": "map",
+  "function_format": "map(array, # operator value)",
+  "capability": "arithmetic_transformation",
+  "complexity": "basic",
+  "primary_example": {
+    "expression": "map([1, 2, 3, 4, 5], # * 2)",
+    "sample_input": {},
+    "expected_output": [
+      2,
+      4,
+      6,
+      8,
+      10
+    ],
+    "explanation": "Transform each array element using arithmetic operations with # placeholder"
+  },
+  "related_examples": [
+    {
+      "variation": "addition",
+      "expression": "map([1, 2, 3], # + 10)",
+      "context": "Add constant to each element"
+    },
+    {
+      "variation": "power",
+      "expression": "map([1, 2, 3, 4], # ^ 2)",
+      "context": "Square each element"
+    },
+    {
+      "variation": "string_concatenation",
+      "expression": "map(['a', 'b', 'c'], # + '!')",
+      "context": "Append character to each string"
+    }
+  ],
+  "relationships": {
+    "commonly_used_with": [
+      "filter",
+      "sum",
+      "len"
+    ],
+    "input_preparation": [
+      "Direct array literal",
+      "Variable containing array"
+    ],
+    "output_usage": [
+      "Further map operations",
+      "Aggregation functions"
+    ],
+    "builds_on": [
+      "array_basics",
+      "arithmetic_operators"
+    ],
+    "leads_to": [
+      "property_extraction",
+      "chained_operations"
+    ]
+  },
+  "retrieval_metadata": {
+    "tags": [
+      "transformation",
+      "arithmetic",
+      "basic_operations"
+    ],
+    "use_cases": [
+      "data_processing",
+      "mathematical_operations",
+      "array_transformation"
+    ],
+    "difficulty_progression": "builds_on: arrays | leads_to: object_mapping"
+  }
+}

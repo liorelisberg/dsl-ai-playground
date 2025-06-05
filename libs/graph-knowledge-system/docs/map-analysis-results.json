@@ -1,0 +1,1201 @@
+{
+  "total_map_occurrences": 117,
+  "files_with_map": [
+    {
+      "file": "/Users/lior.e/git/dsl-ai-playground/dsl-ai-playground/libs/graph-knowledge-system/knowledge-cards/examples/arrayOperationsExamples.ts",
+      "count": 28
+    },
+    {
+      "file": "/Users/lior.e/git/dsl-ai-playground/dsl-ai-playground/libs/graph-knowledge-system/knowledge-cards/examples/business_calculationsExamples.ts",
+      "count": 6
+    },
+    {
+      "file": "/Users/lior.e/git/dsl-ai-playground/dsl-ai-playground/libs/graph-knowledge-system/knowledge-cards/examples/closureOperationsExamples.ts",
+      "count": 19
+    },
+    {
+      "file": "/Users/lior.e/git/dsl-ai-playground/dsl-ai-playground/libs/graph-knowledge-system/knowledge-cards/examples/complexExamples.ts",
+      "count": 9
+    },
+    {
+      "file": "/Users/lior.e/git/dsl-ai-playground/dsl-ai-playground/libs/graph-knowledge-system/knowledge-cards/examples/conditionalExamples.ts",
+      "count": 2
+    },
+    {
+      "file": "/Users/lior.e/git/dsl-ai-playground/dsl-ai-playground/libs/graph-knowledge-system/knowledge-cards/examples/dateOperationsExamples.ts",
+      "count": 4
+    },
+    {
+      "file": "/Users/lior.e/git/dsl-ai-playground/dsl-ai-playground/libs/graph-knowledge-system/knowledge-cards/examples/mathematicalOperationsExamples.ts",
+      "count": 3
+    },
+    {
+      "file": "/Users/lior.e/git/dsl-ai-playground/dsl-ai-playground/libs/graph-knowledge-system/knowledge-cards/examples/rangeExamples.ts",
+      "count": 4
+    },
+    {
+      "file": "/Users/lior.e/git/dsl-ai-playground/dsl-ai-playground/libs/graph-knowledge-system/knowledge-cards/examples/stringOperationsExamples.ts",
+      "count": 6
+    },
+    {
+      "file": "/Users/lior.e/git/dsl-ai-playground/dsl-ai-playground/libs/graph-knowledge-system/knowledge-cards/rules/array-rule.mdc",
+      "count": 13
+    },
+    {
+      "file": "/Users/lior.e/git/dsl-ai-playground/dsl-ai-playground/libs/graph-knowledge-system/knowledge-cards/rules/market-rule.mdc",
+      "count": 9
+    },
+    {
+      "file": "/Users/lior.e/git/dsl-ai-playground/dsl-ai-playground/libs/graph-knowledge-system/knowledge-cards/rules/object-rule.mdc",
+      "count": 8
+    },
+    {
+      "file": "/Users/lior.e/git/dsl-ai-playground/dsl-ai-playground/libs/graph-knowledge-system/knowledge-cards/rules/strings-rule.mdc",
+      "count": 2
+    },
+    {
+      "file": "/Users/lior.e/git/dsl-ai-playground/dsl-ai-playground/libs/graph-knowledge-system/knowledge-cards/rules/syntax-restrictions.mdc",
+      "count": 2
+    },
+    {
+      "file": "/Users/lior.e/git/dsl-ai-playground/dsl-ai-playground/libs/graph-knowledge-system/knowledge-cards/rules/type-inspection-rule.mdc",
+      "count": 2
+    }
+  ],
+  "unique_capabilities": {
+    "arithmetic_transformation": [
+      "map([1, 2, 3, 4, 5], # * 2)",
+      "map(['a', 'b', 'c'], # + '!')",
+      "map([1, 2, 3], # * 2)",
+      "map([1, 2, 3], # + 2)",
+      "map([1, 2, 3], # * 2)",
+      "map(#, # * 2)",
+      "map([1, 2, 3], # * 2)",
+      "map([1, 2, 3], # + 10)",
+      "map([1, 2, 3], # * # + 1)",
+      "map([1, 2, 3, 4], # > 2 ? # * 2 : #)",
+      "map(numbers, # * multiplier)",
+      "map(map([1, 2, 3], # * 2)",
+      "map([1, 2, 3, 4, 5], # * 2)",
+      "map([0..5], # * 2)",
+      "map([1, 2, 3], # * 2)"
+    ],
+    "filtered_transformation": [
+      "map(filter([1, 2, 3, 4, 5], # > 2)",
+      "map(filter([1, 2, 3, 4, 5], # > 3)",
+      "map(filter([1, 2, 3, 4, 5], # > 2)",
+      "map(filter([1, 2, 3, 4, 5, 6], # % 2 == 0)",
+      "map(filter([1, 2, 3, 4, 5], # % 2 == 1)",
+      "map(filter([1, 2, 3, 4, 5], # > 2)",
+      "map(filter(split(\"apple,banana,a,cherry,go\", \",\")",
+      "map(filter(split(text, \" \")",
+      "map(filter([1, 2, 3, 4, 5], # > 2)"
+    ],
+    "object_restructuring": [
+      "map([{id: 1, name: \"John\"}, {id: 2, name: \"Jane\"}], #.id)",
+      "map(filter([{id: 1, name: \"John\"}, {id: 2, name: \"Jane\"}], #.id > 1)",
+      "map(items, {id: #.id, fullName: #.firstName + \" \" + #.lastName})",
+      "map(filter([{id: 1, val: 10}, {id: 2, val: 20}, {id: 3, val: 30}], #.id > 1)",
+      "map(#.items, {sku: #.sku, name: #.name, quantity: #.quantity, unit_price: #.price, line_total: #.price * #.quantity, category: #.category, tax_rate: #.category == 'electronics' ? 0.08 : #.category == 'clothing' ? 0.06 : 0.05})",
+      "map([{x: 1}, {x: 2}, {x: 3}], #.x * 2)",
+      "map([{id: 1, name: \"John\"}, {id: 2, name: \"Jane\"}], #.id)",
+      "map(items, {id: #.id, fullName: #.firstName + \" \" + #.lastName})",
+      "map(markets, {market_id: #.id, status: \\\"analyzed\\\"})",
+      "map(delivery_routes, {route_id: #.id, status: \\\"optimized\\\"})",
+      "map(customers, {name: #.name, tier: #.orders > 100 ? \\'platinum\\' : #.orders > 50 ? \\'gold\\' : #.orders > 10 ? \\'silver\\' : \\'bronze\\', discount: #.orders > 100 ? 0.15 : #.orders > 50 ? 0.1 : #.orders > 10 ? 0.05 : 0})",
+      "map(inventory, {product: #.name, status: #.quantity <= 0 ? \\'out_of_stock\\' : #.quantity <= #.reorder_point ? \\'low_stock\\' : #.quantity >= #.max_capacity ? \\'overstocked\\' : \\'normal\\', action: #.quantity <= 0 ? \\'urgent_reorder\\' : #.quantity <= #.reorder_point ? \\'reorder_soon\\' : #.quantity >= #.max_capacity ? \\'reduce_orders\\' : \\'none\\'})",
+      "map(resource_requests, {request_id: #.id, status: \"allocated\"})",
+      "map(portfolios, {owner: #.owner, status: \\\"analyzed\\\"})",
+      "map(options_chains, {symbol: #.symbol, status: \\\"analyzed\\\"})",
+      "map([{id: 1, name: 'John'}, {id: 2, name: 'Jane'}], #.id)",
+      "map(filter([{id: 1, name: 'John'}, {id: 2, name: 'Jane'}], #.id > 1)",
+      "map(selections, {Name: #.name})",
+      "map([{id: 1, name: 'John'}, {id: 2, name: 'Jane'}], #.id)",
+      "map(filter([{id: 1, name: 'John'}, {id: 2, name: 'Jane'}], #.id > 1)",
+      "map(items, {id: #.id, fullName: #.firstName + ' ' + #.lastName})",
+      "map(items, {id: #.id, fullName: #.firstName + ' ' + #.lastName})"
+    ],
+    "property_extraction": [
+      "map(items, #.price)",
+      "map(items, #.qty * #.price)",
+      "map(#.values, # * 2)",
+      "map(products, #.price)",
+      "map(filter(#.items, #.active)",
+      "map(keys(map(sales, #.region)",
+      "map(filter(sales, #.region == #)",
+      "map(orders, {order_id: #.id, customer: {id: #.customer.id, tier: #.customer.orders_count > 50 ? 'VIP' : #.customer.orders_count > 20 ? 'Premium' : 'Standard', discount_eligible: #.customer.tier == 'VIP' or sum(map(#.items, #.price * #.quantity)",
+      "map(#.items, #.price * #.quantity)",
+      "map(#.items, #.price * #.quantity * (#.category == 'electronics' ? 0.08 : #.category == 'clothing' ? 0.06 : 0.05)",
+      "map(#.items, #.price * #.quantity)",
+      "map(#.items, #.price * #.quantity)",
+      "map(datasets, {name: #.name, total_records: len(#.records)",
+      "map(filter(#.records, type(#.age)",
+      "map(items, #.price)",
+      "map(items, #.qty * #.price)",
+      "map(orders, #.qty * #.price)",
+      "map(cart, #.price)",
+      "map(orders, {id: #.id, total: sum(map(#.items, #.price * #.quantity)",
+      "map(employees, {name: #.name, score: round(avg([#.sales, #.reviews, #.attendance])",
+      "map(filter(items, #.active)",
+      "map(filter(data, #.score > 80)",
+      "map(filter(orders, #.status == \"completed\")",
+      "map(items, #.price)",
+      "map(#.teams, sum(map(#.members, #.salary)",
+      "map(filter(markets, contains(#.name, 'Over/Under')",
+      "map(parlays, {id: #.id, legs: len(#.selections)",
+      "map(projects, {name: #.name, duration: d(#.endDate)",
+      "map([0..d(#.endDate)",
+      "map(events, {id: #.id, title: #.title, local_start: d(#.start_utc)",
+      "map(orders, #.total)",
+      "map(orders, #.customer)",
+      "map(arr, #.prop)",
+      "map(markets,\n    {\n      Condition: contains(#.name, \"Asian Handicap\")",
+      "map(#.selections, {    // Use map and # for bets/selections\n        \"Name\": #.optionName,      // DSL expression for the bet's name\n        \"Line\": #.line ?? \"\", // DSL expression for the bet's line/sub-name, with fallback\n        \"Price\": number(#.price)",
+      "map(selections, {\n      Name: #.name.cleanName,\n      Line: #.points.formattedPoints ?? \"\",\n      Price: number(#.odds.numerator/#.odds.denominator)",
+      "map(selections, {\n    Name: #.name.cleanName,\n    Line: #.points.formattedPoints ?? \"\",\n    Price: number(#.odds.numerator/#.odds.denominator)",
+      "map(arr, #.id)",
+      "map(this.markets, #.name)",
+      "map(markets, #.name)"
+    ],
+    "basic_transformation": [
+      "map(split(\"123,456,789\", \",\")",
+      "map([1, 2, 3, 4], # ^ 2)",
+      "map([-1, -2, 3, -4], abs(#)",
+      "map([1, 2, 3, 4], # ^ 2)",
+      "map(numbers, (#- avg(numbers)",
+      "map([0..3], #)",
+      "map((0..3], #)",
+      "map([0..3)",
+      "map(split(\"123,456,789\", \",\")",
+      "map(split(\"short,medium,verylongstring\", \",\")",
+      "map(x => x * 2)",
+      "map(x => x * 2)",
+      "map(obj => obj.id)",
+      "map(obj => obj.name)",
+      "map(Number)",
+      "map(split('123,456,789', ',')",
+      "map(arr, #)",
+      "map(split(str, ',')",
+      "map(arrayField, {...})",
+      "map([ARRAY OF BETS], {    // Use map and # for bets/selections\n        Name: [ZEN EXPRESSION HERE],      // DSL expression for to identify the bet's name\n        Line: [ZEN EXPRESSION HERE], // DSL expression for the bet's line/sub-name, with coelesing for default\n        Price: [ZEN EXPRESSION HERE],    // DSL expression for the bet's price, in decimal format.\n        Status: [ZEN EXPRESSION HERE] // DSL expression for the bet's status, converting from the input data, to the desired format (input-to-desire-output for example: Input:\"Open\",output:1 ; Input:\"Close\",output:2  )",
+      "map(array, {...})",
+      "map(array, {...})",
+      "map(obj => obj.id)",
+      "map(obj => obj.name)",
+      "map(obj => ({id: obj.id, fullName: obj.firstName + ' ' + obj.lastName})",
+      "map(split(\"123,456,789\", \",\")",
+      "map(split(\"123,456,789\", \",\")",
+      "map(Number)",
+      "map(split(\"123,456,789\", \",\")"
+    ],
+    "function_application": [
+      "map([\"hello\", \"world\"], upper(#)",
+      "map([\"a\", \"bb\", \"ccc\"], len(#)"
+    ]
+  },
+  "complexity_levels": {
+    "basic": [
+      {
+        "expression": "map([1, 2, 3, 4, 5], # * 2)",
+        "file": "/Users/lior.e/git/dsl-ai-playground/dsl-ai-playground/libs/graph-knowledge-system/knowledge-cards/examples/arrayOperationsExamples.ts",
+        "line": 81,
+        "capability": "arithmetic_transformation",
+        "pattern": "simple_transform"
+      },
+      {
+        "expression": "map(['a', 'b', 'c'], # + '!')",
+        "file": "/Users/lior.e/git/dsl-ai-playground/dsl-ai-playground/libs/graph-knowledge-system/knowledge-cards/examples/arrayOperationsExamples.ts",
+        "line": 137,
+        "capability": "arithmetic_transformation",
+        "pattern": "other"
+      },
+      {
+        "expression": "map(filter([1, 2, 3, 4, 5], # > 2)",
+        "file": "/Users/lior.e/git/dsl-ai-playground/dsl-ai-playground/libs/graph-knowledge-system/knowledge-cards/examples/arrayOperationsExamples.ts",
+        "line": 173,
+        "capability": "filtered_transformation",
+        "pattern": "other"
+      },
+      {
+        "expression": "map(filter([1, 2, 3, 4, 5], # > 3)",
+        "file": "/Users/lior.e/git/dsl-ai-playground/dsl-ai-playground/libs/graph-knowledge-system/knowledge-cards/examples/arrayOperationsExamples.ts",
+        "line": 200,
+        "capability": "filtered_transformation",
+        "pattern": "other"
+      },
+      {
+        "expression": "map([1, 2, 3], # * 2)",
+        "file": "/Users/lior.e/git/dsl-ai-playground/dsl-ai-playground/libs/graph-knowledge-system/knowledge-cards/examples/arrayOperationsExamples.ts",
+        "line": 209,
+        "capability": "arithmetic_transformation",
+        "pattern": "simple_transform"
+      },
+      {
+        "expression": "map([1, 2, 3], # + 2)",
+        "file": "/Users/lior.e/git/dsl-ai-playground/dsl-ai-playground/libs/graph-knowledge-system/knowledge-cards/examples/arrayOperationsExamples.ts",
+        "line": 218,
+        "capability": "arithmetic_transformation",
+        "pattern": "simple_transform"
+      },
+      {
+        "expression": "map([1, 2, 3], # * 2)",
+        "file": "/Users/lior.e/git/dsl-ai-playground/dsl-ai-playground/libs/graph-knowledge-system/knowledge-cards/examples/arrayOperationsExamples.ts",
+        "line": 227,
+        "capability": "arithmetic_transformation",
+        "pattern": "simple_transform"
+      },
+      {
+        "expression": "map([{id: 1, name: \"John\"}, {id: 2, name: \"Jane\"}], #.id)",
+        "file": "/Users/lior.e/git/dsl-ai-playground/dsl-ai-playground/libs/graph-knowledge-system/knowledge-cards/examples/arrayOperationsExamples.ts",
+        "line": 236,
+        "capability": "object_restructuring",
+        "pattern": "object_transformation"
+      },
+      {
+        "expression": "map(items, #.price)",
+        "file": "/Users/lior.e/git/dsl-ai-playground/dsl-ai-playground/libs/graph-knowledge-system/knowledge-cards/examples/arrayOperationsExamples.ts",
+        "line": 308,
+        "capability": "property_extraction",
+        "pattern": "property_extraction"
+      },
+      {
+        "expression": "map(items, #.qty * #.price)",
+        "file": "/Users/lior.e/git/dsl-ai-playground/dsl-ai-playground/libs/graph-knowledge-system/knowledge-cards/examples/arrayOperationsExamples.ts",
+        "line": 317,
+        "capability": "property_extraction",
+        "pattern": "other"
+      },
+      {
+        "expression": "map(split(\"123,456,789\", \",\")",
+        "file": "/Users/lior.e/git/dsl-ai-playground/dsl-ai-playground/libs/graph-knowledge-system/knowledge-cards/examples/arrayOperationsExamples.ts",
+        "line": 326,
+        "capability": "basic_transformation",
+        "pattern": "other"
+      },
+      {
+        "expression": "map(#, # * 2)",
+        "file": "/Users/lior.e/git/dsl-ai-playground/dsl-ai-playground/libs/graph-knowledge-system/knowledge-cards/examples/arrayOperationsExamples.ts",
+        "line": 346,
+        "capability": "arithmetic_transformation",
+        "pattern": "other"
+      },
+      {
+        "expression": "map(#.values, # * 2)",
+        "file": "/Users/lior.e/git/dsl-ai-playground/dsl-ai-playground/libs/graph-knowledge-system/knowledge-cards/examples/arrayOperationsExamples.ts",
+        "line": 391,
+        "capability": "property_extraction",
+        "pattern": "other"
+      },
+      {
+        "expression": "map(products, #.price)",
+        "file": "/Users/lior.e/git/dsl-ai-playground/dsl-ai-playground/libs/graph-knowledge-system/knowledge-cards/examples/arrayOperationsExamples.ts",
+        "line": 483,
+        "capability": "property_extraction",
+        "pattern": "property_extraction"
+      },
+      {
+        "expression": "map(keys(map(sales, #.region)",
+        "file": "/Users/lior.e/git/dsl-ai-playground/dsl-ai-playground/libs/graph-knowledge-system/knowledge-cards/examples/arrayOperationsExamples.ts",
+        "line": 503,
+        "capability": "property_extraction",
+        "pattern": "property_extraction"
+      },
+      {
+        "expression": "map(filter(sales, #.region == #)",
+        "file": "/Users/lior.e/git/dsl-ai-playground/dsl-ai-playground/libs/graph-knowledge-system/knowledge-cards/examples/arrayOperationsExamples.ts",
+        "line": 503,
+        "capability": "property_extraction",
+        "pattern": "other"
+      },
+      {
+        "expression": "map(#.items, #.price * #.quantity)",
+        "file": "/Users/lior.e/git/dsl-ai-playground/dsl-ai-playground/libs/graph-knowledge-system/knowledge-cards/examples/arrayOperationsExamples.ts",
+        "line": 514,
+        "capability": "property_extraction",
+        "pattern": "other"
+      },
+      {
+        "expression": "map(#.items, #.price * #.quantity)",
+        "file": "/Users/lior.e/git/dsl-ai-playground/dsl-ai-playground/libs/graph-knowledge-system/knowledge-cards/examples/arrayOperationsExamples.ts",
+        "line": 514,
+        "capability": "property_extraction",
+        "pattern": "other"
+      },
+      {
+        "expression": "map(#.items, #.price * #.quantity)",
+        "file": "/Users/lior.e/git/dsl-ai-playground/dsl-ai-playground/libs/graph-knowledge-system/knowledge-cards/examples/arrayOperationsExamples.ts",
+        "line": 514,
+        "capability": "property_extraction",
+        "pattern": "other"
+      },
+      {
+        "expression": "map(datasets, {name: #.name, total_records: len(#.records)",
+        "file": "/Users/lior.e/git/dsl-ai-playground/dsl-ai-playground/libs/graph-knowledge-system/knowledge-cards/examples/arrayOperationsExamples.ts",
+        "line": 523,
+        "capability": "property_extraction",
+        "pattern": "other"
+      },
+      {
+        "expression": "map(items, #.price)",
+        "file": "/Users/lior.e/git/dsl-ai-playground/dsl-ai-playground/libs/graph-knowledge-system/knowledge-cards/examples/business_calculationsExamples.ts",
+        "line": 34,
+        "capability": "property_extraction",
+        "pattern": "property_extraction"
+      },
+      {
+        "expression": "map(items, #.qty * #.price)",
+        "file": "/Users/lior.e/git/dsl-ai-playground/dsl-ai-playground/libs/graph-knowledge-system/knowledge-cards/examples/business_calculationsExamples.ts",
+        "line": 43,
+        "capability": "property_extraction",
+        "pattern": "other"
+      },
+      {
+        "expression": "map(orders, #.qty * #.price)",
+        "file": "/Users/lior.e/git/dsl-ai-playground/dsl-ai-playground/libs/graph-knowledge-system/knowledge-cards/examples/business_calculationsExamples.ts",
+        "line": 52,
+        "capability": "property_extraction",
+        "pattern": "other"
+      },
+      {
+        "expression": "map(cart, #.price)",
+        "file": "/Users/lior.e/git/dsl-ai-playground/dsl-ai-playground/libs/graph-knowledge-system/knowledge-cards/examples/business_calculationsExamples.ts",
+        "line": 106,
+        "capability": "property_extraction",
+        "pattern": "property_extraction"
+      },
+      {
+        "expression": "map([1, 2, 3], # * 2)",
+        "file": "/Users/lior.e/git/dsl-ai-playground/dsl-ai-playground/libs/graph-knowledge-system/knowledge-cards/examples/closureOperationsExamples.ts",
+        "line": 8,
+        "capability": "arithmetic_transformation",
+        "pattern": "simple_transform"
+      },
+      {
+        "expression": "map([1, 2, 3], # + 10)",
+        "file": "/Users/lior.e/git/dsl-ai-playground/dsl-ai-playground/libs/graph-knowledge-system/knowledge-cards/examples/closureOperationsExamples.ts",
+        "line": 26,
+        "capability": "arithmetic_transformation",
+        "pattern": "simple_transform"
+      },
+      {
+        "expression": "map([1, 2, 3], # * # + 1)",
+        "file": "/Users/lior.e/git/dsl-ai-playground/dsl-ai-playground/libs/graph-knowledge-system/knowledge-cards/examples/closureOperationsExamples.ts",
+        "line": 35,
+        "capability": "arithmetic_transformation",
+        "pattern": "other"
+      },
+      {
+        "expression": "map([\"hello\", \"world\"], upper(#)",
+        "file": "/Users/lior.e/git/dsl-ai-playground/dsl-ai-playground/libs/graph-knowledge-system/knowledge-cards/examples/closureOperationsExamples.ts",
+        "line": 44,
+        "capability": "function_application",
+        "pattern": "other"
+      },
+      {
+        "expression": "map([\"a\", \"bb\", \"ccc\"], len(#)",
+        "file": "/Users/lior.e/git/dsl-ai-playground/dsl-ai-playground/libs/graph-knowledge-system/knowledge-cards/examples/closureOperationsExamples.ts",
+        "line": 62,
+        "capability": "function_application",
+        "pattern": "other"
+      },
+      {
+        "expression": "map([{x: 1}, {x: 2}, {x: 3}], #.x * 2)",
+        "file": "/Users/lior.e/git/dsl-ai-playground/dsl-ai-playground/libs/graph-knowledge-system/knowledge-cards/examples/closureOperationsExamples.ts",
+        "line": 89,
+        "capability": "object_restructuring",
+        "pattern": "object_transformation"
+      },
+      {
+        "expression": "map([1, 2, 3, 4], # > 2 ? # * 2 : #)",
+        "file": "/Users/lior.e/git/dsl-ai-playground/dsl-ai-playground/libs/graph-knowledge-system/knowledge-cards/examples/closureOperationsExamples.ts",
+        "line": 98,
+        "capability": "arithmetic_transformation",
+        "pattern": "other"
+      },
+      {
+        "expression": "map([1, 2, 3, 4], # ^ 2)",
+        "file": "/Users/lior.e/git/dsl-ai-playground/dsl-ai-playground/libs/graph-knowledge-system/knowledge-cards/examples/closureOperationsExamples.ts",
+        "line": 107,
+        "capability": "basic_transformation",
+        "pattern": "simple_transform"
+      },
+      {
+        "expression": "map([-1, -2, 3, -4], abs(#)",
+        "file": "/Users/lior.e/git/dsl-ai-playground/dsl-ai-playground/libs/graph-knowledge-system/knowledge-cards/examples/closureOperationsExamples.ts",
+        "line": 116,
+        "capability": "basic_transformation",
+        "pattern": "other"
+      },
+      {
+        "expression": "map(numbers, # * multiplier)",
+        "file": "/Users/lior.e/git/dsl-ai-playground/dsl-ai-playground/libs/graph-knowledge-system/knowledge-cards/examples/closureOperationsExamples.ts",
+        "line": 134,
+        "capability": "arithmetic_transformation",
+        "pattern": "other"
+      },
+      {
+        "expression": "map(filter([1, 2, 3, 4, 5], # > 2)",
+        "file": "/Users/lior.e/git/dsl-ai-playground/dsl-ai-playground/libs/graph-knowledge-system/knowledge-cards/examples/closureOperationsExamples.ts",
+        "line": 154,
+        "capability": "filtered_transformation",
+        "pattern": "other"
+      },
+      {
+        "expression": "map([1, 2, 3, 4], # ^ 2)",
+        "file": "/Users/lior.e/git/dsl-ai-playground/dsl-ai-playground/libs/graph-knowledge-system/knowledge-cards/examples/closureOperationsExamples.ts",
+        "line": 163,
+        "capability": "basic_transformation",
+        "pattern": "simple_transform"
+      },
+      {
+        "expression": "map(filter([1, 2, 3, 4, 5, 6], # % 2 == 0)",
+        "file": "/Users/lior.e/git/dsl-ai-playground/dsl-ai-playground/libs/graph-knowledge-system/knowledge-cards/examples/closureOperationsExamples.ts",
+        "line": 172,
+        "capability": "filtered_transformation",
+        "pattern": "other"
+      },
+      {
+        "expression": "map(filter(items, #.active)",
+        "file": "/Users/lior.e/git/dsl-ai-playground/dsl-ai-playground/libs/graph-knowledge-system/knowledge-cards/examples/closureOperationsExamples.ts",
+        "line": 181,
+        "capability": "property_extraction",
+        "pattern": "property_extraction"
+      },
+      {
+        "expression": "map(filter(data, #.score > 80)",
+        "file": "/Users/lior.e/git/dsl-ai-playground/dsl-ai-playground/libs/graph-knowledge-system/knowledge-cards/examples/closureOperationsExamples.ts",
+        "line": 190,
+        "capability": "property_extraction",
+        "pattern": "other"
+      },
+      {
+        "expression": "map([1, 2, 3, 4, 5], # * 2)",
+        "file": "/Users/lior.e/git/dsl-ai-playground/dsl-ai-playground/libs/graph-knowledge-system/knowledge-cards/examples/closureOperationsExamples.ts",
+        "line": 199,
+        "capability": "arithmetic_transformation",
+        "pattern": "simple_transform"
+      },
+      {
+        "expression": "map(filter([1, 2, 3, 4, 5], # % 2 == 1)",
+        "file": "/Users/lior.e/git/dsl-ai-playground/dsl-ai-playground/libs/graph-knowledge-system/knowledge-cards/examples/closureOperationsExamples.ts",
+        "line": 208,
+        "capability": "filtered_transformation",
+        "pattern": "other"
+      },
+      {
+        "expression": "map(filter(orders, #.status == \"completed\")",
+        "file": "/Users/lior.e/git/dsl-ai-playground/dsl-ai-playground/libs/graph-knowledge-system/knowledge-cards/examples/closureOperationsExamples.ts",
+        "line": 217,
+        "capability": "property_extraction",
+        "pattern": "other"
+      },
+      {
+        "expression": "map(filter([1, 2, 3, 4, 5], # > 2)",
+        "file": "/Users/lior.e/git/dsl-ai-playground/dsl-ai-playground/libs/graph-knowledge-system/knowledge-cards/examples/complexExamples.ts",
+        "line": 7,
+        "capability": "filtered_transformation",
+        "pattern": "other"
+      },
+      {
+        "expression": "map([{id: 1, name: \"John\"}, {id: 2, name: \"Jane\"}], #.id)",
+        "file": "/Users/lior.e/git/dsl-ai-playground/dsl-ai-playground/libs/graph-knowledge-system/knowledge-cards/examples/complexExamples.ts",
+        "line": 16,
+        "capability": "object_restructuring",
+        "pattern": "object_transformation"
+      },
+      {
+        "expression": "map(items, #.price)",
+        "file": "/Users/lior.e/git/dsl-ai-playground/dsl-ai-playground/libs/graph-knowledge-system/knowledge-cards/examples/complexExamples.ts",
+        "line": 34,
+        "capability": "property_extraction",
+        "pattern": "property_extraction"
+      },
+      {
+        "expression": "map(filter(markets, contains(#.name, 'Over/Under')",
+        "file": "/Users/lior.e/git/dsl-ai-playground/dsl-ai-playground/libs/graph-knowledge-system/knowledge-cards/examples/complexExamples.ts",
+        "line": 67,
+        "capability": "property_extraction",
+        "pattern": "other"
+      },
+      {
+        "expression": "map(parlays, {id: #.id, legs: len(#.selections)",
+        "file": "/Users/lior.e/git/dsl-ai-playground/dsl-ai-playground/libs/graph-knowledge-system/knowledge-cards/examples/complexExamples.ts",
+        "line": 76,
+        "capability": "property_extraction",
+        "pattern": "other"
+      },
+      {
+        "expression": "map(markets, {market_id: #.id, status: \\\"analyzed\\\"})",
+        "file": "/Users/lior.e/git/dsl-ai-playground/dsl-ai-playground/libs/graph-knowledge-system/knowledge-cards/examples/complexExamples.ts",
+        "line": 85,
+        "capability": "object_restructuring",
+        "pattern": "object_transformation"
+      },
+      {
+        "expression": "map(delivery_routes, {route_id: #.id, status: \\\"optimized\\\"})",
+        "file": "/Users/lior.e/git/dsl-ai-playground/dsl-ai-playground/libs/graph-knowledge-system/knowledge-cards/examples/complexExamples.ts",
+        "line": 94,
+        "capability": "object_restructuring",
+        "pattern": "object_transformation"
+      },
+      {
+        "expression": "map(projects, {name: #.name, duration: d(#.endDate)",
+        "file": "/Users/lior.e/git/dsl-ai-playground/dsl-ai-playground/libs/graph-knowledge-system/knowledge-cards/examples/dateOperationsExamples.ts",
+        "line": 348,
+        "capability": "property_extraction",
+        "pattern": "other"
+      },
+      {
+        "expression": "map([0..d(#.endDate)",
+        "file": "/Users/lior.e/git/dsl-ai-playground/dsl-ai-playground/libs/graph-knowledge-system/knowledge-cards/examples/dateOperationsExamples.ts",
+        "line": 348,
+        "capability": "property_extraction",
+        "pattern": "other"
+      },
+      {
+        "expression": "map(events, {id: #.id, title: #.title, local_start: d(#.start_utc)",
+        "file": "/Users/lior.e/git/dsl-ai-playground/dsl-ai-playground/libs/graph-knowledge-system/knowledge-cards/examples/dateOperationsExamples.ts",
+        "line": 359,
+        "capability": "property_extraction",
+        "pattern": "other"
+      },
+      {
+        "expression": "map(resource_requests, {request_id: #.id, status: \"allocated\"})",
+        "file": "/Users/lior.e/git/dsl-ai-playground/dsl-ai-playground/libs/graph-knowledge-system/knowledge-cards/examples/dateOperationsExamples.ts",
+        "line": 368,
+        "capability": "object_restructuring",
+        "pattern": "object_transformation"
+      },
+      {
+        "expression": "map(numbers, (#- avg(numbers)",
+        "file": "/Users/lior.e/git/dsl-ai-playground/dsl-ai-playground/libs/graph-knowledge-system/knowledge-cards/examples/mathematicalOperationsExamples.ts",
+        "line": 589,
+        "capability": "basic_transformation",
+        "pattern": "other"
+      },
+      {
+        "expression": "map(portfolios, {owner: #.owner, status: \\\"analyzed\\\"})",
+        "file": "/Users/lior.e/git/dsl-ai-playground/dsl-ai-playground/libs/graph-knowledge-system/knowledge-cards/examples/mathematicalOperationsExamples.ts",
+        "line": 784,
+        "capability": "object_restructuring",
+        "pattern": "object_transformation"
+      },
+      {
+        "expression": "map(options_chains, {symbol: #.symbol, status: \\\"analyzed\\\"})",
+        "file": "/Users/lior.e/git/dsl-ai-playground/dsl-ai-playground/libs/graph-knowledge-system/knowledge-cards/examples/mathematicalOperationsExamples.ts",
+        "line": 793,
+        "capability": "object_restructuring",
+        "pattern": "object_transformation"
+      },
+      {
+        "expression": "map([0..3], #)",
+        "file": "/Users/lior.e/git/dsl-ai-playground/dsl-ai-playground/libs/graph-knowledge-system/knowledge-cards/examples/rangeExamples.ts",
+        "line": 7,
+        "capability": "basic_transformation",
+        "pattern": "other"
+      },
+      {
+        "expression": "map((0..3], #)",
+        "file": "/Users/lior.e/git/dsl-ai-playground/dsl-ai-playground/libs/graph-knowledge-system/knowledge-cards/examples/rangeExamples.ts",
+        "line": 16,
+        "capability": "basic_transformation",
+        "pattern": "other"
+      },
+      {
+        "expression": "map([0..3)",
+        "file": "/Users/lior.e/git/dsl-ai-playground/dsl-ai-playground/libs/graph-knowledge-system/knowledge-cards/examples/rangeExamples.ts",
+        "line": 25,
+        "capability": "basic_transformation",
+        "pattern": "other"
+      },
+      {
+        "expression": "map([0..5], # * 2)",
+        "file": "/Users/lior.e/git/dsl-ai-playground/dsl-ai-playground/libs/graph-knowledge-system/knowledge-cards/examples/rangeExamples.ts",
+        "line": 34,
+        "capability": "arithmetic_transformation",
+        "pattern": "simple_transform"
+      },
+      {
+        "expression": "map(split(\"123,456,789\", \",\")",
+        "file": "/Users/lior.e/git/dsl-ai-playground/dsl-ai-playground/libs/graph-knowledge-system/knowledge-cards/examples/stringOperationsExamples.ts",
+        "line": 201,
+        "capability": "basic_transformation",
+        "pattern": "other"
+      },
+      {
+        "expression": "map(filter(split(\"apple,banana,a,cherry,go\", \",\")",
+        "file": "/Users/lior.e/git/dsl-ai-playground/dsl-ai-playground/libs/graph-knowledge-system/knowledge-cards/examples/stringOperationsExamples.ts",
+        "line": 239,
+        "capability": "filtered_transformation",
+        "pattern": "other"
+      },
+      {
+        "expression": "map(split(\"short,medium,verylongstring\", \",\")",
+        "file": "/Users/lior.e/git/dsl-ai-playground/dsl-ai-playground/libs/graph-knowledge-system/knowledge-cards/examples/stringOperationsExamples.ts",
+        "line": 248,
+        "capability": "basic_transformation",
+        "pattern": "other"
+      },
+      {
+        "expression": "map(filter(split(text, \" \")",
+        "file": "/Users/lior.e/git/dsl-ai-playground/dsl-ai-playground/libs/graph-knowledge-system/knowledge-cards/examples/stringOperationsExamples.ts",
+        "line": 362,
+        "capability": "filtered_transformation",
+        "pattern": "other"
+      },
+      {
+        "expression": "map(orders, #.total)",
+        "file": "/Users/lior.e/git/dsl-ai-playground/dsl-ai-playground/libs/graph-knowledge-system/knowledge-cards/examples/stringOperationsExamples.ts",
+        "line": 371,
+        "capability": "property_extraction",
+        "pattern": "property_extraction"
+      },
+      {
+        "expression": "map(orders, #.customer)",
+        "file": "/Users/lior.e/git/dsl-ai-playground/dsl-ai-playground/libs/graph-knowledge-system/knowledge-cards/examples/stringOperationsExamples.ts",
+        "line": 371,
+        "capability": "property_extraction",
+        "pattern": "property_extraction"
+      },
+      {
+        "expression": "map(x => x * 2)",
+        "file": "/Users/lior.e/git/dsl-ai-playground/dsl-ai-playground/libs/graph-knowledge-system/knowledge-cards/rules/array-rule.mdc",
+        "line": 82,
+        "capability": "basic_transformation",
+        "pattern": "other"
+      },
+      {
+        "expression": "map([1, 2, 3], # * 2)",
+        "file": "/Users/lior.e/git/dsl-ai-playground/dsl-ai-playground/libs/graph-knowledge-system/knowledge-cards/rules/array-rule.mdc",
+        "line": 83,
+        "capability": "arithmetic_transformation",
+        "pattern": "simple_transform"
+      },
+      {
+        "expression": "map(x => x * 2)",
+        "file": "/Users/lior.e/git/dsl-ai-playground/dsl-ai-playground/libs/graph-knowledge-system/knowledge-cards/rules/array-rule.mdc",
+        "line": 96,
+        "capability": "basic_transformation",
+        "pattern": "other"
+      },
+      {
+        "expression": "map(filter([1, 2, 3, 4, 5], # > 2)",
+        "file": "/Users/lior.e/git/dsl-ai-playground/dsl-ai-playground/libs/graph-knowledge-system/knowledge-cards/rules/array-rule.mdc",
+        "line": 97,
+        "capability": "filtered_transformation",
+        "pattern": "other"
+      },
+      {
+        "expression": "map(obj => obj.id)",
+        "file": "/Users/lior.e/git/dsl-ai-playground/dsl-ai-playground/libs/graph-knowledge-system/knowledge-cards/rules/array-rule.mdc",
+        "line": 258,
+        "capability": "basic_transformation",
+        "pattern": "other"
+      },
+      {
+        "expression": "map([{id: 1, name: 'John'}, {id: 2, name: 'Jane'}], #.id)",
+        "file": "/Users/lior.e/git/dsl-ai-playground/dsl-ai-playground/libs/graph-knowledge-system/knowledge-cards/rules/array-rule.mdc",
+        "line": 259,
+        "capability": "object_restructuring",
+        "pattern": "object_transformation"
+      },
+      {
+        "expression": "map(obj => obj.name)",
+        "file": "/Users/lior.e/git/dsl-ai-playground/dsl-ai-playground/libs/graph-knowledge-system/knowledge-cards/rules/array-rule.mdc",
+        "line": 272,
+        "capability": "basic_transformation",
+        "pattern": "other"
+      },
+      {
+        "expression": "map(Number)",
+        "file": "/Users/lior.e/git/dsl-ai-playground/dsl-ai-playground/libs/graph-knowledge-system/knowledge-cards/rules/array-rule.mdc",
+        "line": 292,
+        "capability": "basic_transformation",
+        "pattern": "other"
+      },
+      {
+        "expression": "map(split('123,456,789', ',')",
+        "file": "/Users/lior.e/git/dsl-ai-playground/dsl-ai-playground/libs/graph-knowledge-system/knowledge-cards/rules/array-rule.mdc",
+        "line": 293,
+        "capability": "basic_transformation",
+        "pattern": "other"
+      },
+      {
+        "expression": "map(arr, #)",
+        "file": "/Users/lior.e/git/dsl-ai-playground/dsl-ai-playground/libs/graph-knowledge-system/knowledge-cards/rules/array-rule.mdc",
+        "line": 321,
+        "capability": "basic_transformation",
+        "pattern": "other"
+      },
+      {
+        "expression": "map(arr, #.prop)",
+        "file": "/Users/lior.e/git/dsl-ai-playground/dsl-ai-playground/libs/graph-knowledge-system/knowledge-cards/rules/array-rule.mdc",
+        "line": 327,
+        "capability": "property_extraction",
+        "pattern": "property_extraction"
+      },
+      {
+        "expression": "map(split(str, ',')",
+        "file": "/Users/lior.e/git/dsl-ai-playground/dsl-ai-playground/libs/graph-knowledge-system/knowledge-cards/rules/array-rule.mdc",
+        "line": 328,
+        "capability": "basic_transformation",
+        "pattern": "other"
+      },
+      {
+        "expression": "map(arrayField, {...})",
+        "file": "/Users/lior.e/git/dsl-ai-playground/dsl-ai-playground/libs/graph-knowledge-system/knowledge-cards/rules/market-rule.mdc",
+        "line": 40,
+        "capability": "basic_transformation",
+        "pattern": "object_transformation"
+      },
+      {
+        "expression": "map(markets,\n    {\n      Condition: contains(#.name, \"Asian Handicap\")",
+        "file": "/Users/lior.e/git/dsl-ai-playground/dsl-ai-playground/libs/graph-knowledge-system/knowledge-cards/rules/market-rule.mdc",
+        "line": 109,
+        "capability": "property_extraction",
+        "pattern": "other"
+      },
+      {
+        "expression": "map(array, {...})",
+        "file": "/Users/lior.e/git/dsl-ai-playground/dsl-ai-playground/libs/graph-knowledge-system/knowledge-cards/rules/market-rule.mdc",
+        "line": 173,
+        "capability": "basic_transformation",
+        "pattern": "object_transformation"
+      },
+      {
+        "expression": "map(selections, {Name: #.name})",
+        "file": "/Users/lior.e/git/dsl-ai-playground/dsl-ai-playground/libs/graph-knowledge-system/knowledge-cards/rules/market-rule.mdc",
+        "line": 173,
+        "capability": "object_restructuring",
+        "pattern": "object_transformation"
+      },
+      {
+        "expression": "map(array, {...})",
+        "file": "/Users/lior.e/git/dsl-ai-playground/dsl-ai-playground/libs/graph-knowledge-system/knowledge-cards/rules/market-rule.mdc",
+        "line": 182,
+        "capability": "basic_transformation",
+        "pattern": "object_transformation"
+      },
+      {
+        "expression": "map(obj => obj.id)",
+        "file": "/Users/lior.e/git/dsl-ai-playground/dsl-ai-playground/libs/graph-knowledge-system/knowledge-cards/rules/object-rule.mdc",
+        "line": 145,
+        "capability": "basic_transformation",
+        "pattern": "other"
+      },
+      {
+        "expression": "map([{id: 1, name: 'John'}, {id: 2, name: 'Jane'}], #.id)",
+        "file": "/Users/lior.e/git/dsl-ai-playground/dsl-ai-playground/libs/graph-knowledge-system/knowledge-cards/rules/object-rule.mdc",
+        "line": 146,
+        "capability": "object_restructuring",
+        "pattern": "object_transformation"
+      },
+      {
+        "expression": "map(obj => obj.name)",
+        "file": "/Users/lior.e/git/dsl-ai-playground/dsl-ai-playground/libs/graph-knowledge-system/knowledge-cards/rules/object-rule.mdc",
+        "line": 159,
+        "capability": "basic_transformation",
+        "pattern": "other"
+      },
+      {
+        "expression": "map(obj => ({id: obj.id, fullName: obj.firstName + ' ' + obj.lastName})",
+        "file": "/Users/lior.e/git/dsl-ai-playground/dsl-ai-playground/libs/graph-knowledge-system/knowledge-cards/rules/object-rule.mdc",
+        "line": 172,
+        "capability": "basic_transformation",
+        "pattern": "object_transformation"
+      },
+      {
+        "expression": "map(arr, #.id)",
+        "file": "/Users/lior.e/git/dsl-ai-playground/dsl-ai-playground/libs/graph-knowledge-system/knowledge-cards/rules/object-rule.mdc",
+        "line": 236,
+        "capability": "property_extraction",
+        "pattern": "property_extraction"
+      },
+      {
+        "expression": "map(split(\"123,456,789\", \",\")",
+        "file": "/Users/lior.e/git/dsl-ai-playground/dsl-ai-playground/libs/graph-knowledge-system/knowledge-cards/rules/strings-rule.mdc",
+        "line": 119,
+        "capability": "basic_transformation",
+        "pattern": "other"
+      },
+      {
+        "expression": "map(split(\"123,456,789\", \",\")",
+        "file": "/Users/lior.e/git/dsl-ai-playground/dsl-ai-playground/libs/graph-knowledge-system/knowledge-cards/rules/strings-rule.mdc",
+        "line": 120,
+        "capability": "basic_transformation",
+        "pattern": "other"
+      },
+      {
+        "expression": "map(this.markets, #.name)",
+        "file": "/Users/lior.e/git/dsl-ai-playground/dsl-ai-playground/libs/graph-knowledge-system/knowledge-cards/rules/syntax-restrictions.mdc",
+        "line": 29,
+        "capability": "property_extraction",
+        "pattern": "property_extraction"
+      },
+      {
+        "expression": "map(markets, #.name)",
+        "file": "/Users/lior.e/git/dsl-ai-playground/dsl-ai-playground/libs/graph-knowledge-system/knowledge-cards/rules/syntax-restrictions.mdc",
+        "line": 47,
+        "capability": "property_extraction",
+        "pattern": "property_extraction"
+      },
+      {
+        "expression": "map(Number)",
+        "file": "/Users/lior.e/git/dsl-ai-playground/dsl-ai-playground/libs/graph-knowledge-system/knowledge-cards/rules/type-inspection-rule.mdc",
+        "line": 185,
+        "capability": "basic_transformation",
+        "pattern": "other"
+      },
+      {
+        "expression": "map(split(\"123,456,789\", \",\")",
+        "file": "/Users/lior.e/git/dsl-ai-playground/dsl-ai-playground/libs/graph-knowledge-system/knowledge-cards/rules/type-inspection-rule.mdc",
+        "line": 186,
+        "capability": "basic_transformation",
+        "pattern": "other"
+      }
+    ],
+    "intermediate": [
+      {
+        "expression": "map(filter([{id: 1, name: \"John\"}, {id: 2, name: \"Jane\"}], #.id > 1)",
+        "file": "/Users/lior.e/git/dsl-ai-playground/dsl-ai-playground/libs/graph-knowledge-system/knowledge-cards/examples/arrayOperationsExamples.ts",
+        "line": 254,
+        "capability": "object_restructuring",
+        "pattern": "object_transformation"
+      },
+      {
+        "expression": "map(items, {id: #.id, fullName: #.firstName + \" \" + #.lastName})",
+        "file": "/Users/lior.e/git/dsl-ai-playground/dsl-ai-playground/libs/graph-knowledge-system/knowledge-cards/examples/arrayOperationsExamples.ts",
+        "line": 263,
+        "capability": "object_restructuring",
+        "pattern": "object_transformation"
+      },
+      {
+        "expression": "map(filter([{id: 1, val: 10}, {id: 2, val: 20}, {id: 3, val: 30}], #.id > 1)",
+        "file": "/Users/lior.e/git/dsl-ai-playground/dsl-ai-playground/libs/graph-knowledge-system/knowledge-cards/examples/arrayOperationsExamples.ts",
+        "line": 272,
+        "capability": "object_restructuring",
+        "pattern": "object_transformation"
+      },
+      {
+        "expression": "map(filter(#.items, #.active)",
+        "file": "/Users/lior.e/git/dsl-ai-playground/dsl-ai-playground/libs/graph-knowledge-system/knowledge-cards/examples/arrayOperationsExamples.ts",
+        "line": 493,
+        "capability": "property_extraction",
+        "pattern": "property_extraction"
+      },
+      {
+        "expression": "map(#.items, #.price * #.quantity * (#.category == 'electronics' ? 0.08 : #.category == 'clothing' ? 0.06 : 0.05)",
+        "file": "/Users/lior.e/git/dsl-ai-playground/dsl-ai-playground/libs/graph-knowledge-system/knowledge-cards/examples/arrayOperationsExamples.ts",
+        "line": 514,
+        "capability": "property_extraction",
+        "pattern": "other"
+      },
+      {
+        "expression": "map(filter(#.records, type(#.age)",
+        "file": "/Users/lior.e/git/dsl-ai-playground/dsl-ai-playground/libs/graph-knowledge-system/knowledge-cards/examples/arrayOperationsExamples.ts",
+        "line": 523,
+        "capability": "property_extraction",
+        "pattern": "other"
+      },
+      {
+        "expression": "map(orders, {id: #.id, total: sum(map(#.items, #.price * #.quantity)",
+        "file": "/Users/lior.e/git/dsl-ai-playground/dsl-ai-playground/libs/graph-knowledge-system/knowledge-cards/examples/business_calculationsExamples.ts",
+        "line": 117,
+        "capability": "property_extraction",
+        "pattern": "other"
+      },
+      {
+        "expression": "map(employees, {name: #.name, score: round(avg([#.sales, #.reviews, #.attendance])",
+        "file": "/Users/lior.e/git/dsl-ai-playground/dsl-ai-playground/libs/graph-knowledge-system/knowledge-cards/examples/business_calculationsExamples.ts",
+        "line": 128,
+        "capability": "property_extraction",
+        "pattern": "other"
+      },
+      {
+        "expression": "map(map([1, 2, 3], # * 2)",
+        "file": "/Users/lior.e/git/dsl-ai-playground/dsl-ai-playground/libs/graph-knowledge-system/knowledge-cards/examples/closureOperationsExamples.ts",
+        "line": 145,
+        "capability": "arithmetic_transformation",
+        "pattern": "simple_transform"
+      },
+      {
+        "expression": "map(items, {id: #.id, fullName: #.firstName + \" \" + #.lastName})",
+        "file": "/Users/lior.e/git/dsl-ai-playground/dsl-ai-playground/libs/graph-knowledge-system/knowledge-cards/examples/complexExamples.ts",
+        "line": 25,
+        "capability": "object_restructuring",
+        "pattern": "object_transformation"
+      },
+      {
+        "expression": "map(#.teams, sum(map(#.members, #.salary)",
+        "file": "/Users/lior.e/git/dsl-ai-playground/dsl-ai-playground/libs/graph-knowledge-system/knowledge-cards/examples/complexExamples.ts",
+        "line": 45,
+        "capability": "property_extraction",
+        "pattern": "property_extraction"
+      },
+      {
+        "expression": "map(filter([{id: 1, name: 'John'}, {id: 2, name: 'Jane'}], #.id > 1)",
+        "file": "/Users/lior.e/git/dsl-ai-playground/dsl-ai-playground/libs/graph-knowledge-system/knowledge-cards/rules/array-rule.mdc",
+        "line": 273,
+        "capability": "object_restructuring",
+        "pattern": "object_transformation"
+      },
+      {
+        "expression": "map([ARRAY OF BETS], {    // Use map and # for bets/selections\n        Name: [ZEN EXPRESSION HERE],      // DSL expression for to identify the bet's name\n        Line: [ZEN EXPRESSION HERE], // DSL expression for the bet's line/sub-name, with coelesing for default\n        Price: [ZEN EXPRESSION HERE],    // DSL expression for the bet's price, in decimal format.\n        Status: [ZEN EXPRESSION HERE] // DSL expression for the bet's status, converting from the input data, to the desired format (input-to-desire-output for example: Input:\"Open\",output:1 ; Input:\"Close\",output:2  )",
+        "file": "/Users/lior.e/git/dsl-ai-playground/dsl-ai-playground/libs/graph-knowledge-system/knowledge-cards/rules/market-rule.mdc",
+        "line": 90,
+        "capability": "basic_transformation",
+        "pattern": "other"
+      },
+      {
+        "expression": "map(selections, {\n      Name: #.name.cleanName,\n      Line: #.points.formattedPoints ?? \"\",\n      Price: number(#.odds.numerator/#.odds.denominator)",
+        "file": "/Users/lior.e/git/dsl-ai-playground/dsl-ai-playground/libs/graph-knowledge-system/knowledge-cards/rules/market-rule.mdc",
+        "line": 134,
+        "capability": "property_extraction",
+        "pattern": "other"
+      },
+      {
+        "expression": "map(selections, {\n    Name: #.name.cleanName,\n    Line: #.points.formattedPoints ?? \"\",\n    Price: number(#.odds.numerator/#.odds.denominator)",
+        "file": "/Users/lior.e/git/dsl-ai-playground/dsl-ai-playground/libs/graph-knowledge-system/knowledge-cards/rules/market-rule.mdc",
+        "line": 157,
+        "capability": "property_extraction",
+        "pattern": "other"
+      },
+      {
+        "expression": "map(filter([{id: 1, name: 'John'}, {id: 2, name: 'Jane'}], #.id > 1)",
+        "file": "/Users/lior.e/git/dsl-ai-playground/dsl-ai-playground/libs/graph-knowledge-system/knowledge-cards/rules/object-rule.mdc",
+        "line": 160,
+        "capability": "object_restructuring",
+        "pattern": "object_transformation"
+      },
+      {
+        "expression": "map(items, {id: #.id, fullName: #.firstName + ' ' + #.lastName})",
+        "file": "/Users/lior.e/git/dsl-ai-playground/dsl-ai-playground/libs/graph-knowledge-system/knowledge-cards/rules/object-rule.mdc",
+        "line": 173,
+        "capability": "object_restructuring",
+        "pattern": "object_transformation"
+      },
+      {
+        "expression": "map(items, {id: #.id, fullName: #.firstName + ' ' + #.lastName})",
+        "file": "/Users/lior.e/git/dsl-ai-playground/dsl-ai-playground/libs/graph-knowledge-system/knowledge-cards/rules/object-rule.mdc",
+        "line": 237,
+        "capability": "object_restructuring",
+        "pattern": "object_transformation"
+      }
+    ],
+    "advanced": [
+      {
+        "expression": "map(orders, {order_id: #.id, customer: {id: #.customer.id, tier: #.customer.orders_count > 50 ? 'VIP' : #.customer.orders_count > 20 ? 'Premium' : 'Standard', discount_eligible: #.customer.tier == 'VIP' or sum(map(#.items, #.price * #.quantity)",
+        "file": "/Users/lior.e/git/dsl-ai-playground/dsl-ai-playground/libs/graph-knowledge-system/knowledge-cards/examples/arrayOperationsExamples.ts",
+        "line": 514,
+        "capability": "property_extraction",
+        "pattern": "other"
+      },
+      {
+        "expression": "map(#.items, {sku: #.sku, name: #.name, quantity: #.quantity, unit_price: #.price, line_total: #.price * #.quantity, category: #.category, tax_rate: #.category == 'electronics' ? 0.08 : #.category == 'clothing' ? 0.06 : 0.05})",
+        "file": "/Users/lior.e/git/dsl-ai-playground/dsl-ai-playground/libs/graph-knowledge-system/knowledge-cards/examples/arrayOperationsExamples.ts",
+        "line": 514,
+        "capability": "object_restructuring",
+        "pattern": "object_transformation"
+      },
+      {
+        "expression": "map(customers, {name: #.name, tier: #.orders > 100 ? \\'platinum\\' : #.orders > 50 ? \\'gold\\' : #.orders > 10 ? \\'silver\\' : \\'bronze\\', discount: #.orders > 100 ? 0.15 : #.orders > 50 ? 0.1 : #.orders > 10 ? 0.05 : 0})",
+        "file": "/Users/lior.e/git/dsl-ai-playground/dsl-ai-playground/libs/graph-knowledge-system/knowledge-cards/examples/conditionalExamples.ts",
+        "line": 99,
+        "capability": "object_restructuring",
+        "pattern": "object_transformation"
+      },
+      {
+        "expression": "map(inventory, {product: #.name, status: #.quantity <= 0 ? \\'out_of_stock\\' : #.quantity <= #.reorder_point ? \\'low_stock\\' : #.quantity >= #.max_capacity ? \\'overstocked\\' : \\'normal\\', action: #.quantity <= 0 ? \\'urgent_reorder\\' : #.quantity <= #.reorder_point ? \\'reorder_soon\\' : #.quantity >= #.max_capacity ? \\'reduce_orders\\' : \\'none\\'})",
+        "file": "/Users/lior.e/git/dsl-ai-playground/dsl-ai-playground/libs/graph-knowledge-system/knowledge-cards/examples/conditionalExamples.ts",
+        "line": 110,
+        "capability": "object_restructuring",
+        "pattern": "object_transformation"
+      },
+      {
+        "expression": "map(#.selections, {    // Use map and # for bets/selections\n        \"Name\": #.optionName,      // DSL expression for the bet's name\n        \"Line\": #.line ?? \"\", // DSL expression for the bet's line/sub-name, with fallback\n        \"Price\": number(#.price)",
+        "file": "/Users/lior.e/git/dsl-ai-playground/dsl-ai-playground/libs/graph-knowledge-system/knowledge-cards/rules/market-rule.mdc",
+        "line": 113,
+        "capability": "property_extraction",
+        "pattern": "other"
+      }
+    ]
+  },
+  "usage_patterns": {
+    "simple_transform": [
+      "map([1, 2, 3, 4, 5], # * 2)",
+      "map([1, 2, 3], # * 2)",
+      "map([1, 2, 3], # + 2)",
+      "map([1, 2, 3], # * 2)",
+      "map([1, 2, 3], # * 2)",
+      "map([1, 2, 3], # + 10)",
+      "map([1, 2, 3, 4], # ^ 2)",
+      "map(map([1, 2, 3], # * 2)",
+      "map([1, 2, 3, 4], # ^ 2)",
+      "map([1, 2, 3, 4, 5], # * 2)",
+      "map([0..5], # * 2)",
+      "map([1, 2, 3], # * 2)"
+    ],
+    "property_extraction": [
+      "map(items, #.price)",
+      "map(products, #.price)",
+      "map(filter(#.items, #.active)",
+      "map(keys(map(sales, #.region)",
+      "map(items, #.price)",
+      "map(cart, #.price)",
+      "map(filter(items, #.active)",
+      "map(items, #.price)",
+      "map(#.teams, sum(map(#.members, #.salary)",
+      "map(orders, #.total)",
+      "map(orders, #.customer)",
+      "map(arr, #.prop)",
+      "map(arr, #.id)",
+      "map(this.markets, #.name)",
+      "map(markets, #.name)"
+    ],
+    "object_transformation": [
+      "map([{id: 1, name: \"John\"}, {id: 2, name: \"Jane\"}], #.id)",
+      "map(filter([{id: 1, name: \"John\"}, {id: 2, name: \"Jane\"}], #.id > 1)",
+      "map(items, {id: #.id, fullName: #.firstName + \" \" + #.lastName})",
+      "map(filter([{id: 1, val: 10}, {id: 2, val: 20}, {id: 3, val: 30}], #.id > 1)",
+      "map(#.items, {sku: #.sku, name: #.name, quantity: #.quantity, unit_price: #.price, line_total: #.price * #.quantity, category: #.category, tax_rate: #.category == 'electronics' ? 0.08 : #.category == 'clothing' ? 0.06 : 0.05})",
+      "map([{x: 1}, {x: 2}, {x: 3}], #.x * 2)",
+      "map([{id: 1, name: \"John\"}, {id: 2, name: \"Jane\"}], #.id)",
+      "map(items, {id: #.id, fullName: #.firstName + \" \" + #.lastName})",
+      "map(markets, {market_id: #.id, status: \\\"analyzed\\\"})",
+      "map(delivery_routes, {route_id: #.id, status: \\\"optimized\\\"})",
+      "map(customers, {name: #.name, tier: #.orders > 100 ? \\'platinum\\' : #.orders > 50 ? \\'gold\\' : #.orders > 10 ? \\'silver\\' : \\'bronze\\', discount: #.orders > 100 ? 0.15 : #.orders > 50 ? 0.1 : #.orders > 10 ? 0.05 : 0})",
+      "map(inventory, {product: #.name, status: #.quantity <= 0 ? \\'out_of_stock\\' : #.quantity <= #.reorder_point ? \\'low_stock\\' : #.quantity >= #.max_capacity ? \\'overstocked\\' : \\'normal\\', action: #.quantity <= 0 ? \\'urgent_reorder\\' : #.quantity <= #.reorder_point ? \\'reorder_soon\\' : #.quantity >= #.max_capacity ? \\'reduce_orders\\' : \\'none\\'})",
+      "map(resource_requests, {request_id: #.id, status: \"allocated\"})",
+      "map(portfolios, {owner: #.owner, status: \\\"analyzed\\\"})",
+      "map(options_chains, {symbol: #.symbol, status: \\\"analyzed\\\"})",
+      "map([{id: 1, name: 'John'}, {id: 2, name: 'Jane'}], #.id)",
+      "map(filter([{id: 1, name: 'John'}, {id: 2, name: 'Jane'}], #.id > 1)",
+      "map(arrayField, {...})",
+      "map(array, {...})",
+      "map(selections, {Name: #.name})",
+      "map(array, {...})",
+      "map([{id: 1, name: 'John'}, {id: 2, name: 'Jane'}], #.id)",
+      "map(filter([{id: 1, name: 'John'}, {id: 2, name: 'Jane'}], #.id > 1)",
+      "map(obj => ({id: obj.id, fullName: obj.firstName + ' ' + obj.lastName})",
+      "map(items, {id: #.id, fullName: #.firstName + ' ' + #.lastName})",
+      "map(items, {id: #.id, fullName: #.firstName + ' ' + #.lastName})"
+    ],
+    "chained_operations": [],
+    "nested_mapping": [],
+    "aggregation_input": [],
+    "other": [
+      "map(['a', 'b', 'c'], # + '!')",
+      "map(filter([1, 2, 3, 4, 5], # > 2)",
+      "map(filter([1, 2, 3, 4, 5], # > 3)",
+      "map(items, #.qty * #.price)",
+      "map(split(\"123,456,789\", \",\")",
+      "map(#, # * 2)",
+      "map(#.values, # * 2)",
+      "map(filter(sales, #.region == #)",
+      "map(orders, {order_id: #.id, customer: {id: #.customer.id, tier: #.customer.orders_count > 50 ? 'VIP' : #.customer.orders_count > 20 ? 'Premium' : 'Standard', discount_eligible: #.customer.tier == 'VIP' or sum(map(#.items, #.price * #.quantity)",
+      "map(#.items, #.price * #.quantity)",
+      "map(#.items, #.price * #.quantity * (#.category == 'electronics' ? 0.08 : #.category == 'clothing' ? 0.06 : 0.05)",
+      "map(#.items, #.price * #.quantity)",
+      "map(#.items, #.price * #.quantity)",
+      "map(datasets, {name: #.name, total_records: len(#.records)",
+      "map(filter(#.records, type(#.age)",
+      "map(items, #.qty * #.price)",
+      "map(orders, #.qty * #.price)",
+      "map(orders, {id: #.id, total: sum(map(#.items, #.price * #.quantity)",
+      "map(employees, {name: #.name, score: round(avg([#.sales, #.reviews, #.attendance])",
+      "map([1, 2, 3], # * # + 1)",
+      "map([\"hello\", \"world\"], upper(#)",
+      "map([\"a\", \"bb\", \"ccc\"], len(#)",
+      "map([1, 2, 3, 4], # > 2 ? # * 2 : #)",
+      "map([-1, -2, 3, -4], abs(#)",
+      "map(numbers, # * multiplier)",
+      "map(filter([1, 2, 3, 4, 5], # > 2)",
+      "map(filter([1, 2, 3, 4, 5, 6], # % 2 == 0)",
+      "map(filter(data, #.score > 80)",
+      "map(filter([1, 2, 3, 4, 5], # % 2 == 1)",
+      "map(filter(orders, #.status == \"completed\")",
+      "map(filter([1, 2, 3, 4, 5], # > 2)",
+      "map(filter(markets, contains(#.name, 'Over/Under')",
+      "map(parlays, {id: #.id, legs: len(#.selections)",
+      "map(projects, {name: #.name, duration: d(#.endDate)",
+      "map([0..d(#.endDate)",
+      "map(events, {id: #.id, title: #.title, local_start: d(#.start_utc)",
+      "map(numbers, (#- avg(numbers)",
+      "map([0..3], #)",
+      "map((0..3], #)",
+      "map([0..3)",
+      "map(split(\"123,456,789\", \",\")",
+      "map(filter(split(\"apple,banana,a,cherry,go\", \",\")",
+      "map(split(\"short,medium,verylongstring\", \",\")",
+      "map(filter(split(text, \" \")",
+      "map(x => x * 2)",
+      "map(x => x * 2)",
+      "map(filter([1, 2, 3, 4, 5], # > 2)",
+      "map(obj => obj.id)",
+      "map(obj => obj.name)",
+      "map(Number)",
+      "map(split('123,456,789', ',')",
+      "map(arr, #)",
+      "map(split(str, ',')",
+      "map([ARRAY OF BETS], {    // Use map and # for bets/selections\n        Name: [ZEN EXPRESSION HERE],      // DSL expression for to identify the bet's name\n        Line: [ZEN EXPRESSION HERE], // DSL expression for the bet's line/sub-name, with coelesing for default\n        Price: [ZEN EXPRESSION HERE],    // DSL expression for the bet's price, in decimal format.\n        Status: [ZEN EXPRESSION HERE] // DSL expression for the bet's status, converting from the input data, to the desired format (input-to-desire-output for example: Input:\"Open\",output:1 ; Input:\"Close\",output:2  )",
+      "map(markets,\n    {\n      Condition: contains(#.name, \"Asian Handicap\")",
+      "map(#.selections, {    // Use map and # for bets/selections\n        \"Name\": #.optionName,      // DSL expression for the bet's name\n        \"Line\": #.line ?? \"\", // DSL expression for the bet's line/sub-name, with fallback\n        \"Price\": number(#.price)",
+      "map(selections, {\n      Name: #.name.cleanName,\n      Line: #.points.formattedPoints ?? \"\",\n      Price: number(#.odds.numerator/#.odds.denominator)",
+      "map(selections, {\n    Name: #.name.cleanName,\n    Line: #.points.formattedPoints ?? \"\",\n    Price: number(#.odds.numerator/#.odds.denominator)",
+      "map(obj => obj.id)",
+      "map(obj => obj.name)",
+      "map(split(\"123,456,789\", \",\")",
+      "map(split(\"123,456,789\", \",\")",
+      "map(Number)",
+      "map(split(\"123,456,789\", \",\")"
+    ]
+  },
+  "redundancy_analysis": {
+    "simple_transform": {
+      "count": 12,
+      "unique_expressions": 7,
+      "redundancy_level": 5
+    },
+    "property_extraction": {
+      "count": 15,
+      "unique_expressions": 13,
+      "redundancy_level": 2
+    },
+    "object_transformation": {
+      "count": 26,
+      "unique_expressions": 20,
+      "redundancy_level": 6
+    },
+    "other": {
+      "count": 64,
+      "unique_expressions": 50,
+      "redundancy_level": 14
+    }
+  },
+  "consolidation_recommendations": [
+    {
+      "action": "create_basic_examples_card",
+      "target_capability": "arithmetic_transformation",
+      "consolidates": 12,
+      "complexity": "basic"
+    },
+    {
+      "action": "create_property_extraction_card",
+      "target_capability": "property_extraction",
+      "consolidates": 15,
+      "complexity": "intermediate"
+    },
+    {
+      "action": "create_object_transformation_card",
+      "target_capability": "object_restructuring",
+      "consolidates": 26,
+      "complexity": "intermediate"
+    },
+    {
+      "action": "create_chained_operations_card",
+      "target_capability": "filtered_transformation",
+      "consolidates": 0,
+      "complexity": "advanced"
+    }
+  ]
+}

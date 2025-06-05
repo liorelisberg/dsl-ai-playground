@@ -1,0 +1,39 @@
+{
+  "id": "map-function-instruction",
+  "type": "instruction",
+  "function": "map",
+  "function_format": "map(array, transformation_expression)",
+  "syntax": "map(array, transformation_expression)",
+  "description": "Transforms each element in an array using the provided expression",
+  "parameters": [
+    {
+      "name": "array",
+      "type": "Array",
+      "description": "Input array to transform"
+    },
+    {
+      "name": "transformation_expression",
+      "type": "Expression",
+      "description": "Expression to apply to each element (use # as placeholder)"
+    }
+  ],
+  "returns": "Array with transformed elements",
+  "constraints": [
+    "Array must not be empty for meaningful results",
+    "Transformation expression must be valid ZEN DSL",
+    "Use # placeholder to reference current element"
+  ],
+  "related_functions": [
+    "filter",
+    "reduce",
+    "flatMap",
+    "sum",
+    "avg"
+  ],
+  "common_patterns": [
+    "Arithmetic: map(numbers, # * 2)",
+    "Property extraction: map(objects, #.property)",
+    "Object transformation: map(objects, {new: structure})",
+    "Chaining: map(filter(array, condition), transformation)"
+  ]
+}

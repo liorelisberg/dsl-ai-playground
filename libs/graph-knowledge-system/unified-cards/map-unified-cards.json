@@ -1,0 +1,349 @@
+{
+  "function": "map",
+  "generated_at": "2025-06-05T22:46:24.087Z",
+  "total_cards": 5,
+  "consolidates_occurrences": 117,
+  "cards": [
+    {
+      "id": "map-arithmetic-transformation-basic",
+      "function": "map",
+      "function_format": "map(array, # operator value)",
+      "capability": "arithmetic_transformation",
+      "complexity": "basic",
+      "primary_example": {
+        "expression": "map([1, 2, 3, 4, 5], # * 2)",
+        "sample_input": {},
+        "expected_output": [
+          2,
+          4,
+          6,
+          8,
+          10
+        ],
+        "explanation": "Transform each array element using arithmetic operations with # placeholder"
+      },
+      "related_examples": [
+        {
+          "variation": "addition",
+          "expression": "map([1, 2, 3], # + 10)",
+          "context": "Add constant to each element"
+        },
+        {
+          "variation": "power",
+          "expression": "map([1, 2, 3, 4], # ^ 2)",
+          "context": "Square each element"
+        },
+        {
+          "variation": "string_concatenation",
+          "expression": "map(['a', 'b', 'c'], # + '!')",
+          "context": "Append character to each string"
+        }
+      ],
+      "relationships": {
+        "commonly_used_with": [
+          "filter",
+          "sum",
+          "len"
+        ],
+        "input_preparation": [
+          "Direct array literal",
+          "Variable containing array"
+        ],
+        "output_usage": [
+          "Further map operations",
+          "Aggregation functions"
+        ],
+        "builds_on": [
+          "array_basics",
+          "arithmetic_operators"
+        ],
+        "leads_to": [
+          "property_extraction",
+          "chained_operations"
+        ]
+      },
+      "retrieval_metadata": {
+        "tags": [
+          "transformation",
+          "arithmetic",
+          "basic_operations"
+        ],
+        "use_cases": [
+          "data_processing",
+          "mathematical_operations",
+          "array_transformation"
+        ],
+        "difficulty_progression": "builds_on: arrays | leads_to: object_mapping"
+      }
+    },
+    {
+      "id": "map-property-extraction-intermediate",
+      "function": "map",
+      "function_format": "map(object_array, #.property)",
+      "capability": "property_extraction",
+      "complexity": "intermediate",
+      "primary_example": {
+        "expression": "map([{id: 1, name: 'John'}, {id: 2, name: 'Jane'}], #.id)",
+        "sample_input": {},
+        "expected_output": [
+          1,
+          2
+        ],
+        "explanation": "Extract specific property from each object in array using dot notation"
+      },
+      "related_examples": [
+        {
+          "variation": "price_extraction",
+          "expression": "map(items, #.price)",
+          "context": "Extract price property from product items"
+        },
+        {
+          "variation": "nested_property",
+          "expression": "map(orders, #.customer.name)",
+          "context": "Extract nested property from objects"
+        },
+        {
+          "variation": "calculated_property",
+          "expression": "map(items, #.qty * #.price)",
+          "context": "Calculate values using multiple properties"
+        }
+      ],
+      "relationships": {
+        "commonly_used_with": [
+          "filter",
+          "sum",
+          "avg",
+          "max",
+          "min"
+        ],
+        "input_preparation": [
+          "Object arrays from API",
+          "Database query results"
+        ],
+        "output_usage": [
+          "Aggregation calculations",
+          "Data analysis"
+        ],
+        "builds_on": [
+          "object_property_access",
+          "array_mapping"
+        ],
+        "leads_to": [
+          "object_transformation",
+          "complex_chaining"
+        ]
+      },
+      "retrieval_metadata": {
+        "tags": [
+          "object_access",
+          "property_extraction",
+          "data_extraction"
+        ],
+        "use_cases": [
+          "api_data_processing",
+          "business_analytics",
+          "report_generation"
+        ],
+        "difficulty_progression": "builds_on: property_access | leads_to: object_restructuring"
+      }
+    },
+    {
+      "id": "map-object-transformation-intermediate",
+      "function": "map",
+      "function_format": "map(object_array, {new_structure})",
+      "capability": "object_restructuring",
+      "complexity": "intermediate",
+      "primary_example": {
+        "expression": "map(items, {id: #.id, fullName: #.firstName + ' ' + #.lastName})",
+        "sample_input": {
+          "items": [
+            {
+              "id": 1,
+              "firstName": "John",
+              "lastName": "Doe"
+            },
+            {
+              "id": 2,
+              "firstName": "Jane",
+              "lastName": "Smith"
+            }
+          ]
+        },
+        "expected_output": [
+          {
+            "id": 1,
+            "fullName": "John Doe"
+          },
+          {
+            "id": 2,
+            "fullName": "Jane Smith"
+          }
+        ],
+        "explanation": "Transform objects into new structure with computed properties"
+      },
+      "related_examples": [
+        {
+          "variation": "status_transformation",
+          "expression": "map(customers, {name: #.name, tier: #.orders > 100 ? 'platinum' : #.orders > 50 ? 'gold' : 'silver'})",
+          "context": "Transform with conditional logic"
+        },
+        {
+          "variation": "data_enrichment",
+          "expression": "map(products, {product: #.name, status: #.quantity <= 0 ? 'out_of_stock' : 'available'})",
+          "context": "Enrich data with calculated status"
+        },
+        {
+          "variation": "complex_calculation",
+          "expression": "map(orders, {order_id: #.id, total: sum(map(#.items, #.price * #.quantity))})",
+          "context": "Nested calculations within transformation"
+        }
+      ],
+      "relationships": {
+        "commonly_used_with": [
+          "filter",
+          "conditional_operators"
+        ],
+        "input_preparation": [
+          "API response objects",
+          "Database records"
+        ],
+        "output_usage": [
+          "UI display data",
+          "Report formatting"
+        ],
+        "builds_on": [
+          "property_extraction",
+          "conditional_logic"
+        ],
+        "leads_to": [
+          "complex_business_logic",
+          "advanced_transformations"
+        ]
+      },
+      "retrieval_metadata": {
+        "tags": [
+          "object_transformation",
+          "data_restructuring",
+          "business_logic"
+        ],
+        "use_cases": [
+          "data_normalization",
+          "ui_data_preparation",
+          "business_reporting"
+        ],
+        "difficulty_progression": "builds_on: object_creation | leads_to: complex_chaining"
+      }
+    },
+    {
+      "id": "map-chained-operations-advanced",
+      "function": "map",
+      "function_format": "map(filter(array, condition), transformation)",
+      "capability": "filtered_transformation",
+      "complexity": "advanced",
+      "primary_example": {
+        "expression": "map(filter([{id: 1, name: 'John', active: true}, {id: 2, name: 'Jane', active: false}], #.active), #.name)",
+        "sample_input": {},
+        "expected_output": [
+          "John"
+        ],
+        "explanation": "Chain filter and map operations to process subset of data"
+      },
+      "related_examples": [
+        {
+          "variation": "numeric_filter_transform",
+          "expression": "map(filter([1, 2, 3, 4, 5], # > 2), # * 2)",
+          "context": "Filter numbers then transform them"
+        },
+        {
+          "variation": "aggregation_chaining",
+          "expression": "sum(map(filter(orders, #.status == 'completed'), #.total))",
+          "context": "Filter, transform, then aggregate"
+        },
+        {
+          "variation": "complex_business_logic",
+          "expression": "avg(map(filter(employees, #.department == 'sales'), #.performance_score))",
+          "context": "Business analytics with chaining"
+        }
+      ],
+      "relationships": {
+        "commonly_used_with": [
+          "filter",
+          "sum",
+          "avg",
+          "max",
+          "min",
+          "count"
+        ],
+        "input_preparation": [
+          "Large datasets",
+          "Business data collections"
+        ],
+        "output_usage": [
+          "Business analytics",
+          "Performance metrics"
+        ],
+        "builds_on": [
+          "map_basics",
+          "filter_operations",
+          "aggregation_functions"
+        ],
+        "leads_to": [
+          "complex_data_pipelines",
+          "business_intelligence"
+        ]
+      },
+      "retrieval_metadata": {
+        "tags": [
+          "chaining",
+          "data_pipeline",
+          "advanced_operations"
+        ],
+        "use_cases": [
+          "business_analytics",
+          "data_science",
+          "performance_analysis"
+        ],
+        "difficulty_progression": "builds_on: filtering + mapping | leads_to: complex_pipelines"
+      }
+    },
+    {
+      "id": "map-function-instruction",
+      "type": "instruction",
+      "function": "map",
+      "function_format": "map(array, transformation_expression)",
+      "syntax": "map(array, transformation_expression)",
+      "description": "Transforms each element in an array using the provided expression",
+      "parameters": [
+        {
+          "name": "array",
+          "type": "Array",
+          "description": "Input array to transform"
+        },
+        {
+          "name": "transformation_expression",
+          "type": "Expression",
+          "description": "Expression to apply to each element (use # as placeholder)"
+        }
+      ],
+      "returns": "Array with transformed elements",
+      "constraints": [
+        "Array must not be empty for meaningful results",
+        "Transformation expression must be valid ZEN DSL",
+        "Use # placeholder to reference current element"
+      ],
+      "related_functions": [
+        "filter",
+        "reduce",
+        "flatMap",
+        "sum",
+        "avg"
+      ],
+      "common_patterns": [
+        "Arithmetic: map(numbers, # * 2)",
+        "Property extraction: map(objects, #.property)",
+        "Object transformation: map(objects, {new: structure})",
+        "Chaining: map(filter(array, condition), transformation)"
+      ]
+    }
+  ]
+}
