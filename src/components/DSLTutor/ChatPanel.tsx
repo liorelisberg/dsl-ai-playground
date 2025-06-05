@@ -14,7 +14,9 @@ import {
   MessageCircle,
   Loader2,
   Brain,
-  FileJson
+  FileJson,
+  Code2,
+  ExternalLink
 } from 'lucide-react';
 import { toast } from "@/hooks/use-toast";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
@@ -33,6 +35,33 @@ import {
   consumeAttachment,
   estimateTokenization
 } from '@/config/upload';
+
+// Phase 1 Parser Attachment Support (utilities only)
+import { formatFileSize, analyzeContentSize, getInputSizeBytes, CONTENT_LIMITS } from '@/lib/parserContentAnalysis';
+
+/**
+ * Create intelligent JSON summary for attachment flow (Frontend Phase 1)
+ */
+const createJsonSummary = (data: unknown): string => {
+  try {
+    if (Array.isArray(data)) {
+      const itemCount = data.length;
+      const firstItem = data[0];
+      const keys = firstItem && typeof firstItem === 'object' ? Object.keys(firstItem) : [];
+      
+      return `Array with ${itemCount} items. Sample structure: {${keys.slice(0, 5).join(', ')}${keys.length > 5 ? '...' : ''}}`;
+    } else if (typeof data === 'object' && data !== null) {
+      const keys = Object.keys(data);
+      const valueTypes = keys.slice(0, 10).map(key => `${key}: ${typeof (data as Record<string, unknown>)[key]}`);
+      
+      return `Object with ${keys.length} properties: {${valueTypes.join(', ')}${keys.length > 10 ? '...' : ''}}`;
+    } else {
+      return `${typeof data}: ${String(data).substring(0, 200)}${String(data).length > 200 ? '...' : ''}`;
+    }
+  } catch (error) {
+    return `JSON data structure analysis failed: ${error}`;
+  }
+};
 
 interface ChatPanelProps {
   chatHistory: ChatMessage[];
@@ -271,7 +300,7 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
       const contentValidation = await validateJsonContent(fileContent);
       
       if (!contentValidation.isValid) {
-        const errorMsg = contentValidation.errors[0] || "Invalid JSON format";
+        const errorMsg = contentValidation.error || "Invalid JSON format";
         onJsonUploadError?.(errorMsg);
         toast({
           title: "Invalid JSON Format",
@@ -279,15 +308,6 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
           variant: "destructive"
         });
         return;
-      }
-
-      // Show warnings if any
-      if (contentValidation.warnings.length > 0) {
-        toast({
-          title: "JSON Validation Warnings",
-          description: contentValidation.warnings[0],
-          variant: "default"
-        });
       }
 
       // Upload to backend
@@ -308,21 +328,67 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
       const result = await response.json();
       
       // Use validated parsed JSON instead of re-parsing
-      const content = contentValidation.parsedJson!;
+      const content = contentValidation.parsed!;
       setUploadedFile({ name: file.name, content });
 
-      // Create enhanced metadata with validation info
-      const metadata: JsonMetadata = {
-        filename: file.name,
-        sizeBytes: result.sizeBytes,
-        topLevelKeys: result.topLevelKeys || contentValidation.metadata.topLevelKeys,
-        uploadTime: new Date().toISOString(),
-        complexity: contentValidation.metadata.complexity,
-        estimatedTokens: contentValidation.metadata.estimatedTokens,
-        depth: contentValidation.metadata.depth
+      // Extract metadata from the parsed JSON
+      const extractMetadata = (jsonData: unknown) => {
+        if (!jsonData || typeof jsonData !== 'object') {
+          return {
+            topLevelKeys: [],
+            complexity: 'simple' as const,
+            estimatedTokens: Math.ceil(fileContent.length / 4),
+            depth: 1
+          };
+        }
+
+        const keys = Object.keys(jsonData as Record<string, unknown>);
+        const estimatedTokens = Math.ceil(fileContent.length / 4);
+        
+        // Calculate depth recursively
+        const calculateDepth = (obj: unknown): number => {
+          if (!obj || typeof obj !== 'object') return 1;
+          if (Array.isArray(obj)) {
+            return obj.length > 0 ? 1 + Math.max(...obj.map(calculateDepth)) : 1;
+          }
+          const values = Object.values(obj as Record<string, unknown>);
+          return values.length > 0 ? 1 + Math.max(...values.map(calculateDepth)) : 1;
+        };
+
+        const depth = calculateDepth(jsonData);
+        
+        // Determine complexity
+        let complexity: 'simple' | 'moderate' | 'complex';
+        if (keys.length <= 5 && depth <= 2) {
+          complexity = 'simple';
+        } else if (keys.length <= 20 && depth <= 4) {
+          complexity = 'moderate';
+        } else {
+          complexity = 'complex';
+        }
+
+        return {
+          topLevelKeys: keys,
+          complexity,
+          estimatedTokens,
+          depth
+        };
       };
 
-      onJsonUploadSuccess?.(metadata);
+      const metadata = extractMetadata(content);
+
+      // Create enhanced metadata with validation info
+      const jsonMetadata: JsonMetadata = {
+        filename: file.name,
+        sizeBytes: result.sizeBytes || contentValidation.sizeBytes,
+        topLevelKeys: result.topLevelKeys || metadata.topLevelKeys,
+        uploadTime: new Date().toISOString(),
+        complexity: metadata.complexity,
+        estimatedTokens: metadata.estimatedTokens,
+        depth: metadata.depth
+      };
+
+      onJsonUploadSuccess?.(jsonMetadata);
       
       // Register attachment for message-specific validation
       registerAttachment(file.name, currentMessageId);
@@ -446,72 +512,99 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
         onClearJsonFile?.();
       }
       
-      // Prepare context for AI based on processing mode
+      // Phase 1: Intelligent JSON Content Analysis (Frontend)
       let messageWithContext = messageContent;
-      let jsonContextData = capturedUploadedFile?.content;
+      let jsonContextData: unknown = undefined;
+      let shouldUseAttachmentFlow = false;
 
-      if (capturedUploadedFile && jsonProcessingMode !== 'full') {
-        try {
-          if (jsonProcessingMode === 'compressed') {
-            // Use compressed JSON with validation
-            const compressionResult = compressJson(capturedUploadedFile.content, 'structured');
-            
-            // Validate compression effectiveness
-            if (compressionResult.compressionRatio >= 0.95) {
-              console.warn('Minimal compression achieved:', compressionResult);
-              toast({
-                title: "Compression Notice",
-                description: `Compression only reduced size by ${((1 - compressionResult.compressionRatio) * 100).toFixed(1)}%`,
-                variant: "default"
-              });
-            }
-            
-            jsonContextData = JSON.parse(compressionResult.compressed);
-            messageWithContext = `${messageContent}\n\n[Compressed JSON Context: ${compressionResult.compressed}]`;
-            
-            console.log(`✅ Compression successful: ${compressionResult.originalSize}B → ${compressionResult.compressedSize}B (${(compressionResult.compressionRatio * 100).toFixed(1)}% of original)`);
-          }
-        } catch (error) {
-          console.error('JSON processing failed:', error);
-          toast({
-            title: "Processing Error",
-            description: "Failed to process JSON file. Using original format.",
-            variant: "default"
-          });
-          // Fall back to original content
-          jsonContextData = capturedUploadedFile.content;
-          messageWithContext = `${messageContent}\n\n[JSON Context: ${JSON.stringify(capturedUploadedFile.content, null, 2)}]`;
-        }
-      } else if (capturedUploadedFile && jsonProcessingMode === 'full') {
-        // Use full JSON content with size validation
-        const fullJsonString = JSON.stringify(capturedUploadedFile.content, null, 2);
-        const fullJsonSize = fullJsonString.length;
-        
-        if (fullJsonSize > 50000) { // 50KB warning threshold
-          console.warn(`Large JSON size: ${fullJsonSize} bytes`);
-          toast({
-            title: "Large JSON Warning",
-            description: `Full JSON is ${Math.round(fullJsonSize / 1024)}KB. This may consume significant tokens.`,
-            variant: "default"
-          });
-        }
-        
-        messageWithContext = `${messageContent}\n\n[JSON Context: ${fullJsonString}]`;
-        console.log(`✅ Full JSON mode: ${fullJsonSize}B`);
-      }
-      
-      // Calculate dynamic token estimate for API call
-      let contextTokens = 0;
       if (capturedUploadedFile) {
+        const jsonString = JSON.stringify(capturedUploadedFile.content, null, 2);
+        
+        // Phase 1: Analyze content size to determine flow
+        const contentAnalysis = analyzeContentSize(messageContent, jsonString, '');
+        const contentSize = getInputSizeBytes(jsonString);
+        
+        console.log(`📊 Frontend Phase 1 Analysis:`);
+        console.log(`   JSON size: ${Math.round(contentSize / 1024)}KB`);
+        console.log(`   Estimated tokens: ${contentAnalysis.estimatedTokens}`);
+        console.log(`   Requires attachment: ${contentAnalysis.requiresAttachment}`);
+        
+        // Decision: Use attachment flow for large content (>2KB or >500 tokens)
+        shouldUseAttachmentFlow = contentSize > CONTENT_LIMITS.maxDirectContent || 
+                                 (contentAnalysis.estimatedTokens && contentAnalysis.estimatedTokens > 500);
+        
+        if (shouldUseAttachmentFlow) {
+          // ATTACHMENT FLOW: Send summary only, no raw JSON to backend
+          console.log(`🔗 Frontend: Using attachment flow (${Math.round(contentSize / 1024)}KB)`);
+          
+          // Create intelligent summary for chat context
+          const jsonSummary = createJsonSummary(capturedUploadedFile.content);
+          messageWithContext = `${messageContent}\n\n[LARGE_JSON_ATTACHMENT] File: ${capturedUploadedFile.name} (${Math.round(contentSize / 1024)}KB)\nSummary: ${jsonSummary}`;
+          
+          // DO NOT send jsonContext - let backend handle via jsonStore
+          jsonContextData = undefined;
+          
+          // Show user feedback about attachment flow
+          toast({
+            title: "Smart Processing",
+            description: `${Math.round(contentSize / 1024)}KB JSON using intelligent attachment flow to optimize performance.`,
+            variant: "default"
+          });
+          
+        } else {
+          // DIRECT FLOW: Small content can be included directly
+          console.log(`📄 Frontend: Using direct flow (${Math.round(contentSize / 1024)}KB)`);
+          
+          if (jsonProcessingMode === 'compressed') {
+            try {
+              // Use compressed JSON with validation
+              const compressionResult = compressJson(capturedUploadedFile.content, 'structured');
+              
+              // Validate compression effectiveness
+              if (compressionResult.compressionRatio >= 0.95) {
+                toast({
+                  title: "Compression Notice",
+                  description: `Compression only reduced size by ${((1 - compressionResult.compressionRatio) * 100).toFixed(1)}%`,
+                  variant: "default"
+                });
+              }
+              
+              jsonContextData = JSON.parse(compressionResult.compressed);
+              messageWithContext = `${messageContent}\n\n[Compressed JSON Context: ${compressionResult.compressed}]`;
+              
+            } catch (error) {
+              console.error('JSON compression failed:', error);
+              // Fall back to original content for small files
+              jsonContextData = capturedUploadedFile.content;
+            }
+          } else {
+            // Use full JSON content for small files
+            jsonContextData = capturedUploadedFile.content;
+          }
+          
+          // Size warning for direct flow
+          if (contentSize > 10000) { // 10KB warning for direct flow
+            toast({
+              title: "Direct Processing",
+              description: `${Math.round(contentSize / 1024)}KB JSON included directly in message context.`,
+              variant: "default"
+            });
+          }
+        }
+      }
+
+      // Calculate dynamic token estimate for API call (only for direct flow)
+      let contextTokens = 0;
+      if (capturedUploadedFile && !shouldUseAttachmentFlow) {
         const originalContent = JSON.stringify(capturedUploadedFile.content);
         const tokenEstimate = estimateTokenization(originalContent, jsonProcessingMode);
         contextTokens = tokenEstimate.tokens + tokenEstimate.overhead;
       }
       
-      // Send to AI with processed context
+      // Send to AI with Phase 1 optimized context
       const response: ChatResponse = await sendChatMessage(messageWithContext, chatHistory, {
         sessionId,
-        jsonContext: jsonContextData,
+        jsonContext: jsonContextData, // undefined for attachment flow, optimized for direct flow
         maxTokens: contextTokens > 10000 ? 16000 : undefined
       });
       
@@ -613,7 +706,7 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
     }
   };
 
-  // Render enhanced time and attachment display for user messages
+  // Enhanced time and attachment display for user messages with parser attachment support
   const renderUserMessageMetadata = (message: ChatMessage) => {
     if (!message.timestamp) return null;
 
@@ -624,13 +717,19 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
       hour12: false 
     });
 
+    // Check for parser-generated attachments
+    const hasParserAttachment = message.metadata?.parserAttachment;
+    const hasManualAttachment = message.metadata?.attachedFile;
+
     return (
       <div className="text-xs text-slate-400 dark:text-slate-500 mt-2 flex items-center space-x-2">
         <div className="flex items-center space-x-1">
           <Clock className="h-3 w-3" />
           <span>{timeString}</span>
         </div>
-        {message.metadata?.attachedFile && (
+        
+        {/* Manual JSON file attachment */}
+        {hasManualAttachment && (
           <>
             <div className="flex items-center space-x-1">
               <FileJson className="h-3 w-3" />
@@ -639,6 +738,34 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
             <span className="font-semibold">{message.metadata.attachedFile.mode}</span>
             <span>{calculateProcessedFileSize(message.metadata.attachedFile)}</span>
           </>
+        )}
+        
+        {/* Parser-generated attachment */}
+        {hasParserAttachment && (
+          <>
+            <div className="flex items-center space-x-1">
+              <Code2 className="h-3 w-3 text-indigo-500" />
+              <span className="text-indigo-600 dark:text-indigo-400">
+                {message.metadata.parserAttachment.filename}
+              </span>
+            </div>
+            <Badge variant="outline" className="text-xs px-2 py-0.5">
+              Parser
+            </Badge>
+            <span className="text-indigo-600 dark:text-indigo-400">
+              {formatFileSize(message.metadata.parserAttachment.sizeBytes)}
+            </span>
+          </>
+        )}
+        
+        {/* Content analysis info for parser attachments */}
+        {message.metadata?.contentAnalysis && (
+          <div className="flex items-center space-x-1 text-slate-500 dark:text-slate-400">
+            <ExternalLink className="h-3 w-3" />
+            <span>
+              {message.metadata.contentAnalysis.flowType} • ~{message.metadata.contentAnalysis.estimatedTokens} tokens
+            </span>
+          </div>
         )}
       </div>
     );

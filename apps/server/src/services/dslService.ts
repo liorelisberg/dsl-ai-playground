@@ -25,8 +25,6 @@ export const evaluateExpression = async (
     return { result: 'No expression provided' };
   }
 
-  console.log('Backend: Evaluating with Zen Engine:', cleanExpression, 'Data:', data);
-
   try {
     const engine = getZenEngine();
     
@@ -80,8 +78,6 @@ export const evaluateExpression = async (
     
     // Evaluate with the provided data
     const result = await decision.evaluate(data);
-    
-    console.log('Backend: Zen Engine result:', result);
     
     // Extract the result value and format as JSON string
     const evaluationResult = result?.result !== undefined ? result.result : result;

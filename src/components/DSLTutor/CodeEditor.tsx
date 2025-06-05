@@ -16,6 +16,16 @@ import {
 import JsonView from '@uiw/react-json-view';
 import { useTheme } from 'next-themes';
 
+// Phase 1 Infrastructure Imports
+import {
+  validateParserContent,
+  generateSizeSummary,
+  getFlowDescription
+} from '@/lib/parserContentAnalysis';
+import {
+  generatePromptPreview
+} from '@/lib/attachmentPromptGenerator';
+
 interface CodeEditorProps {
   onParserToChat?: (expression: string, input: string, result: string, isSuccess: boolean, isEmpty?: boolean) => Promise<void>;
 }
@@ -405,32 +415,87 @@ const CodeEditor = forwardRef<CodeEditorRef, CodeEditorProps>(({ onParserToChat 
     }
   };
 
+  // Enhanced Ask About This with Phase 1 infrastructure
   const handleAskAboutThis = async () => {
     if (!onParserToChat || !hasEvaluated || explainCooldown > 0) return;
 
     setIsAskingAI(true);
+    
     try {
+      // Phase 1: Content validation and analysis
+      const validation = validateParserContent(code, sampleInput, result);
+      
+      if (!validation.isValid) {
+        // Show validation errors to user
+        toast({
+          title: "Content Validation Error",
+          description: validation.errors[0],
+          variant: "destructive",
+          duration: 5000
+        });
+        return;
+      }
+      
+      // Show warnings if any
+      if (validation.warnings.length > 0) {
+        validation.warnings.forEach(warning => {
+          toast({
+            title: "Content Notice",
+            description: warning,
+            variant: "default",
+            duration: 4000
+          });
+        });
+      }
+      
+      // Determine prompt type for preview
+      const promptType = !lastEvaluationSuccess ? 'error' : 
+                        isEmptyResult(result) ? 'empty' : 'success';
+      
+      // Generate user-friendly preview
+      const promptPreview = generatePromptPreview(
+        promptType,
+        validation.analysis.requiresAttachment,
+        validation.analysis.inputSize
+      );
+      
+      // Enhanced user feedback with flow information
+      const { analysis } = validation;
+      const sizeSummary = generateSizeSummary(analysis);
+      const flowDescription = getFlowDescription(analysis);
+      
+      // Call the enhanced parser-to-chat handler
       await onParserToChat(code, sampleInput, result, lastEvaluationSuccess, isEmptyResult(result));
       
-      const queryInfo = aiQueryInfo;
-      // Show feedback toast with enhanced messaging
+      // Success feedback with detailed information
+      let toastDescription = promptPreview;
+      
+      if (analysis.requiresAttachment) {
+        toastDescription += `\n\n📊 Content: ${sizeSummary}\n🔄 Flow: ${flowDescription}`;
+      } else {
+        toastDescription += `\n\n📊 Content: ${sizeSummary} (sent directly)`;
+      }
+      
       toast({
-        title: "Sent to Chat",
-        description: queryInfo.type === 'empty' 
-          ? "Asking AI to explain why the result is empty"
-          : queryInfo.type === 'error'
-            ? "Asking AI to debug your failing expression"
-            : "Asking AI to explain your working expression",
+        title: "Sent to AI Chat",
+        description: toastDescription,
+        duration: analysis.requiresAttachment ? 6000 : 4000
       });
 
-      // Start 5-second cooldown to prevent abuse
-      setExplainCooldown(5);
+      // Adaptive cooldown based on content size
+      const cooldownTime = analysis.requiresAttachment ? 8 : 5; // Longer cooldown for complex flows
+      setExplainCooldown(cooldownTime);
+      
     } catch (error) {
-      console.error('Chat communication error:', error);
+      console.error('Enhanced parser-to-chat error:', error);
+      
       toast({
-        title: "Chat Communication Error",
-        description: "Failed to communicate with AI. Please try again later.",
-        variant: "destructive"
+        title: "AI Communication Error", 
+        description: error instanceof Error 
+          ? `Failed to send to AI: ${error.message}`
+          : "Failed to communicate with AI. Please try again.",
+        variant: "destructive",
+        duration: 5000
       });
     } finally {
       setIsAskingAI(false);
@@ -598,14 +663,6 @@ const CodeEditor = forwardRef<CodeEditorRef, CodeEditorProps>(({ onParserToChat 
       setHasEvaluated(false);
       setLastEvaluationSuccess(false);
       setResult('');
-      
-      // Log the transfer for debugging
-      if (process.env.NODE_ENV === 'development') {
-        console.log('🔄 Chat transfer received:', { 
-          expression, 
-          input 
-        });
-      }
     },
   }));
 

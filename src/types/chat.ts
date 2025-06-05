@@ -22,6 +22,21 @@ export interface ChatMetadata {
     estimatedTokens?: number;
     messageId?: string;
   };
+  // Parser attachment support (Phase 1 integration)
+  parserAttachment?: {
+    filename: string;
+    sizeBytes: number;
+    type: 'json' | 'text';
+    messageId: string;
+    isParserGenerated: boolean;
+  };
+  // Content analysis from parser-to-chat flow
+  contentAnalysis?: {
+    totalSize: number;
+    requiresAttachment: boolean;
+    estimatedTokens: number;
+    flowType?: 'direct' | 'attachment';
+  };
 }
 
 export interface ChatResponse {

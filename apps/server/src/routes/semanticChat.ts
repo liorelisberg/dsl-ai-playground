@@ -17,6 +17,7 @@ import { Document } from '../services/vectorStore';
 import { jsonStore } from '../api/upload';
 import * as fs from 'fs';
 import * as path from 'path';
+
 // loadDSLExamples function defined locally in this file
 
 // Define Example type locally since we can't import from frontend
@@ -80,6 +81,54 @@ interface SemanticChatResponse {
         errorRate: number;
       };
     };
+  };
+}
+
+// Phase 1 Content Analysis Integration
+interface ContentSizeAnalysis {
+  isDirectFlow: boolean;
+  requiresAttachment: boolean;
+  totalSize: number;
+  estimatedTokens: number;
+  expressionSize: number;
+  resultSize: number;
+  inputSize: number;
+}
+
+// Phase 1 Content Limits (copied from frontend)
+const CONTENT_LIMITS = {
+  DIRECT_MESSAGE_CHARS: 2000,
+  EXPRESSION_CHARS: 1024,
+  RESULT_CHARS: 2048,
+  INPUT_BYTES: 100 * 1024, // 100KB
+} as const;
+
+/**
+ * Phase 1: Analyze content size and determine flow type
+ */
+function analyzeContentSize(expression: string, input: string, result: string): ContentSizeAnalysis {
+  const expressionSize = expression.length;
+  const resultSize = result.length;
+  const inputSize = new TextEncoder().encode(input).length;
+  
+  const totalSize = expressionSize + resultSize + inputSize;
+  const estimatedTokens = Math.ceil(totalSize / 4);
+  
+  // Determine if content requires attachment flow
+  const requiresAttachment = 
+    expressionSize > CONTENT_LIMITS.EXPRESSION_CHARS ||
+    resultSize > CONTENT_LIMITS.RESULT_CHARS ||
+    inputSize > CONTENT_LIMITS.INPUT_BYTES ||
+    totalSize > CONTENT_LIMITS.DIRECT_MESSAGE_CHARS;
+  
+  return {
+    isDirectFlow: !requiresAttachment,
+    requiresAttachment,
+    totalSize,
+    estimatedTokens,
+    expressionSize,
+    resultSize,
+    inputSize
   };
 }
 
@@ -156,19 +205,53 @@ async function handleSemanticChat(req: Request, res: Response): Promise<void> {
     // 7. Build simplified prompt
     const chatHistoryForPrompt = recentHistory;
 
-    // Handle JSON context with simple processing
+    // Phase 1: Handle JSON context with intelligent content analysis
     let optimizedJsonContext: string | undefined;
     if (hasJsonRequest) {
       // First, try to get uploaded file data (priority)
       const uploadedData = jsonStore.get(sessionId);
       
       if (uploadedData) {
-        optimizedJsonContext = JSON.stringify(uploadedData, null, 2);
-        console.log(`📄 JSON context: Using full uploaded data`);
+        const jsonString = JSON.stringify(uploadedData, null, 2);
+        
+        // Phase 1: Analyze content size and determine flow
+        const mockExpression = message; // Use message as expression proxy
+        const mockResult = ''; // No result yet
+        const contentAnalysis = analyzeContentSize(mockExpression, jsonString, mockResult);
+        
+        console.log(`📊 Phase 1 Content Analysis:`);
+        console.log(`   Total size: ${Math.round(contentAnalysis.totalSize / 1024)}KB`);
+        console.log(`   Estimated tokens: ${contentAnalysis.estimatedTokens}`);
+        console.log(`   Requires attachment: ${contentAnalysis.requiresAttachment}`);
+        
+        if (contentAnalysis.requiresAttachment) {
+          // Phase 1: ATTACHMENT FLOW - Use optimized content
+          console.log(`🔗 Using Phase 1 attachment flow (large content: ${Math.round(contentAnalysis.totalSize / 1024)}KB)`);
+          
+          // For attachment flow, create a summary instead of full content
+          const contentSummary = createJsonSummary(uploadedData);
+          optimizedJsonContext = `[ATTACHMENT] Large JSON data (${Math.round(contentAnalysis.totalSize / 1024)}KB) - Summary:\n${contentSummary}`;
+          
+        } else {
+          // Phase 1: DIRECT FLOW - Use full content (within limits)
+          console.log(`📄 Using Phase 1 direct flow (small content: ${Math.round(contentAnalysis.totalSize / 1024)}KB)`);
+          optimizedJsonContext = jsonString;
+        }
+        
       } else if (jsonContext) {
         // Fall back to request body jsonContext if no uploaded file
-        optimizedJsonContext = JSON.stringify(jsonContext, null, 2);
-        console.log(`📄 JSON context: Using request body data`);
+        const jsonString = JSON.stringify(jsonContext, null, 2);
+        const contentAnalysis = analyzeContentSize(message, jsonString, '');
+        
+        if (contentAnalysis.requiresAttachment) {
+          const contentSummary = createJsonSummary(jsonContext);
+          optimizedJsonContext = `[ATTACHMENT] JSON context (${Math.round(contentAnalysis.totalSize / 1024)}KB) - Summary:\n${contentSummary}`;
+          console.log(`🔗 Using Phase 1 attachment flow for request body JSON`);
+        } else {
+          optimizedJsonContext = jsonString;
+          console.log(`📄 Using Phase 1 direct flow for request body JSON`);
+        }
+        
       } else {
         console.log('⚠️  JSON context requested but no data available for session:', sessionId);
       }
@@ -957,6 +1040,30 @@ async function clearSession(req: Request, res: Response): Promise<void> {
  */
 function generateSessionId(): string {
   return `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+}
+
+/**
+ * Phase 1: Create intelligent JSON summary for attachment flow
+ */
+function createJsonSummary(data: unknown): string {
+  try {
+    if (Array.isArray(data)) {
+      const itemCount = data.length;
+      const firstItem = data[0];
+      const keys = firstItem && typeof firstItem === 'object' ? Object.keys(firstItem) : [];
+      
+      return `Array with ${itemCount} items. Sample structure: {${keys.slice(0, 5).join(', ')}${keys.length > 5 ? '...' : ''}}`;
+    } else if (typeof data === 'object' && data !== null) {
+      const keys = Object.keys(data);
+      const valueTypes = keys.slice(0, 10).map(key => `${key}: ${typeof (data as Record<string, unknown>)[key]}`);
+      
+      return `Object with ${keys.length} properties: {${valueTypes.join(', ')}${keys.length > 10 ? '...' : ''}}`;
+    } else {
+      return `${typeof data}: ${String(data).substring(0, 200)}${String(data).length > 200 ? '...' : ''}`;
+    }
+  } catch (error) {
+    return `JSON data structure analysis failed: ${error}`;
+  }
 }
 
 // Routes

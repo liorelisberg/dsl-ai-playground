@@ -4,7 +4,6 @@ import cookieParser from 'cookie-parser';
 import swaggerUi from 'swagger-ui-express';
 import YAML from 'yamljs';
 import path from 'path';
-import chatRouter from './routes/chat';
 import uploadRouter from './api/upload';
 import examplesRouter from './api/examples';
 import { config, validateConfig } from './config/environment';
@@ -56,8 +55,7 @@ if (swaggerDocument) {
       message: 'API Documentation not available',
       endpoints: [
         'GET /health - Health check',
-        'POST /api/chat - Basic chat',
-        'POST /api/chat/semantic - Advanced semantic chat',
+        'POST /api/chat/semantic - Advanced semantic chat with Phase 1 content analysis',
         'POST /api/evaluate-dsl - DSL expression evaluation',
         'POST /api/upload-json - JSON file upload'
       ]
@@ -66,7 +64,6 @@ if (swaggerDocument) {
 }
 
 // Routes
-app.use('/api', chatRouter);
 app.use('/api', uploadRouter);
 app.use('/api', examplesRouter);
 app.use('/api/chat', semanticChatRoutes);
@@ -90,8 +87,6 @@ app.post('/api/evaluate-dsl', (req, res) => {
         return res.status(400).json({ error: 'Missing expression or data' });
       }
       
-      console.log('DSL evaluation request:', { expression, data });
-      
       // Import and use the backend DSL service
       const { evaluateExpression } = await import('./services/dslService');
       const result = await evaluateExpression(expression, data);
@@ -113,7 +108,6 @@ app.listen(config.server.port, async () => {
   console.log(`🔧 Environment: ${config.server.nodeEnv}`);
   console.log(`⚡ Rate Limits: ${config.rateLimit.max} requests per ${config.rateLimit.window}s`);
   console.log(`📡 Health check: http://localhost:${config.server.port}/health`);
-  console.log(`💬 Chat API: http://localhost:${config.server.port}/api/chat`);
   console.log(`🧠 Semantic Chat API: http://localhost:${config.server.port}/api/chat/semantic`);
   
   // Initialize vector store for knowledge retrieval

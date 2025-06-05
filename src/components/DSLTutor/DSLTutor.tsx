@@ -1,76 +1,100 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
-import ChatPanel from './ChatPanel';
-import CodeEditor from './CodeEditor';
-import { JsonMetadata } from './JsonUpload';
-import { GlobalDragDropZone } from './GlobalDragDropZone';
-import { ThemeToggle } from '../ui/theme-toggle';
-import { ChatMessage } from '../../types/chat';
-import { useConnectionStatus } from '../../hooks/useConnectionStatus';
-import { useToast } from '../../hooks/use-toast';
-import { SessionProvider } from '../../contexts/SessionContext';
+import { ThemeToggle } from '@/components/ui/theme-toggle';
+import ChatPanel from '@/components/DSLTutor/ChatPanel';
+import { ChatMessage } from '@/types/chat';
+import { JsonMetadata } from '@/components/DSLTutor/JsonUpload';
+import CodeEditor from '@/components/DSLTutor/CodeEditor';
+import { GlobalDragDropZone } from '@/components/DSLTutor/GlobalDragDropZone';
+import { useConnectionStatus } from '@/hooks/useConnectionStatus';
+import { useToast } from '@/hooks/use-toast';
+import { SessionProvider } from '@/contexts/SessionContext';
+
+// Phase 1 Infrastructure Imports
+import {
+  optimizeContentForChat,
+  validateParserContent,
+  generateSizeSummary,
+  getFlowDescription
+} from '@/lib/parserContentAnalysis';
+import {
+  attachInputToMessage,
+  ParserAttachmentResult
+} from '@/services/parserAttachmentService';
+import {
+  generateAttachmentPrompt,
+  generateDirectPrompt,
+  generatePromptPreview,
+  PromptContext
+} from '@/lib/attachmentPromptGenerator';
 
 // ============================================================================
-// TYPE DEFINITIONS
+// CONSTANTS & TYPES
 // ============================================================================
 
-/** Interface for CodeEditor ref methods */
+const MAX_CHAT_HISTORY = 50;
+const PARSER_TO_CHAT_EVENT = 'parser-to-chat';
+
 interface CodeEditorRef {
   handleChatTransfer: (expression: string, input: string) => void;
 }
 
-/** Parser evaluation data structure */
+// Enhanced interface to support attachment-based communication
 interface ParserEvaluationData {
   expression: string;
   input: string;
   result: string;
   isSuccess: boolean;
   isEmpty?: boolean;
+  // New attachment-related fields
+  attachmentMetadata?: {
+    filename: string;
+    sizeBytes: number;
+    type: 'json' | 'text';
+  };
+  contentAnalysis?: {
+    totalSize: number;
+    requiresAttachment: boolean;
+    estimatedTokens: number;
+  };
 }
 
-/** Custom event detail for parser-to-chat communication */
+// Enhanced event detail interface
 interface ParserToChatEventDetail extends ParserEvaluationData {
   prompt: string;
+  // New fields for attachment flow
+  hasAttachment?: boolean;
+  flowType?: 'direct' | 'attachment';
+  messageId?: string;
 }
 
-/** Custom event for parser-to-chat communication */
 type ParserToChatEvent = CustomEvent<ParserToChatEventDetail>;
-
-// ============================================================================
-// CONSTANTS
-// ============================================================================
-
-/** Event name for parser-to-chat communication */
-const PARSER_TO_CHAT_EVENT = 'dsl:parser-to-chat' as const;
-
-/** Maximum number of chat messages to keep in history */
-const MAX_CHAT_HISTORY = 8;
 
 /** Welcome message for new users */
 const WELCOME_MESSAGE: ChatMessage = {
   role: 'assistant',
-  content: 'Welcome to the ZEN DSL AI Playground! 🚀\n\nI\'m your intelligent DSL assistant, here to help you master ZEN expressions and data processing.',
+  content: `👋 **Welcome to ZAIP** - Your ZEN AI Playground!
+
+I'm here to help you master the ZEN language. Here's what I can do:
+
+🎯 **Smart Expression Analysis**
+- Explain how your ZEN expressions work
+- Debug failing expressions with context
+- Suggest improvements and optimizations
+- Handle large data intelligently with automatic attachments
+
+🔧 **Interactive Learning**
+- Upload JSON files for context-aware assistance
+- Transfer expressions between chat and workbench
+- Get real-time help as you code
+
+💡 **Getting Started**
+- Write ZEN expressions in the workbench
+- Click "Ask AI" to get explanations and help
+- Upload JSON files for better context
+- Use the bi-directional transfer between chat and workbench
+
+Ready to explore ZEN? Try writing an expression or ask me anything!`,
   timestamp: new Date().toISOString()
-};
-
-// ============================================================================
-// UTILITY FUNCTIONS
-// ============================================================================
-
-/**
- * Generate a contextual prompt based on expression evaluation results
- */
-const generatePrompt = (data: ParserEvaluationData): string => {
-  const { expression, input, result, isSuccess, isEmpty } = data;
-  
-  if (!isSuccess) {
-    return `I have a failing expression, explain why it fails.\n\nExpression: ${expression}\n\nInput: ${input}\n\nError: ${result}`;
-  }
-  
-  if (isEmpty) {
-    return `I have an expression that runs successfully but returns an empty result. Please explain why the result is empty and how to fix it.\n\nExpression: ${expression}\n\nInput: ${input}\n\nResult: ${result}\n\nThe expression executed without errors but produced an empty/null result. What could be the reasons and how can I modify the expression to get the expected data?`;
-  }
-  
-  return `I have a working expression, explain it.\n\nExpression: ${expression}\n\nInput: ${input}\n\nResult: ${result}`;
 };
 
 /**
@@ -122,7 +146,8 @@ const DSLTutorCore: React.FC = () => {
   }, []);
 
   /**
-   * Handle parser-to-chat communication using event-driven architecture
+   * Enhanced parser-to-chat communication with intelligent content handling
+   * Supports both direct and attachment-based flows based on content size
    */
   const handleParserToChat = useCallback(async (
     expression: string, 
@@ -131,18 +156,177 @@ const DSLTutorCore: React.FC = () => {
     isSuccess: boolean, 
     isEmpty?: boolean
   ) => {
-    const data: ParserEvaluationData = { expression, input, result, isSuccess, isEmpty };
-    const prompt = generatePrompt(data);
-    
-    // Dispatch custom event for loose coupling
-    const event = new CustomEvent(PARSER_TO_CHAT_EVENT, {
-      detail: { ...data, prompt }
-    }) as ParserToChatEvent;
-    
-    window.dispatchEvent(event);
-    
-    // Note: Toast feedback is handled by CodeEditor for better UX messaging
-  }, []);
+    try {
+      // Generate unique message ID for attachment tracking
+      const messageId = `msg-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+      
+      // Phase 1: Content validation and analysis
+      const validation = validateParserContent(expression, input, result);
+      
+      if (!validation.isValid) {
+        // Handle validation errors
+        const errorMessage = `❌ **Content Validation Failed**\n\n${validation.errors.join('\n')}\n\nPlease check your expression and data.`;
+        
+        toast({
+          title: "Content Validation Error",
+          description: validation.errors[0],
+          variant: "destructive"
+        });
+        
+        // Still dispatch a simplified event for basic error handling
+        const errorEvent = new CustomEvent(PARSER_TO_CHAT_EVENT, {
+          detail: {
+            expression: expression.substring(0, 100) + (expression.length > 100 ? '...' : ''),
+            input: '',
+            result: errorMessage,
+            isSuccess: false,
+            isEmpty: false,
+            prompt: `Error: ${validation.errors.join(', ')}`,
+            flowType: 'direct',
+            messageId
+          }
+        }) as ParserToChatEvent;
+        
+        window.dispatchEvent(errorEvent);
+        return;
+      }
+      
+      // Phase 2: Determine flow type based on content analysis
+      const { analysis } = validation;
+      let prompt: string;
+      let attachmentMetadata: ParserEvaluationData['attachmentMetadata'];
+      let hasAttachment = false;
+      
+      if (analysis.requiresAttachment) {
+        // ATTACHMENT FLOW: Large content needs attachment
+        try {
+          // Create attachment for input data
+          const attachmentResult: ParserAttachmentResult = await attachInputToMessage(input, messageId);
+          
+          if (!attachmentResult.success) {
+            throw new Error(attachmentResult.error || 'Failed to create attachment');
+          }
+          
+          // Optimize content for chat display
+          const optimizedContent = optimizeContentForChat(expression, input, result);
+          
+          // Generate attachment-based prompt
+          const promptContext: PromptContext = {
+            expression: optimizedContent.expression,
+            result: optimizedContent.result,
+            isSuccess,
+            isEmpty,
+            attachmentFilename: optimizedContent.attachmentFilename,
+            truncationInfo: optimizedContent.truncationInfo
+          };
+          
+          prompt = generateAttachmentPrompt(promptContext);
+          
+          attachmentMetadata = {
+            filename: attachmentResult.attachmentMetadata.filename,
+            sizeBytes: attachmentResult.attachmentMetadata.sizeBytes,
+            type: attachmentResult.attachmentMetadata.type
+          };
+          
+          hasAttachment = true;
+          
+          // Success feedback for attachment flow
+          const sizeSummary = generateSizeSummary(analysis);
+          const flowDescription = getFlowDescription(analysis);
+          
+          toast({
+            title: "Large Content Optimized",
+            description: `${flowDescription} • ${sizeSummary}`,
+            duration: 4000
+          });
+          
+        } catch (attachmentError) {
+          console.error('Attachment creation failed:', attachmentError);
+          
+          // Fallback to truncated direct flow
+          const optimizedContent = optimizeContentForChat(expression, input, result);
+          prompt = generateAttachmentPrompt({
+            expression: optimizedContent.expression,
+            result: optimizedContent.result,
+            isSuccess,
+            isEmpty
+          });
+          
+          toast({
+            title: "Attachment Failed",
+            description: "Content was truncated for direct chat. Full data available in workbench.",
+            variant: "destructive",
+            duration: 5000
+          });
+        }
+      } else {
+        // DIRECT FLOW: Content fits within limits
+        prompt = generateDirectPrompt(expression, input, result, isSuccess, isEmpty);
+        
+        // Success feedback for direct flow
+        toast({
+          title: "Expression Ready",
+          description: generatePromptPreview(
+            isSuccess ? (isEmpty ? 'empty' : 'success') : 'error',
+            false,
+            analysis.inputSize
+          ),
+          duration: 3000
+        });
+      }
+      
+      // Phase 3: Dispatch enhanced event
+      const eventDetail: ParserToChatEventDetail = {
+        expression,
+        input,
+        result,
+        isSuccess,
+        isEmpty,
+        prompt,
+        hasAttachment,
+        flowType: analysis.requiresAttachment ? 'attachment' : 'direct',
+        messageId,
+        attachmentMetadata,
+        contentAnalysis: {
+          totalSize: analysis.totalSize,
+          requiresAttachment: analysis.requiresAttachment,
+          estimatedTokens: analysis.estimatedTokens || 0
+        }
+      };
+      
+      const event = new CustomEvent(PARSER_TO_CHAT_EVENT, {
+        detail: eventDetail
+      }) as ParserToChatEvent;
+      
+      window.dispatchEvent(event);
+      
+    } catch (error) {
+      console.error('Parser-to-chat handling failed:', error);
+      
+      toast({
+        title: "Processing Error",
+        description: error instanceof Error ? error.message : "Failed to process expression for chat",
+        variant: "destructive",
+        duration: 5000
+      });
+      
+      // Dispatch minimal error event
+      const errorEvent = new CustomEvent(PARSER_TO_CHAT_EVENT, {
+        detail: {
+          expression: expression.substring(0, 100),
+          input: '',
+          result: 'Processing error occurred',
+          isSuccess: false,
+          isEmpty: false,
+          prompt: 'Error: Failed to process expression for chat',
+          flowType: 'direct',
+          messageId: `error-${Date.now()}`
+        }
+      }) as ParserToChatEvent;
+      
+      window.dispatchEvent(errorEvent);
+    }
+  }, [toast]);
 
   /**
    * Capture chat input setter for cross-component communication
@@ -178,7 +362,7 @@ const DSLTutorCore: React.FC = () => {
   }, [handleNewMessage]);
 
   /**
-   * Handle JSON context clearing
+   * Handle JSON context clearing with attachment cleanup
    */
   const handleClearJsonFile = useCallback(() => {
     setCurrentJsonFile(null);
@@ -190,7 +374,7 @@ const DSLTutorCore: React.FC = () => {
   // ========================================================================
 
   /**
-   * Set up parser-to-chat event listener
+   * Enhanced parser-to-chat event listener with attachment support
    */
   useEffect(() => {
     const handleParserToChatEvent = (event: Event) => {
@@ -213,6 +397,16 @@ const DSLTutorCore: React.FC = () => {
       window.removeEventListener(PARSER_TO_CHAT_EVENT, handleParserToChatEvent);
     };
   }, [toast]);
+
+  /**
+   * Component cleanup - clean up any remaining temporary attachments
+   */
+  useEffect(() => {
+    return () => {
+      // Clean up any temporary attachments when component unmounts
+      // Note: cleanupExpiredAttachments is automatically called by the service
+    };
+  }, []);
 
   /**
    * Handle global drag & drop
