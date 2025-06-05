@@ -7,7 +7,7 @@ import { evaluateExpression } from '../../services/dslService';
 import { useToast } from '@/hooks/use-toast';
 import { useErrorToast } from '../../hooks/useErrorToast';
 import ExamplesDrawer from './ExamplesDrawer';
-import { allExamples, Example } from '../../examples';
+import { allExamples, Example } from '../../../docs/knowledge-cards/examples';
 import {
   Tooltip,
   TooltipContent,

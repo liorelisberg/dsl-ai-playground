@@ -59,6 +59,33 @@
 
 ---
 
+### Development Workflow
+```bash
+# Frontend development
+pnpm run dev:client    # Vite dev server on :8080
+
+# Backend development  
+pnpm run dev:server    # Nodemon server on :3000
+
+# Full-stack development
+pnpm run dev:full      # Both servers with concurrently
+```
+
+### Build Process
+```bash
+# Frontend build
+pnpm run build         # Vite production build
+
+# Backend build
+pnpm run build:server  # TypeScript compilation
+
+# Production deployment
+pnpm run start:server  # Production server start
+```
+
+---
+
+
 ## Major Features Analysis
 
 ### 1. **AI-Powered Chat Assistant**
@@ -450,8 +477,6 @@ VectorStore (Fallback Service)
 - `GET /health` - System health check
 - `GET /api-docs` - Swagger API documentation
 
-### WebSocket Integration
-*Note: Currently using HTTP polling, WebSocket support planned for real-time features*
 
 ---
 
@@ -476,30 +501,6 @@ VectorStore (Fallback Service)
 ---
 
 ## Development & Deployment
-
-### Development Workflow
-```bash
-# Frontend development
-pnpm run dev:client    # Vite dev server on :8080
-
-# Backend development  
-pnpm run dev:server    # Nodemon server on :3000
-
-# Full-stack development
-pnpm run dev:full      # Both servers with concurrently
-```
-
-### Build Process
-```bash
-# Frontend build
-pnpm run build         # Vite production build
-
-# Backend build
-pnpm run build:server  # TypeScript compilation
-
-# Production deployment
-pnpm run start:server  # Production server start
-```
 
 ### Environment Configuration
 - **Development**: Local development with hot reload

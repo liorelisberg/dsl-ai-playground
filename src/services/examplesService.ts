@@ -1,4 +1,4 @@
-import { allExamples, Example } from '../examples';
+import { allExamples, Example } from '../../docs/knowledge-cards/examples';
 
 export const getExamples = async (): Promise<Example[]> => {
   // Simulate API delay

@@ -435,10 +435,14 @@ This demonstrates correct ZEN DSL syntax. Always use ZEN functions and operators
     // Also ensure .mdc rules are loaded for comprehensive coverage
     await ensureMdcRulesLoaded();
     
+    // Also ensure ZEN vocabulary is loaded for function validation
+    await ensureZenVocabularyLoaded();
+    
     console.log(`✅ Enhanced knowledge base loaded:`);
     console.log(`   📄 ZEN Examples: ${examples.length}`);
     console.log(`   🧩 Categories: ${[...new Set(examples.map((e: Example) => e.category))].length}`);
     console.log(`   🔧 DSL Rules: Auto-loaded from .mdc files`);
+    console.log(`   📚 ZEN Vocabulary: Auto-loaded from zen-vocabulary.json`);
     console.log(`   🧠 Embeddings: Generated with ZEN priority`);
     
   } catch (error) {
@@ -499,6 +503,266 @@ This defines official ZEN DSL syntax and functions. Always follow these rules ex
     
   } catch (error) {
     console.error('⚠️  Could not load .mdc rules:', error);
+  }
+}
+
+/**
+ * Load ZEN vocabulary from JSON file into semantic store
+ */
+async function ensureZenVocabularyLoaded(): Promise<void> {
+  try {
+    console.log('🔄 Loading ZEN vocabulary from zen-vocabulary.json...');
+    
+    const vocabularyPath = path.join(__dirname, '../../../docs/config/zen-vocabulary.json');
+    
+    if (!fs.existsSync(vocabularyPath)) {
+      console.log('⚠️  ZEN vocabulary file not found');
+      return;
+    }
+
+    const vocabularyContent = fs.readFileSync(vocabularyPath, 'utf-8');
+    const vocabulary = JSON.parse(vocabularyContent);
+    
+    // Create knowledge cards from vocabulary data
+    const vocabularyDocuments: Document[] = [
+      // Main vocabulary overview
+      {
+        id: 'zen_vocabulary_overview',
+        content: `ZEN DSL Vocabulary Overview
+
+Total Functions: ${vocabulary.metadata.total_functions}
+Total Operators: ${vocabulary.metadata.total_operators}
+Total Keywords: ${vocabulary.metadata.total_keywords}
+Validation Accuracy: ${vocabulary.metadata.accuracy}
+
+This vocabulary defines all valid ZEN DSL functions, operators, and keywords. Use ONLY these validated elements in ZEN expressions.`,
+        metadata: {
+          source: 'zen-vocabulary.json',
+          category: 'vocabulary-overview',
+          type: 'rule' as const,
+          tokens: 50,
+          zenSyntax: true,
+          priority: 'high',
+          ruleType: 'vocabulary'
+        }
+      },
+      
+      // String functions
+      {
+        id: 'zen_vocabulary_string_functions',
+        content: `ZEN DSL String Functions
+
+Available string functions: ${vocabulary.function_categories.string_functions.join(', ')}
+
+These are the ONLY valid string functions in ZEN DSL. Do not use JavaScript string methods like .charAt(), .substring(), .indexOf(), .slice(), .replace(), .search(), etc.
+
+Examples:
+- Use len(text) NOT text.length
+- Use upper(text) NOT text.toUpperCase()
+- Use contains(text, "word") NOT text.includes("word")
+- Use startsWith(text, "prefix") NOT text.startsWith("prefix")`,
+        metadata: {
+          source: 'zen-vocabulary.json',
+          category: 'string-functions',
+          type: 'rule' as const,
+          tokens: 80,
+          zenSyntax: true,
+          priority: 'high',
+          ruleType: 'vocabulary'
+        }
+      },
+      
+      // Array functions
+      {
+        id: 'zen_vocabulary_array_functions',
+        content: `ZEN DSL Array Functions
+
+Available array functions: ${vocabulary.function_categories.array_functions.join(', ')}
+
+These are the ONLY valid array functions in ZEN DSL. Do not use JavaScript array methods like .push(), .pop(), .shift(), .unshift(), .splice(), .slice(), .indexOf(), .join(), .reverse(), .sort(), etc.
+
+Examples:
+- Use len(array) NOT array.length
+- Use filter(array, # > 5) NOT array.filter(x => x > 5)
+- Use map(array, # * 2) NOT array.map(x => x * 2)
+- Use contains(array, value) NOT array.includes(value)`,
+        metadata: {
+          source: 'zen-vocabulary.json',
+          category: 'array-functions',
+          type: 'rule' as const,
+          tokens: 90,
+          zenSyntax: true,
+          priority: 'high',
+          ruleType: 'vocabulary'
+        }
+      },
+      
+      // Mathematical functions
+      {
+        id: 'zen_vocabulary_math_functions',
+        content: `ZEN DSL Mathematical Functions
+
+Available math functions: ${vocabulary.function_categories.mathematical_functions.join(', ')}
+
+These are the ONLY valid math functions in ZEN DSL. Do not use JavaScript Math methods like Math.sqrt(), Math.pow(), Math.sin(), Math.cos(), Math.log(), Math.random(), etc.
+
+Examples:
+- Use abs(number) NOT Math.abs(number)
+- Use round(number, 2) NOT Math.round(number)
+- Use floor(number) NOT Math.floor(number)
+- Use rand() NOT Math.random()`,
+        metadata: {
+          source: 'zen-vocabulary.json',
+          category: 'mathematical-functions',
+          type: 'rule' as const,
+          tokens: 70,
+          zenSyntax: true,
+          priority: 'high',
+          ruleType: 'vocabulary'
+        }
+      },
+      
+      // Date functions
+      {
+        id: 'zen_vocabulary_date_functions',
+        content: `ZEN DSL Date Functions
+
+Available date functions: ${vocabulary.function_categories.date_functions.join(', ')}
+
+These are the ONLY valid date functions in ZEN DSL. Do not use JavaScript Date methods like new Date(), .getTime(), .getFullYear(), .getMonth(), .toISOString(), etc.
+
+Examples:
+- Use d('2023-10-15') NOT new Date('2023-10-15')
+- Use year(date) NOT date.getFullYear()
+- Use format(date, 'YYYY-MM-DD') NOT date.toISOString()
+- Use diff(date1, date2) for date differences`,
+        metadata: {
+          source: 'zen-vocabulary.json',
+          category: 'date-functions',
+          type: 'rule' as const,
+          tokens: 85,
+          zenSyntax: true,
+          priority: 'high',
+          ruleType: 'vocabulary'
+        }
+      },
+      
+      // Type functions
+      {
+        id: 'zen_vocabulary_type_functions',
+        content: `ZEN DSL Type Functions
+
+Available type functions: ${vocabulary.function_categories.type_functions.join(', ')}
+
+These are the ONLY valid type functions in ZEN DSL. Do not use JavaScript type methods like typeof, instanceof, Array.isArray(), etc.
+
+Examples:
+- Use type(value) NOT typeof value
+- Use string(value) NOT String(value) or value.toString()
+- Use number(value) NOT Number(value) or parseInt(value)
+- Use bool(value) NOT Boolean(value)`,
+        metadata: {
+          source: 'zen-vocabulary.json',
+          category: 'type-functions',
+          type: 'rule' as const,
+          tokens: 60,
+          zenSyntax: true,
+          priority: 'high',
+          ruleType: 'vocabulary'
+        }
+      },
+      
+      // Object functions
+      {
+        id: 'zen_vocabulary_object_functions',
+        content: `ZEN DSL Object Functions
+
+Available object functions: ${vocabulary.function_categories.object_functions.join(', ')}
+
+These are the ONLY valid object functions in ZEN DSL. Do not use JavaScript Object methods like Object.entries(), Object.assign(), Object.hasOwnProperty(), etc.
+
+Examples:
+- Use keys(object) NOT Object.keys(object)
+- Use values(object) NOT Object.values(object)
+- Use object.property for property access
+- Use object[key] for dynamic property access`,
+        metadata: {
+          source: 'zen-vocabulary.json',
+          category: 'object-functions',
+          type: 'rule' as const,
+          tokens: 65,
+          zenSyntax: true,
+          priority: 'high',
+          ruleType: 'vocabulary'
+        }
+      },
+      
+      // Operators and keywords
+      {
+        id: 'zen_vocabulary_operators_keywords',
+        content: `ZEN DSL Operators and Keywords
+
+Valid operators: ${vocabulary.zen_operators.join(', ')}
+Valid keywords: ${vocabulary.zen_keywords.join(', ')}
+
+Important syntax rules:
+- Use 'and', 'or', 'not' instead of '&&', '||', '!'
+- Use 'in' and 'not in' for membership testing
+- Use '#' operator for array element access in functions
+- Use '..' for ranges: [1..10], [0..5)
+- Use '?' and ':' for ternary operations
+- Comments are NOT supported in ZEN DSL expressions
+
+${vocabulary.syntax_notes.slicing}
+${vocabulary.syntax_notes.operators}
+${vocabulary.syntax_notes.array_access}`,
+        metadata: {
+          source: 'zen-vocabulary.json',
+          category: 'operators-keywords',
+          type: 'rule' as const,
+          tokens: 100,
+          zenSyntax: true,
+          priority: 'high',
+          ruleType: 'vocabulary'
+        }
+      },
+      
+      // Validation notes and hallucinations removed
+      {
+        id: 'zen_vocabulary_validation',
+        content: `ZEN DSL Validation Information
+
+Validation accuracy: ${vocabulary.metadata.accuracy}
+Sources validated: ${vocabulary.validation.sources_checked.join(', ')}
+
+IMPORTANT: These functions/methods do NOT exist in ZEN DSL and should NEVER be used:
+${vocabulary.validation.hallucinations_removed.join(', ')}
+
+Always verify function availability against the official ZEN vocabulary before suggesting any function usage.`,
+        metadata: {
+          source: 'zen-vocabulary.json',
+          category: 'validation-info',
+          type: 'rule' as const,
+          tokens: 75,
+          zenSyntax: true,
+          priority: 'high',
+          ruleType: 'vocabulary'
+        }
+      }
+    ];
+    
+    // Upsert vocabulary documents into semantic store
+    await semanticStore.upsertDocuments(vocabularyDocuments);
+    
+    console.log(`✅ Loaded ZEN vocabulary:`);
+    console.log(`   📄 Documents: ${vocabularyDocuments.length}`);
+    console.log(`   🔧 Functions: ${vocabulary.metadata.total_functions}`);
+    console.log(`   ⚙️  Operators: ${vocabulary.metadata.total_operators}`);
+    console.log(`   🏷️  Keywords: ${vocabulary.metadata.total_keywords}`);
+    console.log(`   ❌ Hallucinations removed: ${vocabulary.validation.hallucinations_removed.length}`);
+    
+  } catch (error) {
+    console.error('⚠️  Could not load ZEN vocabulary:', error);
   }
 }
 

@@ -12,6 +12,11 @@ export interface Document {
     chunkIndex?: number;
     totalChunks?: number;
     tokens?: number;     // Estimated token count
+    zenSyntax?: boolean; // Flag for ZEN syntax priority
+    priority?: 'high' | 'medium' | 'low'; // Priority level
+    ruleType?: string;   // Rule type classification
+    title?: string;      // Title for examples
+    expression?: string; // Expression for examples
   };
 }
 
@@ -270,16 +275,78 @@ class VectorStore {
       // Upsert documents into vector store
       await this.upsertDocuments(documents);
       
+      // Also load ZEN vocabulary
+      await this.loadZenVocabulary();
+      
       const stats = fileProcessor.getProcessingStats(processedFiles);
       console.log(`✅ Auto-loaded DSL knowledge base:`);
       console.log(`   📄 Files: ${stats.totalFiles}`);
       console.log(`   🧩 Chunks: ${stats.totalChunks}`);
       console.log(`   🔢 Tokens: ${stats.totalTokens}`);
+      console.log(`   📚 ZEN Vocabulary: Loaded from zen-vocabulary.json`);
       
     } catch (error) {
       console.error('❌ Failed to auto-load knowledge base:', error);
       console.log('⚠️  Server will continue with empty knowledge base');
       // Don't throw - let server continue without knowledge base
+    }
+  }
+
+  /**
+   * Load ZEN vocabulary from JSON file
+   */
+  private async loadZenVocabulary(): Promise<void> {
+    try {
+      const path = await import('path');
+      const fs = await import('fs');
+      
+      const vocabularyPath = path.join(__dirname, '../../../docs/config/zen-vocabulary.json');
+      
+      if (!fs.existsSync(vocabularyPath)) {
+        console.log('⚠️  ZEN vocabulary file not found');
+        return;
+      }
+
+      const vocabularyContent = fs.readFileSync(vocabularyPath, 'utf-8');
+      const vocabulary = JSON.parse(vocabularyContent);
+      
+      // Create vocabulary document
+      const vocabularyDoc: Document = {
+        id: 'zen_vocabulary_reference',
+        content: `ZEN DSL Vocabulary Reference
+
+Valid Functions (${vocabulary.metadata.total_functions}): ${vocabulary.zen_functions.join(', ')}
+
+Valid Operators (${vocabulary.metadata.total_operators}): ${vocabulary.zen_operators.join(', ')}
+
+Valid Keywords (${vocabulary.metadata.total_keywords}): ${vocabulary.zen_keywords.join(', ')}
+
+Function Categories:
+- String: ${vocabulary.function_categories.string_functions.join(', ')}
+- Array: ${vocabulary.function_categories.array_functions.join(', ')}
+- Math: ${vocabulary.function_categories.mathematical_functions.join(', ')}
+- Date: ${vocabulary.function_categories.date_functions.join(', ')}
+- Type: ${vocabulary.function_categories.type_functions.join(', ')}
+- Object: ${vocabulary.function_categories.object_functions.join(', ')}
+
+NEVER use these (hallucinations): ${vocabulary.validation.hallucinations_removed.join(', ')}
+
+Always use ZEN syntax, not JavaScript equivalents.`,
+        metadata: {
+          source: 'zen-vocabulary.json',
+          category: 'vocabulary',
+          type: 'rule',
+          tokens: 150,
+          zenSyntax: true,
+          priority: 'high',
+          ruleType: 'vocabulary-reference'
+        }
+      };
+      
+      await this.upsertDocuments([vocabularyDoc]);
+      
+    } catch (error) {
+      console.error('⚠️  Could not load ZEN vocabulary:', error);
     }
   }
 }

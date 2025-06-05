@@ -4,7 +4,7 @@ import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
 import { X, Search, Code, Sparkles, ArrowLeft, FolderOpen, Hash, Layers, Calendar, Braces, Clock, BarChart } from 'lucide-react';
 import { getExamples } from '../../services/examplesService';
-import { Example } from '../../examples/types';
+import { Example } from '../../../docs/knowledge-cards/examples/types';
 import {
   Tooltip,
   TooltipContent,
