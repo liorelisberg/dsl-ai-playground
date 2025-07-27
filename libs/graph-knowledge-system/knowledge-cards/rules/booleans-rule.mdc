@@ -1,0 +1,215 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# DSL Boolean Expressions Rule
+
+This rule defines the Boolean logic syntax for the DSL, including literals, logical operators, ternary expressions, nullish coalescing, and Boolean-producing functions.  
+**All expressions must preserve logical structure and use only the operators and functions defined here.**
+
+---
+
+## 1. Boolean Literals
+
+Use lowercase `true` and `false` (without quotes) to represent Boolean values.
+
+**Example 1:**  
+- **JavaScript:** `true`  
+- **DSL:** `true`  
+- **Input:** _(none)_  
+- **Output:** `true`  
+- **Explanation:** The literal value `true` is directly represented in the DSL.
+
+**Example 2:**  
+- **JavaScript:** `false`  
+- **DSL:** `false`  
+- **Input:** _(none)_  
+- **Output:** `false`  
+- **Explanation:** The literal value `false` is directly represented in the DSL.
+
+---
+
+## 2. Logical Operators
+
+### 2.1 Logical AND (`and`)
+
+Represents logical conjunction (like JavaScript's `&&`).
+
+**Example:**  
+- **JavaScript:** `true && false`  
+- **DSL:** `true and false`  
+- **Input:** _(none)_  
+- **Output:** `false`  
+- **Explanation:** Both operands must be true for the result to be true.
+
+---
+
+### 2.2 Logical OR (`or`)
+
+Represents logical disjunction (like JavaScript's `||`).
+
+**Example:**  
+- **JavaScript:** `true || false`  
+- **DSL:** `true or false`  
+- **Input:** _(none)_  
+- **Output:** `true`  
+- **Explanation:** At least one operand must be true for the result to be true.
+
+---
+
+### 2.3 Logical NOT (`not`)
+
+Represents logical negation (like JavaScript's `!`).
+
+**Example:**  
+- **JavaScript:** `!true`  
+- **DSL:** `not true`  
+- **Input:** _(none)_  
+- **Output:** `false`  
+- **Explanation:** Negates the Boolean value.
+
+---
+
+### 2.4 Equality (`==`)
+
+Checks for equality between values.
+
+**Example:**  
+- **JavaScript:** `x == true`  
+- **DSL:** `# == true`  
+- **Input:** `{ "x": true }`  
+- **Output:** `true`  
+- **Explanation:** Compares the variable `x` to `true`.
+
+---
+
+## 3. Ternary Expressions
+
+Ternary expressions allow conditional logic, following JavaScript's `condition ? then : else` syntax.
+
+**Example 1:**  
+- **JavaScript:** `true ? 10 == 10 : 20 == 30`  
+- **DSL:** `true ? 10 == 10 : 20 == 30`  
+- **Input:** _(none)_  
+- **Output:** `true`  
+- **Explanation:** Since the condition is true, the first branch (`10 == 10`) is evaluated.
+
+**Example 2:**  
+- **JavaScript:** `false ? 10 == 10 : 20 == 30`  
+- **DSL:** `false ? 10 == 10 : 20 == 30`  
+- **Input:** _(none)_  
+- **Output:** `false`  
+- **Explanation:** Since the condition is false, the second branch (`20 == 30`) is evaluated.
+
+**Example 3 (Nested):**  
+- **JavaScript:** `true ? 10 == 20 : false ? 30 == 40 : true ? 50 == 60 : 70 == 80`  
+- **DSL:** `true ? 10 == 20 : false ? 30 == 40 : true ? 50 == 60 : 70 == 80`  
+- **Input:** _(none)_  
+- **Output:** `false`  
+- **Explanation:** The first condition is true, so `10 == 20` is evaluated.
+
+---
+
+## 4. Nullish Coalescing (`??`)
+
+The nullish coalescing operator provides a fallback value if the left operand is null or undefined.  
+It is not a Boolean operator, but can appear in Boolean expressions.
+
+**Example 1:**  
+- **JavaScript:** `null ?? 'hello'`  
+- **DSL:** `null ?? 'hello'`  
+- **Input:** _(none)_  
+- **Output:** `'hello'`  
+- **Explanation:** Returns `'hello'` because the left operand is null.
+
+**Example 2 (in a Boolean context):**  
+- **JavaScript:** `false || true ? null ?? 'test' : false`  
+- **DSL:** `false or true ? null ?? 'test' : false`  
+- **Input:** _(none)_  
+- **Output:** `'test'`  
+- **Explanation:** The condition is true, so the true branch (`null ?? 'test'`) is evaluated.
+
+---
+
+## 5. Combination Logic
+
+You can combine logical operators, ternary, and nullish coalescing as needed.
+
+**Example:**  
+- **JavaScript:** `!x && true`  
+- **DSL:** `not # and true`  
+- **Input:** `{ "x": false }`  
+- **Output:** `true`  
+- **Explanation:** `not false` is `true`, and `true and true` is `true`.
+
+---
+
+## 6. Boolean-Producing Functions
+
+The following functions are not Boolean operators, but produce Boolean values and are valid in Boolean expressions:
+
+- Quantifiers: `some(array, condition)`, `all(array, condition)`, `none(array, condition)`, `one(array, condition)`
+- Type conversion: `bool(value)`, `string(value)`, `number(value)`
+- Type check: `type(value) == 'bool'`
+
+**Example 1 (Quantifier):**  
+- **JavaScript:** `[1, 2, 3].some(x => x > 2)`  
+- **DSL:** `some([1, 2, 3], # > 2)`  
+- **Input:** _(none)_  
+- **Output:** `true`  
+- **Explanation:** At least one element in the array is greater than 2.
+
+**Example 2 (Type conversion):**  
+- **JavaScript:** `Boolean('true')`  
+- **DSL:** `bool('true')`  
+- **Input:** _(none)_  
+- **Output:** `true`  
+- **Explanation:** Converts the string `'true'` to the Boolean value `true`.
+
+**Example 3 (Type check):**  
+- **JavaScript:** `typeof true === 'boolean'`  
+- **DSL:** `type(true) == 'bool'`  
+- **Input:** _(none)_  
+- **Output:** `true`  
+- **Explanation:** Checks that the type of `true` is Boolean.
+
+---
+
+## 7. Expression vs. Evaluation
+
+Boolean expressions represent logical **structure**, not immediate **return values**.
+
+- Do **not** simplify or evaluate expressions unless provided with a context.
+- Always preserve the original logic and structure.
+
+**Example:**  
+- **JavaScript:** `x && !x`  
+- **DSL:** `# and not #`  
+- **Input:** `{ "x": true }`  
+- **Output:** `false`  
+- **Explanation:** The structure is preserved; only evaluate if input is provided.
+
+---
+
+## 8. Syntax Restrictions
+
+- Use: `and`, `or`, `not`, `==`, `? :`, `??`
+- Do **not** use: `&&`, `||`, `!`, `===`
+- Do **not** wrap expressions in quotes
+- Only use operators, methods, and functions defined in this rule
+
+---
+
+## 9. Summary Table
+
+| Feature/Operator         | Allowed | Example (DSL)                          |
+|-------------------------|---------|-----------------------------------------|
+| Boolean literals        | Yes     | true, false                             |
+| Logical AND/OR/NOT      | Yes     | x and y, x or y, not x                  |
+| Equality                | Yes     | x == true                               |
+| Ternary                 | Yes     | x ? y : z                               |
+| Nullish coalescing      | Yes     | x ?? y                                  |
+| Quantifiers             | Yes     | some(arr, # > 2)                        |
+| Type conversion/check   | Yes     | bool('true'), type(x) == 'bool'         |
+| Non-DSL operators       | No      | &&, ||, !, ===                          |

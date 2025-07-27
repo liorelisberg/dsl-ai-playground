@@ -1,0 +1,71 @@
+{
+  "id": "map-property-extraction-intermediate",
+  "function": "map",
+  "function_format": "map(object_array, #.property)",
+  "capability": "property_extraction",
+  "complexity": "intermediate",
+  "primary_example": {
+    "expression": "map([{id: 1, name: 'John'}, {id: 2, name: 'Jane'}], #.id)",
+    "sample_input": {},
+    "expected_output": [
+      1,
+      2
+    ],
+    "explanation": "Extract specific property from each object in array using dot notation"
+  },
+  "related_examples": [
+    {
+      "variation": "price_extraction",
+      "expression": "map(items, #.price)",
+      "context": "Extract price property from product items"
+    },
+    {
+      "variation": "nested_property",
+      "expression": "map(orders, #.customer.name)",
+      "context": "Extract nested property from objects"
+    },
+    {
+      "variation": "calculated_property",
+      "expression": "map(items, #.qty * #.price)",
+      "context": "Calculate values using multiple properties"
+    }
+  ],
+  "relationships": {
+    "commonly_used_with": [
+      "filter",
+      "sum",
+      "avg",
+      "max",
+      "min"
+    ],
+    "input_preparation": [
+      "Object arrays from API",
+      "Database query results"
+    ],
+    "output_usage": [
+      "Aggregation calculations",
+      "Data analysis"
+    ],
+    "builds_on": [
+      "object_property_access",
+      "array_mapping"
+    ],
+    "leads_to": [
+      "object_transformation",
+      "complex_chaining"
+    ]
+  },
+  "retrieval_metadata": {
+    "tags": [
+      "object_access",
+      "property_extraction",
+      "data_extraction"
+    ],
+    "use_cases": [
+      "api_data_processing",
+      "business_analytics",
+      "report_generation"
+    ],
+    "difficulty_progression": "builds_on: property_access | leads_to: object_restructuring"
+  }
+}

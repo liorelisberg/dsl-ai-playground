@@ -1,0 +1,143 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# ZEN DSL Syntax Restrictions
+
+## Overview
+This document defines what syntax is **NOT supported** in ZEN DSL to prevent confusion and ensure correct usage.
+
+## ❌ CRITICAL: "this" Operator Is NOT Supported
+
+**❌ CRITICAL: "this" operator does NOT exist in ZEN DSL**
+
+ZEN DSL does not support the "this" keyword or operator for accessing data:
+
+### Examples of Invalid "this" Syntax
+
+**❌ Invalid - this.property access:**
+```zen
+this.markets
+this.users
+this.data
+```
+**Error:** `Failed to evaluate expression - "this" is not defined`
+
+**❌ Invalid - this in array operations:**
+```zen
+map(this.markets, #.name)
+filter(this.users, #.age > 18)
+```
+**Error:** `Failed to evaluate expression - "this" is not defined`
+
+### Correct Approach - Direct Property Access
+
+**✅ Valid - Direct property access:**
+```zen
+markets
+users
+data
+```
+**Input:** `{"markets": [{"name": "Market 1"}], "users": [{"age": 25}]}`
+**Output:** Direct access to the properties
+
+**✅ Valid - Correct array operations:**
+```zen
+map(markets, #.name)
+filter(users, #.age > 18)
+```
+**Input:** `{"markets": [{"name": "Market 1"}], "users": [{"age": 25}]}`
+**Output:** `["Market 1"]` and `[{"age": 25}]` respectively
+
+### Why "this" Is Not Supported
+
+1. **Language Design**: ZEN DSL uses direct property access, not object-oriented "this" references
+2. **Simplicity**: No context switching - properties are accessed directly from input data
+3. **Performance**: Direct access is faster than context resolution
+4. **Clarity**: Expressions are more readable without "this" indirection
+
+## Comments Are Not Supported
+
+**❌ CRITICAL: Comments are NOT supported in ZEN DSL**
+
+ZEN DSL does not support any form of comments, including:
+- Single-line comments: `//`
+- Multi-line comments: `/* */`
+- Hash comments: `#` (except for lambda parameter references)
+
+### Examples of Invalid Syntax
+
+**❌ Invalid - Single-line comment:**
+```zen
+// This is a comment
+upper(user.name)
+```
+**Error:** `Failed to evaluate expression`
+
+**❌ Invalid - Inline comment:**
+```zen
+upper(user.name) // Convert to uppercase
+```
+**Error:** `Failed to evaluate expression`
+
+**❌ Invalid - Multi-line comment:**
+```zen
+/* This is a 
+   multi-line comment */
+upper(user.name)
+```
+**Error:** `Failed to evaluate expression`
+
+### Correct Approach
+
+**✅ Valid - No comments:**
+```zen
+upper(user.name)
+```
+**Input:** `{"user": {"name": "john doe"}}`
+**Output:** `"JOHN DOE"`
+
+## Why Comments Are Not Supported
+
+1. **Language Design**: ZEN DSL is designed for pure expression evaluation
+2. **Performance**: No comment parsing overhead in sub-millisecond evaluation
+3. **Simplicity**: Clean, focused syntax without documentation syntax
+4. **JSON Integration**: Comments would complicate JSON data processing
+
+## Alternative Documentation Methods
+
+Instead of comments in expressions, use:
+1. **Descriptive variable names**: `userFullName` instead of `name`
+2. **External documentation**: Document expressions outside the DSL
+3. **Example metadata**: Use example titles and descriptions
+4. **Test cases**: Show expected inputs and outputs
+
+## Syntax Rules Summary
+
+### ❌ Not Allowed
+- Comments: `//`, `/* */`
+- JavaScript operators: `&&`, `||`, `!`, `===`
+- Semicolons: `;`
+- Variable declarations: `var`, `let`, `const`
+
+### ✅ Allowed
+- ZEN operators: `and`, `or`, `not`, `==`
+- Function calls: `upper()`, `map()`, `filter()`
+- Property access: `user.name`, `data[0]`
+- Arithmetic: `+`, `-`, `*`, `/`, `%`
+- Comparisons: `<`, `>`, `<=`, `>=`, `!=`
+- Conditionals: `condition ? true_value : false_value`
+
+## Error Handling
+
+When comments are used, ZEN Engine will return:
+```json
+{
+  "type": "NodeError",
+  "nodeId": "expression", 
+  "source": "Failed to evaluate expression: \"//comment\\nexpression\""
+}
+```
+
+This is the **expected and correct behavior**.

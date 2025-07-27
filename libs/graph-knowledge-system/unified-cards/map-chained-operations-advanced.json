@@ -1,0 +1,72 @@
+{
+  "id": "map-chained-operations-advanced",
+  "function": "map",
+  "function_format": "map(filter(array, condition), transformation)",
+  "capability": "filtered_transformation",
+  "complexity": "advanced",
+  "primary_example": {
+    "expression": "map(filter([{id: 1, name: 'John', active: true}, {id: 2, name: 'Jane', active: false}], #.active), #.name)",
+    "sample_input": {},
+    "expected_output": [
+      "John"
+    ],
+    "explanation": "Chain filter and map operations to process subset of data"
+  },
+  "related_examples": [
+    {
+      "variation": "numeric_filter_transform",
+      "expression": "map(filter([1, 2, 3, 4, 5], # > 2), # * 2)",
+      "context": "Filter numbers then transform them"
+    },
+    {
+      "variation": "aggregation_chaining",
+      "expression": "sum(map(filter(orders, #.status == 'completed'), #.total))",
+      "context": "Filter, transform, then aggregate"
+    },
+    {
+      "variation": "complex_business_logic",
+      "expression": "avg(map(filter(employees, #.department == 'sales'), #.performance_score))",
+      "context": "Business analytics with chaining"
+    }
+  ],
+  "relationships": {
+    "commonly_used_with": [
+      "filter",
+      "sum",
+      "avg",
+      "max",
+      "min",
+      "count"
+    ],
+    "input_preparation": [
+      "Large datasets",
+      "Business data collections"
+    ],
+    "output_usage": [
+      "Business analytics",
+      "Performance metrics"
+    ],
+    "builds_on": [
+      "map_basics",
+      "filter_operations",
+      "aggregation_functions"
+    ],
+    "leads_to": [
+      "complex_data_pipelines",
+      "business_intelligence"
+    ]
+  },
+  "retrieval_metadata": {
+    "tags": [
+      "chaining",
+      "data_pipeline",
+      "advanced_operations"
+    ],
+    "use_cases": [
+      "business_analytics",
+      "data_science",
+      "performance_analysis"
+    ],
+    "difficulty_progression": "builds_on: filtering + mapping | leads_to: complex_pipelines"
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "consolidation_success": {
+    "original_occurrences": 117,
+    "original_files": 15,
+    "unified_cards": 5,
+    "reduction_percentage": 96
+  },
+  "capability_coverage": {
+    "original_capabilities": 6,
+    "cards_by_capability": {
+      "arithmetic_transformation": 1,
+      "property_extraction": 1,
+      "object_restructuring": 1,
+      "filtered_transformation": 1
+    },
+    "instruction_cards": 1,
+    "example_cards": 4
+  },
+  "complexity_distribution": {
+    "basic": 1,
+    "intermediate": 2,
+    "advanced": 1
+  },
+  "relationship_completeness": {
+    "cards_with_relationships": 4,
+    "unique_relationship_types": 5
+  }
+}

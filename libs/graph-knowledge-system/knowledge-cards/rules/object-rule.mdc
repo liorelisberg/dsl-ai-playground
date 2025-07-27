@@ -1,0 +1,240 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# DSL Object Expressions Rule
+
+This rule defines the syntax and semantics for object expressions in the DSL, including creation, property access, dynamic keys, keys/values extraction, nested access, and more.
+
+---
+
+## 1. Object Creation & Literals
+
+Defines how to create objects using literals and dynamic keys.
+
+**Example 1:**  
+- **JavaScript:** `{a: 1, b: 2}`  
+- **DSL:** `{a: 1, b: 2}`  
+- **Input:** _(none)_  
+- **Output:** `{a: 1, b: 2}`  
+- **Explanation:** Creates an object with two properties.
+
+**Example 2:**  
+- **JavaScript:** `{}`  
+- **DSL:** `{}`  
+- **Input:** _(none)_  
+- **Output:** `{}`  
+- **Explanation:** Creates an empty object.
+
+**Example 3:**  
+- **JavaScript:** `{[key]: value}`  
+- **DSL:** `{[key]: value}`  
+- **Input:** `{ "key": "foo", "value": 123 }`  
+- **Output:** `{foo: 123}`  
+- **Explanation:** Uses a variable as a property key.
+
+**Example 4:**  
+- **JavaScript:** `{[`dynamic-${expr}`]: value}`  
+- **DSL:** `{[`dynamic-${expr}`]: value}`  
+- **Input:** `{ "expr": "key", "value": 123 }`  
+- **Output:** `{dynamic-key: 123}`  
+- **Explanation:** Uses a dynamic expression as a property key.
+
+---
+
+## 2. Property Access
+
+Accesses properties of objects, including nested properties.
+
+**Example 1:**  
+- **JavaScript:** `obj.a`  
+- **DSL:** `obj.a`  
+- **Input:** `{ "obj": {"a": 10, "b": 20} }`  
+- **Output:** `10`  
+- **Explanation:** Accesses the property `a` of the object.
+
+**Example 2:**  
+- **JavaScript:** `obj['b']`  
+- **DSL:** `obj['b']`  
+- **Input:** `{ "obj": {"a": 10, "b": 20} }`  
+- **Output:** `20`  
+- **Explanation:** Accesses the property `b` using bracket notation.
+
+**Example 3:**  
+- **JavaScript:** `user.address.city`  
+- **DSL:** `user.address.city`  
+- **Input:** `{ "user": {"address": {"city": "New York"}} }`  
+- **Output:** `'New York'`  
+- **Explanation:** Accesses a nested property.
+
+**Example 4:**  
+- **JavaScript:** `data.items[0]`  
+- **DSL:** `data.items[0]`  
+- **Input:** `{ "data": {"items": ["a", "b", "c"]} }`  
+- **Output:** `'a'`  
+- **Explanation:** Accesses the first element of the `items` array property.
+
+---
+
+## 3. Dynamic Keys
+
+Uses variables or expressions as property keys in object literals.
+
+**Example 1:**  
+- **JavaScript:** `{[key]: value}`  
+- **DSL:** `{[key]: value}`  
+- **Input:** `{ "key": "foo", "value": 123 }`  
+- **Output:** `{foo: 123}`  
+- **Explanation:** Uses a variable as a property key.
+
+**Example 2:**  
+- **JavaScript:** `{[`dynamic-${expr}`]: value}`  
+- **DSL:** `{[`dynamic-${expr}`]: value}`  
+- **Input:** `{ "expr": "key", "value": 123 }`  
+- **Output:** `{dynamic-key: 123}`  
+- **Explanation:** Uses a dynamic expression as a property key.
+
+---
+
+## 4. Keys & Values Extraction
+
+Extracts the property names (keys) or property values from an object.
+
+**Example 1:**  
+- **JavaScript:** `Object.keys(obj)`  
+- **DSL:** `keys(obj)`  
+- **Input:** `{ "obj": {"a": 10, "b": 20} }`  
+- **Output:** `["a", "b"]`  
+- **Explanation:** Extracts the keys of the object as an array of strings.
+
+**Example 2:**  
+- **JavaScript:** `Object.values(obj)`  
+- **DSL:** `values(obj)`  
+- **Input:** `{ "obj": {"a": 10, "b": 20} }`  
+- **Output:** `[10, 20]`  
+- **Explanation:** Extracts the values of the object as an array.
+
+---
+
+## 5. Nested Access
+
+Accesses deeply nested properties within objects and arrays.
+
+**Example 1:**  
+- **JavaScript:** `user.address.city`  
+- **DSL:** `user.address.city`  
+- **Input:** `{ "user": {"address": {"city": "New York"}} }`  
+- **Output:** `'New York'`  
+- **Explanation:** Accesses a nested property.
+
+**Example 2:**  
+- **JavaScript:** `user.contacts[0].phone`  
+- **DSL:** `user.contacts[0].phone`  
+- **Input:** `{ "user": {"contacts": [{"phone": "123-456-7890"}]} }`  
+- **Output:** `'123-456-7890'`  
+- **Explanation:** Accesses a property inside an array within an object.
+
+---
+
+## 6. Object Operations in Arrays
+
+Performs mapping and filtering on arrays of objects.
+
+**Example 1:**  
+- **JavaScript:** `arr.map(obj => obj.id)`  
+- **DSL:** `map([{id: 1, name: 'John'}, {id: 2, name: 'Jane'}], #.id)`  
+- **Input:** _(none)_  
+- **Output:** `[1, 2]`  
+- **Explanation:** Maps over an array of objects, extracting the `id` property.
+
+**Example 2:**  
+- **JavaScript:** `arr.filter(obj => obj.id > 1)`  
+- **DSL:** `filter([{id: 1, name: 'John'}, {id: 2, name: 'Jane'}], #.id > 1)`  
+- **Input:** _(none)_  
+- **Output:** `[{id: 2, name: 'Jane'}]`  
+- **Explanation:** Filters the array of objects for those with `id > 1`.
+
+**Example 3:**  
+- **JavaScript:** `arr.filter(obj => obj.id > 1).map(obj => obj.name)`  
+- **DSL:** `map(filter([{id: 1, name: 'John'}, {id: 2, name: 'Jane'}], #.id > 1), #.name)`  
+- **Input:** _(none)_  
+- **Output:** `['Jane']`  
+- **Explanation:** Filters the array of objects for those with `id > 1`, then maps to their `name` property.
+
+---
+
+## 7. Object Construction in Mapping
+
+Constructs new objects within mapping operations, often combining or transforming properties.
+
+**Example 1:**  
+- **JavaScript:** `arr.map(obj => ({id: obj.id, fullName: obj.firstName + ' ' + obj.lastName}))`  
+- **DSL:** `map(items, {id: #.id, fullName: #.firstName + ' ' + #.lastName})`  
+- **Input:** `{ "items": [ {"id": 1, "firstName": "John", "lastName": "Doe"}, {"id": 2, "firstName": "Jane", "lastName": "Smith"} ] }`  
+- **Output:** `[{"id":1,"fullName":"John Doe"},{"id":2,"fullName":"Jane Smith"}]`  
+- **Explanation:** Maps over an array of objects, constructing a new object for each item.
+
+---
+
+## 8. Type Inspection
+
+Checks the type of a value.
+
+**Example 1:**  
+- **JavaScript:** `typeof obj === 'object'`  
+- **DSL:** `type(obj) == 'object'`  
+- **Input:** `{ "obj": {"a": 1, "b": 2} }`  
+- **Output:** `true`  
+- **Explanation:** Checks if the value is an object.
+
+---
+
+## 9. Other Object Utilities
+
+Other utilities and patterns for working with objects.
+
+**Example 1:**  
+- **JavaScript:** `Object.keys({[key]: value})`  
+- **DSL:** `keys({[key]: value})`  
+- **Input:** `{ "key": "foo", "value": 123 }`  
+- **Output:** `["foo"]`  
+- **Explanation:** Extracts the key from an object with a dynamic property.
+
+**Example 2:**  
+- **JavaScript:** `Object.values({[key]: value})`  
+- **DSL:** `values({[key]: value})`  
+- **Input:** `{ "key": "foo", "value": 123 }`  
+- **Output:** `[123]`  
+- **Explanation:** Extracts the value from an object with a dynamic property.
+
+---
+
+## 10. Syntax Restrictions & Summary Table
+
+**Description:**  
+Defines what is and isn't allowed in DSL object expressions, and provides a quick reference table.
+
+---
+
+### Syntax Restrictions
+- Use only the operators, functions, and methods defined in this rule.
+- Do **not** use JavaScript-specific methods or syntax not listed here.
+- All object operations must use DSL-supported constructs.
+- Parentheses, brackets, and braces must be used as shown in the examples for property access, dynamic keys, and function calls.
+
+---
+
+### Summary Table
+| Feature/Operator         | Allowed | Example (DSL)                                 |
+|-------------------------|---------|-----------------------------------------------|
+| Object creation         | Yes     | `{a: 1, b: 2}`, `{}`                          |
+| Dynamic keys            | Yes     | `{[key]: value}`, `{[`dynamic-${expr}`]: v}`  |
+| Property access         | Yes     | `obj.a`, `obj['b']`, `obj.a.b`                |
+| Keys/Values extraction  | Yes     | `keys(obj)`, `values(obj)`                    |
+| Nested access           | Yes     | `user.address.city`, `user.contacts[0].phone` |
+| Object ops in arrays    | Yes     | `map(arr, #.id)`, `filter(arr, #.id > 1)`     |
+| Object construction in map | Yes  | `map(items, {id: #.id, fullName: #.firstName + ' ' + #.lastName})` |
+| Type inspection         | Yes     | `type(obj) == 'object'`                       |
+| #partent                | No      | `{Line: #parent.condition}` not part of the DSL |
+| Non-DSL ops             | No      | (any not listed above)                        |
